@@ -4,7 +4,7 @@ import ViewQR from './components/view-qr'
 import Admin from './components/admin'
 
 import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { HashRouter as Router, Switch, Route } from 'react-router-dom'
 import { log } from './modules/helpers'
 
 // ///////////////////////////////
