@@ -1,38 +1,106 @@
-.App {
-  text-align: center;
-}
+.container {
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  min-height: 100vh;
+  width: 100%;
+  padding:  0 2rem;
+  box-sizing: border-box;
+
 }
 
-.App-link {
-  color: #61dafb;
+button {
+  margin-top: 5rem;
+  padding:  1rem 2rem;
+  border: 2px solid #8076fa;
+  color: #8076fa;
+  font-size: 1rem;
+  background: none;
+  border-radius: 5px;
 }
 
-@keyframes App-logo-spin {
-  from {
+#logo {
+  position: absolute;
+  z-index: -1;
+  right: 50%;
+  transform: translateY( -50% );
+  /*top: 50%;*/
+  transform: translateX( 50% );
+  width: 90%;
+  opacity: .05;
+}
+
+p.sidenote {
+  opacity: .5;
+  font-style: italic;
+  margin-top:  1rem;
+  text-align: center;
+}
+
+/* ///////////////////////////////
+// File upload
+// /////////////////////////////*/
+
+#fileupload {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top:  3rem;
+}
+
+#fileupload label {
+  opacity: .5;
+  margin-bottom: .5rem;
+  font-style: italic;
+
+}
+
+input#password {
+
+  background: rgba( 0,0,0,0.05 );
+  border-bottom: 2px solid black;
+  padding:  1rem 2rem;
+  margin-bottom: 3rem;
+
+}
+
+button#uploadcodes {
+  margin-top: 0;
+}
+
+/*Loading spinner*/
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.loading * {
+  margin: 2rem 0;
+}
+.lds-dual-ring {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid black;
+  border-color: black transparent black transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
     transform: rotate(0deg);
   }
-  to {
+  100% {
     transform: rotate(360deg);
   }
 }
