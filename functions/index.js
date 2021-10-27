@@ -67,9 +67,8 @@ exports.importCodes = functions.https.onCall( async ( data, context ) => {
 		// Load the codes into firestore
 		await Promise.all( codes.map( code => {
 
-			// Remove prefixes
-			code = code.replace( 'https://poap.xyz/claim/', '' )
-			code = code.replace( 'http://poap.xyz/claim/', '' )
+			// Remove web prefixes
+			code = code.replace( /(https?:\/\/.*\/)/ig, '')
 
 			return db.collection( 'codes' ).doc( code ).set( {
 				claimed: 'unknown',

@@ -49,15 +49,9 @@ export default function Admin( ) {
 
         log( 'Validation error ', e, ' for ', csv )
         setCsv( undefined )
+        setCodes( undefined )
         return alert( e.message )
 
-      }
-
-      const { name } = csv
-      if( !name.includes( '.csv' ) ) {
-        setCsv( undefined )
-        setCodes( undefined )
-        return alert( '' )
       }
 
     } )(  )
