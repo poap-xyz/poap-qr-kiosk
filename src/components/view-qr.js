@@ -24,7 +24,7 @@ export default function ViewQR( ) {
   // Start code listener
   useEffect( f => listenToCode( newCode => {
     setCode( newCode.id )
-    setLoading( false )
+    if( newCode.id ) setLoading( false )
   } ), [] )
 
   // No code timeout
