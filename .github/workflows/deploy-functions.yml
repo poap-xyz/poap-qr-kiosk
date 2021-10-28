@@ -1,0 +1,44 @@
+name: Deploy functions on push/merge
+
+on:
+  # Trigger: on new tag push
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/deploy-functions.yml'
+      - 'functions/**'
+
+jobs:
+  build:
+    name: Publish changes
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Get the repo files from current commit
+      - name: Cloning repository
+        uses: actions/checkout@v1
+
+      # Install frontend dependencies based on nvmrc
+      - name: Read .nvmrc
+        run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+        id: nvmfunctions
+        working-directory: functions
+
+      - name: Set Node.js (.nvmrc)
+        uses: actions/setup-node@v1
+        with:
+          node-version: "${{ steps.nvmfunctions.outputs.NVMRC }}"
+
+      - name: Install functions dependencies
+        run: npm i
+        working-directory: functions
+
+          
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only=functions
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

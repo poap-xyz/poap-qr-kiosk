@@ -1,4 +1,4 @@
-name: Deploy viewer on push/merge
+name: Deploy frontend on push/merge
 
 # Only trigger on PR/push and only for frontend files
 on:

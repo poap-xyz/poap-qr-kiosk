@@ -1,7 +1,7 @@
 // Firebase functionality
 import { initializeApp } from "firebase/app"
 import { getFirestore, collection, setDoc, doc, onSnapshot, query, where, limit } from "firebase/firestore"
-import { getAnalytics } from "firebase/analytics"
+import { getAnalytics, logEvent } from "firebase/analytics"
 import { getFunctions, httpsCallable } from 'firebase/functions'
 
 import { log } from './helpers'
@@ -32,7 +32,7 @@ const functions = getFunctions( app )
 const importCodes = httpsCallable( functions, 'importCodes' )
 
 // ///////////////////////////////
-// Actions
+// Code actions
 // ///////////////////////////////
 export async function markCodeClaimed( code ) {
 
@@ -76,4 +76,13 @@ export async function importCodesFromArray( password='', codes=[] ) {
 	if( error ) throw new Error( error )
 
 
+}
+
+// ///////////////////////////////
+// Analytics actions
+// ///////////////////////////////
+export function event( name ) {
+	if( !name ) return
+	if( process.env.NODE_ENV == 'development' ) return log( 'Dummy analytics event: ', name )
+	logEvent( analytics, name )
 }

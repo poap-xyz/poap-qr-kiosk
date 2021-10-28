@@ -2,7 +2,7 @@ import logo from '../logo.svg'
 
 import React, { useState, useEffect } from 'react'
 import { Container, Loading } from './generic'
-import { importCodesFromArray } from '../modules/firebase'
+import { importCodesFromArray, event } from '../modules/firebase'
 import { log } from '../modules/helpers'
 import Papa from 'papaparse'
 import { useHistory } from 'react-router-dom'
@@ -86,6 +86,7 @@ export default function Admin( ) {
       setLoading( 'Importing codes' )
       await importCodesFromArray( password, codes )
       alert( 'Import success! Forwarding you to the main interface' )
+      event( 'admin_code_import' )
       history.push( '/' )
 
     } catch( e ) {

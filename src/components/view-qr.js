@@ -2,7 +2,7 @@ import logo from '../logo.svg'
 
 import React, { useState, useEffect } from 'react'
 import { Container } from './generic'
-import { listenToCode, markCodeClaimed } from '../modules/firebase'
+import { listenToCode, markCodeClaimed, event } from '../modules/firebase'
 import QRCode from 'react-qr-code'
 import { log } from '../modules/helpers'
 
@@ -34,6 +34,7 @@ export default function ViewQR( ) {
     setLoading( 'Getting next code' )
     await markCodeClaimed( code )
     setLoading( false )
+    event( 'user_request_next_qr' )
   }
 
   // ///////////////////////////////
