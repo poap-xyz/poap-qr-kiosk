@@ -50,7 +50,7 @@ export default function ViewQR( ) {
   
   return <Container>
     <img id='logo' src={ logo } />
-    <QRCode value={ `https://poap.xyz/code/${ code }` } />
+    <QRCode value={ `https://app.poap.xyz/code/${ code }` } />
     <button onClick={ nextCode }>Next code</button>
   </Container>
 
