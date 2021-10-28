@@ -46,6 +46,11 @@ exports.verifyCodeStatus = functions.firestore.document( 'codes/{code}' ).onWrit
 
 	} catch( e ) {
 
+		// Set retry marker
+		await db.collection( 'codes' ).doc( code ).set( {
+			retry: true
+		}, { merge: true } )
+
 		// Log errors to cloud logs
 		console.error( 'verifyCodeStatus error: ', e )
 
