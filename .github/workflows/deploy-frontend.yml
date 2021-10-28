@@ -47,6 +47,10 @@ jobs:
       - name: Install dependencies
         run: npm i
 
+      - name: Create environment files
+        run: |
+          echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
+
       - name: Build website files
         env:
           NODE_ENV: production
