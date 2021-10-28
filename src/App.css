@@ -60,6 +60,7 @@ p.sidenote {
 input#password {
 
   background: rgba( 0,0,0,0.05 );
+  border: none;
   border-bottom: 2px solid black;
   padding:  1rem 2rem;
   margin-bottom: 3rem;

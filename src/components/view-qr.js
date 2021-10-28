@@ -43,7 +43,7 @@ export default function ViewQR( ) {
   
     <img id='logo' src={ logo } />
     <h1>No codes available</h1>
-    <p className='sidenote'>If you just uploaded new ones, give the backend a minute to catch up.</p>
+    <p onClick={ f => history.push( '/admin' ) } className='sidenote'>If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface.</p>
     
   </Container>
   
