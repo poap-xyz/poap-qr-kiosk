@@ -67,6 +67,9 @@ exports.importCodes = functions.https.onCall( async ( data, context ) => {
 		// Load the codes into firestore
 		await Promise.all( codes.map( code => {
 
+			// If it is a newline, let it go
+			if( !code.length ) return
+
 			// Remove web prefixes
 			code = code.replace( /(https?:\/\/.*\/)/ig, '')
 

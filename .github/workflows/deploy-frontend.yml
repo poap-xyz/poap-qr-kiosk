@@ -1,0 +1,61 @@
+name: Deploy viewer on push/merge
+
+# Only trigger on PR/push and only for frontend files
+on:
+  # Trigger on PR close
+  pull_request:
+    types: [ closed ]
+    paths:
+      - '*.json'
+      - '*.js'
+      - '**'
+      - '.github/workflows/deploy-frontend.yml'
+    branches:
+      - main
+  
+  # Trigger on push to master (edge case, local merge)
+  push:
+    branches:
+      - main
+    paths:
+      - '*.json'
+      - '*.js'
+      - '**'
+      - '.github/workflows/deploy-frontend.yml'
+
+jobs:
+  # Build the frontend giles
+  build:
+    name: Compile frontend
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Get the repo files from current commit
+      - name: Cloning repository
+        uses: actions/checkout@v1
+
+      - name: Read .nvmrc
+        run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+        id: nvm
+
+      - name: Set Node.js (.nvmrc)
+        uses: actions/setup-node@v1
+        with:
+          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build website files
+        env:
+          NODE_ENV: production
+          CI: false
+        run: npm run build
+
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
