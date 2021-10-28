@@ -65,7 +65,7 @@ exports.importCodes = functions.https.onCall( async ( data, context ) => {
 		if( password !== api.password ) throw new Error( `Incorrect password` )
 
 		// Load the codes into firestore
-		await Promise.all( codes.map( code => {
+		await Promise.all( codes.map( ( code='' ) => {
 
 			// If it is a newline, let it go
 			if( !code.length ) return

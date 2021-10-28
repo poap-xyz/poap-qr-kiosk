@@ -31,7 +31,7 @@ export default function ViewQR( ) {
   useEffect( f => {
 
     // If there is a code, do nothing
-    if( code.length ) return
+    if( code?.length ) return
 
 
     // If there is no code, after a delay take away the loading indicator
