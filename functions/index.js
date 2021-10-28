@@ -70,6 +70,8 @@ exports.importCodes = functions.https.onCall( async ( data, context ) => {
 			// Remove web prefixes
 			code = code.replace( /(https?:\/\/.*\/)/ig, '')
 
+			if( !code.match( /\w{1,42}/ ) ) throw new Error( `Invalid code: ${ code }` )
+
 			return db.collection( 'codes' ).doc( code ).set( {
 				claimed: 'unknown',
 				created: Date.now(),
