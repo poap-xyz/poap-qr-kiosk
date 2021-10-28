@@ -1,4 +1,5 @@
 import React from 'react'
+import logo from '../logo.svg'
 
 export const Container = ( { children, props } ) => <div { ...props } className="container">
 	
@@ -7,7 +8,7 @@ export const Container = ( { children, props } ) => <div { ...props } className=
 </div>
 
 export const Loading = ( { children, message } ) => <Container>
-	
+	<img id='logo' src={ logo } />
 	<div className="loading">
 			
 		<div className="lds-dual-ring"></div>
