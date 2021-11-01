@@ -78,6 +78,9 @@ exports.checkIfCodeHasBeenClaimed = async ( code, context ) => {
 		// If claimed, or there was an error, mark it so
 		if( claimed === true || error ) await updateCodeStatus( code, status )
 
+		// Always trigger a return from a callable
+		return true
+
 
 	} catch( e ) {
 		console.error( 'checkIfCodeHasBeenClaimed error: ', e )

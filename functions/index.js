@@ -12,7 +12,7 @@ const claimMiddleware = require( './modules/claim' )
 // ///////////////////////////////
 
 // Trigger check from frontend
-exports.checkIfCodeHadBeenClaimed = functions.https.onCall( checkIfCodeHasBeenClaimed )
+exports.checkIfCodeHasBeenClaimed = functions.https.onCall( checkIfCodeHasBeenClaimed )
 exports.requestManualCodeRefresh = functions.https.onCall( f => refreshOldUnknownCodes() )
 
 // Periodically check old unknown codes

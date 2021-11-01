@@ -42,8 +42,11 @@ export default function ViewQR( ) {
     setTimeout( async f => {
 
       // Ask backend to update all old codes
-      log( `No codes found after ${ maxWaitForCode }ms, triggering manual backend recheck.` )
-      await requestManualCodeRefresh()
+      if( !code?.length ) {
+        log( `No codes found after ${ maxWaitForCode }ms, triggering manual backend recheck.` )
+        await requestManualCodeRefresh()
+      }
+      
       setLoading( false )
 
 
