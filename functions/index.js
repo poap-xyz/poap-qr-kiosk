@@ -2,7 +2,7 @@ const functions = require("firebase-functions")
 // const fs = require( 'fs' ).promises
 
 // Code verifications
-const { importCodes, verifyCodeStatusIfUnknownStatus, refreshOldUnknownCodes } = require( './modules/codes' )
+const { importCodes, refreshOldUnknownCodes, checkIfCodeHasBeenClaimed } = require( './modules/codes' )
 
 // APIs
 const claimMiddleware = require( './modules/claim' )
@@ -11,8 +11,8 @@ const claimMiddleware = require( './modules/claim' )
 // Check status against live env
 // ///////////////////////////////
 
-// On write, check remote status if the code was set to unknown
-// exports.verifyCodeStatusIfUnknownStatus = functions.firestore.document( 'codes/{code}' ).onWrite( verifyCodeStatusIfUnknownStatus )
+// Trigger check from frontend
+exports.checkIfCodeHadBeenClaimed = functions.https.onCall( checkIfCodeHasBeenClaimed )
 
 // Periodically check old unknown codes
 exports.refreshOldUnknownStatusses = functions.pubsub.schedule( 'every 5 minutes' ).onRun( refreshOldUnknownCodes )

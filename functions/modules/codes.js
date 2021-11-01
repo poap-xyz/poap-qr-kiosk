@@ -1,7 +1,6 @@
 // Firebase interactors
 const functions = require( 'firebase-functions' )
-const { increment } = require( 'firebase-admin/firestore' )
-const { db, dataFromSnap } = require( './firebase' )
+const { db, dataFromSnap, increment } = require( './firebase' )
 
 // Secrets
 const { api } = functions.config()
@@ -28,10 +27,10 @@ const checkCodeStatus = code => fetch( `https://api.poap.xyz/actions/claim-qr?qr
 } )
 
 // Code updater
-async function updateCodeStatus( code ) {
+async function updateCodeStatus( code, cachedResponse ) {
 
 	// Check claim status on claim backend
-	const { claimed, error, message } = await checkCodeStatus( code )
+	const { claimed, error, message } = cachedResponse || await checkCodeStatus( code )
 
 	// Formulate updates
 	const updates = { updated: Date.now() }
@@ -42,16 +41,17 @@ async function updateCodeStatus( code ) {
 	if( error ) {
 
 		// Track by code
-		await db.collection( 'errors' ).doc( code ).set( {
+		await db.collection( 'erroredCodes' ).doc( code ).set( {
 			updated: Date.now(),
 			error: error,
 			strikes: increment( 1 )
 		} )
 
 		// Track by error
-		await db.collection( 'trace' ).doc( error ).set( {
+		await db.collection( 'errors' ).doc( error ).set( {
 			updated: Date.now(),
-			strikes: increment( 1 )
+			strikes: increment( 1 ),
+			message: message || ''
 		} ).catch( e => {
 			// This might happen if the remote error code has weird characters
 			console.error( 'Unable to write error ', e )
@@ -63,6 +63,28 @@ async function updateCodeStatus( code ) {
 	return db.collection( 'codes' ).doc( code ).set( updates, { merge: true } )
 
 }
+
+// ///////////////////////////////
+// Manual code check
+// ///////////////////////////////
+exports.checkIfCodeHasBeenClaimed = async ( code, context ) => {
+
+	try {
+
+		// Check claim status on claim backend
+		const status = await checkCodeStatus( code )
+		const { claimed, error, message } = status
+
+		// If claimed, or there was an error, mark it so
+		if( claimed === true || error ) await updateCodeStatus( code, status )
+
+
+	} catch( e ) {
+		console.error( 'checkIfCodeHasBeenClaimed error: ', e )
+	}
+
+}
+
 
 // ///////////////////////////////
 // Code importer
@@ -104,37 +126,6 @@ exports.importCodes = async ( data, context ) => {
 		return {
 			error: `Import error: ${ e.message || e }`
 		}
-
-	}
-
-}
-
-// ///////////////////////////////
-// Check status of newly unknowns
-// ///////////////////////////////
-exports.verifyCodeStatusIfUnknownStatus = async ( change, context ) => {
-
-	try {
-
-		// Deletion? Ignore
-		if( !change.after.exists ) return
-
-		// Get new data
-		const data = change.after.data()
-
-		// Code is untouched by frontend
-		if( data.claimed !== 'unknown' ) return
-		if( data.error ) return
-
-		// Get code hash through param
-		const { code } = context.params
-
-		await updateCodeStatus( code )
-
-	} catch( e ) {
-
-		// Log errors to cloud logs
-		console.error( 'verifyCodeStatus error: ', e )
 
 	}
 

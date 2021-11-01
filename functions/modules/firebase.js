@@ -1,6 +1,6 @@
 // Firebase interactors
 const { initializeApp } = require("firebase-admin/app")
-const { getFirestore } = require( 'firebase-admin/firestore' )
+const { getFirestore, FieldValue } = require( 'firebase-admin/firestore' )
 const app = initializeApp()
 const db = getFirestore( app )
 
@@ -18,5 +18,6 @@ const dataFromSnap = ( snapOfDocOrDocs, withDocId=true ) => {
 module.exports = {
 	db: db,
 	app: app,
-	dataFromSnap: dataFromSnap
+	dataFromSnap: dataFromSnap,
+	increment: FieldValue.increment
 }

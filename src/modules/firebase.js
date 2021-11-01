@@ -30,6 +30,7 @@ const analytics = getAnalytics( app )
 const db = getFirestore( app )
 const functions = getFunctions( app )
 const importCodes = httpsCallable( functions, 'importCodes' )
+const checkIfCodeHasBeenClaimed = httpsCallable( functions, 'checkIfCodeHasBeenClaimed' )
 
 // ///////////////////////////////
 // Code actions
@@ -60,10 +61,13 @@ export async function listenToCode( cb ) {
 			return cb( {} )
 		}
 
+		// Give new code to frontend
 		const newCode = { id: doc.id,  ...doc.data() }
 		log( 'New code received: ', newCode )
+		cb( newCode )
 
-		return cb( newCode )
+		// Tell backend to double check the code status in case it is expired
+		return checkIfCodeHasBeenClaimed( newCode.id )
 
 	} )
 
