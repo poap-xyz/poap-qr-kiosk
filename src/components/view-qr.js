@@ -2,7 +2,7 @@ import logo from '../logo.svg'
 
 import React, { useState, useEffect } from 'react'
 import { Container, Loading } from './generic'
-import { listenToCode, markCodeClaimed, event } from '../modules/firebase'
+import { listenToCode, markCodeClaimed, event, requestManualCodeRefresh } from '../modules/firebase'
 import QRCode from 'react-qr-code'
 import { log } from '../modules/helpers'
 import { useHistory } from 'react-router-dom'
@@ -39,7 +39,15 @@ export default function ViewQR( ) {
 
     // If there is no code, after a delay take away the loading indicator
     const maxWaitForCode = 5000
-    setTimeout( f => setLoading( false ), maxWaitForCode )
+    setTimeout( async f => {
+
+      // Ask backend to update all old codes
+      log( `No codes found after ${ maxWaitForCode }ms, triggering manual backend recheck.` )
+      await requestManualCodeRefresh()
+      setLoading( false )
+
+
+    }, maxWaitForCode )
 
   }, [ code ] )
 

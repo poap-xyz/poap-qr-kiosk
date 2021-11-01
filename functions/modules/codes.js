@@ -136,9 +136,9 @@ exports.importCodes = async ( data, context ) => {
 // ///////////////////////////////
 exports.refreshOldUnknownCodes = async context => {
 
-	// How old is old?
-	// const ageInHours = 12
-	const ageInMins = 5
+	// If this was called with context (cron) use delay check
+	// if there was no context (frontend asked) then run with no delay
+	const ageInMins = context ? 5 : 0
 	const ageInMs = 1000 * 60 * ageInMins
 	const errorSlowdownFactor = 10
 	const maxInProgress = 10

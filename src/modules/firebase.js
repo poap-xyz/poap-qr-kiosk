@@ -31,6 +31,7 @@ const db = getFirestore( app )
 const functions = getFunctions( app )
 const importCodes = httpsCallable( functions, 'importCodes' )
 const checkIfCodeHasBeenClaimed = httpsCallable( functions, 'checkIfCodeHasBeenClaimed' )
+export const requestManualCodeRefresh = httpsCallable( functions, 'requestManualCodeRefresh' )
 
 // ///////////////////////////////
 // Code actions
