@@ -69,7 +69,7 @@ export default function ViewQR( ) {
   // Display QR
   return <Container>
     <img id='logo' src={ logo } />
-    <QRCode value={ `http://poap.xyz/claim/${ code }` } />
+    <QRCode value={ `https://poap-qr-kiosk.web.app/claim/${ code }` } />
     <button onClick={ nextCode }>Next code</button>
   </Container>
 

@@ -7,7 +7,7 @@
     "public": "build",
     "rewrites": [
       {
-        "source": "/claim**",
+        "source": "/claim/**",
         "function": "claimMiddleware"
       }
     ],

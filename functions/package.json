@@ -17,7 +17,8 @@
     "express": "^4.17.1",
     "firebase-admin": "^10.0.0",
     "firebase-functions": "^3.11.0",
-    "isomorphic-fetch": "^3.0.0"
+    "isomorphic-fetch": "^3.0.0",
+    "promise-parallel-throttle": "^3.3.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^0.2.0"
