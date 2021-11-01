@@ -5,11 +5,14 @@ import { Container, Loading } from './generic'
 import { listenToCode, markCodeClaimed, event } from '../modules/firebase'
 import QRCode from 'react-qr-code'
 import { log } from '../modules/helpers'
+import { useHistory } from 'react-router-dom'
 
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
 export default function ViewQR( ) {
+
+  const history = useHistory()
 
   // ///////////////////////////////
   // State handling
