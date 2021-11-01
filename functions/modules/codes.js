@@ -126,13 +126,15 @@ exports.verifyCodeStatusIfUnknownStatus = async ( change, context ) => {
 exports.refreshOldUnknownCodes = async context => {
 
 	// How old is old?
-	const ageInHours = 12
-	const ageInMins = ageInHours * 60
+	// const ageInHours = 12
+	const ageInMins = 5
 	const ageInMs = 1000 * 60 * ageInMins
 	const maxInProgress = 10
 
 
 	try {
+
+		// 🛑 TODO: think about errored codes handling!
 
 		// Get old unknown codes
 		const oldUnknowns = await db.collection( 'codes' ).where( 'claimed', '==', 'unknown' ).where( 'updated', '<', Date.now() - ageInMs ).get().then( dataFromSnap )

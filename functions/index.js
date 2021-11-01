@@ -12,10 +12,10 @@ const claimMiddleware = require( './modules/claim' )
 // ///////////////////////////////
 
 // On write, check remote status if the code was set to unknown
-exports.verifyCodeStatusIfUnknownStatus = functions.firestore.document( 'codes/{code}' ).onWrite( verifyCodeStatusIfUnknownStatus )
+// exports.verifyCodeStatusIfUnknownStatus = functions.firestore.document( 'codes/{code}' ).onWrite( verifyCodeStatusIfUnknownStatus )
 
 // Periodically check old unknown codes
-exports.refreshOldUnknownStatusses = functions.pubsub.schedule( 'every 60 minutes' ).onRun( refreshOldUnknownCodes )
+exports.refreshOldUnknownStatusses = functions.pubsub.schedule( 'every 5 minutes' ).onRun( refreshOldUnknownCodes )
 
 // ///////////////////////////////
 // Load codes submitted in frontend
