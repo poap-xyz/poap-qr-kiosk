@@ -5,6 +5,12 @@
   },
   "hosting": {
     "public": "build",
+    "rewrites": [
+      {
+        "source": "/claim**",
+        "function": "claimMiddleware"
+      }
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",

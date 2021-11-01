@@ -1,6 +1,6 @@
 // Firebase functionality
 import { initializeApp } from "firebase/app"
-import { getFirestore, collection, setDoc, doc, onSnapshot, query, where, limit } from "firebase/firestore"
+import { getFirestore, collection, setDoc, doc, onSnapshot, query, where, limit, orderBy } from "firebase/firestore"
 import { getAnalytics, logEvent } from "firebase/analytics"
 import { getFunctions, httpsCallable } from 'firebase/functions'
 
@@ -46,8 +46,9 @@ export async function markCodeClaimed( code ) {
 
 export async function listenToCode( cb ) {
 
+	// Grab oldest known code that has not been claimed
 	const col = collection( db, 'codes' )
-	const q = query( col, where( 'claimed', '==', false ), limit( 1 ) )
+	const q = query( col, where( 'claimed', '==', false ), orderBy( "updated" ), limit( 1 ) )
 	return onSnapshot( q, snap => {
 
 		const { docs } = snap
@@ -58,7 +59,11 @@ export async function listenToCode( cb ) {
 			log( 'No code found in ', snap )
 			return cb( {} )
 		}
-		return cb( { id: doc.id,  ...doc.data() } )
+
+		const newCode = { id: doc.id,  ...doc.data() }
+		log( 'New code received: ', newCode )
+
+		return cb( newCode )
 
 	} )
 

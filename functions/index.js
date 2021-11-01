@@ -1,133 +1,23 @@
 const functions = require("firebase-functions")
-const fs = require( 'fs' ).promises
-const fetch = require( 'isomorphic-fetch' )
+// const fs = require( 'fs' ).promises
 
-// Firebase interactors
-const { initializeApp } = require("firebase-admin/app")
-const { getFirestore, setDoc, doc } = require( 'firebase-admin/firestore' )
-const app = initializeApp()
-const db = getFirestore( app )
+// Code verifications
+const { importCodes, verifyCodeStatus } = require( './modules/codes' )
 
-// Secrets
-const { api } = functions.config()
+// APIs
+const claimMiddleware = require( './modules/claim' )
 
 // ///////////////////////////////
 // Check status against live env
 // ///////////////////////////////
-exports.verifyCodeStatus = functions.firestore.document( 'codes/{code}' ).onWrite( async ( change, context ) => {
-
-	try {
-
-		// Deletion? Ignore
-		if( !change.after.exists ) return
-
-		// Get new data
-		const data = change.after.data()
-
-		// Code is untouched by frontend
-		if( data.claimed !== 'unknown' ) return
-		if( data.error ) return
-
-		// Get code hash through param
-		const { code } = context.params
-
-		// Check claim status on laim backend
-		const { claimed, error, message } = await fetch( `https://api.poap.xyz/actions/claim-qr?qr_hash=${ code }` ).then( res => res.json() )
-
-		const updates = {
-			updated: Date.now()
-		}
-
-		if( error ) updates.error = `${ error }: ${ message }`
-		else updates.claimed = claimed ? true : false
-
-		// Set updated status to firestore
-		await db.collection( 'codes' ).doc( code ).set( updates, { merge: true } )
-
-	} catch( e ) {
-
-		// Set retry marker
-		await db.collection( 'codes' ).doc( code ).set( {
-			retry: true
-		}, { merge: true } )
-
-		// Log errors to cloud logs
-		console.error( 'verifyCodeStatus error: ', e )
-
-	}
-
-} )
+exports.verifyCodeStatus = functions.firestore.document( 'codes/{code}' ).onWrite( verifyCodeStatus )
 
 // ///////////////////////////////
 // Load codes submitted in frontend
 // ///////////////////////////////
-exports.importCodes = functions.https.onCall( async ( data, context ) => {
-
-	try {
-
-		// Validate request
-		const { password, codes } = data
-		if( password !== api.password ) throw new Error( `Incorrect password` )
-
-		// Load the codes into firestore
-		await Promise.all( codes.map( ( code='' ) => {
-
-			// If it is a newline, let it go
-			if( !code.length ) return
-
-			// Remove web prefixes
-			code = code.replace( /(https?:\/\/.*\/)/ig, '')
-
-			if( !code.match( /\w{1,42}/ ) ) throw new Error( `Invalid code: ${ code }` )
-
-			return db.collection( 'codes' ).doc( code ).set( {
-				claimed: 'unknown',
-				created: Date.now(),
-				updated: Date.now()
-			} )
-
-		} ) )
-
-		return {
-			success: `${ codes.length } imported`
-		}
-
-	} catch( e ) {
-
-		console.log( 'importCodes error: ', e )
-		return {
-			error: `Import error: ${ e.message || e }`
-		}
-
-	}
-
-} )
+exports.importCodes = functions.https.onCall( importCodes )
 
 // ///////////////////////////////
-// This is a dirty MVP function
-// it is only called from the CLI
-// by the dev
+// Middleware API
 // ///////////////////////////////
-// exports.loadCodes = functions.https.onRequest( async ( req, res ) => {
-
-// 	// This is a manual toggle to disable the function once import is done
-// 	// yes reader, I will buy you a beer so you will forgive me
-// 	return
-
-// 	// Load codes
-// 	const codesString = await fs.readFile( `./modules/codes.csv`, 'utf8' )
-// 	const codes = codesString.split( '\n' )
-// 	console.log( 'Loading ', codes.length )
-
-// 	// Write the docs the actions async
-// 	await Promise.all( codes.map( code => {
-
-// 		return db.collection( 'codes' ).doc( code ).set( {
-// 			claimed: false,
-// 			created: Date.now(),
-// 			updated: Date.now()
-// 		} )
-
-// 	} ) )
-
-// } )
+exports.claimMiddleware = functions.https.onRequest( claimMiddleware )
