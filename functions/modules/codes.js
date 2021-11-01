@@ -1,5 +1,6 @@
 // Firebase interactors
 const functions = require( 'firebase-functions' )
+const { increment } = require( 'firebase-admin/firestore' )
 const { db, dataFromSnap } = require( './firebase' )
 
 // Secrets
@@ -32,12 +33,31 @@ async function updateCodeStatus( code ) {
 	// Check claim status on claim backend
 	const { claimed, error, message } = await checkCodeStatus( code )
 
-	const updates = {
-		updated: Date.now()
-	}
-
+	// Formulate updates
+	const updates = { updated: Date.now() }
 	if( error ) updates.error = `${ error }: ${ message }`
 	else updates.claimed = claimed ? true : false
+
+	// Track error frequency
+	if( error ) {
+
+		// Track by code
+		await db.collection( 'errors' ).doc( code ).set( {
+			updated: Date.now(),
+			error: error,
+			strikes: increment( 1 )
+		} )
+
+		// Track by error
+		await db.collection( 'trace' ).doc( error ).set( {
+			updated: Date.now(),
+			strikes: increment( 1 )
+		} ).catch( e => {
+			// This might happen if the remote error code has weird characters
+			console.error( 'Unable to write error ', e )
+		} )
+
+	}
 
 	// Set updated status to firestore
 	return db.collection( 'codes' ).doc( code ).set( updates, { merge: true } )
@@ -129,18 +149,27 @@ exports.refreshOldUnknownCodes = async context => {
 	// const ageInHours = 12
 	const ageInMins = 5
 	const ageInMs = 1000 * 60 * ageInMins
+	const errorSlowdownFactor = 10
 	const maxInProgress = 10
 
 
 	try {
 
-		// 🛑 TODO: think about errored codes handling!
-
 		// Get old unknown codes
 		const oldUnknowns = await db.collection( 'codes' ).where( 'claimed', '==', 'unknown' ).where( 'updated', '<', Date.now() - ageInMs ).get().then( dataFromSnap )
+		const [ clean, withErrors ] = oldUnknowns.reduce( ( acc, val ) => {
+
+			const [ cleanAcc, errorAcc ] = acc
+			if( val.error ) return [ cleanAcc, [ ...errorAcc, val ] ]
+			else return [ [ ...cleanAcc, val ], errorAcc ]
+
+		}, [ [], [] ] )
+
+		// Make the error checking slower
+		const olderWithErrors = withErrors.filter( ( { updated } ) => updated < ( Date.now() - ( ageInMs * errorSlowdownFactor ) ) )
 
 		// Build action queue
-		const queue = oldUnknowns.map( ( { uid } ) => function() {
+		const queue = [ ...clean, ...olderWithErrors ].map( ( { uid } ) => function() {
 
 			return updateCodeStatus( uid )
 
