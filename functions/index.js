@@ -1,5 +1,8 @@
 const functions = require("firebase-functions")
-// const fs = require( 'fs' ).promises
+const generousRuntime = {
+	timeoutSeconds: 540,
+	memory: '4GB'
+}
 
 // Code verifications
 const { importCodes, refreshOldUnknownCodes, checkIfCodeHasBeenClaimed } = require( './modules/codes' )
@@ -13,15 +16,15 @@ const claimMiddleware = require( './modules/claim' )
 
 // Trigger check from frontend
 exports.checkIfCodeHasBeenClaimed = functions.https.onCall( checkIfCodeHasBeenClaimed )
-exports.requestManualCodeRefresh = functions.https.onCall( f => refreshOldUnknownCodes() )
+exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.onCall( f => refreshOldUnknownCodes() )
 
 // Periodically check old unknown codes
-exports.refreshOldUnknownStatusses = functions.pubsub.schedule( 'every 5 minutes' ).onRun( refreshOldUnknownCodes )
+exports.refreshOldUnknownStatusses = functions.runWith( generousRuntime ).pubsub.schedule( 'every 5 minutes' ).onRun( refreshOldUnknownCodes )
 
 // ///////////////////////////////
 // Load codes submitted in frontend
 // ///////////////////////////////
-exports.importCodes = functions.https.onCall( importCodes )
+exports.importCodes = functions.runWith( generousRuntime ).https.onCall( importCodes )
 
 // ///////////////////////////////
 // Middleware API
