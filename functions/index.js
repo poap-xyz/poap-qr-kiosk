@@ -4,8 +4,11 @@ const generousRuntime = {
 	memory: '4GB'
 }
 
+// Event creation
+const { registerEvent, deleteCodesOfDeletedEvent, deleteEvent } = require( './modules/events' )
+
 // Code verifications
-const { importCodes, refreshOldUnknownCodes, checkIfCodeHasBeenClaimed } = require( './modules/codes' )
+const { refreshOldUnknownCodes, checkIfCodeHasBeenClaimed, deleteExpiredCodes } = require( './modules/codes' )
 
 // APIs
 const claimMiddleware = require( './modules/claim' )
@@ -24,9 +27,16 @@ exports.refreshOldUnknownStatusses = functions.runWith( generousRuntime ).pubsub
 // ///////////////////////////////
 // Load codes submitted in frontend
 // ///////////////////////////////
-exports.importCodes = functions.runWith( generousRuntime ).https.onCall( importCodes )
-
+// exports.importCodes = functions.runWith( generousRuntime ).https.onCall( importCodes )
+exports.registerEvent = functions.runWith( generousRuntime ).https.onCall( registerEvent )
+exports.deleteEvent = functions.https.onCall( deleteEvent )
 // ///////////////////////////////
 // Middleware API
 // ///////////////////////////////
 exports.claimMiddleware = functions.https.onRequest( claimMiddleware )
+
+// ///////////////////////////////
+// Housekeeping
+// ///////////////////////////////
+exports.deleteExpiredCodes = functions.runWith( generousRuntime ).pubsub.schedule( 'every 24 hours' ).onRun( deleteExpiredCodes )
+exports.deleteCodesOfDeletedEvent = functions.firestore.document( `events/{eventId}` ).onDelete( deleteCodesOfDeletedEvent )

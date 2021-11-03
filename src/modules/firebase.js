@@ -29,7 +29,11 @@ const app = initializeApp( config )
 const analytics = getAnalytics( app )
 const db = getFirestore( app )
 const functions = getFunctions( app )
+
+// Remote functions
 const importCodes = httpsCallable( functions, 'importCodes' )
+export const registerEvent = httpsCallable( functions, 'registerEvent' )
+export const deleteEvent = httpsCallable( functions, 'deleteEvent' )
 const checkIfCodeHasBeenClaimed = httpsCallable( functions, 'checkIfCodeHasBeenClaimed' )
 export const requestManualCodeRefresh = httpsCallable( functions, 'requestManualCodeRefresh' )
 

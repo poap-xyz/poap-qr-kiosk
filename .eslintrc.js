@@ -19,6 +19,7 @@ module.exports = {
     rules: {
         "prefer-arrow-callback": 2,
         "no-mixed-spaces-and-tabs": 1,
+        "react/react-in-jsx-scope": 0, // CRA globally imports it
         "no-unused-vars": [ 1, { vars: 'all', args: 'none' } ], // All variables, no function arguments
 
         // React specific
