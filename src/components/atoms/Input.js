@@ -1,0 +1,50 @@
+import styled from 'styled-components'
+
+const Input = styled.div`
+
+	display: flex;
+	flex-direction: column;
+	margin: 1rem 0;
+	width: 100%;
+	
+	& input {
+		background: ${ ( { theme } ) => theme.colors.backdrop };
+		border: none;
+		border-bottom: 2px solid black;
+	}
+
+	& input {
+		padding: 1rem 2rem 1rem 1rem;
+		width: 100%;
+	}
+
+	& label {
+		opacity: .5;
+		font-style: italic;
+		margin-bottom: .5rem;
+		display: flex;
+		width: 100%;
+
+		span {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: .9rem;
+			margin-left: auto;
+			font-style: normal;
+			background: ${ ( { theme } ) => theme.colors.hint };
+			color: white;
+			border-radius: 50%;
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+`
+
+export default ( { onChange, type, label, info, ...props } ) => <Input>
+
+	{ label && <label htmlFor="input">{ label } { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
+	<input { ...props } id="input" onChange={ onChange } type={ type || 'text' } />
+	
+</Input>
