@@ -76,7 +76,7 @@ export default function EventAdmin( ) {
 
 			<H1>Event links</H1>
 
-			<Text>⚠️ BETA WARNING: the email system doesn't work yet, please sve the links below somewhere.</Text>
+			<Text>⚠️ BETA WARNING: the email system doesn&apos;t work yet, please sve the links below somewhere.</Text>
 			
 			<Section>
 				<Input onClick={ focus } label="Your public event link" value={ eventLink } />
@@ -90,7 +90,7 @@ export default function EventAdmin( ) {
 
 			<H1>Admin actions</H1>
 			<Section>
-				<Text>If you want to re-upload a different list of codes, you need to delete your existing event first since codes can't be updated. This will delete your QR kiosk event but not your POAP event.</Text>
+				<Text>If you want to re-upload a different list of codes, you need to delete your existing event first since codes can&apos;t be updated. This will delete your QR kiosk event but not your POAP event.</Text>
 				<Button onClick={ safelyDeleteEvent }>Delete event</Button>
 			</Section>
 
