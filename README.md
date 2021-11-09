@@ -1,6 +1,6 @@
 # POAP QR Kiosk MVP
 
-[Live demo]( https://poap-qr-kiosk.web.app/ ) (please do not claim the codes in it).
+[Live url]( https://poap-qr-kiosk.web.app/ ) (please do not claim the codes in it).
 
 This is an MVP of a kiosk app that displays QR codes based on a list of event codes uploaded by the event manager.
 
@@ -17,6 +17,6 @@ Product owner: @actualymentor
 
 ## Architecture
 
-App code based on `create-react-app` without any advanced optimisations.
+App code based on `create-react-app`, styling based on `styled-components`, routing using `react-router`.
 
 Backend runs on a Firebase project.

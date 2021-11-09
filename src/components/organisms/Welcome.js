@@ -1,14 +1,11 @@
 import Button from '../atoms/Button'
 import Container from '../atoms/Container'
-import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 import Section from '../atoms/Section'
 import { Text, H1 } from '../atoms/Text'
 
 // Functionality
-import { useParams, useHistory } from 'react-router-dom'
-import { deleteEvent } from '../../modules/firebase'
-import { log } from '../../modules/helpers'
+import { useHistory } from 'react-router-dom'
 
 
 // ///////////////////////////////

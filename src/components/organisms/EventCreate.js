@@ -130,7 +130,7 @@ export default function Admin( ) {
       if( newEvent.error ) throw new Error( newEvent.error )
 
       // Send to admin interface
-      history.push( `/event/admin/${ newEvent.id }/${ newEvent.authToken }` )
+      return history.push( `/event/admin/${ newEvent.id }/${ newEvent.authToken }` )
 
     } catch( e ) {
 
@@ -153,17 +153,18 @@ export default function Admin( ) {
 
     <Main>
 
-      <Input onChange={ ( { target } ) => setName( target.value ) } placeholder='Best launch party ever' label="Event name" info="For your own reference, not visible to the world." value={ name } />
-      <Input onChange={ ( { target } ) => setEmail( target.value ) } placeholder='revered@organizer.com' label="Your email" info="We will send the QR kiosk link and the admin link there." value={ email } />
-      <Input onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } max={ dateOnXDaysFromNow( 30 ) } type='date' label="Event end date" info={ `After this date your QR kiosk will stop working in your local timezone.\n\n⚠️ You can only schedule up to 30 days in advance.` } value={ date } />
+      <Input id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder='Best launch party ever' label="Event name" info="For your own reference, not visible to the world." value={ name } />
+      <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder='revered@organizer.com' label="Your email" info="We will send the QR kiosk link and the admin link there." value={ email } />
+      <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } max={ dateOnXDaysFromNow( 30 ) } type='date' label="Event end date" info={ `After this date your QR kiosk will stop working in your local timezone.\n\n⚠️ You can only schedule up to 30 days in advance.` } value={ date } />
 
       { !codes && <Input 
+        id="event-create-file"
         label="Select .txt file with codes"
         onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
       /> }
 
-      { codes && <Button onClick={ createEvent }>Create event with { codes.length } codes</Button> }
-      { codes && <Button color='hint' onClick={ f => setCodes( null ) }>Upload different codes</Button> }
+      { codes && <Button id="event-create-submit" onClick={ createEvent }>Create event with { codes.length } codes</Button> }
+      { codes && <Button id="event-create-reset" color='hint' onClick={ f => setCodes( null ) }>Upload different codes</Button> }
     </Main>
 
   </Container>

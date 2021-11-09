@@ -17,7 +17,7 @@ module.exports = {
 
     // Specific rules, 2: err, 1: warn, 0: off
     rules: {
-        "prefer-arrow-callback": 2,
+        "prefer-arrow-callback": 1,
         "no-mixed-spaces-and-tabs": 1,
         "react/react-in-jsx-scope": 0, // CRA globally imports it
         "no-unused-vars": [ 1, { vars: 'all', args: 'none' } ], // All variables, no function arguments
@@ -38,7 +38,11 @@ module.exports = {
 
     // What global variables should be assumed to exist
     globals: {
-        context: false
+        context: true,
+        cy: true,
+        it: true,
+        Cypress: true,
+        expect: true
     }
 
 }

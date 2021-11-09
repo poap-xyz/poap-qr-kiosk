@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { useRef } from 'react'
 
 const Input = styled.div`
 
@@ -42,9 +43,15 @@ const Input = styled.div`
 
 `
 
-export default ( { onChange, type, label, info, ...props } ) => <Input>
+export default ( { onChange, type, label, info, id, ...props } ) => {
 
-	{ label && <label htmlFor="input">{ label } { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
-	<input { ...props } id="input" onChange={ onChange } type={ type || 'text' } />
-	
-</Input>
+	const { current: internalId } = useRef( id || `input-${ Math.random() }` )
+
+	return <Input>
+
+		{ label && <label htmlFor={ internalId }>{ label } { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
+		<input data-testid={ internalId } { ...props } id={ internalId } onChange={ onChange } type={ type || 'text' } />
+		
+	</Input>
+
+}

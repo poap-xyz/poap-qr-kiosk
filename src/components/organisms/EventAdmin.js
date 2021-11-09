@@ -10,7 +10,7 @@ import { Text, H1 } from '../atoms/Text'
 import { useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { deleteEvent } from '../../modules/firebase'
-import { log } from '../../modules/helpers'
+import { log, dev } from '../../modules/helpers'
 
 
 // ///////////////////////////////
@@ -20,8 +20,8 @@ export default function EventAdmin( ) {
 
 	const { eventId, authToken } = useParams( )
 	const history = useHistory()
-	const eventLink = `https://poap-qr-kiosk.web.app/#/event/${ eventId }`
-	const adminLink = `https://poap-qr-kiosk.web.app/#/event/admin/${ eventId }/${ authToken }`
+	const eventLink = `${ dev ? 'http://localhost:3000' : 'https://poap-qr-kiosk.web.app' }/#/event/${ eventId }`
+	const adminLink = `${ dev ? 'http://localhost:3000' : 'https://poap-qr-kiosk.web.app' }/#/event/admin/${ eventId }/${ authToken }`
 	const clipboardAPI = !!navigator.clipboard
 
 	// ///////////////////////////////
@@ -55,7 +55,7 @@ export default function EventAdmin( ) {
 			if( error ) throw new Error( error )
 
 			alert( `Deletion success!\n\nYour event and its codes were deleted.\n\nRedirecting you to the home page.` )
-			history.push( '/' )
+			return history.push( '/' )
 
 		} catch( e ) {
 			alert( `Error deleting event: ${ e.message }` )
@@ -79,12 +79,12 @@ export default function EventAdmin( ) {
 			<Text>⚠️ BETA WARNING: the email system doesn&apos;t work yet, please sve the links below somewhere.</Text>
 			
 			<Section>
-				<Input onClick={ focus } label="Your public event link" value={ eventLink } />
+				<Input id='admin-eventlink-public' readOnly onClick={ focus } label="Your public event link" value={ eventLink } />
 				{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>Copy event link to clipboard</Button> }
 			</Section>
 
 			<Section>
-				<Input onClick={ focus } label="Your secret admin link" value={ adminLink } />
+				<Input id='admin-eventlink-secret' readOnly onClick={ focus } label="Your secret admin link" value={ adminLink } />
 				{ clipboardAPI && <Button onClick={ f => clipboard( adminLink ) }>Copy secret admin link to clipboard</Button> }
 			</Section>
 

@@ -15,16 +15,21 @@ const Throttle = require( 'promise-parallel-throttle' )
 
 // Remote api checker, this ALWAYS resolves
 // this is because I am not suer that this API will not suddenly be throttled or authenticated.
-const checkCodeStatus = code => fetch( `https://api.poap.xyz/actions/claim-qr?qr_hash=${ code }` ).then( res => res.json() ).catch( e => {
+const checkCodeStatus = async code => {
 
-	// Log for my reference
-	console.log( 'API error, if this keeps happening check in with the backend team: ', e )
+	if( code.includes( 'testing' ) ) return { claimed: false }
 
-	// Return object so the updateCodeStatus function can continue
-	return {
-		claimed: 'unknown'
-	}
-} )
+	return fetch( `https://api.poap.xyz/actions/claim-qr?qr_hash=${ code }` ).then( res => res.json() ).catch( e => {
+
+		// Log for my reference
+		console.log( 'API error, if this keeps happening check in with the backend team: ', e )
+
+		// Return object so the updateCodeStatus function can continue
+		return {
+			claimed: 'unknown'
+		}
+	} )
+}
 
 // Code updater
 async function updateCodeStatus( code, cachedResponse ) {

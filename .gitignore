@@ -26,3 +26,8 @@ yarn-error.log*
 .firebase
 *.log
 .*
+
+# Cypress
+cypress/downloads
+cypress/screenshots
+cypress/videos

@@ -1,0 +1,10 @@
+{
+	"baseUrl": "http://localhost:3000/#",
+	"defaultCommandTimeout": 20000,
+	"requestTimeout": 20000,
+	"video": true,
+	"videoCompression": false,
+	"screenscreenshotOnRunFailureshots": true
+	
+}
+

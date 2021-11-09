@@ -52,7 +52,7 @@ export default function ViewQR( ) {
 
     // Give useEffect a cancel funtion
     return f => {
-      log( 'Code found, cancel backend refresh' )
+      log( 'Code found, cancel backend refresh ', timeout )
       clearTimeout( timeout )
     }
 
@@ -61,12 +61,12 @@ export default function ViewQR( ) {
   // ///////////////////////////////
   // Component functions
   // ///////////////////////////////
-  async function nextCode(  ) {
-    log( `Marking ${ code } as claimed` )
-    setLoading( 'Getting next code' )
-    await markCodeClaimed( code )
-    event( 'user_request_next_qr' )
-  }
+  // async function nextCode(  ) {
+  //   log( `Marking ${ code } as claimed` )
+  //   setLoading( 'Getting next code' )
+  //   await markCodeClaimed( code )
+  //   event( 'user_request_next_qr' )
+  // }
 
   // ///////////////////////////////
   // Render component
@@ -85,8 +85,8 @@ export default function ViewQR( ) {
   
   // Display QR
   return <Container>
-    <QRCode value={ `https://poap-qr-kiosk.web.app/claim/${ code }` } />
-    <Button onClick={ nextCode }>Next code</Button>
+    <QRCode data-code={ code } value={ `https://poap-qr-kiosk.web.app/claim/${ code }` } />
+    { /* <Button onClick={ nextCode }>Next code</Button> */ }
   </Container>
 
 }
