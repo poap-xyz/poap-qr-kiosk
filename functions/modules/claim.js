@@ -9,10 +9,10 @@ app.get( '/claim/:code', async ( req, res ) => {
 		const { code } = req.params
 		if( !code ) throw new Error( `No code in request` )
 
-		// Mark this code as unknown status
+		// Mark this code as unknown status, but mark true for testing environment
 		await db.collection( 'codes' ).doc( code ).set( {
 			updated: Date.now(),
-			claimed: 'unknown'
+			claimed: code.includes( 'testing' ) ? true : 'unknown'
 		}, { merge: true } )
 
 		// Return a redirect to the POAP app

@@ -45,12 +45,10 @@ context( 'Can view valid event', () => {
 
 	} )
 
-	it( 'Shows different code after first is scanned', async function( ) {
+	it( 'Shows different code after first is scanned', function( ) {
 
 		// Mark the first code as read by simulating a scan
-		await fetch( `https://poap-qr-kiosk.web.app/claim/${ this.firstcode }`, {
-			mode: 'no-cors'
-		} )
+		cy.request( `https://poap-qr-kiosk.web.app/claim/${ this.firstcode }` )
 
 		// Visit the public link
 		cy.visit( this.publiclink )
@@ -61,12 +59,10 @@ context( 'Can view valid event', () => {
 
 	} )
 
-	it( 'Shows no codes after both are scanned', async function( ) {
+	it( 'Shows no codes after both are scanned', function( ) {
 
 		// Mark the second code as read by simulating a scan
-		await fetch( `https://poap-qr-kiosk.web.app/claim/${ this.secondcode }`, {
-			mode: 'no-cors'
-		} )
+		cy.request( `https://poap-qr-kiosk.web.app/claim/${ this.secondcode }` )
 		cy.visit( this.publiclink )
 		cy.contains( 'No codes available' )
 
