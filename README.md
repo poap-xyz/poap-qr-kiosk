@@ -8,12 +8,20 @@ There is a non-trivial chance it will be rewritten if the concept proves viable.
 
 Product owner: @actualymentor
 
-## Setup
+## Frontend setup
 
 1. `nvm use`
 2. `npm i`
 3. Populate `.env` based on `.env.example`
 4. `npm start`
+
+## Backend setup
+
+1. `cd functions`
+2. `nvm use`
+3. `npm i`
+4. `firebase functions:config:get > .runtimeconfig.json` (assuming the infra already has the data through `firebase functions:config:set api.accesstoken=`)
+5. `npm start`
 
 ## Architecture
 

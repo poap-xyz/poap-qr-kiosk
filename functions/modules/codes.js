@@ -19,7 +19,13 @@ const checkCodeStatus = async code => {
 
 	if( code.includes( 'testing' ) ) return { claimed: false }
 
-	return fetch( `https://api.poap.xyz/actions/claim-qr?qr_hash=${ code }` ).then( res => res.json() ).catch( e => {
+	const apiUrl = process.env.development ? 'https://dev-api.poap.tech' : 'https://api.poap.tech'
+
+	return fetch( `${ apiUrl }/actions/claim-qr?qr_hash=${ code }`, {
+		headers: {
+			Authorization: `Bearer ${ api.accesstoken }`
+		}
+	} ).then( res => res.json() ).catch( e => {
 
 		// Log for my reference
 		console.log( 'API error, if this keeps happening check in with the backend team: ', e )
