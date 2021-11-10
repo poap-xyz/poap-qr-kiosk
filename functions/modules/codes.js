@@ -1,7 +1,7 @@
 // Firebase interactors
 const functions = require( 'firebase-functions' )
 const { db, dataFromSnap, increment } = require( './firebase' )
-
+const dev = !!process.env.development
 // Secrets
 const { api } = functions.config()
 
@@ -19,13 +19,20 @@ const checkCodeStatus = async code => {
 
 	if( code.includes( 'testing' ) ) return { claimed: false }
 
-	const apiUrl = process.env.development ? 'https://dev-api.poap.tech' : 'https://api.poap.tech'
+	const apiUrl = dev ? 'https://dev-api.poap.tech' : 'https://api.poap.tech'
+	if( dev ) console.log( `Calling ${ apiUrl } with ${ dev ? 'dev' : 'prod' } token` )
 
 	return fetch( `${ apiUrl }/actions/claim-qr?qr_hash=${ code }`, {
 		headers: {
-			Authorization: `Bearer ${ api.accesstoken }`
+			Authorization: `Bearer ${ dev ? api.devaccesstoken : api.accesstoken }`
 		}
-	} ).then( res => res.json() ).catch( e => {
+	} )
+	.then( res => res.json() )
+	.then( json => {
+		if( dev ) console.log( 'Response: ', json )
+		return json
+	} )
+	.catch( e => {
 
 		// Log for my reference
 		console.log( 'API error, if this keeps happening check in with the backend team: ', e )
