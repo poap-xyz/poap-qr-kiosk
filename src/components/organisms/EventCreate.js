@@ -151,7 +151,7 @@ export default function Admin( ) {
   
   return <Container>
 
-    <Main>
+    <Main width='400px'>
 
       <Input id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder='Best launch party ever' label="Event name" info="For your own reference, not visible to the world." value={ name } />
       <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder='revered@organizer.com' label="Your email" info="We will send the QR kiosk link and the admin link there." value={ email } />
@@ -160,6 +160,7 @@ export default function Admin( ) {
       { !codes && <Input 
         id="event-create-file"
         label="Select .txt file with codes"
+        info="This is the codes.txt file you received when you created your POAP event at https://app.poap.xyz/admin"
         onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
       /> }
 

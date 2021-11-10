@@ -72,19 +72,33 @@ export default function EventAdmin( ) {
 	if( loading ) return <Loading message={ loading } />
 	return <Container>
 
-		<Main align="flex-start">
+		<Main align="flex-start" width='600px'>
 
 			<H1>Event links</H1>
 
 			<Text>⚠️ BETA WARNING: the email system doesn&apos;t work yet, please sve the links below somewhere.</Text>
 			
 			<Section>
-				<Input id='admin-eventlink-public' readOnly onClick={ focus } label="Your public event link" value={ eventLink } />
+				<Input
+					id='admin-eventlink-public' 
+					eadOnly
+					onClick={ focus }
+					label="Your public event link"
+					value={ eventLink }
+					info="This link will display POAP QR codes, you can for example show this on an iPad at your check-in desk."
+				/>
 				{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>Copy event link to clipboard</Button> }
 			</Section>
 
 			<Section>
-				<Input id='admin-eventlink-secret' readOnly onClick={ focus } label="Your secret admin link" value={ adminLink } />
+				<Input
+					id='admin-eventlink-secret'
+					readOnly
+					onClick={ focus }
+					label="Your secret admin link"
+					value={ adminLink }
+					info="This linkt to the page you are seeing now. It allows you to take actions like deleting your event. Keep this secret!"
+				/>
 				{ clipboardAPI && <Button onClick={ f => clipboard( adminLink ) }>Copy secret admin link to clipboard</Button> }
 			</Section>
 

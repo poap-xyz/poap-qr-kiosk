@@ -11,7 +11,7 @@ const Input = styled.div`
 	& input {
 		background: ${ ( { theme } ) => theme.colors.backdrop };
 		border: none;
-		border-bottom: 2px solid black;
+		border-left: 2px solid ${ ( { theme } ) => theme.colors.primary };
 	}
 
 	& input {
@@ -25,7 +25,7 @@ const Input = styled.div`
 		margin-bottom: .5rem;
 		display: flex;
 		width: 100%;
-
+		color: ${ ( { theme } ) => theme.colors.text };
 		span {
 			display: flex;
 			align-items: center;

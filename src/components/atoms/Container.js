@@ -16,13 +16,15 @@ const BackgroundImage = styled.img.attrs( props => ( {
 `
 
 const Wrapper = styled.div`
+	position: relative;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	min-height: 100vh;
 	width: 100%;
-	padding:  0 2rem;
+	padding:  0 max( 1rem, calc( 25vw - 4rem ) );
 	box-sizing: border-box;
 	& * {
 		box-sizing: border-box;
