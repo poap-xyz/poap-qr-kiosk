@@ -5,7 +5,7 @@ import { getAnalytics, logEvent } from "firebase/analytics"
 import { getFunctions, httpsCallable } from 'firebase/functions'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 
-import { log } from './helpers'
+import { log, dev } from './helpers'
 
 // ///////////////////////////////
 // Initialisation
@@ -32,7 +32,7 @@ const db = getFirestore( app )
 const functions = getFunctions( app )
 
 // App check config
-self.FIREBASE_APPCHECK_DEBUG_TOKEN = REACT_APP_APPCHECK_DEBUG_TOKEN
+if( dev ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = REACT_APP_APPCHECK_DEBUG_TOKEN
 const appcheck = initializeAppCheck( app, {
 	provider: new ReCaptchaV3Provider( REACT_APP_recaptcha_site_key ),
 	isTokenAutoRefreshEnabled: true
