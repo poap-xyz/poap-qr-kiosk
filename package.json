@@ -21,8 +21,8 @@
     "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
     "build": "react-scripts build",
     "cypress": "$(npm bin)/cypress open",
-    "test": "start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress open\"",
-    "test:ci": "start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --config 60000\"",
+    "test": "start-server-and-test 'BROWSER=none CI=true npm start' 3000 \"$(npm bin)/cypress open\"",
+    "test:ci": "start-server-and-test 'BROWSER=none CI=true npm start' 3000 \"$(npm bin)/cypress run --config 60000\"",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

@@ -51,6 +51,8 @@ jobs:
       # Testing
       - name: Run e2e tests
         run: npm run test:ci
+        env:
+          CI: true
       - name: Testing failed
         if: ${{ failure() }}
         uses: actions/upload-artifact@v2

@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react'
 
 // Functionality
 import { useHistory } from 'react-router-dom'
-import { dev } from '../../modules/helpers'
 
 
 // ///////////////////////////////
@@ -18,7 +17,7 @@ import { dev } from '../../modules/helpers'
 export default function ComponentName( ) {
 
 	const history = useHistory()
-	const [ allowAccess, setAllowAccess ] = useState( !!dev )
+	const [ allowAccess, setAllowAccess ] = useState( !!process.env.CI )
 	const [ password, setPassword ] = useState( '' )
 
 	/* ///////////////////////////////
