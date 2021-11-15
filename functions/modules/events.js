@@ -6,6 +6,12 @@ exports.registerEvent = async function( data, context ) {
 	
 	try {
 
+		// Appcheck validation
+		if( context.app == undefined ) {
+			console.log( context )
+			throw new Error( `App context error` )
+		}
+
 		// Validations
 		const { name='', email='', date='', codes=[] } = data
 		if( !codes.length ) throw new Error( 'Csv has 0 entries' )
@@ -83,6 +89,11 @@ exports.deleteEvent = async function( data, context ) {
 	
 	try {
 
+		if( context.app == undefined ) {
+			console.log( context )
+			throw new Error( `App context error` )
+		}
+
 		// Validations
 		const { eventId, authToken } = data
 
@@ -112,6 +123,7 @@ exports.deleteCodesOfDeletedEvent = async function( snap, context ) {
 
 	try {
 
+		// Get parameters
 		const { eventId } = context.params
 
 		// Delete obsolete codes

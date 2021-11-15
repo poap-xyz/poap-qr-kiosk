@@ -89,6 +89,11 @@ exports.checkIfCodeHasBeenClaimed = async ( code, context ) => {
 
 	try {
 
+		if( context.app == undefined ) {
+			console.log( context )
+			throw new Error( `App context error` )
+		}
+
 		// Check claim status on claim backend
 		const status = await checkCodeStatus( code )
 		const { claimed, error, message } = status
@@ -155,17 +160,23 @@ exports.checkIfCodeHasBeenClaimed = async ( code, context ) => {
 // ///////////////////////////////
 // Check status of old unknowns
 // ///////////////////////////////
-exports.refreshOldUnknownCodes = async context => {
+exports.refreshOldUnknownCodes = async ( source, context ) => {
 
 	// If this was called with context (cron) use delay check
 	// if there was no context (frontend asked) then run with no delay
-	const ageInMins = context ? 5 : 0
+	const ageInMins = source == 'cron' ? 5 : 0
 	const ageInMs = 1000 * 60 * ageInMins
 	const errorSlowdownFactor = 10
 	const maxInProgress = 10
 
 
 	try {
+
+		// Appcheck validation
+		if( context.app == undefined ) {
+			console.log( context )
+			throw new Error( `App context error` )
+		}
 
 		// Get old unknown codes
 		const oldUnknowns = await db.collection( 'codes' ).where( 'claimed', '==', 'unknown' ).where( 'updated', '<', Date.now() - ageInMs ).get().then( dataFromSnap )
@@ -192,9 +203,12 @@ exports.refreshOldUnknownCodes = async context => {
 			maxInProgress: maxInProgress
 		} )
 
+		return 'success'
+
 
 	} catch( e ) {
 		console.error( 'refreshOldUnknownCodes cron error ', e )
+		return e
 	}
 
 }
@@ -202,7 +216,7 @@ exports.refreshOldUnknownCodes = async context => {
 // ///////////////////////////////
 // Delete expired codes
 // ///////////////////////////////
-exports.deleteExpiredCodes = async context => {
+exports.deleteExpiredCodes = async () => {
 
 
 	try {

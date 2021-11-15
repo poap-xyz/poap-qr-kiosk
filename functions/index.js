@@ -4,39 +4,46 @@ const generousRuntime = {
 	memory: '4GB'
 }
 
-// Event creation
-const { registerEvent, deleteCodesOfDeletedEvent, deleteEvent } = require( './modules/events' )
-
-// Code verifications
-const { refreshOldUnknownCodes, checkIfCodeHasBeenClaimed, deleteExpiredCodes } = require( './modules/codes' )
-
-// APIs
-const claimMiddleware = require( './modules/claim' )
-
 // ///////////////////////////////
 // Check status against live env
 // ///////////////////////////////
 
 // Trigger check from frontend
+const { refreshOldUnknownCodes, checkIfCodeHasBeenClaimed } = require( './modules/codes' )
+
 exports.checkIfCodeHasBeenClaimed = functions.https.onCall( checkIfCodeHasBeenClaimed )
-exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.onCall( f => refreshOldUnknownCodes() )
+exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.onCall( refreshOldUnknownCodes )
 
 // Periodically check old unknown codes
-exports.refreshOldUnknownStatusses = functions.runWith( generousRuntime ).pubsub.schedule( 'every 5 minutes' ).onRun( refreshOldUnknownCodes )
+exports.refreshOldUnknownStatusses = functions.runWith( generousRuntime ).pubsub.schedule( 'every 5 minutes' ).onRun( f => refreshOldUnknownCodes( 'cron', { app: true } ) )
 
 // ///////////////////////////////
 // Load codes submitted in frontend
 // ///////////////////////////////
-// exports.importCodes = functions.runWith( generousRuntime ).https.onCall( importCodes )
+
+const { registerEvent, deleteEvent } = require( './modules/events' )
+
 exports.registerEvent = functions.runWith( generousRuntime ).https.onCall( registerEvent )
 exports.deleteEvent = functions.https.onCall( deleteEvent )
+
 // ///////////////////////////////
 // Middleware API
 // ///////////////////////////////
+const claimMiddleware = require( './modules/claim' )
 exports.claimMiddleware = functions.https.onRequest( claimMiddleware )
 
 // ///////////////////////////////
 // Housekeeping
 // ///////////////////////////////
+
+const { deleteExpiredCodes } = require( './modules/codes' )
+const { deleteCodesOfDeletedEvent } = require( './modules/events' )
+
 exports.deleteExpiredCodes = functions.runWith( generousRuntime ).pubsub.schedule( 'every 24 hours' ).onRun( deleteExpiredCodes )
 exports.deleteCodesOfDeletedEvent = functions.firestore.document( `events/{eventId}` ).onDelete( deleteCodesOfDeletedEvent )
+
+/* ///////////////////////////////
+// Security
+// /////////////////////////////*/
+const { validateCallerDevice } = require( './modules/security' )
+exports.validateCallerDevice = functions.https.onCall( validateCallerDevice )

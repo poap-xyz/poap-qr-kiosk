@@ -9,15 +9,18 @@ app.get( '/claim/:code', async ( req, res ) => {
 		const { code } = req.params
 		if( !code ) throw new Error( `No code in request` )
 
+		// Translate base64 code to string
+		const stringCode = Buffer.from( code, 'base64' ).toString()
+
 		// Mark this code as unknown status, but mark true for testing environment
-		await db.collection( 'codes' ).doc( code ).set( {
+		await db.collection( 'codes' ).doc( stringCode ).set( {
 			updated: Date.now(),
-			claimed: code.includes( 'testing' ) ? true : 'unknown'
+			claimed: stringCode.includes( 'testing' ) ? true : 'unknown'
 		}, { merge: true } )
 
 		// Return a redirect to the POAP app
 		// 307: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_redirection
-		return res.redirect( 307, `http://poap.xyz/claim/${ code }` )
+		return res.redirect( 307, `https://poap-qr-kiosk.web.app/#/claim/${ code }` )
 
 	} catch( e ) {
 
