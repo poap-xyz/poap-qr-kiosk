@@ -37,13 +37,10 @@ export default function ViewQR( ) {
 
         const { data: isValid } = await validateCallerDevice()
 
-        // Get string code from base64 code
-        const code = atob( claimCode )
-
         // If is valid, forward
         if( isValid ) {
-          const link = `http://poap.xyz/claim/${ code }`
-          log( `Valid with code ${ code }, forwarding to ${ link }` )
+          const link = `http://poap.xyz/claim/${ claimCode }`
+          log( `Valid with code ${ claimCode }, forwarding to ${ link }` )
           if( !dev ) window.location.replace( link )
         }
         else throw new Error( `Device is not valid, contact the POAP team` )

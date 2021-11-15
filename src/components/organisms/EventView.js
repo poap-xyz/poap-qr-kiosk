@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { listenToCode, markCodeClaimed, event, requestManualCodeRefresh } from '../../modules/firebase'
 import { log } from '../../modules/helpers'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 // Components
 import QRCode from 'react-qr-code'
@@ -17,6 +17,7 @@ import { Sidenote } from '../atoms/Text'
 export default function ViewQR( ) {
 
   const history = useHistory()
+  const { eventId } = useParams()
 
   // ///////////////////////////////
   // State handling
@@ -29,10 +30,13 @@ export default function ViewQR( ) {
   // ///////////////////////////////
 
   // Start code listener
-  useEffect( f => listenToCode( newCode => {
-    setCode( newCode.id )
-    if( newCode.id ) setLoading( false )
-  } ), [] )
+  useEffect( f => {
+    log( `Litening to codes for ${ eventId }` )
+    return listenToCode( eventId, newCode => {
+      setCode( newCode.id )
+      if( newCode.id ) setLoading( false )
+    } )
+  }, [] )
 
   // No code timeout
   useEffect( f => {
@@ -91,7 +95,7 @@ export default function ViewQR( ) {
   return <Container>
 
     {  /* QR showing code in base64 for minor obfuscation */ }
-    <QRCode data-code={ code } value={ `https://poap-qr-kiosk.web.app/claim/${ btoa( code ) }` } />
+    <QRCode data-code={ code } value={ `https://poap-qr-kiosk.web.app/claim/${ code }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
   </Container>
 

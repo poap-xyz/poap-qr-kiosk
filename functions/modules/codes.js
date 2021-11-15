@@ -47,6 +47,8 @@ const checkCodeStatus = async code => {
 // Code updater
 async function updateCodeStatus( code, cachedResponse ) {
 
+	if( !code ) return
+
 	// Check claim status on claim backend
 	const { claimed, error, message } = cachedResponse || await checkCodeStatus( code )
 

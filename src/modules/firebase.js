@@ -59,11 +59,11 @@ export async function markCodeClaimed( code ) {
 
 }
 
-export async function listenToCode( cb ) {
+export async function listenToCode( eventId, cb ) {
 
 	// Grab oldest known code that has not been claimed
 	const col = collection( db, 'codes' )
-	const q = query( col, where( 'claimed', '==', false ), orderBy( "updated" ), limit( 1 ) )
+	const q = query( col, where( 'event', '==', eventId ), where( 'claimed', '==', false ), orderBy( "updated" ), limit( 1 ) )
 	return onSnapshot( q, snap => {
 
 		const { docs } = snap
