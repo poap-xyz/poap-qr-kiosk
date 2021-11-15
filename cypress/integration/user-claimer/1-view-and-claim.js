@@ -48,7 +48,7 @@ context( 'Can view valid event', () => {
 	it( 'Shows different code after first is scanned', function( ) {
 
 		// Mark the first code as read by simulating a scan
-		cy.request( `https://poap-qr-kiosk.web.app/claim/${ this.firstcode }` )
+		cy.request( `https://poap-qr-kiosk.web.app/claim/${ Buffer.from( this.firstcode  ).toString( 'base64' ) }` )
 
 		// Visit the public link
 		cy.visit( this.publiclink )
@@ -62,7 +62,7 @@ context( 'Can view valid event', () => {
 	it( 'Shows no codes after both are scanned', function( ) {
 
 		// Mark the second code as read by simulating a scan
-		cy.request( `https://poap-qr-kiosk.web.app/claim/${ this.secondcode }` )
+		cy.request( `https://poap-qr-kiosk.web.app/claim/${ Buffer.from( this.secondcode ).toString( 'base64' ) }` )
 		cy.visit( this.publiclink )
 		cy.contains( 'No codes available' )
 

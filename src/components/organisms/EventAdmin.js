@@ -81,7 +81,7 @@ export default function EventAdmin( ) {
 			<Section>
 				<Input
 					id='admin-eventlink-public' 
-					eadOnly
+					readOnly
 					onClick={ focus }
 					label="Your public event link"
 					value={ eventLink }

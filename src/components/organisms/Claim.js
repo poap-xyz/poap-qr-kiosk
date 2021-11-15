@@ -1,0 +1,70 @@
+// Data management
+import { useState, useEffect } from 'react'
+import { listenToCode, markCodeClaimed, event, requestManualCodeRefresh } from '../../modules/firebase'
+import { log, dev } from '../../modules/helpers'
+import { useHistory, useParams } from 'react-router-dom'
+import { validateCallerDevice } from '../../modules/firebase'
+
+// Components
+import QRCode from 'react-qr-code'
+import Loading from '../molecules/Loading'
+import Button from '../atoms/Button'
+import Container from '../atoms/Container'
+import { Sidenote } from '../atoms/Text'
+
+// ///////////////////////////////
+// Render component
+// ///////////////////////////////
+export default function ViewQR( ) {
+
+  // ///////////////////////////////
+  // State handling
+  // ///////////////////////////////
+  const { claimCode } = useParams( )
+  const [ loading, setLoading ] = useState( 'Loading your code' )
+
+  // ///////////////////////////////
+  // Lifecycle handling
+  // ///////////////////////////////
+
+  // Validate client as non bot
+  useEffect( f => {
+
+    // Validate client
+    ( async () => {
+
+      try {
+
+        const { data: isValid } = await validateCallerDevice()
+
+        // Get string code from base64 code
+        const code = atob( claimCode )
+
+        // If is valid, forward
+        if( isValid ) {
+          const link = `http://poap.xyz/claim/${ code }`
+          log( `Valid with code ${ code }, forwarding to ${ link }` )
+          if( !dev ) window.location.replace( link )
+        }
+        else throw new Error( `Device is not valid, contact the POAP team` )
+
+      } catch( e ) {
+
+        log( e )
+        alert( e.message )
+        setLoading( e.message )
+
+      }
+
+    } )()
+
+  }, [ claimCode ] )
+
+  // ///////////////////////////////
+  // Render component
+  // ///////////////////////////////
+
+  // loading screen
+  if( loading ) return <Loading message={ loading } />
+
+}

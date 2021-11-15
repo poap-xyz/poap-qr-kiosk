@@ -46,13 +46,17 @@ export default function ViewQR( ) {
     const timeout = setTimeout( f => {
 
       // Ask backend to update all old codes
-      requestManualCodeRefresh().then( f => setLoading( false ) )
+      requestManualCodeRefresh().then( res => {
+        log( `Backend refresh complete with `, res )
+        setLoading( false )
+      } )
 
     }, maxWaitForFirstCode )
+    log( `New timeout ${ timeout } set` )
 
     // Give useEffect a cancel funtion
     return f => {
-      log( 'Code found, cancel backend refresh ', timeout )
+      log( `Code changed to ${ code }, cancel previous refresh `, timeout )
       clearTimeout( timeout )
     }
 
@@ -85,7 +89,9 @@ export default function ViewQR( ) {
   
   // Display QR
   return <Container>
-    <QRCode data-code={ code } value={ `https://poap-qr-kiosk.web.app/claim/${ code }` } />
+
+    {  /* QR showing code in base64 for minor obfuscation */ }
+    <QRCode data-code={ code } value={ `https://poap-qr-kiosk.web.app/claim/${ btoa( code ) }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
   </Container>
 

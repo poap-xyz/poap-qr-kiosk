@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app"
 import { getFirestore, collection, setDoc, doc, onSnapshot, query, where, limit, orderBy } from "firebase/firestore"
 import { getAnalytics, logEvent } from "firebase/analytics"
 import { getFunctions, httpsCallable } from 'firebase/functions'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 
 import { log } from './helpers'
 
@@ -11,7 +12,7 @@ import { log } from './helpers'
 // ///////////////////////////////
 
 // Firebase config
-const { REACT_APP_apiKey, REACT_APP_authDomain, REACT_APP_projectId, REACT_APP_storageBucket, REACT_APP_messagingSenderId, REACT_APP_appId, REACT_APP_measurementId } = process.env
+const { REACT_APP_apiKey, REACT_APP_authDomain, REACT_APP_projectId, REACT_APP_storageBucket, REACT_APP_messagingSenderId, REACT_APP_appId, REACT_APP_measurementId, REACT_APP_recaptcha_site_key, REACT_APP_APPCHECK_DEBUG_TOKEN } = process.env
 const config = {
 	apiKey: REACT_APP_apiKey,
 	authDomain: REACT_APP_authDomain,
@@ -24,11 +25,18 @@ const config = {
 
 log( 'Init firebase with ', config )
 
-// Init app
+// Init app components
 const app = initializeApp( config )
 const analytics = getAnalytics( app )
 const db = getFirestore( app )
 const functions = getFunctions( app )
+
+// App check config
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = REACT_APP_APPCHECK_DEBUG_TOKEN
+const appcheck = initializeAppCheck( app, {
+	provider: new ReCaptchaV3Provider( REACT_APP_recaptcha_site_key ),
+	isTokenAutoRefreshEnabled: true
+} )
 
 // Remote functions
 const importCodes = httpsCallable( functions, 'importCodes' )
@@ -36,6 +44,7 @@ export const registerEvent = httpsCallable( functions, 'registerEvent' )
 export const deleteEvent = httpsCallable( functions, 'deleteEvent' )
 const checkIfCodeHasBeenClaimed = httpsCallable( functions, 'checkIfCodeHasBeenClaimed' )
 export const requestManualCodeRefresh = httpsCallable( functions, 'requestManualCodeRefresh' )
+export const validateCallerDevice = httpsCallable( functions, 'validateCallerDevice' )
 
 // ///////////////////////////////
 // Code actions

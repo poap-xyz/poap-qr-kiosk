@@ -8,7 +8,7 @@ on:
     paths:
       - '*.json'
       - '*.js'
-      - '**'
+      - 'src/**'
       - '.github/workflows/deploy-frontend.yml'
     branches:
       - main
@@ -20,7 +20,7 @@ on:
     paths:
       - '*.json'
       - '*.js'
-      - '**'
+      - 'src/**'
       - '.github/workflows/deploy-frontend.yml'
 
 jobs:

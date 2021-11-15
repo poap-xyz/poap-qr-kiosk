@@ -28,3 +28,13 @@ Product owner: @actualymentor
 App code based on `create-react-app`, styling based on `styled-components`, routing using `react-router`.
 
 Backend runs on a Firebase project.
+
+### Firebase initial setup
+
+For backend/functions setup, see `./functions/README.md`.
+
+To configure Firebase services:
+
+1. Enable firestore
+2. Enable [app check]( https://console.firebase.google.com/u/0/project/poap-qr-kiosk/settings/appcheck ) ([docs](https://firebase.google.com/docs/app-check/web/recaptcha-provider))
+3. Fill out all variables in `.env`
