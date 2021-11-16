@@ -42,9 +42,10 @@ const appcheck = initializeAppCheck( app, {
 const importCodes = httpsCallable( functions, 'importCodes' )
 export const registerEvent = httpsCallable( functions, 'registerEvent' )
 export const deleteEvent = httpsCallable( functions, 'deleteEvent' )
-const checkIfCodeHasBeenClaimed = httpsCallable( functions, 'checkIfCodeHasBeenClaimed' )
+export const checkIfCodeHasBeenClaimed = httpsCallable( functions, 'checkIfCodeHasBeenClaimed' )
 export const requestManualCodeRefresh = httpsCallable( functions, 'requestManualCodeRefresh' )
 export const validateCallerDevice = httpsCallable( functions, 'validateCallerDevice' )
+export const refreshScannedCodesStatuses = httpsCallable( functions, 'refreshScannedCodesStatuses' )
 
 // ///////////////////////////////
 // Code actions

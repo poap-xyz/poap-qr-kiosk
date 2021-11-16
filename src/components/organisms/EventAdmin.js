@@ -60,7 +60,6 @@ export default function EventAdmin( ) {
 		} catch( e ) {
 			alert( `Error deleting event: ${ e.message }` )
 			log( e )
-		} finally {
 			setLoading( false )
 		}
 

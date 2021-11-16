@@ -170,6 +170,56 @@ exports.refreshOldUnknownCodes = async ( source, context ) => {
 
 }
 
+// ///////////////////////////////
+// Check status of scanned codes
+// ///////////////////////////////
+exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
+
+	// const oneHour = 1000 * 60 * 60
+	const fiveMinutes = 1000 * 60 * 5
+	const updateWindow = fiveMinutes
+	const maxInProgress = 10
+
+
+	try {
+
+		// Appcheck validation
+		if( context.app == undefined ) {
+			console.log( context )
+			throw new Error( `App context error` )
+		}
+
+
+		// Codes scanned in the last updateWindow that have not been claimed
+		const scannedCodes = await db.collection( 'codes' )
+									.where( 'event', '==', eventId )
+									.where( 'scanned', '>', Date.now() - updateWindow )
+									.get().then( dataFromSnap )
+
+		const scannedAndUnclaimedCodes = scannedCodes.filter( ( { claimed } ) => !claimed )
+
+		// Build action queue
+		const queue = scannedAndUnclaimedCodes.map( ( { uid } ) => function() {
+
+			return updateCodeStatus( uid )
+
+		} )
+
+		// For every unknown, check the status against live API
+		await Throttle.all( queue, {
+			maxInProgress: maxInProgress
+		} )
+
+		return { updated: scannedAndUnclaimedCodes.length }
+
+
+	} catch( e ) {
+		console.error( 'refreshOldUnknownCodes cron error ', e )
+		return { error: e.message }
+	}
+
+}
+
 /* ///////////////////////////////
 // Public event data updater
 // /////////////////////////////*/

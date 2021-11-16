@@ -37,6 +37,8 @@ export default function Admin( ) {
   // File validations and loading
   useEffect( f => {
 
+    let cancelled = false
+
     if( !csv ) return
 
     ( async f => {
@@ -70,19 +72,21 @@ export default function Admin( ) {
 
         // Validated and sanetised codes
         log( 'Sanetised codes: ', data )
-        setCodes( data )
+        if( !cancelled ) setCodes( data )
 
 
       } catch( e ) {
 
         log( 'Validation error ', e, ' for ', csv )
-        setCsv( undefined )
-        setCodes( undefined )
+        if( !cancelled ) setCsv( undefined )
+        if( !cancelled ) setCodes( undefined )
         return alert( e.message )
 
       }
 
     } )(  )
+
+    return () => cancelled = true
 
   }, [ csv ] )
 
@@ -136,9 +140,8 @@ export default function Admin( ) {
 
       alert( e.message )
       log( 'Upload error: ', e )
-
-    } finally {
       setLoading( false )
+
     }
 
 

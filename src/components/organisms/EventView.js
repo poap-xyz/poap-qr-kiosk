@@ -1,8 +1,9 @@
 // Data management
 import { useState, useEffect } from 'react'
-import { listenToCode, requestManualCodeRefresh, listenToEventMeta } from '../../modules/firebase'
+import { listenToCode, requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses } from '../../modules/firebase'
 import { log } from '../../modules/helpers'
 import { useHistory, useParams } from 'react-router-dom'
+import useInterval from 'use-interval'
 
 // Components
 import QR from '../atoms/QR'
@@ -21,9 +22,12 @@ export default function ViewQR( ) {
   // ///////////////////////////////
   // State handling
   // ///////////////////////////////
+  const defaultScanInerval = 30000
   const [ code, setCode ] = useState( null )
   const [ loading, setLoading ] = useState( 'Setting up your Kiosk' )
   const [ event, setEvent ] = useState(  )
+  const [ scanInterval, setScanInterval ] = useState( defaultScanInerval )
+  const [ lastKnownScannedCodes, setLastKnownScannedCodes ] = useState(  )
 
   // ///////////////////////////////
   // Lifecycle handling
@@ -31,15 +35,27 @@ export default function ViewQR( ) {
 
   // Start code listener
   useEffect( f => {
-    log( `Litening to codes for ${ eventId }` )
-    return listenToCode( eventId, newCode => {
-      setCode( newCode.id )
-      if( newCode.id ) setLoading( false )
+
+    let cancelled = false
+
+    log( `Listening to codes for ${ eventId }` )
+
+    const codeListener = listenToCode( eventId, newCode => {
+      if( !cancelled ) setCode( newCode.id )
+      if( !cancelled && newCode.id ) setLoading( false )
     } )
+
+    return () => {
+      cancelled = true
+      return codeListener
+    }
+
   }, [] )
 
-  // No code timeout
+  // No code? Manual refresh timer
   useEffect( f => {
+
+    let cancelled = false
 
     // If there is a code, do nothing
     if( code?.length ) return
@@ -52,7 +68,7 @@ export default function ViewQR( ) {
       // Ask backend to update all old codes
       requestManualCodeRefresh().then( res => {
         log( `Backend refresh complete with `, res )
-        setLoading( false )
+        if( !cancelled ) setLoading( false )
       } )
 
     }, maxWaitForFirstCode )
@@ -60,6 +76,7 @@ export default function ViewQR( ) {
 
     // Give useEffect a cancel funtion
     return f => {
+      cancelled = true
       log( `Code changed to ${ code }, cancel previous refresh `, timeout )
       clearTimeout( timeout )
     }
@@ -69,6 +86,29 @@ export default function ViewQR( ) {
   // Get event details on load
   useEffect( () => listenToEventMeta( eventId, setEvent ), [] )
 
+  // Update the state of scanned codes periodically
+  useInterval( () => {
+
+      let cancelled = false;
+      
+      ( async () => {
+
+        try {
+
+          log( 'Starting remote scanned code scan' )
+          const { data: { error, updated } } = await refreshScannedCodesStatuses()
+          log( `${ updated } scanned codes updated with error: `, error )
+          if( updated && !cancelled ) setLastKnownScannedCodes( updated )
+
+        } catch( e ) {
+          log( `Scanned code update error: `, e )
+        }
+
+      } )()
+
+      return () => cancelled = true
+
+  }, scanInterval )
 
   // ///////////////////////////////
   // Render component

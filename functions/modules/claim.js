@@ -12,6 +12,7 @@ app.get( '/claim/:code', async ( req, res ) => {
 		// Mark this code as unknown status, but mark true for testing environment
 		await db.collection( 'codes' ).doc( code ).set( {
 			updated: Date.now(),
+			scanned: Date.now(),
 			claimed: code.includes( 'testing' ) ? true : 'unknown'
 		}, { merge: true } )
 

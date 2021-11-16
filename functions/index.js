@@ -9,13 +9,16 @@ const generousRuntime = {
 // ///////////////////////////////
 
 // Trigger check from frontend
-const { refreshOldUnknownCodes, checkIfCodeHasBeenClaimed } = require( './modules/codes' )
+const { refreshOldUnknownCodes, checkIfCodeHasBeenClaimed, refreshScannedCodesStatuses } = require( './modules/codes' )
 
 exports.checkIfCodeHasBeenClaimed = functions.https.onCall( checkIfCodeHasBeenClaimed )
 exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.onCall( refreshOldUnknownCodes )
 
 // Periodically check old unknown codes
 exports.refreshOldUnknownStatusses = functions.runWith( generousRuntime ).pubsub.schedule( 'every 5 minutes' ).onRun( f => refreshOldUnknownCodes( 'cron', { app: true } ) )
+
+// Allow frontend to trigger updates for scanned codes
+exports.refreshScannedCodesStatuses = functions.runWith( generousRuntime ).https.onCall( refreshScannedCodesStatuses )
 
 // ///////////////////////////////
 // Load codes submitted in frontend

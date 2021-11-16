@@ -21,7 +21,7 @@ export default function ViewQR( ) {
   // State handling
   // ///////////////////////////////
   const { claimCode } = useParams( )
-  const [ loading, setLoading ] = useState( 'Loading your code' )
+  const [ loading, setLoading ] = useState( `Verifying your humanity, you'll be forwarded soon` )
 
   // ///////////////////////////////
   // Lifecycle handling
@@ -29,6 +29,8 @@ export default function ViewQR( ) {
 
   // Validate client as non bot
   useEffect( f => {
+
+    let cancelled = false;
 
     // Validate client
     ( async () => {
@@ -49,11 +51,13 @@ export default function ViewQR( ) {
 
         log( e )
         alert( e.message )
-        setLoading( e.message )
+        if( !cancelled ) setLoading( e.message )
 
       }
 
     } )()
+
+    return () => cancelled = true
 
   }, [ claimCode ] )
 
