@@ -227,6 +227,10 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 exports.updatePublicEventAvailableCodes = async function( change, context ) {
 
 	const { before, after } = change
+
+	// Exit on deletion
+	if( !after.exists ) return
+
 	const { codeId } = context.params
 	const { claimed: prevClaimed } = before.data()
 	const { event, claimed } = after.data()
