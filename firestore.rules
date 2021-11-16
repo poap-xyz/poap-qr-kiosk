@@ -6,12 +6,17 @@ service cloud.firestore {
       // Disallow by default
       allow read, write: if false;
 
-
-      // Allow updated by default
+      // Allow reading codes
       match /codes/{code} {
 
         allow read: if true;
-        allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly( [ 'claimed', 'updated' ] )
+
+      }
+
+      // Allow reading of public event meta
+      match /publicEventData/{eventId} {
+
+        allow get: if true;
 
       }
 

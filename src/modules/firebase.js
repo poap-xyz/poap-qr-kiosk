@@ -81,7 +81,7 @@ export async function listenToCode( eventId, cb ) {
 		cb( newCode )
 
 		// Tell backend to double check the code status in case it is expired
-		return checkIfCodeHasBeenClaimed( newCode.id )
+		return newCode.id ? checkIfCodeHasBeenClaimed( newCode.id ) : true
 
 	} )
 
@@ -98,6 +98,23 @@ export async function importCodesFromArray( password='', codes=[] ) {
 
 	if( error ) throw new Error( error )
 
+
+}
+
+/* ///////////////////////////////
+// Event actions
+// /////////////////////////////*/
+export async function listenToEventMeta( eventId, cb ) {
+
+	const d = doc( db, 'publicEventData', eventId )
+
+	return onSnapshot( d, snap => {
+
+		const data = snap.data()
+		log( `Retreived event metadata: `, data )
+		cb( data )
+
+	} )
 
 }
 

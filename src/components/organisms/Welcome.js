@@ -40,7 +40,10 @@ export default function ComponentName( ) {
 				<H2>Stressless POAP code distribution at physical events</H2>
 				<Text>Turn your claim code .txt file into a webpage that displays them as easy-to-scan QR codes. Perfect for POAP claims at a physical event check-ins.</Text>
 				{ allowAccess && <Button onClick={ f => history.push( '/create' ) }>Create QR kiosk</Button> }
-				{ !allowAccess && <Input id='welcome-beta-password' type='password' placeholder='P4ssword' onChange={ ( { target } ) => setPassword( target.value ) } label='Beta password' value={ password } /> }
+				{ !allowAccess && <>
+					<Input id='welcome-beta-password' type='password' placeholder='P4ssword' onChange={ ( { target } ) => setPassword( target.value ) } label='Beta password' value={ password } />
+					<Button onClick={ f => alert( 'Wrong password' ) }>Submit password</Button>
+				</> }
 
 			</Hero>
 

@@ -4,7 +4,7 @@
 
 const admin = require( '../../fixtures/admin-user' )
 
-context( 'Successful event creation', () => {
+context( 'Organiser successful event creation', () => {
 
 	it( 'Has all required fields', () => {
 
@@ -41,13 +41,13 @@ context( 'Successful event creation', () => {
 		} )
 
 		cy.get( '#event-create-submit' ).click()
-		cy.get( '#event-create-name' ).type( admin.name )
+		cy.get( '#event-create-name' ).type( admin.events[0].name )
 
 		cy.get( '#event-create-submit' ).click()
 		cy.get( '#event-create-email' ).type( admin.email )
 
 		cy.get( '#event-create-submit' ).click()
-		cy.get( '#event-create-date' ).type( admin.event.end )
+		cy.get( '#event-create-date' ).type( admin.events[0].end )
 
 		cy.get( '#event-create-submit' ).click()
 
@@ -72,6 +72,10 @@ context( 'Successful event creation', () => {
 		cy.contains( 'Deleting event' )
 
 		cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
+
+		// Wait for firestore to delete old codes
+		cy.wait( 2000 )
+
 	} )
 
 } )

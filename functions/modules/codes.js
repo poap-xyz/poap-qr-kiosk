@@ -115,51 +115,6 @@ exports.checkIfCodeHasBeenClaimed = async ( code, context ) => {
 
 
 // ///////////////////////////////
-// Code importer
-// ///////////////////////////////
-// exports.importCodes = async ( data, context ) => {
-
-// 	try {
-
-// 		// Validate request
-// 		const { password, codes } = data
-// 		if( password !== api.password ) throw new Error( `Incorrect password` )
-
-// 		// Load the codes into firestore
-// 		await Promise.all( codes.map( code => {
-
-// 			// If it is a newline, let it go
-// 			if( !code.length ) return
-
-// 			// Remove web prefixes
-// 			code = code.replace( /(https?:\/\/.*\/)/ig, '')
-
-// 			if( !code.match( /\w{1,42}/ ) ) throw new Error( `Invalid code: ${ code }` )
-
-// 			return db.collection( 'codes' ).doc( code ).set( {
-// 				claimed: 'unknown',
-// 				created: Date.now(),
-// 				updated: Date.now()
-// 			} )
-
-// 		} ) )
-
-// 		return {
-// 			success: `${ codes.length } imported`
-// 		}
-
-// 	} catch( e ) {
-
-// 		console.log( 'importCodes error: ', e )
-// 		return {
-// 			error: `Import error: ${ e.message || e }`
-// 		}
-
-// 	}
-
-// }
-
-// ///////////////////////////////
 // Check status of old unknowns
 // ///////////////////////////////
 exports.refreshOldUnknownCodes = async ( source, context ) => {
@@ -212,6 +167,25 @@ exports.refreshOldUnknownCodes = async ( source, context ) => {
 		console.error( 'refreshOldUnknownCodes cron error ', e )
 		return e
 	}
+
+}
+
+/* ///////////////////////////////
+// Public event data updater
+// /////////////////////////////*/
+
+exports.updatePublicEventAvailableCodes = async function( change, context ) {
+
+	const { before, after } = change
+	const { codeId } = context.params
+	const { claimed: prevClaimed } = before.data()
+	const { event, claimed } = after.data()
+
+	// Do nothing if no change
+	if( prevClaimed == claimed ) return
+
+	// If it is now claimed, decrement available codes
+	if( claimed == true ) return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now() }, { merge: true } )
 
 }
 

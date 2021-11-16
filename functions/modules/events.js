@@ -26,7 +26,10 @@ exports.registerEvent = async function( data, context ) {
 			email,
 			expires: date,
 			codes: codes.length,
-			authToken
+			codesAvailable: codes.length,
+			authToken,
+			created: Date.now(),
+			updated: Date.now()
 		} )
 
 		// Sanetise codes
@@ -82,6 +85,20 @@ exports.registerEvent = async function( data, context ) {
 
 	}
 
+
+}
+
+exports.updatePublicEventData = async function( change, context ) {
+
+	const { after } = change
+	const { eventId } = context.params
+
+	// If this was a deletion, delete public data
+	if( !after.exists ) return db.collection( 'publicEventData' ).doc( eventId ).delete()
+
+	// If this was an update, grab the public properties and set them
+	const { name, codes, codesAvailable } = after.data()
+	return db.collection( 'publicEventData' ).doc( eventId ).set( { name, codes, codesAvailable: codesAvailable || 0, updated: Date.now() }, { merge: true } )
 
 }
 

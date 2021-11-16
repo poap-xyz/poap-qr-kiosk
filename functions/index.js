@@ -36,11 +36,15 @@ exports.claimMiddleware = functions.https.onRequest( claimMiddleware )
 // Housekeeping
 // ///////////////////////////////
 
-const { deleteExpiredCodes } = require( './modules/codes' )
-const { deleteCodesOfDeletedEvent } = require( './modules/events' )
+const { deleteExpiredCodes, updatePublicEventAvailableCodes } = require( './modules/codes' )
+const { deleteCodesOfDeletedEvent, updatePublicEventData } = require( './modules/events' )
 
 exports.deleteExpiredCodes = functions.runWith( generousRuntime ).pubsub.schedule( 'every 24 hours' ).onRun( deleteExpiredCodes )
 exports.deleteCodesOfDeletedEvent = functions.firestore.document( `events/{eventId}` ).onDelete( deleteCodesOfDeletedEvent )
+exports.updatePublicEventData = functions.firestore.document( `events/{eventId}` ).onWrite( updatePublicEventData )
+exports.updatePublicEventAvailableCodes = functions.firestore.document( `codes/{codeId}` ).onWrite( updatePublicEventAvailableCodes )
+
+
 
 /* ///////////////////////////////
 // Security

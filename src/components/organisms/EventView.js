@@ -1,15 +1,14 @@
 // Data management
 import { useState, useEffect } from 'react'
-import { listenToCode, markCodeClaimed, event, requestManualCodeRefresh } from '../../modules/firebase'
+import { listenToCode, requestManualCodeRefresh, listenToEventMeta } from '../../modules/firebase'
 import { log } from '../../modules/helpers'
 import { useHistory, useParams } from 'react-router-dom'
 
 // Components
-import QRCode from 'react-qr-code'
+import QR from '../atoms/QR'
 import Loading from '../molecules/Loading'
-import Button from '../atoms/Button'
+import { H1, H2, Sidenote } from '../atoms/Text'
 import Container from '../atoms/Container'
-import { Sidenote } from '../atoms/Text'
 
 // ///////////////////////////////
 // Render component
@@ -23,7 +22,8 @@ export default function ViewQR( ) {
   // State handling
   // ///////////////////////////////
   const [ code, setCode ] = useState( null )
-  const [ loading, setLoading ] = useState( true )
+  const [ loading, setLoading ] = useState( 'Setting up your Kiosk' )
+  const [ event, setEvent ] = useState(  )
 
   // ///////////////////////////////
   // Lifecycle handling
@@ -66,15 +66,9 @@ export default function ViewQR( ) {
 
   }, [ code ] )
 
-  // ///////////////////////////////
-  // Component functions
-  // ///////////////////////////////
-  // async function nextCode(  ) {
-  //   log( `Marking ${ code } as claimed` )
-  //   setLoading( 'Getting next code' )
-  //   await markCodeClaimed( code )
-  //   event( 'user_request_next_qr' )
-  // }
+  // Get event details on load
+  useEffect( () => listenToEventMeta( eventId, setEvent ), [] )
+
 
   // ///////////////////////////////
   // Render component
@@ -94,9 +88,16 @@ export default function ViewQR( ) {
   // Display QR
   return <Container>
 
-    {  /* QR showing code in base64 for minor obfuscation */ }
-    <QRCode data-code={ code } value={ `https://poap-qr-kiosk.web.app/claim/${ code }` } />
+    {  /* Event metadata */ }
+    { event && <H1>{ event.name }</H1> }
+    { <H2 align="center">Scan the code below to claim your POAP</H2> }
+
+    {  /* QR showing code */ }
+    <QR data-code={ code } value={ `https://poap-qr-kiosk.web.app/claim/${ code }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
+
+    { event && <Sidenote>{ event.codes - event.codesAvailable } of { event.codes } codes claimed</Sidenote> }
+
   </Container>
 
 }

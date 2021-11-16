@@ -2,7 +2,7 @@
 // Welcome page UX tests
 // /////////////////////////////*/
 
-context( 'Welcome page', () => {
+context( 'Welcome page UX', () => {
 
 	it( 'Has a link to create a QR kiosk, protected by the Beta password', () => {
 
