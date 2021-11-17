@@ -20,7 +20,8 @@ Product owner: @actualymentor
 1. `cd functions`
 2. `nvm use`
 3. `npm i`
-4. `firebase functions:config:get > .runtimeconfig.json` (assuming the infra already has the data through `firebase functions:config:set api.accesstoken=`)
+4. Set keys `api.accesstoken`, `api.accesstoken`, `sendgrid.fromemail`, and `sendgrid.apikey` with `firebase functions:config:set key=value`
+4. `firebase functions:config:get > .runtimeconfig.json`
 5. `npm start`
 
 ## Architecture

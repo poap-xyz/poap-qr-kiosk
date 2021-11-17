@@ -129,7 +129,7 @@ export default function ViewQR( ) {
   return <Container>
 
     {  /* Event metadata */ }
-    { event && <H1>{ event.name }</H1> }
+    { event && <H1 align="center">{ event.name }</H1> }
     { <H2 align="center">Scan the code below to claim your POAP</H2> }
 
     {  /* QR showing code */ }

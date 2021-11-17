@@ -1,6 +1,7 @@
 // Firebase interactors
 const { db, dataFromSnap } = require( './firebase' )
 const { v4: uuidv4 } = require('uuid')
+const { sendEventAdminEmail } = require( './email' )
 
 exports.registerEvent = async function( data, context ) {
 	
@@ -68,7 +69,15 @@ exports.registerEvent = async function( data, context ) {
 
 		} ) )
 
-		// TODO: send email to user with event and admin links 
+		// Send email to user with event and admin links
+		await sendEventAdminEmail( {
+			email: email,
+			event: {
+				name,
+				eventlink: `https://poap-qr-kiosk.web.app/#/event/${ id }`,
+				adminlink: `https://poap-qr-kiosk.web.app/#/event/${ id }/${ authToken }`
+			}
+		} )
 
 		// Return event data
 		return {

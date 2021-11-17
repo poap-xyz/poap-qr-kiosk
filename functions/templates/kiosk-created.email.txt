@@ -1,0 +1,16 @@
+POAP kiosk: %%eventname%%
+
+Your QR delivery kiosk is ready for use
+
+Open the public event link on the device you want to serve the QR codes from. This could be a tablet device at the check-in of your event for example.
+
+Public event link: %%eventlink%%
+
+The link below is your secret admin link. Never share this in public. It allows you to edit or delete your event.
+
+Admin link: %%adminlink%%
+
+If you have any questions or suggestions, please do not hesitate to reach out to us on discord.
+
+Enjoy your event!
+The POAP team

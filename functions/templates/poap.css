@@ -1,0 +1,83 @@
+/*:root {
+	--color-primary: #8076fa;
+	--color-text: rgb(77, 86, 128);
+	--color-accent: rgb( 248, 117, 136 );
+	--color-backdrop: rgba( 0, 0, 0, .05 );
+}*/
+
+/* Note that web fonts DO NOT WORK in most email clients */
+@import url('https://fonts.googleapis.com/css2?family=Archivo&family=Comfortaa:wght@500&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Archivo', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ///////////////////////////////
+// Flow text
+// /////////////////////////////*/
+html {
+  font-size: calc( 18px + .1vw );
+}
+
+/* ///////////////////////////////
+// Brand styles
+// /////////////////////////////*/
+
+h1 {
+	font-size: 2.5rem;
+	font-weight: 500;
+	line-height: 1.2;
+	font-family: 'Comfortaa', sans-serif;
+	text-align: left;
+	/*color: var( --color-primary );*/
+	color: #8076fa;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin: 0 0 1rem;
+	line-height: 1.2;
+	font-weight: 400;
+	text-align: left;
+	/*color: var( --color-accent );*/
+	color: rgb( 248, 117, 136 );
+}
+
+p {
+	font-size: 1rem;
+	margin: 1rem 0;
+	line-height: 1.5rem;
+	/*color: var( --color-text );*/
+	color: rgb(77, 86, 128);
+	text-align: left
+}
+
+a.button {
+	display: inline-block;
+	padding:  1rem 2rem;
+	margin: .5rem;
+	margin-left: 0;
+	text-decoration: none;
+	/*border: 2px solid var( --color-primary );*/
+	border: 2px solid #8076fa;
+	/*color: var( --color-primary );*/
+	color: #8076fa;
+	font-size: 1rem;
+	background: none;
+	border-radius: 5px;
+}
+
+input {
+	/*background: var( --color-backdrop );*/
+	background: rgba( 0, 0, 0, .05 );
+	border: none;
+	/*border-left: 2px solid var( --color-primary );*/
+	border-left: 2px solid #8076fa;
+	padding: 1rem;
+	margin:  1rem 10% 1rem 0;
+	width: 90%;
+}
