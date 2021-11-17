@@ -232,7 +232,7 @@ exports.updatePublicEventAvailableCodes = async function( change, context ) {
 	if( !after.exists ) return
 
 	const { codeId } = context.params
-	const { claimed: prevClaimed } = before.data()
+	const { claimed: prevClaimed } = before.data() || {}
 	const { event, claimed } = after.data()
 
 	// Do nothing if no change

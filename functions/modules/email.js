@@ -12,10 +12,10 @@ async function compilePugToEmail( pugFile, event ) {
 
 	const [ emailPug, inlineNormalise, styleExtra, styleOutlook, poapStyles ]= await Promise.all( [
 		fs.readFile( pugFile ),
-		fs.readFile( `${ __dirname }/../templates/css-resets/normalize.css`, 'utf8' ),
-		fs.readFile( `${ __dirname }/../templates/css-resets/extra.css`, 'utf8' ),
-		fs.readFile( `${ __dirname }/../templates/css-resets/outlook.css`, 'utf8' ),
-		fs.readFile( `${ __dirname }/../templates/poap.css`, 'utf8' )
+		fs.readFile( `../templates/css-resets/normalize.css`, 'utf8' ),
+		fs.readFile( `../templates/css-resets/extra.css`, 'utf8' ),
+		fs.readFile( `../templates/css-resets/outlook.css`, 'utf8' ),
+		fs.readFile( `../templates/poap.css`, 'utf8' )
 	] )
 
 	const { css } = csso.minify( [ styleExtra, styleOutlook, inlineNormalise, poapStyles ].join( '\n' ) )
