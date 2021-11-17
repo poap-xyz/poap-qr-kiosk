@@ -43,8 +43,6 @@ exports.sendEventAdminEmail = async ( { email, event } ) => {
 			html: await compilePugToEmail( `${ __dirname }/../templates/kiosk-created.email.pug`, event ),
 		}
 
-		console.log( msg )
-
 		await mail.send( msg )
 
 	} catch( e ) {
