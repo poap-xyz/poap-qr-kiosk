@@ -33,6 +33,16 @@ exports.registerEvent = async function( data, context ) {
 			updated: Date.now()
 		} )
 
+		// Send email to user with event and admin links
+		await sendEventAdminEmail( {
+			email: email,
+			event: {
+				name,
+				eventlink: `https://poap-qr-kiosk.web.app/#/event/${ id }`,
+				adminlink: `https://poap-qr-kiosk.web.app/#/event/${ id }/${ authToken }`
+			}
+		} )
+
 		// Sanetise codes
 		const saneCodes = codes.map( ( code='' ) => {
 
@@ -68,16 +78,6 @@ exports.registerEvent = async function( data, context ) {
 			} )
 
 		} ) )
-
-		// Send email to user with event and admin links
-		await sendEventAdminEmail( {
-			email: email,
-			event: {
-				name,
-				eventlink: `https://poap-qr-kiosk.web.app/#/event/${ id }`,
-				adminlink: `https://poap-qr-kiosk.web.app/#/event/${ id }/${ authToken }`
-			}
-		} )
 
 		// Return event data
 		return {
