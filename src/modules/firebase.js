@@ -50,15 +50,15 @@ export const refreshScannedCodesStatuses = httpsCallable( functions, 'refreshSca
 // ///////////////////////////////
 // Code actions
 // ///////////////////////////////
-export async function markCodeClaimed( code ) {
+// export async function markCodeClaimed( code ) {
 
-	// Create the reference to the doc
-	const docToSet = doc( db, 'codes', code )
+// 	// Create the reference to the doc
+// 	const docToSet = doc( db, 'codes', code )
 
-	// Write the code to the doc with the code as ID
-	return setDoc( docToSet, { claimed: 'unknown', updated: Date.now() }, { merge: true } )
+// 	// Write the code to the doc with the code as ID
+// 	return setDoc( docToSet, { claimed: 'unknown', updated: Date.now() }, { merge: true } )
 
-}
+// }
 
 export async function listenToCode( eventId, cb ) {
 

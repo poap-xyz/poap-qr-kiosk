@@ -11,6 +11,7 @@ import Loading from '../molecules/Loading'
 import { H1, H2, Sidenote } from '../atoms/Text'
 import Container from '../atoms/Container'
 
+
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
@@ -22,12 +23,11 @@ export default function ViewQR( ) {
   // ///////////////////////////////
   // State handling
   // ///////////////////////////////
-  const defaultScanInerval = 30000
+  const defaultScanInerval = 2 * 60 * 1000
   const [ code, setCode ] = useState( null )
   const [ loading, setLoading ] = useState( 'Setting up your Kiosk' )
   const [ event, setEvent ] = useState(  )
   const [ scanInterval, setScanInterval ] = useState( defaultScanInerval )
-  const [ lastKnownScannedCodes, setLastKnownScannedCodes ] = useState(  )
 
   // ///////////////////////////////
   // Lifecycle handling
@@ -41,8 +41,11 @@ export default function ViewQR( ) {
     log( `Listening to codes for ${ eventId }` )
 
     const codeListener = listenToCode( eventId, newCode => {
+
+      // Set new code to state
       if( !cancelled ) setCode( newCode.id )
       if( !cancelled && newCode.id ) setLoading( false )
+
     } )
 
     return () => {
@@ -98,7 +101,6 @@ export default function ViewQR( ) {
           log( 'Starting remote scanned code scan' )
           const { data: { error, updated } } = await refreshScannedCodesStatuses()
           log( `${ updated } scanned codes updated with error: `, error )
-          if( updated && !cancelled ) setLastKnownScannedCodes( updated )
 
         } catch( e ) {
           log( `Scanned code update error: `, e )
@@ -133,7 +135,7 @@ export default function ViewQR( ) {
     { <H2 align="center">Scan the code below to claim your POAP</H2> }
 
     {  /* QR showing code */ }
-    <QR data-code={ code } value={ `https://poap-qr-kiosk.web.app/claim/${ code }` } />
+    <QR key={ code } className='glow' data-code={ code } value={ `https://poap-qr-kiosk.web.app/claim/${ code }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
     { event && <Sidenote>{ event.codes - event.codesAvailable } of { event.codes } codes claimed</Sidenote> }

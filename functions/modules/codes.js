@@ -39,7 +39,8 @@ const checkCodeStatus = async code => {
 
 		// Return object so the updateCodeStatus function can continue
 		return {
-			claimed: 'unknown'
+			error: `checkCodeStatus error`,
+			message: e.message
 		}
 	} )
 }
@@ -50,13 +51,30 @@ async function updateCodeStatus( code, cachedResponse ) {
 	if( !code ) return
 
 	// Check claim status on claim backend
-	const { claimed, error, message } = cachedResponse || await checkCodeStatus( code )
+	let { claimed, error, message, Message } = cachedResponse || await checkCodeStatus( code )
+
+	// The api is unpredictable with error/message keys, the message should only ever happen inthe case of an error
+	let readableError = ''
+	if( !error && message ) readableError = message
+	if( !error && Message ) readableError = Message
+	if( error ) readableError = `${ error } - ${ message || Message }`
 
 	// Formulate updates
 	const updates = { updated: Date.now() }
-	if( error ) updates.error = `${ error }: ${ message }`
-	else updates.claimed = claimed ? true : false
 
+	// If there was an error, append it to the code
+	if( error || message || Message ) {
+		updates.error = readableError
+	} else { 
+
+		// If no error then set the claimed status and update counter
+		updates.claimed = !!claimed
+
+		// Track how many times this code has been updated from the api
+		updates.amountOfRemoteStatusChecks = increment( 1 )
+		updates.lastRemoteStatusCheck = Date.now()
+
+	}
 	// Track error frequency
 	if( error ) {
 
@@ -98,7 +116,7 @@ exports.checkIfCodeHasBeenClaimed = async ( code, context ) => {
 
 		// Check claim status on claim backend
 		const status = await checkCodeStatus( code )
-		const { claimed, error, message } = status
+		const { claimed, error } = status
 
 		// If claimed, or there was an error, mark it so
 		if( claimed === true || error ) await updateCodeStatus( code, status )
@@ -177,29 +195,40 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 
 	// const oneHour = 1000 * 60 * 60
 	const fiveMinutes = 1000 * 60 * 5
-	const updateWindow = fiveMinutes
+	const checkCodesAtLeast = 2
+	const codeResetTimeout = fiveMinutes
+	const checkCooldown = 1000 * 30
 	const maxInProgress = 10
 
 
 	try {
 
 		// Appcheck validation
-		if( context.app == undefined ) {
-			console.log( context )
+		if( !dev && context.app == undefined ) {
+			console.log( context.app )
 			throw new Error( `App context error` )
 		}
 
 
-		// Codes scanned in the last updateWindow that have not been claimed
-		const scannedCodes = await db.collection( 'codes' )
+		// Codes that have been scanned and have not been claimed
+		const scannedAndUnclaimedCodes = await db.collection( 'codes' )
 									.where( 'event', '==', eventId )
-									.where( 'scanned', '>', Date.now() - updateWindow )
+									.where( 'scanned', '==', true )
+									.where( 'claimed', '==', false )
 									.get().then( dataFromSnap )
 
-		const scannedAndUnclaimedCodes = scannedCodes.filter( ( { claimed } ) => !claimed )
+		// Grab codes that have been checked and are old enough
+		const codesToReset = scannedAndUnclaimedCodes.filter( ( { amountOfRemoteStatusChecks, lastRemoteStatusCheck, } ) => amountOfRemoteStatusChecks > checkCodesAtLeast && lastRemoteStatusCheck < ( Date.now() - codeResetTimeout ) )
+		await Promise.all( codesToReset.map( ( { uid } ) => db.collection( 'codes' ).doc( uid ).set( {
+			scanned: false,
+			amountOfRemoteStatusChecks: 0
+		}, { merge: true } ) ) )
+
+		// Filter out codes that were checked within the throttle interval. This may be useful if there are 50 ipads at an event and they all trigger rechecks.
+		const codesToCheck = scannedAndUnclaimedCodes.filter( ( { updated } ) => updated < ( Date.now() - checkCooldown ) )
 
 		// Build action queue
-		const queue = scannedAndUnclaimedCodes.map( ( { uid } ) => function() {
+		const queue = codesToCheck.map( ( { uid } ) => function() {
 
 			return updateCodeStatus( uid )
 
@@ -210,7 +239,7 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 			maxInProgress: maxInProgress
 		} )
 
-		return { updated: scannedAndUnclaimedCodes.length }
+		return { updated: codesToCheck.length, reset: codesToReset.length }
 
 
 	} catch( e ) {
