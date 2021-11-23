@@ -92,7 +92,7 @@ export default function ViewQR( ) {
   // Update the state of scanned codes periodically
   useInterval( () => {
 
-      let cancelled = false;
+      // let cancelled = false;
       
       ( async () => {
 
@@ -108,7 +108,7 @@ export default function ViewQR( ) {
 
       } )()
 
-      return () => cancelled = true
+      // return () => cancelled = true
 
   }, scanInterval )
 

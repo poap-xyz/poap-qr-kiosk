@@ -3,7 +3,7 @@ const functions = require( 'firebase-functions' )
 const { db, dataFromSnap, increment } = require( './firebase' )
 const dev = !!process.env.development
 // Secrets
-const { api } = functions.config()
+const { auth0 } = functions.config()
 
 // Libraries
 const fetch = require( 'isomorphic-fetch' )
@@ -13,18 +13,55 @@ const Throttle = require( 'promise-parallel-throttle' )
 // Code helpers
 // ///////////////////////////////
 
+// Get auth token from auth0
+async function getAccessToken() {
+
+	// Get API secrets
+	const { access_token, expires } = await db.collection( 'secrets' ).doc( 'poap-api' ).get().then( dataFromSnap )
+	const { client_id, client_secret, endpoint } = auth0
+
+	// If token is valid for another hour, keep it
+	if( expires > ( Date.now() + 1000 * 60 * 10 ) ) return access_token
+
+	// If the access token expires soon, get a new one
+	const options = {
+		method: 'POST',
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify( {
+			audience: 'POAP-QR-Kiosk',
+			grant_type: 'client_credentials',
+			client_id: client_id,
+			client_secret: client_secret
+		} )
+	}
+	const { access_token: new_access_token, expires_in } = await fetch( endpoint, options ).then( res => res.json() )
+
+	// Set new token to firestore cache
+	await db.collection( 'secrets' ).doc( 'poap-api' ).set( {
+		access_token: new_access_token,
+		expires: Date.now() + ( expires_in * 1000 ),
+		updated: Date.now()
+	}, { merge: true } )
+
+	return new_access_token
+
+
+}
+
 // Remote api checker, this ALWAYS resolves
-// this is because I am not suer that this API will not suddenly be throttled or authenticated.
+// this is because I am not sure that this API will not suddenly be throttled or authenticated.
 const checkCodeStatus = async code => {
 
 	if( code.includes( 'testing' ) ) return { claimed: false }
 
+	// Get API data
 	const apiUrl = dev ? 'https://dev-api.poap.tech' : 'https://api.poap.tech'
-	if( dev ) console.log( `Calling ${ apiUrl } with ${ dev ? 'dev' : 'prod' } token` )
+	const access_token = await getAccessToken()
+	if( dev ) console.log( `Calling ${ apiUrl } with token ${ access_token }` )
 
 	return fetch( `${ apiUrl }/actions/claim-qr?qr_hash=${ code }`, {
 		headers: {
-			Authorization: `Bearer ${ dev ? api.devaccesstoken : api.accesstoken }`
+			Authorization: `Bearer ${ access_token }`
 		}
 	} )
 	.then( res => res.json() )

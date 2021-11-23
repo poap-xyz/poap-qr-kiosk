@@ -74,8 +74,6 @@ export default function EventAdmin( ) {
 		<Main align="flex-start" width='600px'>
 
 			<H1>Event links</H1>
-
-			<Text>⚠️ BETA WARNING: the email system doesn&apos;t work yet, please sve the links below somewhere.</Text>
 			
 			<Section>
 				<Input

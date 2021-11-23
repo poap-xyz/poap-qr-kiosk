@@ -75,7 +75,7 @@ exports.registerEvent = async function( data, context ) {
 			event: {
 				name,
 				eventlink: `https://poap-qr-kiosk.web.app/#/event/${ id }`,
-				adminlink: `https://poap-qr-kiosk.web.app/#/event/${ id }/${ authToken }`
+				adminlink: `https://poap-qr-kiosk.web.app/#/event/admin/${ id }/${ authToken }`
 			}
 		} )
 
