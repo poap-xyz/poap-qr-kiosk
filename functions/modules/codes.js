@@ -294,8 +294,8 @@ exports.updatePublicEventAvailableCodes = async function( change, context ) {
 
 	const { before, after } = change
 
-	// Exit on deletion
-	if( !after.exists ) return
+	// Exit on deletion or creation
+	if( !after.exists || !before.exists ) return
 
 	const { codeId } = context.params
 	const { claimed: prevClaimed } = before.data() || {}
@@ -305,10 +305,7 @@ exports.updatePublicEventAvailableCodes = async function( change, context ) {
 	if( prevClaimed == claimed ) return
 
 	// If it is now claimed or of unknown status, decrement available codes
-	if( claimed == true ) return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now() }, { merge: true } )
-
-	// If it is now confirmed unclaimed, increment available codes
-	if( claimed == false ) return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now() }, { merge: true } )
+	if( claimed === true ) return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now() }, { merge: true } )
 
 }
 
