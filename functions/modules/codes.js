@@ -304,8 +304,11 @@ exports.updatePublicEventAvailableCodes = async function( change, context ) {
 	// Do nothing if no change
 	if( prevClaimed == claimed ) return
 
-	// If it is now claimed, decrement available codes
+	// If it is now claimed or of unknown status, decrement available codes
 	if( claimed == true ) return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now() }, { merge: true } )
+
+	// If it is now confirmed unclaimed, increment available codes
+	if( claimed == false ) return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now() }, { merge: true } )
 
 }
 
