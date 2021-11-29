@@ -6,6 +6,7 @@ on:
     branches:
       - development
     paths:
+      - '.firebaserc'
       - '.github/workflows/dev-deploy-functions.yml'
       - 'functions/**'
 
