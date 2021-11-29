@@ -36,6 +36,6 @@ For backend/functions setup, see `./functions/README.md`.
 
 To configure Firebase services:
 
-1. Enable firestore
+1. Enable firestore, hosting, analytics
 2. Enable [app check]( https://console.firebase.google.com/u/0/project/poap-qr-kiosk/settings/appcheck ) ([docs](https://firebase.google.com/docs/app-check/web/recaptcha-provider))
 3. Fill out all variables in `.env`

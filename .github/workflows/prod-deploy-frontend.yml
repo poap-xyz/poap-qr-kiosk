@@ -9,7 +9,7 @@ on:
       - '*.json'
       - '*.js'
       - 'src/**'
-      - '.github/workflows/deploy-frontend.yml'
+      - '.github/workflows/prod-deploy-frontend.yml'
     branches:
       - main
   
@@ -21,7 +21,7 @@ on:
       - '*.json'
       - '*.js'
       - 'src/**'
-      - '.github/workflows/deploy-frontend.yml'
+      - '.github/workflows/prod-deploy-frontend.yml'
 
 jobs:
   # Build the frontend giles
@@ -67,21 +67,21 @@ jobs:
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting
+          args: deploy --only hosting,firestore --project=production
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
       # Notify Mentor
       - name: Send push notification
         env:
-          MSG_TITLE: "Success: POAP QR Kiosk"
+          MSG_TITLE: "Success: Production POAP QR Kiosk"
           MSG_CONTENT: "frontend CI success"
         run: curl -f -X POST -d "token=${{ secrets.PUSHOVER_TOKEN }}&user=${{ secrets.PUSHOVER_USER }}&title=$MSG_TITLE&message=$MSG_CONTENT&priority=1" https://api.pushover.net/1/messages.json
         
       - name: Send failure push notification
         if: ${{ failure() }}
         env:
-          MSG_TITLE: "Failure: POAP QR Kiosk"
+          MSG_TITLE: "Failure: Production POAP QR Kiosk"
           MSG_CONTENT: "frontend CI failed"
         run: curl -f -X POST -d "token=${{ secrets.PUSHOVER_TOKEN }}&user=${{ secrets.PUSHOVER_USER }}&title=$MSG_TITLE&message=$MSG_CONTENT&priority=1" https://api.pushover.net/1/messages.json
         
