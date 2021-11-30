@@ -1,6 +1,10 @@
 const { db } = require( './firebase' )
 const app = require( './express' )()
 
+// Configs
+const functions = require( 'firebase-functions' )
+const { kiosk } = functions.config()
+
 app.get( '/claim/:code', async ( req, res ) => {
 
 	try {
@@ -18,7 +22,7 @@ app.get( '/claim/:code', async ( req, res ) => {
 
 		// Return a redirect to the POAP app
 		// 307: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_redirection
-		return res.redirect( 307, `https://poap-qr-kiosk.web.app/#/claim/${ code }` )
+		return res.redirect( 307, `${ kiosk.public_url }#/claim/${ code }` )
 
 	} catch( e ) {
 

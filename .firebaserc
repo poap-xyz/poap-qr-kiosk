@@ -2,6 +2,6 @@
   "projects": {
     "default": "qr-kiosk-dev",
     "development": "qr-kiosk-dev",
-    "production": "qr-kiosk-production"
+    "production": "qr-kiosk"
   }
 }

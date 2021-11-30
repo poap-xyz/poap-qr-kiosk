@@ -18,7 +18,7 @@ To configure Firebase services:
 
 To Configure backend:
 
-1. Set keys `auth0.client_id`, `auth0.client_secret`, `auth0.endpoint`, `sendgrid.fromemail`, and `sendgrid.apikey` with `firebase functions:config:set key=value`
+1. Set keys `auth0.client_id`, `auth0.client_secret`, `auth0.endpoint`, `sendgrid.fromemail`, `sendgrid.apikey` and `kiosk.publicUrl` with `firebase functions:config:set key=value`
 1. `firebase functions:config:get > .runtimeconfig.json`
 
 
