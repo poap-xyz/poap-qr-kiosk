@@ -17,8 +17,15 @@
  */
 // eslint-disable-next-line no-unused-vars
 
-// Load environment
-const envFile = process.env.NODE_ENV == 'development' ? '.env.development' : '.env.production'
+// Load environment variables
+let envFile = '.env.production'
+
+// If in offline dev, use development env
+if( process.env.NODE_ENV == 'development' ) envFile = '.env.development'
+
+// If in CI use .env since the workflows write to that file on run
+if( process.env.CI ) envFile = '.env'
+
 const dotenvConfig = {
     path: `${ __dirname }/../../${ envFile }`
   }
@@ -29,4 +36,5 @@ module.exports = (on, config) => {
 
   config.env.REACT_APP_publicUrl = process.env.REACT_APP_publicUrl
   return config
+  
 }

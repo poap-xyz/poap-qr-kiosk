@@ -27,7 +27,7 @@ on:
 jobs:
   # Build the frontend giles
   build:
-    name: Compile frontend
+    name: Deploy frontend
 
     runs-on: ubuntu-latest
 
