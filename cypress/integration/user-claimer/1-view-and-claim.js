@@ -8,7 +8,6 @@ const fiveCodes = require( '../../fixtures/five-correct-codes' )
 
 context( 'Claimer can view valid events', () => {
 
-
 	/* ///////////////////////////////
 	// First event
 	// /////////////////////////////*/
@@ -52,7 +51,7 @@ context( 'Claimer can view valid events', () => {
 	it( 'Event 1: Shows different code after first is scanned', function( ) {
 
 		// Mark the first code as read by simulating a scan
-		cy.request( `https://poap-qr-kiosk.web.app/claim/${ this.event_1_firstcode }` )
+		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_firstcode }` )
 
 		// Visit the public link
 		cy.visit( this.event_1_publiclink )
@@ -66,7 +65,7 @@ context( 'Claimer can view valid events', () => {
 	it( 'Event 1: Shows no codes after both are scanned', function( ) {
 
 		// Mark the second code as read by simulating a scan
-		cy.request( `https://poap-qr-kiosk.web.app/claim/${ this.event_1_secondcode }` )
+		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_secondcode }` )
 		cy.visit( this.event_1_publiclink )
 		cy.contains( 'No codes available' )
 
@@ -115,7 +114,7 @@ context( 'Claimer can view valid events', () => {
 	it( 'Event 2: Shows different code after first is scanned', function( ) {
 
 		// Mark the first code as read by simulating a scan
-		cy.request( `https://poap-qr-kiosk.web.app/claim/${ this.event_2_firstcode }` )
+		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_2_firstcode }` )
 
 		// Visit the public link
 		cy.visit( this.event_2_publiclink )

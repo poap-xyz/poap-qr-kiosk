@@ -16,7 +16,17 @@
  * @type {Cypress.PluginConfig}
  */
 // eslint-disable-next-line no-unused-vars
+
+// Load environment
+const envFile = process.env.NODE_ENV == 'development' ? '.env.development' : '.env.production'
+const dotenvConfig = {
+    path: `${ __dirname }/../../${ envFile }`
+  }
+console.log( `Runing cypress with ${ process.env.NODE_ENV } and ${ envFile }` )
+require('dotenv').config( dotenvConfig )
+
 module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
+
+  config.env.REACT_APP_publicUrl = process.env.REACT_APP_publicUrl
+  return config
 }

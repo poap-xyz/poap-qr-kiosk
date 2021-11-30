@@ -21,9 +21,9 @@
   "scripts": {
     "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
     "build": "react-scripts build",
-    "cypress": "$(npm bin)/cypress open",
-    "test": "start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress open\"",
-    "test:ci": "start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --config 60000\"",
+    "cypress": "NODE_ENV=development $(npm bin)/cypress open",
+    "test": "NODE_ENV=development start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress open\"",
+    "test:ci": "NODE_ENV=production start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --config 60000\"",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -49,6 +49,7 @@
     "@babel/eslint-parser": "^7.16.0",
     "@babel/preset-react": "^7.16.0",
     "cypress-file-upload": "^5.0.8",
+    "dotenv": "^10.0.0",
     "start-server-and-test": "^1.14.0"
   }
 }

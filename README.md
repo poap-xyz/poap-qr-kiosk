@@ -8,20 +8,32 @@ There is a non-trivial chance it will be rewritten if the concept proves viable.
 
 Product owner: @actualymentor
 
-## Frontend setup
+## Firebase initial setup
+
+To configure Firebase services:
+
+1. Enable firestore, functions, hosting, analytics
+2. Enable [app check]( https://console.firebase.google.com/u/0/project/poap-qr-kiosk/settings/appcheck ) ([docs](https://firebase.google.com/docs/app-check/web/recaptcha-provider))
+3. Fill out all variables in `.env`
+
+To Configure backend:
+
+1. Set keys `auth0.client_id`, `auth0.client_secret`, `auth0.endpoint`, `sendgrid.fromemail`, and `sendgrid.apikey` with `firebase functions:config:set key=value`
+1. `firebase functions:config:get > .runtimeconfig.json`
+
+
+## Frontend usage
 
 1. `nvm use`
-2. `npm i`
+2. `npm i`u
 3. Populate `.env` based on `.env.example`
 4. `npm start`
 
-## Backend setup
+## Backend usage
 
 1. `cd functions`
 2. `nvm use`
 3. `npm i`
-4. Set keys `api.devaccesstoken`, `api.accesstoken`, `sendgrid.fromemail`, and `sendgrid.apikey` with `firebase functions:config:set key=value`
-4. `firebase functions:config:get > .runtimeconfig.json`
 5. `npm start`
 
 ## Architecture
@@ -30,12 +42,3 @@ App code based on `create-react-app`, styling based on `styled-components`, rout
 
 Backend runs on a Firebase project.
 
-### Firebase initial setup
-
-For backend/functions setup, see `./functions/README.md`.
-
-To configure Firebase services:
-
-1. Enable firestore, functions, hosting, analytics
-2. Enable [app check]( https://console.firebase.google.com/u/0/project/poap-qr-kiosk/settings/appcheck ) ([docs](https://firebase.google.com/docs/app-check/web/recaptcha-provider))
-3. Fill out all variables in `.env`

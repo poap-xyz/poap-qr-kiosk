@@ -4,6 +4,8 @@ import { listenToCode, requestManualCodeRefresh, listenToEventMeta, refreshScann
 import { log } from '../../modules/helpers'
 import { useHistory, useParams } from 'react-router-dom'
 import useInterval from 'use-interval'
+const { REACT_APP_publicUrl } = process.env
+console.log( 'Frontend using ', REACT_APP_publicUrl )
 
 // Components
 import QR from '../atoms/QR'
@@ -135,7 +137,7 @@ export default function ViewQR( ) {
     { <H2 align="center">Scan the code below to claim your POAP</H2> }
 
     {  /* QR showing code */ }
-    <QR key={ code } className='glow' data-code={ code } value={ `https://poap-qr-kiosk.web.app/claim/${ code }` } />
+    <QR key={ code } className='glow' data-code={ code } value={ `${ REACT_APP_publicUrl }/claim/${ code }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
     { event && <Sidenote>{ event.codes - event.codesAvailable } of { event.codes } codes claimed</Sidenote> }
