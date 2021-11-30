@@ -2,6 +2,9 @@
 const { db, dataFromSnap } = require( './firebase' )
 const { v4: uuidv4 } = require('uuid')
 const { sendEventAdminEmail } = require( './email' )
+
+// Configs
+const functions = require( 'firebase-functions' )
 const { kiosk } = functions.config()
 
 exports.registerEvent = async function( data, context ) {
