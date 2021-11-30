@@ -20,6 +20,8 @@ jobs:
       # Get the repo files from current commit
       - name: Cloning repository
         uses: actions/checkout@v1
+      - name: Checkout development
+        run: git checkout development
 
       # Install frontend dependencies based on nvmrc
       - name: Read .nvmrc

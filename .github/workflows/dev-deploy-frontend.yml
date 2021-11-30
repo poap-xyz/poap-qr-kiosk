@@ -36,6 +36,8 @@ jobs:
       # Environment and dependency setup
       - name: Cloning repository
         uses: actions/checkout@v1
+      - name: Checkout development
+        run: git checkout development
       - name: Read .nvmrc
         run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
         id: nvm
