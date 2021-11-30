@@ -2,6 +2,7 @@
 const { db, dataFromSnap } = require( './firebase' )
 const { v4: uuidv4 } = require('uuid')
 const { sendEventAdminEmail } = require( './email' )
+const { kiosk } = functions.config()
 
 exports.registerEvent = async function( data, context ) {
 	
@@ -74,8 +75,8 @@ exports.registerEvent = async function( data, context ) {
 			email: email,
 			event: {
 				name,
-				eventlink: `https://poap-qr-kiosk.web.app/#/event/${ id }`,
-				adminlink: `https://poap-qr-kiosk.web.app/#/event/admin/${ id }/${ authToken }`
+				eventlink: `${ kiosk.public_url }/#/event/${ id }`,
+				adminlink: `${ kiosk.public_url }/#/event/admin/${ id }/${ authToken }`
 			}
 		} )
 

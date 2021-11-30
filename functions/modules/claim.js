@@ -22,7 +22,7 @@ app.get( '/claim/:code', async ( req, res ) => {
 
 		// Return a redirect to the POAP app
 		// 307: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_redirection
-		return res.redirect( 307, `${ kiosk.public_url }#/claim/${ code }` )
+		return res.redirect( 307, `${ kiosk.public_url }/#/claim/${ code }` )
 
 	} catch( e ) {
 
