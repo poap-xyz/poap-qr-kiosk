@@ -148,7 +148,7 @@ context( 'Claimer can view valid events', () => {
 		cy.visit( this.event_2_publiclink )
 
 		// Shows one code as claimed
-		cy.contains( '1 of 2 codes claimed' )
+		cy.contains( '1 of 5 codes claimed' )
 
 	} )
 
