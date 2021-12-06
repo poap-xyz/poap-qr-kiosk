@@ -5,7 +5,7 @@ import { log } from '../../modules/helpers'
 import { useHistory, useParams } from 'react-router-dom'
 import useInterval from 'use-interval'
 const { REACT_APP_publicUrl } = process.env
-console.log( 'Frontend using ', REACT_APP_publicUrl )
+log( 'Frontend using live url', REACT_APP_publicUrl )
 
 // Components
 import QR from '../atoms/QR'
