@@ -11,7 +11,7 @@ const Input = styled.div`
 	& input {
 		background: ${ ( { theme } ) => theme.colors.backdrop };
 		border: none;
-		border-left: 2px solid ${ ( { theme } ) => theme.colors.primary };
+		border-left: 2px solid ${ ( { theme, highlight } ) => highlight ? theme.colors.accent : theme.colors.primary };
 	}
 
 	& input {
@@ -43,11 +43,11 @@ const Input = styled.div`
 
 `
 
-export default ( { onChange, type, label, info, id, ...props } ) => {
+export default ( { onChange, type, label, info, highlight, id, ...props } ) => {
 
 	const { current: internalId } = useRef( id || `input-${ Math.random() }` )
 
-	return <Input>
+	return <Input highlight={ highlight }>
 
 		{ label && <label htmlFor={ internalId }>{ label } { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
 		<input data-testid={ internalId } { ...props } id={ internalId } onChange={ onChange } type={ type || 'text' } />

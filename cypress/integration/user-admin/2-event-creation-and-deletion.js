@@ -6,31 +6,48 @@ const admin = require( '../../fixtures/admin-user' )
 
 context( 'Organiser successful event creation', () => {
 
-	it( 'Has all required fields', () => {
+	it( 'Shows only file box if no file was selected', () => {
 
 		cy.visit( '/create' )
-		cy.contains( 'label', 'Event name' )
-		cy.contains( 'label', 'Your email' )
-		cy.contains( 'label', 'Event end date' )
+		cy.get( 'button' ).should( 'not.exist' )
 		cy.contains( 'label', 'Select .txt file with codes' )
 
 	} )
 
-	it( 'Shows no button if no file was selected', () => {
+	it( 'Shows prefilled fields after file selected', () => {
 
-		cy.get( 'button' ).should( 'not.exist' )
+		cy.visit( '/create' )
 
-	} )
-
-	it( 'Shows the amount of codes in a selected .txt file', () => {
-
+		// Select file
+		cy.contains( 'label', 'Select .txt file with codes' )
 		cy.get( 'input[type=file]' ).attachFile( `two-correct-codes.txt` )
+		cy.contains( 'Checking your codes' )
+
+		// Relevant inputs appear
+		cy.contains( 'label', 'Event name' )
+		cy.contains( 'label', 'Your email' )
+		cy.contains( 'label', 'Event end date' )
+
+		// Inputs are prefilled with expected values (generated based on backend testing defaults)
+		cy.get( 'input#event-create-name' ).should( input => {
+			const val = input.val()
+			expect( val ).to.include( 'Test Event' )
+		} )
+			
+		const tomorrow = new Date( Date.now() + 1000 * 60 * 60 * 24 )
+		let month = tomorrow.getUTCMonth() + 1
+		month = `${month}`.length == 1 ? `0${month}` : month
+		let day = tomorrow.getDate()
+		day = `${day}`.length == 1 ? `0${day}` : day
+		const YMD = `${ tomorrow.getFullYear() }-${ month }-${ day }`
+		cy.get( 'input#event-create-date' ).should( 'have.value', YMD )
+
 		cy.contains( 'Create event with 2 codes' )
-		cy.contains( 'Upload different codes' )
+		
 
 	} )
 
-	it( 'Succeeds when all data is provided', () => {
+	it( 'Fails with missing data and succeeds when all data is provided', () => {
 
 		let alerts = 0
 		cy.on( 'window:alert', response => {
@@ -39,6 +56,10 @@ context( 'Organiser successful event creation', () => {
 			if( alerts == 2 ) expect( response ).to.contain( 'specify a valid email address' )
 			if( alerts == 3 ) expect( response ).to.contain( 'specify the date' )
 		} )
+
+		// Clear inputs
+		cy.get( '#event-create-name' ).clear()
+		cy.get( '#event-create-date' ).clear()
 
 		cy.get( '#event-create-submit' ).click()
 		cy.get( '#event-create-name' ).type( admin.events[0].name )

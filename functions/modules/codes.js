@@ -52,7 +52,10 @@ async function getAccessToken() {
 // this is because I am not sure that this API will not suddenly be throttled or authenticated.
 const checkCodeStatus = async code => {
 
-	if( code.includes( 'testing' ) ) return { claimed: false }
+	// Testing data for CI
+	const tomorrow = new Date( Date.now() + 1000 * 60 * 60 * 24 )
+	const dayMonthYear = `${ tomorrow.getDate() }-${ tomorrow.toString().match( /(?:\w*\ )([A-Z]{1}[a-z]{2})/ )[1] }-${ tomorrow.getFullYear() }`
+	if( code.includes( 'testing' ) ) return { claimed: false, event: { end_date: dayMonthYear, name: `Test Event ${ Math.random() }` } }
 
 	// Get API data
 	const apiUrl = dev ? 'https://dev-api.poap.tech' : 'https://api.poap.tech'
@@ -139,6 +142,31 @@ async function updateCodeStatus( code, cachedResponse ) {
 
 }
 
+/* ///////////////////////////////
+// Get event data from code
+// /////////////////////////////*/
+exports.getEventDataFromCode = async function ( code, context ) {
+
+	try {
+
+		if( context.app == undefined ) {
+			throw new Error( `App context error` )
+		}
+
+		// Get code meta from API
+		const { event, error, message } = await checkCodeStatus( code )
+
+		// Return only the event portion
+		return { event, error: error && `${error}, ${message}` }
+
+
+	} catch( e ) {
+		console.error( 'getEventDataFromCode error: ', e )
+		return { error: e.message }
+	}
+
+}
+
 // ///////////////////////////////
 // Manual code check
 // ///////////////////////////////
@@ -147,7 +175,6 @@ exports.checkIfCodeHasBeenClaimed = async ( code, context ) => {
 	try {
 
 		if( context.app == undefined ) {
-			console.log( context )
 			throw new Error( `App context error` )
 		}
 
@@ -186,7 +213,6 @@ exports.refreshOldUnknownCodes = async ( source, context ) => {
 
 		// Appcheck validation
 		if( context.app == undefined ) {
-			console.log( context )
 			throw new Error( `App context error` )
 		}
 

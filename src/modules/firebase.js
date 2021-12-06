@@ -46,6 +46,7 @@ export const checkIfCodeHasBeenClaimed = httpsCallable( functions, 'checkIfCodeH
 export const requestManualCodeRefresh = httpsCallable( functions, 'requestManualCodeRefresh' )
 export const validateCallerDevice = httpsCallable( functions, 'validateCallerDevice' )
 export const refreshScannedCodesStatuses = httpsCallable( functions, 'refreshScannedCodesStatuses' )
+export const getEventDataFromCode = httpsCallable( functions, 'getEventDataFromCode' )
 
 // ///////////////////////////////
 // Code actions

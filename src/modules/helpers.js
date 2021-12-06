@@ -16,3 +16,8 @@ export const dateOnXDaysFromNow = days => {
 	return new Date( Date.now() + daysInMs ).toISOString().slice(0, 10)
 
 }
+
+export const monthNameToNumber = monthName => {
+	const months = [ 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december' ]
+	return months.findIndex( month => month.includes( monthName.toLowerCase() ) ) + 1
+}

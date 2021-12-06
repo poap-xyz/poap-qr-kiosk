@@ -62,12 +62,26 @@ context( 'Claimer can view valid events', () => {
 
 	} )
 
+	it( 'Event 1: Shows code marked as used', function( ) {
+
+		// Mark the first code as read by simulating a scan
+		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_firstcode }` )
+
+		// Visit the public link
+		cy.visit( this.event_1_publiclink )
+
+		// Shows one code as claimed
+		cy.contains( '1 of 2 codes claimed' )
+
+	} )
+
 	it( 'Event 1: Shows no codes after both are scanned', function( ) {
 
 		// Mark the second code as read by simulating a scan
 		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_secondcode }` )
 		cy.visit( this.event_1_publiclink )
 		cy.contains( 'No codes available' )
+		cy.get( 'svg[data-code]' ).should( 'not.exist' )
 
 	} )
 
@@ -122,6 +136,19 @@ context( 'Claimer can view valid events', () => {
 		// Check that the QR shows an unused code and save the second code
 		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_2_secondcode' )
 		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).should( 'eq', fiveCodes.find( code => code != this.event_2_firstcode ) )
+
+	} )
+
+	it( 'Event 2: Shows code marked as used', function( ) {
+
+		// Mark the first code as read by simulating a scan
+		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_2_firstcode }` )
+
+		// Visit the public link
+		cy.visit( this.event_2_publiclink )
+
+		// Shows one code as claimed
+		cy.contains( '1 of 2 codes claimed' )
 
 	} )
 

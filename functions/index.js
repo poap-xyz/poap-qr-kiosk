@@ -8,7 +8,10 @@ const generousRuntime = {
 // Code status managers
 // ///////////////////////////////
 
-const { checkIfCodeHasBeenClaimed, refreshScannedCodesStatuses, refreshOldUnknownCodes } = require( './modules/codes' )
+const { checkIfCodeHasBeenClaimed, refreshScannedCodesStatuses, refreshOldUnknownCodes, getEventDataFromCode } = require( './modules/codes' )
+
+// Get event data of a code
+exports.getEventDataFromCode = functions.https.onCall( getEventDataFromCode )
 
 // Refresh all codes ( trigger from frontend )
 exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.onCall( refreshOldUnknownCodes )
@@ -20,7 +23,7 @@ exports.checkIfCodeHasBeenClaimed = functions.https.onCall( checkIfCodeHasBeenCl
 exports.refreshScannedCodesStatuses = functions.runWith( generousRuntime ).https.onCall( refreshScannedCodesStatuses )
 
 // ///////////////////////////////
-// Event CRUD
+// Event data
 // ///////////////////////////////
 
 const { registerEvent, deleteEvent } = require( './modules/events' )

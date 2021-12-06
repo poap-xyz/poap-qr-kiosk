@@ -8,8 +8,8 @@ import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 
 // Functionality
-import { registerEvent, event } from '../../modules/firebase'
-import { log, dateOnXDaysFromNow } from '../../modules/helpers'
+import { registerEvent, event, getEventDataFromCode } from '../../modules/firebase'
+import { log, dateOnXDaysFromNow, monthNameToNumber } from '../../modules/helpers'
 import Papa from 'papaparse'
 import { useHistory } from 'react-router-dom'
 
@@ -45,6 +45,9 @@ export default function Admin( ) {
 
       try {
 
+        // Loading animation
+        setLoading( `Checking your codes` )
+
         // Validations
         const { name } = csv
         if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( 'File is not a csv/txt' )
@@ -72,14 +75,29 @@ export default function Admin( ) {
 
         // Validated and sanetised codes
         log( 'Sanetised codes: ', data )
+        if( !data.length ) throw new Error( `No codes in the file you selected` )
         if( !cancelled ) setCodes( data )
 
+        // Load event data based on codes
+        const { data: { event, error } } = await getEventDataFromCode( data[0] )
+        log( 'Code data received ', event, error )
+        if( error ) throw new Error( error )
+
+        // Set event details to state
+        setName( event.name )
+        const [ day, monthName, year ] = event.end_date.split( '-' )
+        const endDate = `${year}-${monthNameToNumber( monthName )}-${ day.length == 1 ? `0${ day }` : day }`
+        log( `Computed end date from ${event.end_date}: `, endDate )
+        setDate( endDate )
+
+        if( !cancelled ) setLoading( false )
 
       } catch( e ) {
 
         log( 'Validation error ', e, ' for ', csv )
-        if( !cancelled ) setCsv( undefined )
         if( !cancelled ) setCodes( undefined )
+        if( !cancelled ) setLoading( false )
+        if( !cancelled ) setCsv( undefined )
         return alert( e.message )
 
       }
@@ -156,19 +174,22 @@ export default function Admin( ) {
 
     <Main width='400px'>
 
-      <Input id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder='Best launch party ever' label="Event name" info="For your own reference, not visible to the world." value={ name } />
-      <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder='revered@organizer.com' label="Your email" info="We will send the QR kiosk link and the admin link there." value={ email } />
-      <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } max={ dateOnXDaysFromNow( 30 ) } type='date' label="Event end date" info={ `After this date your QR kiosk will stop working in your local timezone.\n\n⚠️ You can only schedule up to 30 days in advance.` } value={ date } />
-
-      { !codes && <Input 
+      <Input
+        highlight={ !codes } 
         id="event-create-file"
         label="Select .txt file with codes"
         info="This is the codes.txt file you received when you created your POAP event at https://app.poap.xyz/admin"
         onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
-      /> }
+      />
 
+      { codes && <>
+        <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder='Best launch party ever' label="Event name" info="For your own reference, not visible to the world." value={ name } />
+        <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } max={ dateOnXDaysFromNow( 30 ) } type='date' label="Event end date" info={ `After this date your QR kiosk will stop working in your local timezone.\n\n⚠️ You can only schedule up to 30 days in advance.` } value={ date } />
+        <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder='revered@organizer.com' label="Your email" info="We will send the QR kiosk link and the admin link there." value={ email } />
+      </> }
+      
       { codes && <Button id="event-create-submit" onClick={ createEvent }>Create event with { codes.length } codes</Button> }
-      { codes && <Button id="event-create-reset" color='hint' onClick={ f => setCodes( null ) }>Upload different codes</Button> }
+      { /* codes && <Button id="event-create-reset" color='hint' onClick={ f => setCodes( null ) }>Upload different codes</Button> */ }
     </Main>
 
   </Container>
