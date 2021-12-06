@@ -26,9 +26,12 @@ exports.refreshScannedCodesStatuses = functions.runWith( generousRuntime ).https
 // Event data
 // ///////////////////////////////
 
-const { registerEvent, deleteEvent } = require( './modules/events' )
+const { registerEvent, deleteEvent, getUniqueOrganiserEmails } = require( './modules/events' )
 exports.registerEvent = functions.runWith( generousRuntime ).https.onCall( registerEvent )
 exports.deleteEvent = functions.https.onCall( deleteEvent )
+
+// Email export to update event organisers
+exports.getUniqueOrganiserEmails = functions.https.onCall( getUniqueOrganiserEmails )
 
 // ///////////////////////////////
 // QR Middleware API

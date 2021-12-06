@@ -1,5 +1,6 @@
 {
   "projects": {
+    "legacy": "poap-qr-kiosk",
     "default": "qr-kiosk-dev",
     "development": "qr-kiosk-dev",
     "production": "qr-kiosk"

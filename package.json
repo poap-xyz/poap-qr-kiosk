@@ -23,6 +23,7 @@
     "build": "react-scripts build",
     "cypress": "NODE_ENV=development $(npm bin)/cypress open",
     "test": "NODE_ENV=development start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress open\"",
+    "test:production": "NODE_ENV=production start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress open\"",
     "test:ci": "NODE_ENV=production CI=true start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --config 60000\"",
     "eject": "react-scripts eject"
   },

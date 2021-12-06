@@ -166,3 +166,25 @@ exports.deleteCodesOfDeletedEvent = async function( snap, context ) {
 	}
 
 }
+
+exports.getUniqueOrganiserEmails = async function(  ) {
+
+	try {
+
+		if( !process.env.development ) return console.error( 'getUniqueOrganiserEmails called externally which is never allowed' )
+
+		const events = await db.collection( 'events' ).get().then( dataFromSnap )
+		const emails = events.map( ( { email } ) => email )
+		const uniqueEmails = []
+		emails.map( email => {
+			if( uniqueEmails.includes( email ) ) return
+			uniqueEmails.push( email )
+		} )
+		
+		return uniqueEmails
+
+	} catch( e ) {
+		console.error( e )
+	}
+
+}
