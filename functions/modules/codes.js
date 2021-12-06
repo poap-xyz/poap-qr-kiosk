@@ -54,7 +54,7 @@ const checkCodeStatus = async code => {
 
 	// Testing data for CI
 	const tomorrow = new Date( Date.now() + 1000 * 60 * 60 * 24 )
-	const dayMonthYear = `${ tomorrow.getDate() }-${ tomorrow.toString().match( /(?:\w*\ )([A-Z]{1}[a-z]{2})/ )[1] }-${ tomorrow.getFullYear() }`
+	const dayMonthYear = `${ tomorrow.getDate() }-${ tomorrow.toString().match( /(?:\w* )([A-Z]{1}[a-z]{2})/ )[1] }-${ tomorrow.getFullYear() }`
 	if( code.includes( 'testing' ) ) return { claimed: false, event: { end_date: dayMonthYear, name: `Test Event ${ Math.random() }` } }
 
 	// Get API data
@@ -343,8 +343,11 @@ exports.deleteExpiredCodes = async () => {
 
 	try {
 
+		// An extra day of expiry distance in case of timezone weirdness
+		const dayInMs = 1000 * 60 * 60 * 24
+
 		// Get all expired codes
-		const { docs: expiredCodes } = await db.collection( 'codes' ).where( 'expires', '>', Date.now() ).get()
+		const { docs: expiredCodes } = await db.collection( 'codes' ).where( 'expires', '>', Date.now() + dayInMs ).get()
 
 		// Log for reference
 		console.log( `Deleting ${ expiredCodes.length } expired codes` )

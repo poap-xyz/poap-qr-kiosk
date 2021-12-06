@@ -29,7 +29,8 @@ exports.registerEvent = async function( data, context ) {
 		const { id } = await db.collection( 'events' ).add( {
 			name,
 			email,
-			expires: date,
+			expires: new Date( date ).getTime(),
+			expires_yyyy_mm_dd: date,
 			codes: codes.length,
 			codesAvailable: codes.length,
 			authToken,
@@ -68,7 +69,7 @@ exports.registerEvent = async function( data, context ) {
 				created: Date.now(),
 				updated: Date.now(),
 				event: id,
-				expires: date
+				expires: new Date( date ).getTime()
 			} )
 
 		} ) )
