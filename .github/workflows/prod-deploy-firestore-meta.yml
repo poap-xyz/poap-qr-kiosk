@@ -10,7 +10,7 @@ on:
       - 'firebase.json'
       - 'firebase.indexes.json'
       - 'firestore.rules'
-  pull-request:
+  pull_request:
     types: [ closed ]
     branches:
       - main

@@ -9,7 +9,7 @@ on:
       - '.firebaserc'
       - '.github/workflows/dev-deploy-functions.yml'
       - 'functions/**'
-  pull-request:
+  pull_request:
     types: [ closed ]
     branches:
       - development
