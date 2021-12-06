@@ -9,6 +9,7 @@ on:
       - '*.json'
       - '*.js'
       - 'src/**'
+      - 'cypress/**'
       - '.github/workflows/prod-deploy-frontend.yml'
     branches:
       - main
@@ -21,6 +22,7 @@ on:
       - '*.json'
       - '*.js'
       - 'src/**'
+      - 'cypress/**'
       - '.github/workflows/prod-deploy-frontend.yml'
 
 jobs:

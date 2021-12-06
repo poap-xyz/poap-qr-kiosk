@@ -10,6 +10,7 @@ on:
       - '*.json'
       - '*.js'
       - 'src/**'
+      - 'cypress/**'
       - '.github/workflows/dev-deploy-frontend.yml'
     branches:
       - development
@@ -22,6 +23,7 @@ on:
       - '*.json'
       - '*.js'
       - 'src/**'
+      - 'cypress/**'
       - '.github/workflows/dev-deploy-frontend.yml'
 
 jobs:
