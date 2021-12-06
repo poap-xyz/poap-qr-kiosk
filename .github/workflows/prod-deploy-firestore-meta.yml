@@ -1,22 +1,25 @@
-name: Deploy functions on push/merge
+name: Deploy Firestore meta settings on push/merge
 
 on:
-  # Trigger: on new tag push
   push:
     branches:
-      - development
+      - main
     paths:
       - '.firebaserc'
-      - '.github/workflows/dev-deploy-functions.yml'
-      - 'functions/**'
+      - '.github/workflows/prod-deploy-firestore-meta.yml'
+      - 'firebase.json'
+      - 'firebase.indexes.json'
+      - 'firestore.rules'
   pull-request:
     types: [ closed ]
     branches:
-      - development
+      - main
     paths:
       - '.firebaserc'
-      - '.github/workflows/dev-deploy-functions.yml'
-      - 'functions/**'
+      - '.github/workflows/prod-deploy-firestore-meta.yml'
+      - 'firebase.json'
+      - 'firebase.indexes.json'
+      - 'firestore.rules'
 
 jobs:
   build:
@@ -28,42 +31,24 @@ jobs:
       # Get the repo files from current commit
       - name: Cloning repository
         uses: actions/checkout@v1
-      - name: Checkout development
-        run: git checkout development
 
-      # Install frontend dependencies based on nvmrc
-      - name: Read .nvmrc
-        run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
-        id: nvmfunctions
-        working-directory: functions
-
-      - name: Set Node.js (.nvmrc)
-        uses: actions/setup-node@v1
-        with:
-          node-version: "${{ steps.nvmfunctions.outputs.NVMRC }}"
-
-      - name: Install functions dependencies
-        run: npm i
-        working-directory: functions
-
-          
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only=functions --project=development
+          args: deploy --only=firestore --project=production
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
       - name: Send push notification
         env:
-          MSG_TITLE: "Success: Development POAP QR Kiosk"
+          MSG_TITLE: "Success: Production Firestore POAP QR Kiosk"
           MSG_CONTENT: "functions CI success"
         run: curl -f -X POST -d "token=${{ secrets.PUSHOVER_TOKEN }}&user=${{ secrets.PUSHOVER_USER }}&title=$MSG_TITLE&message=$MSG_CONTENT&priority=1" https://api.pushover.net/1/messages.json
         
       - name: Send failure push notification
         if: ${{ failure() }}
         env:
-          MSG_TITLE: "Failure: Development POAP QR Kiosk"
+          MSG_TITLE: "Failure: Production Firestore POAP QR Kiosk"
           MSG_CONTENT: "functions CI failed"
         run: curl -f -X POST -d "token=${{ secrets.PUSHOVER_TOKEN }}&user=${{ secrets.PUSHOVER_USER }}&title=$MSG_TITLE&message=$MSG_CONTENT&priority=1" https://api.pushover.net/1/messages.json
         

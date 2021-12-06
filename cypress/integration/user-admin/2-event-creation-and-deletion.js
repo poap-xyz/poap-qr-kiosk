@@ -8,7 +8,7 @@ context( 'Organiser successful event creation', () => {
 
 	it( 'Shows only file box if no file was selected', () => {
 
-		cy.visit( '/create' )
+		cy.visit( '/create?debug=true' )
 		cy.get( 'button' ).should( 'not.exist' )
 		cy.contains( 'label', 'Select .txt file with codes' )
 
@@ -16,7 +16,7 @@ context( 'Organiser successful event creation', () => {
 
 	it( 'Shows prefilled fields after file selected', () => {
 
-		cy.visit( '/create' )
+		cy.visit( '/create?debug=true' )
 
 		// Select file
 		cy.contains( 'label', 'Select .txt file with codes' )

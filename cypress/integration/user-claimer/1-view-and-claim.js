@@ -15,7 +15,7 @@ context( 'Claimer can view valid events', () => {
 	it( 'Event 1: Creates event', () => {
 
 		// Visit creation interface
-		cy.visit( '/create' )
+		cy.visit( '/create?debug=true' )
 
 		// Input the event data
 		cy.get( 'input[type=file]' ).attachFile( `two-correct-codes.txt` )
@@ -92,7 +92,7 @@ context( 'Claimer can view valid events', () => {
 	it( 'Event 2: Creates event', () => {
 
 		// Visit creation interface
-		cy.visit( '/create' )
+		cy.visit( '/create?debug=true' )
 
 		// Input the event data
 		cy.get( 'input[type=file]' ).attachFile( `five-correct-codes.txt` )

@@ -1,8 +1,14 @@
 name: Deploy functions on push/merge
 
 on:
-  # Trigger: on new tag push
   push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/prod-deploy-functions.yml'
+      - 'functions/**'
+  pull-request:
+    types: [ closed ]
     branches:
       - main
     paths:
