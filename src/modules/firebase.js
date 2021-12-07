@@ -86,6 +86,8 @@ export async function listenToCode( eventId, cb ) {
 		// Tell backend to double check the code status in case it is expired
 		return newCode.id ? checkIfCodeHasBeenClaimed( newCode.id ) : true
 
+	}, error => {
+		log( 'Snapshot error: ', error )
 	} )
 
 }

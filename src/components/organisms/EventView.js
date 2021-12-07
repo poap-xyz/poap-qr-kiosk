@@ -122,6 +122,14 @@ export default function ViewQR( ) {
   // loading screen
   if( loading ) return <Loading message={ loading } />
 
+  // Expired event error
+  if( event?.expires && event.expires < Date.now() ) return <Container>
+  
+    <h1>QR Kiosk expired</h1>
+    <Sidenote>This kiosk was set to expire on { new Date( event.expires ).toString(  ) } by the organiser.</Sidenote>
+    
+  </Container>
+
   // No code error
   if( !code ) return <Container>
   
