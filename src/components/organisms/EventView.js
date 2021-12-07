@@ -12,6 +12,7 @@ import QR from '../atoms/QR'
 import Loading from '../molecules/Loading'
 import { H1, H2, Sidenote } from '../atoms/Text'
 import Container from '../atoms/Container'
+import Network from '../molecules/NetworkStatusBar'
 
 
 // ///////////////////////////////
@@ -141,6 +142,8 @@ export default function ViewQR( ) {
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
     { event && <Sidenote>{ event.codes - event.codesAvailable } of { event.codes } codes claimed</Sidenote> }
+
+    <Network />
 
   </Container>
 

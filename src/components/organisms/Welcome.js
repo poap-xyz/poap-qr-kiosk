@@ -1,7 +1,6 @@
 import Button from '../atoms/Button'
 import Container from '../atoms/Container'
 import Main from '../atoms/Main'
-import Section from '../atoms/Section'
 import Hero from '../molecules/Hero'
 import Input from '../atoms/Input'
 import { Text, H1, H2 } from '../atoms/Text'
@@ -48,7 +47,7 @@ export default function ComponentName( ) {
 			</Hero>
 
 		</Main>
-		
+
 	</Container>
 
 }
