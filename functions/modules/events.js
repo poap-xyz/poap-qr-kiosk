@@ -111,8 +111,8 @@ exports.updatePublicEventData = async function( change, context ) {
 	if( !after.exists ) return db.collection( 'publicEventData' ).doc( eventId ).delete()
 
 	// If this was an update, grab the public properties and set them
-	const { name, codes, codesAvailable } = after.data()
-	return db.collection( 'publicEventData' ).doc( eventId ).set( { name, codes, codesAvailable: codesAvailable || 0, updated: Date.now() }, { merge: true } )
+	const { name, codes, codesAvailable, expires } = after.data()
+	return db.collection( 'publicEventData' ).doc( eventId ).set( { name, codes, expires, codesAvailable: codesAvailable || 0, updated: Date.now() }, { merge: true } )
 
 }
 
