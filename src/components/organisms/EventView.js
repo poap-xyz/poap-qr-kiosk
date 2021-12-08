@@ -1,6 +1,6 @@
 // Data management
 import { useState, useEffect } from 'react'
-import { listenToCode, requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses } from '../../modules/firebase'
+import { listenToCode, requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses, trackEvent } from '../../modules/firebase'
 import { log } from '../../modules/helpers'
 import { useHistory, useParams } from 'react-router-dom'
 import useInterval from 'use-interval'
@@ -46,7 +46,10 @@ export default function ViewQR( ) {
     const codeListener = listenToCode( eventId, newCode => {
 
       // Set new code to state
-      if( !cancelled ) setCode( newCode.id )
+      if( !cancelled ) {
+        setCode( newCode.id )
+        trackEvent( 'qr_view_code_loaded' )
+      }
       if( !cancelled && newCode.id ) setLoading( false )
 
     } )
@@ -72,6 +75,7 @@ export default function ViewQR( ) {
     const timeout = setTimeout( f => {
 
       // Ask backend to update all old codes
+      trackEvent( 'qr_view_force_backend_refresh' )
       requestManualCodeRefresh().then( res => {
         log( `Backend refresh complete with `, res )
         if( !cancelled ) setLoading( false )

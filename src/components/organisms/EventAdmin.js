@@ -9,7 +9,7 @@ import { Text, H1 } from '../atoms/Text'
 // Functionality
 import { useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
-import { deleteEvent } from '../../modules/firebase'
+import { deleteEvent, trackEvent } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 const { REACT_APP_publicUrl } = process.env
 
@@ -39,6 +39,7 @@ export default function EventAdmin( ) {
 	const clipboard = async text => {
 		await navigator.clipboard.writeText( text )
 		alert( 'Copied to clipboard!' )
+		trackEvent( 'admin_link_copied_clipboard' )
 	}
 	// Data management
 	async function safelyDeleteEvent(  ) {
@@ -56,6 +57,7 @@ export default function EventAdmin( ) {
 			if( error ) throw new Error( error )
 
 			alert( `Deletion success!\n\nYour event and its codes were deleted.\n\nRedirecting you to the home page.` )
+			trackEvent( 'admin_event_deleted' )
 			return history.push( '/' )
 
 		} catch( e ) {
@@ -76,7 +78,8 @@ export default function EventAdmin( ) {
 
 			<H1>Event links</H1>
 			
-			<Section>
+			<Section align="flex-start">
+				<Text>Open your public event link in a new tab on your phone browser, and get POAPs to all your closest frens.</Text>
 				<Input
 					id='admin-eventlink-public' 
 					readOnly
@@ -89,6 +92,7 @@ export default function EventAdmin( ) {
 			</Section>
 
 			<Section>
+				<Text>Your admin link is yours to make changes to this instance of the magic POAP dispenser. Don&apos;t share this with anyone!</Text>
 				<Input
 					id='admin-eventlink-secret'
 					readOnly
@@ -102,7 +106,7 @@ export default function EventAdmin( ) {
 
 			<H1>Admin actions</H1>
 			<Section>
-				<Text>If you want to re-upload a different list of codes, you need to delete your existing event first since codes can&apos;t be updated. This will delete your QR kiosk event but not your POAP event.</Text>
+				<Text>Want to rebuild your kiosk? Delete this one first, and upload a new set of codes when you&apos;re ready.</Text>
 				<Button onClick={ safelyDeleteEvent }>Delete event</Button>
 			</Section>
 

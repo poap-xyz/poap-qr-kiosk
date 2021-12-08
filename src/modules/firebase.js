@@ -126,7 +126,7 @@ export async function listenToEventMeta( eventId, cb ) {
 // ///////////////////////////////
 // Analytics actions
 // ///////////////////////////////
-export function event( name ) {
+export function trackEvent( name ) {
 	if( !name ) return
 	if( process.env.NODE_ENV == 'development' ) return log( 'Dummy analytics event: ', name )
 	logEvent( analytics, name )

@@ -3,7 +3,7 @@ import Container from '../atoms/Container'
 import Main from '../atoms/Main'
 import Hero from '../molecules/Hero'
 import Input from '../atoms/Input'
-import { Text, H1, H2 } from '../atoms/Text'
+import { Text, H1, H2, Sup } from '../atoms/Text'
 import { useEffect, useState } from 'react'
 
 // Functionality
@@ -35,9 +35,9 @@ export default function ComponentName( ) {
 
 			<Hero>
 
-				<H1>POAP QR code kiosk</H1>
-				<H2>Stressless POAP code distribution at physical events</H2>
-				<Text>Turn your claim code .txt file into a webpage that displays them as easy-to-scan QR codes. Perfect for POAP claims at a physical event check-ins.</Text>
+				<H1>Magic POAP Dispenser <Sup>beta</Sup></H1>
+				<H2>Get POAPs to your friends IRL</H2>
+				<Text>Just input your .txt file, and watch your phone turn into a POAP QR dispenser at the click of a button. You&apos;ll be able to show QR codes for everyone to scan one by one.</Text>
 				{ allowAccess && <Button onClick={ f => history.push( '/create' ) }>Create QR kiosk</Button> }
 				{ !allowAccess && <>
 					<Input id='welcome-beta-password' type='password' placeholder='P4ssword' onChange={ ( { target } ) => setPassword( target.value ) } label='Beta password' value={ password } />

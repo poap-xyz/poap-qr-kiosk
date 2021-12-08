@@ -8,7 +8,7 @@ import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 
 // Functionality
-import { registerEvent, event, getEventDataFromCode } from '../../modules/firebase'
+import { registerEvent, trackEvent, getEventDataFromCode } from '../../modules/firebase'
 import { log, dateOnXDaysFromNow, monthNameToNumber } from '../../modules/helpers'
 import Papa from 'papaparse'
 import { useHistory } from 'react-router-dom'
@@ -146,7 +146,7 @@ export default function Admin( ) {
       // Create remote event
       const { data: newEvent } = await registerEvent( { name, email, date, codes } )
       log( 'Event created: ', newEvent, { name, email, date, codes } )
-      event( 'admin_code_import' )
+      trackEvent( 'admin_event_create' )
 
       // Error handling
       if( newEvent.error ) throw new Error( newEvent.error )

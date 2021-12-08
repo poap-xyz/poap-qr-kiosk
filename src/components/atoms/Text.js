@@ -37,3 +37,6 @@ export const Br = styled.span`
 	width: 100%;
 	margin: 2rem 0;
 `
+export const Sup = styled.sup`
+
+`

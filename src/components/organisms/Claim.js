@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { log, dev } from '../../modules/helpers'
 import { useParams } from 'react-router-dom'
-import { validateCallerDevice } from '../../modules/firebase'
+import { validateCallerDevice, trackEvent } from '../../modules/firebase'
 
 // Components
 import Loading from '../molecules/Loading'
@@ -37,6 +37,7 @@ export default function ViewQR( ) {
         if( isValid ) {
           const link = `http://poap.xyz/claim/${ claimCode }`
           log( `Valid with code ${ claimCode }, forwarding to ${ link }` )
+          trackEvent( 'claim_device_validation_failed' )
           if( !dev ) window.location.replace( link )
         }
         else throw new Error( `Device is not valid, contact the POAP team` )
@@ -44,6 +45,7 @@ export default function ViewQR( ) {
       } catch( e ) {
 
         log( e )
+        trackEvent( 'claim_device_validation_failed' )
         alert( e.message )
         if( !cancelled ) setLoading( e.message )
 
