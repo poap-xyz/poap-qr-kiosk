@@ -136,7 +136,7 @@ export default function ViewQR( ) {
     <H2>Keep your internet on</H2>
     <Text align="center">Without an internet connection new codes will stop loading. You will receive a notification if the dispenser notices you are offline.</Text>
 
-    <Button onClick={ f => setAcceptedTerms( true ) }>I understand, let&apos;s go!</Button>
+    <Button id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>I understand, let&apos;s go!</Button>
 
   </Container>
 
