@@ -5,7 +5,8 @@ export const Text = styled.p`
 	margin: 1rem 0;
 	line-height: 1.5rem;
 	color: ${ ( { theme } ) => theme.colors.text };
-	text-align: ${ ( { align } ) => align || 'left' }
+	text-align: ${ ( { align } ) => align || 'left' };
+	overflow-wrap: anywhere;
 `
 
 export const H1 = styled.h1`
@@ -15,6 +16,7 @@ export const H1 = styled.h1`
 	font-family: 'Comfortaa', cursive, sans-serif;
 	text-align: ${ ( { align } ) => align || 'left' };
 	color: ${ ( { theme } ) => theme.colors.primary };
+	overflow-wrap: anywhere;
 `
 
 export const H2 = styled.h2`
@@ -24,6 +26,7 @@ export const H2 = styled.h2`
 	font-weight: 400;
 	text-align: ${ ( { align } ) => align || 'left' };
 	color: ${ ( { theme } ) => theme.colors.accent };
+	overflow-wrap: anywhere;
 `
 
 export const Sidenote = styled.p`
@@ -31,6 +34,7 @@ export const Sidenote = styled.p`
 	font-style: italic;
 	margin-top:  1rem;
 	text-align: center;
+	overflow-wrap: anywhere;
 `
 
 export const Br = styled.span`
@@ -38,5 +42,5 @@ export const Br = styled.span`
 	margin: 2rem 0;
 `
 export const Sup = styled.sup`
-
+	overflow-wrap: anywhere;
 `

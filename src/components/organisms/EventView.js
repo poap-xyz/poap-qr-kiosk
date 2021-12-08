@@ -9,8 +9,9 @@ log( 'Frontend using live url', REACT_APP_publicUrl )
 
 // Components
 import QR from '../atoms/QR'
+import Button from '../atoms/Button'
 import Loading from '../molecules/Loading'
-import { H1, H2, Sidenote } from '../atoms/Text'
+import { H1, H2, Text, Sidenote } from '../atoms/Text'
 import Container from '../atoms/Container'
 import Network from '../molecules/NetworkStatusBar'
 
@@ -31,6 +32,7 @@ export default function ViewQR( ) {
   const [ loading, setLoading ] = useState( 'Setting up your Kiosk' )
   const [ event, setEvent ] = useState(  )
   const [ scanInterval, setScanInterval ] = useState( defaultScanInerval )
+  const [ acceptedTerms, setAcceptedTerms ] = useState( false )
 
   // ///////////////////////////////
   // Lifecycle handling
@@ -119,9 +121,24 @@ export default function ViewQR( ) {
 
   }, scanInterval )
 
+
   // ///////////////////////////////
   // Render component
   // ///////////////////////////////
+
+  // Show welcome screen
+  if( !acceptedTerms ) return <Container>
+    
+    <H1 align="center">Before we begin</H1>
+    <H2 align="center">Scan QRs with a camera app</H2>
+    <Text align="center">Do not scan codes with the POAP app, they will not work. This is an anti-abuse measure.</Text>
+
+    <H2>Keep your internet on</H2>
+    <Text align="center">Without an internet connection new codes will stop loading. You will receive a notification if the dispenser notices you are offline.</Text>
+
+    <Button onClick={ f => setAcceptedTerms( true ) }>I understand, let&apos;s go!</Button>
+
+  </Container>
 
   // loading screen
   if( loading ) return <Loading message={ loading } />
@@ -147,7 +164,7 @@ export default function ViewQR( ) {
 
     {  /* Event metadata */ }
     { event && <H1 align="center">{ event.name }</H1> }
-    { <H2 align="center">Scan the code below to claim your POAP</H2> }
+    { <H2 align="center">Scan the QR with your camera to claim your POAP</H2> }
 
     {  /* QR showing code */ }
     <QR key={ code } className='glow' data-code={ code } value={ `${ REACT_APP_publicUrl }/claim/${ code }` } />
