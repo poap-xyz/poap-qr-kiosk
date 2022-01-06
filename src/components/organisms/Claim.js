@@ -37,7 +37,7 @@ export default function ViewQR( ) {
         if( isValid ) {
           const link = `http://poap.xyz/claim/${ claimCode }`
           log( `Valid with code ${ claimCode }, forwarding to ${ link }` )
-          trackEvent( 'claim_device_validation_failed' )
+          trackEvent( 'claim_device_validation_success' )
           if( !dev ) window.location.replace( link )
         }
         else throw new Error( `Device is not valid, contact the POAP team` )

@@ -22,7 +22,8 @@ import Network from '../molecules/NetworkStatusBar'
 export default function ViewQR( ) {
 
   const history = useHistory()
-  const { eventId } = useParams()
+  const { eventId, viewMode } = useParams()
+  const { eventId: stateEventId } = history.location
 
   // ///////////////////////////////
   // State handling
@@ -31,21 +32,42 @@ export default function ViewQR( ) {
   const [ code, setCode ] = useState( null )
   const [ loading, setLoading ] = useState( 'Setting up your Kiosk' )
   const [ event, setEvent ] = useState(  )
+	const [ internalEventId, setInternalEventId ] = useState( eventId || stateEventId )
+
   const [ scanInterval, setScanInterval ] = useState( defaultScanInerval )
   const [ acceptedTerms, setAcceptedTerms ] = useState( false )
+  const [ mode, setMode ] = useState( viewMode )
 
   // ///////////////////////////////
   // Lifecycle handling
   // ///////////////////////////////
+
+  // Mode handling
+  useEffect( ( ) => {
+
+	// If this is stream mode, hide the event Id from the URL
+	if( viewMode == 'stream' ) {
+		log( `Stream mode enabled for ${ eventId }, redirecting` )
+		history.push( '/event/', {
+			eventId
+		} )
+	}
+
+  }, [ viewMode ] )
 
   // Start code listener
   useEffect( f => {
 
     let cancelled = false
 
-    log( `Listening to codes for ${ eventId }` )
+    log( `Listening to codes for ${ internalEventId }` )
 
-    const codeListener = listenToCode( eventId, newCode => {
+    if( !internalEventId ) {
+			alert( `Make sure to open this page through the link you received by email!` )
+			return history.push( '/' )
+    }
+
+    const codeListener = listenToCode( internalEventId, newCode => {
 
       // Set new code to state
       if( !cancelled ) {
@@ -61,7 +83,7 @@ export default function ViewQR( ) {
       return codeListener
     }
 
-  }, [] )
+  }, [ internalEventId ] )
 
   // No code? Manual refresh timer
   useEffect( f => {
@@ -96,7 +118,12 @@ export default function ViewQR( ) {
   }, [ code ] )
 
   // Get event details on load
-  useEffect( () => listenToEventMeta( eventId, setEvent ), [] )
+  useEffect( () => {
+
+		log( `New event ID ${ internalEventId } detected, grabbing event meta` )
+		if( internalEventId ) return listenToEventMeta( internalEventId, setEvent )
+
+  }, [ internalEventId ] )
 
   // Update the state of scanned codes periodically
   useInterval( () => {
@@ -170,7 +197,7 @@ export default function ViewQR( ) {
     <QR key={ code } className='glow' data-code={ code } value={ `${ REACT_APP_publicUrl }/claim/${ code }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
-    { event && <Sidenote>{ event.codes - event.codesAvailable } of { event.codes } codes claimed</Sidenote> }
+    { event && <Sidenote>{ event.codes - event.codesAvailable } of { event.codes } codes claimed or pending</Sidenote> }
 
     <Network />
 

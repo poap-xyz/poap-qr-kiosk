@@ -55,6 +55,8 @@ const checkCodeStatus = async code => {
 	// Testing data for CI
 	const tomorrow = new Date( Date.now() + 1000 * 60 * 60 * 24 )
 	const dayMonthYear = `${ tomorrow.getDate() }-${ tomorrow.toString().match( /(?:\w* )([A-Z]{1}[a-z]{2})/ )[1] }-${ tomorrow.getFullYear() }`
+	
+	// For testing codes, always reset on refresh
 	if( code.includes( 'testing' ) ) return { claimed: false, event: { end_date: dayMonthYear, name: `Test Event ${ Math.random() }` } }
 
 	// Get API data
@@ -203,8 +205,11 @@ exports.refreshOldUnknownCodes = async ( source, context ) => {
 
 	// If this was called with context (cron) use delay check
 	// if there was no context (frontend asked) then run with no delay
-	const ageInMins = source == 'cron' ? 5 : 0
-	const ageInMs = 1000 * 60 * ageInMins
+	// const ageInMins = source == 'cron' ? 5 : 0
+
+	// These are some sane defaults to prevent complete DOSsing
+	const ageInSeconds = 60
+	const ageInMs = 1000 * ageInSeconds
 	const errorSlowdownFactor = 10
 	const maxInProgress = 10
 
@@ -218,6 +223,7 @@ exports.refreshOldUnknownCodes = async ( source, context ) => {
 
 		// Get old unknown codes
 		const oldUnknowns = await db.collection( 'codes' ).where( 'claimed', '==', 'unknown' ).where( 'updated', '<', Date.now() - ageInMs ).get().then( dataFromSnap )
+		const uncheckedCodes = await db.collection( 'codes' ).where( 'amountOfRemoteStatusChecks', '==', 0 ).get().then( dataFromSnap )
 		const [ clean, withErrors ] = oldUnknowns.reduce( ( acc, val ) => {
 
 			const [ cleanAcc, errorAcc ] = acc
@@ -230,7 +236,7 @@ exports.refreshOldUnknownCodes = async ( source, context ) => {
 		const olderWithErrors = withErrors.filter( ( { updated } ) => updated < ( Date.now() - ( ageInMs * errorSlowdownFactor ) ) )
 
 		// Build action queue
-		const queue = [ ...clean, ...olderWithErrors ].map( ( { uid } ) => function() {
+		const queue = [ ...uncheckedCodes, ...clean, ...olderWithErrors ].map( ( { uid } ) => function() {
 
 			return updateCodeStatus( uid )
 
@@ -328,10 +334,23 @@ exports.updatePublicEventAvailableCodes = async function( change, context ) {
 	const { event, claimed } = after.data()
 
 	// Do nothing if no change
-	if( prevClaimed == claimed ) return
+	if( prevClaimed === claimed ) return
 
-	// If it is now claimed or of unknown status, decrement available codes
-	if( claimed === true ) return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now() }, { merge: true } )
+	// Scenarios:
+	// false > unknown = -1
+	// false > true = -1
+	// unknown > true = 0
+	// true > false = +1
+	// unknown > false = +1
+
+	if( prevClaimed === false && [ 'unknown', true ].includes( claimed ) ) {
+		return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now() }, { merge: true } )
+	}
+	
+	if( [ true, 'unknown' ].includes( prevClaimed ) && claimed === false ) {
+		return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now() }, { merge: true } )
+	}	
+
 
 }
 

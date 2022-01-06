@@ -32,7 +32,7 @@ exports.registerEvent = async function( data, context ) {
 			expires: new Date( date ).getTime(),
 			expires_yyyy_mm_dd: date,
 			codes: codes.length,
-			codesAvailable: codes.length,
+			codesAvailable: 0, // This will be updates by the initial scan run in codes.js:updatePublicEventAvailableCodes
 			authToken,
 			created: Date.now(),
 			updated: Date.now()
@@ -54,7 +54,6 @@ exports.registerEvent = async function( data, context ) {
 		await Promise.all( saneCodes.map( async code => {
 
 			// Check if code already exists and is claimed
-			console.log( 'Getting doc...' )
 			const oldDocRef = await db.collection( 'codes' ).doc( code ).get()
 			const oldDocData = oldDocRef.data()
 			if( oldDocRef.exists && oldDocData.event != id ) throw new Error( `Code ${ code } is already in use by another event.` )
@@ -66,6 +65,7 @@ exports.registerEvent = async function( data, context ) {
 
 			return db.collection( 'codes' ).doc( code ).set( {
 				claimed: 'unknown',
+				amountOfRemoteStatusChecks: 0,
 				created: Date.now(),
 				updated: Date.now(),
 				event: id,
@@ -121,7 +121,6 @@ exports.deleteEvent = async function( data, context ) {
 	try {
 
 		if( context.app == undefined ) {
-			console.log( context )
 			throw new Error( `App context error` )
 		}
 

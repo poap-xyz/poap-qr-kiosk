@@ -19,5 +19,6 @@ export const dateOnXDaysFromNow = days => {
 
 export const monthNameToNumber = monthName => {
 	const months = [ 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december' ]
-	return months.findIndex( month => month.includes( monthName.toLowerCase() ) ) + 1
+	const monthNumber = months.findIndex( month => month.includes( monthName.toLowerCase() ) ) + 1
+	return `${monthNumber}`.length == 1 ? `0${monthNumber}` : monthNumber
 }

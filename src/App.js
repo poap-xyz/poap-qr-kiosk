@@ -22,7 +22,7 @@ export default function App( ) {
         <Route exact path='/' component={ Welcome } />
         <Route exact path='/create' component={ CreateEvent } />
         <Route path='/event/admin/:eventId/:authToken' component={ EventAdmin } />
-        <Route path='/event/:eventId' component={ ViewQR } />
+        <Route path='/event/:eventId?/:viewMode?' component={ ViewQR } />
         <Route path='/claim/:claimCode' component={ Claim } />
 
 
