@@ -208,7 +208,7 @@ exports.refreshOldUnknownCodes = async ( source, context ) => {
 	// const ageInMins = source == 'cron' ? 5 : 0
 
 	// These are some sane defaults to prevent complete DOSsing
-	const ageInSeconds = 60
+	const ageInSeconds = 5 * 60
 	const ageInMs = 1000 * ageInSeconds
 	const errorSlowdownFactor = 10
 	const maxInProgress = 10
