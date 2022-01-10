@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 export default styled.section`
 	padding: ${ ( { padding } ) => padding || '1rem 0' };
+	margin: 1rem 0;
 	display: flex;
 	flex-direction: ${ ( { direction } ) => direction || 'column' };
 	width: ${ ( { width } ) => width || '100%' };

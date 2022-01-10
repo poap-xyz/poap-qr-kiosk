@@ -9,8 +9,8 @@ import Image from '../atoms/Image'
 import { Text, H1, H2, Sup } from '../atoms/Text'
 import { useEffect, useState } from 'react'
 
-import checkin from '../../assets/undraw_designer_life_re_6ywf.svg'
-import stream from '../../assets/undraw_conference_call_b0w6.svg'
+import checkin from '../../assets/undraw_designer_life_re_6ywf_modified.svg'
+import stream from '../../assets/undraw_conference_call_b0w6_modified.svg'
 
 // Functionality
 import { useHistory } from 'react-router-dom'
@@ -52,7 +52,7 @@ export default function ComponentName( ) {
 
 			</Hero>
 
-			<Section height='500px' justify='space-between' direction="row">
+			<Section height='600px' justify='space-around' direction="row">
 
 				<Column>
 					<Image src={ checkin } />
@@ -65,7 +65,7 @@ export default function ComponentName( ) {
 
 			</Section>
 
-			<Section height='500px' justify='space-between' direction="row">
+			<Section height='600px' justify='space-around' direction="row">
 
 				<Column>
 					<H2>Stream-friendly QR sharing</H2>
