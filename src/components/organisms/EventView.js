@@ -8,6 +8,7 @@ const { REACT_APP_publicUrl } = process.env
 log( 'Frontend using live url', REACT_APP_publicUrl )
 
 // Components
+import Section from '../atoms/Section'
 import QR from '../atoms/QR'
 import Button from '../atoms/Button'
 import Loading from '../molecules/Loading'
@@ -45,15 +46,17 @@ export default function ViewQR( ) {
   // Mode handling
   useEffect( ( ) => {
 
-	// If this is stream mode, hide the event Id from the URL
-	if( viewMode == 'stream' ) {
-		log( `Stream mode enabled for ${ eventId }, redirecting` )
-		history.push( '/event/', {
-			eventId
-		} )
-	}
+		log( `Url mode ${ viewMode }, state mode ${ mode }` )
 
-  }, [ viewMode ] )
+		// If this is stream mode, hide the event Id from the URL
+		if( mode == 'stream' ) {
+			log( `Stream mode enabled for ${ eventId }, redirecting` )
+			history.push( '/event/', {
+				eventId
+			} )
+		}
+
+  }, [ viewMode, mode ] )
 
   // Start code listener
   useEffect( f => {
@@ -165,6 +168,30 @@ export default function ViewQR( ) {
 
     <Button id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>I understand, let&apos;s go!</Button>
 
+  </Container>
+
+  if( !mode ) return <Container>
+    
+		<Section>
+
+			<H1 align="center">Are you online or IRL?</H1>
+			<H2 align="center">Physical event mode</H2>
+			<Text align="center">The physical event mode works best if you have one device that is dispensing POAPs. For example an iPad at the check-in of an event.</Text>
+			<Button id="event-view-mode-physical" onClick={ f => setMode( 'physical' ) }>Use physical mode</Button>
+
+		</Section>
+
+		<Section>
+
+			<H2>Online/stream mode</H2>
+			<Text align="center">The streaming mode can be used as a screenshare in for example Discord. It is designed to handle many people scanning at the same time, and has extra farming protections.</Text>
+
+			<Button id="event-view-mode-stream" onClick={ f => setMode( 'stream' ) }>Use streaming mode</Button>
+
+		</Section>
+
+
+    
   </Container>
 
   // loading screen

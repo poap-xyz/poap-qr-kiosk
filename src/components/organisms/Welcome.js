@@ -38,7 +38,7 @@ export default function ComponentName( ) {
 				<H1>Magic POAP Dispenser <Sup>beta</Sup></H1>
 				<H2>Get POAPs to your friends IRL</H2>
 				<Text>Just input your .txt file, and watch your phone turn into a POAP QR dispenser at the click of a button. You&apos;ll be able to show QR codes for everyone to scan one by one.</Text>
-				{ allowAccess && <Button onClick={ f => history.push( '/create' ) }>Create QR kiosk</Button> }
+				{ allowAccess && <Button onClick={ f => history.push( '/create' ) }>Create QR dispenser</Button> }
 				{ !allowAccess && <>
 					<Input id='welcome-beta-password' type='password' placeholder='P4ssword' onChange={ ( { target } ) => setPassword( target.value ) } label='Beta password' value={ password } />
 					<Button onClick={ f => alert( 'Wrong password' ) }>Submit password</Button>

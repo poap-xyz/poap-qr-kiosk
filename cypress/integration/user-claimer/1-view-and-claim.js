@@ -40,8 +40,9 @@ context( 'Claimer can view valid events', () => {
 		// Visit the public interface
 		cy.visit( this.event_1_publiclink )
 
-		// Accept disclaimer
+		// Accept disclaimer and set physical mode
 		cy.get( '#event-view-accept-disclaimer' ).click()
+		cy.get( '#event-view-mode-physical' ).click()
 
 		// Check that a valid QR is shown
 		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).should( 'be.oneOf', twoCodes )
@@ -59,8 +60,9 @@ context( 'Claimer can view valid events', () => {
 		// Visit the public link
 		cy.visit( this.event_1_publiclink )
 
-		// Accept disclaimer
+		// Accept disclaimer and set physical mode
 		cy.get( '#event-view-accept-disclaimer' ).click()
+		cy.get( '#event-view-mode-physical' ).click()
 
 		// Check that the QR shows an unused code and save the second code
 		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_1_secondcode' )
@@ -76,8 +78,9 @@ context( 'Claimer can view valid events', () => {
 		// Visit the public link
 		cy.visit( this.event_1_publiclink )
 
-		// Accept disclaimer
+		// Accept disclaimer and set physical mode
 		cy.get( '#event-view-accept-disclaimer' ).click()
+		cy.get( '#event-view-mode-physical' ).click()
 
 		// Shows one code as claimed
 		cy.contains( '1 of 2 codes claimed' )
@@ -90,8 +93,9 @@ context( 'Claimer can view valid events', () => {
 		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_secondcode }` )
 		cy.visit( this.event_1_publiclink )
 
-		// Accept disclaimer
+		// Accept disclaimer and set physical mode
 		cy.get( '#event-view-accept-disclaimer' ).click()
+		cy.get( '#event-view-mode-physical' ).click()
 
 		cy.contains( 'No codes available' )
 		cy.get( 'svg[data-code]' ).should( 'not.exist' )
@@ -130,8 +134,9 @@ context( 'Claimer can view valid events', () => {
 		// Visit the public interface
 		cy.visit( this.event_2_publiclink )
 
-		// Accept disclaimer
+		// Accept disclaimer and set physical mode
 		cy.get( '#event-view-accept-disclaimer' ).click()
+		cy.get( '#event-view-mode-physical' ).click()
 
 		// Check that a valid QR is shown
 		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).should( 'be.oneOf', fiveCodes )
@@ -149,8 +154,9 @@ context( 'Claimer can view valid events', () => {
 		// Visit the public link
 		cy.visit( this.event_2_publiclink )
 
-		// Accept disclaimer
+		// Accept disclaimer and set physical mode
 		cy.get( '#event-view-accept-disclaimer' ).click()
+		cy.get( '#event-view-mode-physical' ).click()
 
 		// Check that the QR shows an unused code and save the second code
 		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_2_secondcode' )
@@ -166,8 +172,9 @@ context( 'Claimer can view valid events', () => {
 		// Visit the public link
 		cy.visit( this.event_2_publiclink )
 
-		// Accept disclaimer
+		// Accept disclaimer and set physical mode
 		cy.get( '#event-view-accept-disclaimer' ).click()
+		cy.get( '#event-view-mode-physical' ).click()
 
 		// Shows one code as claimed
 		cy.contains( '1 of 5 codes claimed' )
