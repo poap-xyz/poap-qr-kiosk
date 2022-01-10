@@ -24,7 +24,7 @@ const Wrapper = styled.div`
 	justify-content: center;
 	min-height: 100vh;
 	width: 100%;
-	padding:  0 max( 1rem, calc( 25vw - 4rem ) );
+	padding:  0 max( 1rem, calc( 25vw - 8rem ) );
 	box-sizing: border-box;
 	& * {
 		box-sizing: border-box;

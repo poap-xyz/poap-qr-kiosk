@@ -8,4 +8,7 @@ export default styled.button`
 	font-size: 1rem;
 	background: none;
 	border-radius: 5px;
+	&:hover {
+		cursor: pointer;
+	}
 `
