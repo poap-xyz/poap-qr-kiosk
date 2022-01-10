@@ -16,8 +16,8 @@ import { useHistory } from 'react-router-dom'
 export default function ComponentName( ) {
 
 	const history = useHistory()
-	const [ allowAccess, setAllowAccess ] = useState( false )
-	const [ password, setPassword ] = useState( '' )
+	const [ allowAccess, setAllowAccess ] = useState( true )
+	const [ password, setPassword ] = useState( 'erc721' )
 
 	/* ///////////////////////////////
 	// Lifecycle management
