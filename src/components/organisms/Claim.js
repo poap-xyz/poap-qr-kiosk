@@ -1,6 +1,6 @@
 // Data management
 import { useState, useEffect } from 'react'
-import { log, dev } from '../../modules/helpers'
+import { log, dev, wait } from '../../modules/helpers'
 import { useParams } from 'react-router-dom'
 import { validateCallerDevice, trackEvent } from '../../modules/firebase'
 
@@ -30,6 +30,20 @@ export default function ViewQR( ) {
     ( async () => {
 
       try {
+
+				// Backend marked this device as invalid
+				if( claimCode == 'robot' ) {
+
+					// Wait to keep the spammer busy
+					await wait( 5000 )
+					setLoading( '👀 Have I seen you before?' )
+					await wait( 5000 )
+					setLoading( '🧐 You look a bit suspicious my friend...' )
+					await wait( 5000 )
+					setLoading( 'Please scan a new QR code' )
+					throw new Error( `You were marked as a robot! This can happen if a lot of people are scanning at the same time, please scan again :)` )
+
+				}
 
         const { data: isValid } = await validateCallerDevice()
 

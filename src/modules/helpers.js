@@ -22,3 +22,9 @@ export const monthNameToNumber = monthName => {
 	const monthNumber = months.findIndex( month => month.includes( monthName.toLowerCase() ) ) + 1
 	return `${monthNumber}`.length == 1 ? `0${monthNumber}` : monthNumber
 }
+
+// ///////////////////////////////
+// Visual
+// ///////////////////////////////
+
+export const wait = ( time, error=false ) => new Promise( ( res, rej ) => setTimeout( error ? rej : res, time ) )

@@ -1,4 +1,4 @@
-const { db, dataFromSnap } = require( './firebase' )
+const { db, dataFromSnap, increment } = require( './firebase' )
 const app = require( './express' )()
 
 // Configs
@@ -9,6 +9,9 @@ app.get( '/claim/:code/:eventId?', async ( req, res ) => {
 
 	try {
 
+		// How many times may a code be scanned before it is considered malicious?
+		const abuseTreshold = 20
+
 		// Get the code from the url
 		const { code, eventId } = req.params
 		if( !code ) throw new Error( `No code in request` )
@@ -17,11 +20,18 @@ app.get( '/claim/:code/:eventId?', async ( req, res ) => {
 		await db.collection( 'codes' ).doc( code ).set( {
 			updated: Date.now(),
 			scanned: true,
-			claimed: code.includes( 'testing' ) ? true : 'unknown'
+			claimed: code.includes( 'testing' ) ? true : 'unknown',
+			timesScanned: increment( 1 )
 		}, { merge: true } )
 
 		// If this is a streaming-mode request, grab a code from the bottom ot the queue instead
 		if( eventId ) {
+
+			// Check this code for abuse
+			const { claimed, timesScanned } = await db.collection( 'codes' ).get().then( dataFromSnap ) 
+
+			// If this code was claimed or is overused, redirect to jail
+			if( claimed || timesScanned > abuseTreshold ) return res.redirect( 307, `${ kiosk.public_url }/#/claim/robot` ) 
 
 			// Grab code in the reverse orderBy from frontend/src/modules/firebase.js
 			const [ oldestCode ] = await db.collection( 'codes' )
