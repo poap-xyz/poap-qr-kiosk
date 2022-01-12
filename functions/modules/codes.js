@@ -69,7 +69,26 @@ const checkCodeStatus = async code => {
 			Authorization: `Bearer ${ access_token }`
 		}
 	} )
-	.then( res => res.json() )
+	.then( async res => {
+
+		try {
+
+			// Try to access response as json first
+			const json = await res.json()
+			return json
+
+		} catch {
+
+			// If json fails, try as text
+			const text = await res.text()
+			return {
+				error: 'checkCodeStatus error',
+				message: text
+			}
+
+		}
+
+	} )
 	.then( json => {
 		if( dev ) console.log( 'Response: ', json )
 		return json
@@ -77,7 +96,7 @@ const checkCodeStatus = async code => {
 	.catch( e => {
 
 		// Log for my reference
-		console.log( 'API error, if this keeps happening check in with the backend team: ', e )
+		console.error( 'checkCodeStatus error: ', e )
 
 		// Return object so the updateCodeStatus function can continue
 		return {
