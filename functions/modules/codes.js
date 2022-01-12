@@ -83,7 +83,7 @@ const checkCodeStatus = async code => {
 			const text = await res.text()
 			return {
 				error: 'checkCodeStatus error',
-				message: text
+				message: `${text}. Did you upload old or expired codes?`
 			}
 
 		}
