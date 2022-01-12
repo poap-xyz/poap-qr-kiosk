@@ -8,15 +8,19 @@ const Input = styled.div`
 	margin: 1rem 0;
 	width: 100%;
 	
-	& input {
+	& input, & p {
 		background: ${ ( { theme } ) => theme.colors.backdrop };
 		border: none;
 		border-left: 2px solid ${ ( { theme, highlight } ) => highlight ? theme.colors.accent : theme.colors.primary };
 	}
 
-	& input {
+	& input, & p {
 		padding: 1rem 2rem 1rem 1rem;
 		width: 100%;
+	}
+
+	p {
+		font-size: .7rem;
 	}
 
 	& label {
@@ -43,14 +47,15 @@ const Input = styled.div`
 
 `
 
-export default ( { onChange, type, label, info, highlight, id, ...props } ) => {
+export default ( { onChange, type, label, info, highlight, id, title, onClick, ...props } ) => {
 
 	const { current: internalId } = useRef( id || `input-${ Math.random() }` )
 
-	return <Input highlight={ highlight }>
+	return <Input onClick={ onClick } highlight={ highlight }>
 
 		{ label && <label htmlFor={ internalId }>{ label } { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
-		<input data-testid={ internalId } { ...props } id={ internalId } onChange={ onChange } type={ type || 'text' } />
+		{ !title && <input data-testid={ internalId } { ...props } id={ internalId } onChange={ onChange } type={ type || 'text' } /> }
+		{ title && <p>{ title }</p> }
 		
 	</Input>
 

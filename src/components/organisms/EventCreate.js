@@ -29,6 +29,7 @@ export default function Admin( ) {
   const [ csv, setCsv ] = useState(  )
   const [ codes, setCodes ] = useState(  )
   const [ loading, setLoading ] = useState( false )
+  const [ filename, setFilename ] = useState( 'codes.txt' )
 
   // ///////////////////////////////
   // Lifecycle handling
@@ -51,6 +52,9 @@ export default function Admin( ) {
         // Validations
         const { name } = csv
         if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( 'File is not a csv/txt' )
+
+        // Set filename to state
+      	setFilename( name )
 
         // Load csv data
         let data = await parseCsv( csv )
@@ -179,6 +183,9 @@ export default function Admin( ) {
         id="event-create-file"
         label="Select .txt file with codes"
         info="This is the codes.txt file you received when you created your POAP event at https://app.poap.xyz/admin"
+        accept=".csv,.txt"
+        title={ csv && codes && `[ ${filename} ] - ${ codes.length } codes detected.` }
+        onClick={ !filename ? undefined : () => setCsv( undefined ) }
         onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
       />
 
