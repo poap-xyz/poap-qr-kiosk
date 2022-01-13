@@ -11,6 +11,8 @@ exports.registerEvent = async function( data, context ) {
 	
 	try {
 
+		const dayInMs = 1000 * 60 * 60 * 24
+
 		// Appcheck validation
 		if( context.app == undefined ) {
 			console.log( context )
@@ -29,7 +31,7 @@ exports.registerEvent = async function( data, context ) {
 		const { id } = await db.collection( 'events' ).add( {
 			name,
 			email,
-			expires: new Date( date ).getTime(),
+			expires: new Date( date ).getTime() + dayInMs, // Event expiration plus a day
 			expires_yyyy_mm_dd: date,
 			codes: codes.length,
 			codesAvailable: 0, // This will be updates by the initial scan run in codes.js:updatePublicEventAvailableCodes
@@ -69,7 +71,7 @@ exports.registerEvent = async function( data, context ) {
 				created: Date.now(),
 				updated: Date.now(),
 				event: id,
-				expires: new Date( date ).getTime()
+				expires: new Date( date ).getTime() + dayInMs
 			}, { merge: true } )
 
 		} ) )
