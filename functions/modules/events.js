@@ -70,7 +70,7 @@ exports.registerEvent = async function( data, context ) {
 				updated: Date.now(),
 				event: id,
 				expires: new Date( date ).getTime()
-			} )
+			}, { merge: true } )
 
 		} ) )
 

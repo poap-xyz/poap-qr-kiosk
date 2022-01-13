@@ -144,14 +144,14 @@ async function updateCodeStatus( code, cachedResponse ) {
 			updated: Date.now(),
 			error: error,
 			strikes: increment( 1 )
-		} )
+		}, { merge: true } )
 
 		// Track by error
 		await db.collection( 'errors' ).doc( error ).set( {
 			updated: Date.now(),
 			strikes: increment( 1 ),
 			message: message || ''
-		} ).catch( e => {
+		}, { merge: true } ).catch( e => {
 			// This might happen if the remote error code has weird characters
 			console.error( 'Unable to write error ', e )
 		} )
