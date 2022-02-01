@@ -17,7 +17,7 @@ exports.getEventDataFromCode = functions.https.onCall( getEventDataFromCode )
 exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.onCall( refreshOldUnknownCodes )
 
 // Check status of single code
-exports.checkIfCodeHasBeenClaimed = functions.https.onCall( checkIfCodeHasBeenClaimed )
+// exports.checkIfCodeHasBeenClaimed = functions.https.onCall( checkIfCodeHasBeenClaimed )
 
 // Allow frontend to trigger updates for scanned codes
 exports.refreshScannedCodesStatuses = functions.runWith( generousRuntime ).https.onCall( refreshScannedCodesStatuses )
@@ -61,3 +61,9 @@ exports.updatePublicEventAvailableCodes = functions.firestore.document( `codes/{
 // /////////////////////////////*/
 const { validateCallerDevice } = require( './modules/security' )
 exports.validateCallerDevice = functions.https.onCall( validateCallerDevice )
+
+/* ///////////////////////////////
+// Code claiming
+// /////////////////////////////*/
+const { get_code_by_challenge } = require( './modules/codes' )
+exports.get_code_by_challenge = functions.https.onCall( get_code_by_challenge )

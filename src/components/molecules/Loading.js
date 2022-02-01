@@ -35,6 +35,6 @@ const Spinner = styled.div`
 export default ( { message, ...props } ) => <Container { ...props }>
 	
 	<Spinner />
-	{ message && <Text align="center">{ message }</Text> }
+	{ message && <Text id='loading_text' align="center">{ message }</Text> }
 
 </Container>

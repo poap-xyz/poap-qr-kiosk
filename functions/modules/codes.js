@@ -191,30 +191,30 @@ exports.getEventDataFromCode = async function ( code, context ) {
 // ///////////////////////////////
 // Manual code check
 // ///////////////////////////////
-exports.checkIfCodeHasBeenClaimed = async ( code, context ) => {
+// exports.checkIfCodeHasBeenClaimed = async ( code, context ) => {
 
-	try {
+// 	try {
 
-		if( context.app == undefined ) {
-			throw new Error( `App context error` )
-		}
+// 		if( context.app == undefined ) {
+// 			throw new Error( `App context error` )
+// 		}
 
-		// Check claim status on claim backend
-		const status = await checkCodeStatus( code )
-		const { claimed, error } = status
+// 		// Check claim status on claim backend
+// 		const status = await checkCodeStatus( code )
+// 		const { claimed, error } = status
 
-		// If claimed, or there was an error, mark it so
-		if( claimed === true || error ) await updateCodeStatus( code, status )
+// 		// If claimed, or there was an error, mark it so
+// 		if( claimed === true || error ) await updateCodeStatus( code, status )
 
-		// Always trigger a return from a callable
-		return true
+// 		// Always trigger a return from a callable
+// 		return true
 
 
-	} catch( e ) {
-		console.error( 'checkIfCodeHasBeenClaimed error: ', e )
-	}
+// 	} catch( e ) {
+// 		console.error( 'checkIfCodeHasBeenClaimed error: ', e )
+// 	}
 
-}
+// }
 
 
 // ///////////////////////////////
@@ -395,6 +395,60 @@ exports.deleteExpiredCodes = async () => {
 
 	} catch( e ) {
 		console.error( 'deleteExpiredCodes error ', e )
+	}
+
+}
+
+/* ///////////////////////////////
+// Get code based on valid challenge
+// /////////////////////////////*/
+exports.get_code_by_challenge = async ( challenge_id, context ) => {
+
+	try {
+
+		// 1 minute grace period for completion, this is additional to the window of generate_new_event_public_auth
+		const grace_period_in_ms = 1000 * 60
+
+		// Validate caller
+		if( context.app == undefined ) {
+			throw new Error( `App context error` )
+		}
+
+		// Get challenge
+		const challenge = await db.collection( 'claim_challenges' ).doc( challenge_id ).get().then( dataFromSnap )
+		
+		// Check if challenge still exists
+		if( !challenge || !challenge.eventId ) throw new Error( `This link was already used by somebody else, scan the QR code again please` )
+
+		// Check if challenge expired already
+		if( challenge.expires < ( Date.now() + grace_period_in_ms ) ) throw new Error( `This link expired, please make sure to claim your POAP right after scanning the QR.` )
+
+		// Grab oldest available code
+		const [ oldestCode ] = await db.collection( 'codes' )
+									.where( 'event', '==', challenge.eventId )
+									.where( 'claimed', '==', false )
+									.orderBy( 'updated', 'desc' )
+									.limit( 1 ).get().then( dataFromSnap )
+
+		if( !oldestCode || !oldestCode.uid ) throw new Error( `No more POAPs available for this event!` )
+
+		// Mark oldest code as unknown status
+		await db.collection( 'codes' ).doc( oldestCode.uid ).set( {
+			updated: Date.now(),
+			scanned: true,
+			claimed: oldestCode.uid.includes( 'testing' ) ? true : 'unknown'
+		}, { merge: true } )
+
+		// Delete challenge to prevent reuse
+		await db.collection( 'claim_challenges' ).doc( challenge_id ).delete()
+
+		// Return valid code to the frontend
+		return oldestCode.uid
+
+	} catch( e ) {
+
+		return { error: e.message }
+
 	}
 
 }

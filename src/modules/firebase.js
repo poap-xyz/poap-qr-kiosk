@@ -48,49 +48,12 @@ export const requestManualCodeRefresh = httpsCallable( functions, 'requestManual
 export const validateCallerDevice = httpsCallable( functions, 'validateCallerDevice' )
 export const refreshScannedCodesStatuses = httpsCallable( functions, 'refreshScannedCodesStatuses' )
 export const getEventDataFromCode = httpsCallable( functions, 'getEventDataFromCode' )
+export const get_code_by_challenge = httpsCallable( functions, 'get_code_by_challenge' )
 
 // ///////////////////////////////
 // Code actions
 // ///////////////////////////////
-// export async function markCodeClaimed( code ) {
 
-// 	// Create the reference to the doc
-// 	const docToSet = doc( db, 'codes', code )
-
-// 	// Write the code to the doc with the code as ID
-// 	return setDoc( docToSet, { claimed: 'unknown', updated: Date.now() }, { merge: true } )
-
-// }
-
-export async function listenToCode( eventId, cb ) {
-
-	// Grab oldest known code that has not been claimed
-	const col = collection( db, 'codes' )
-	const q = query( col, where( 'event', '==', eventId ), where( 'claimed', '==', false ), orderBy( "updated" ), limit( 1 ) )
-	return onSnapshot( q, snap => {
-
-		const { docs } = snap
-
-		// expext max one doc
-		const [ doc ] = docs
-		if( !doc ) {
-			log( 'No code found in ', snap )
-			return cb( {} )
-		}
-
-		// Give new code to frontend
-		const newCode = { id: doc.id,  ...doc.data() }
-		log( 'New code received: ', newCode )
-		cb( newCode )
-
-		// Tell backend to double check the code status in case it is expired
-		return newCode.id ? checkIfCodeHasBeenClaimed( newCode.id ) : true
-
-	}, error => {
-		log( 'Snapshot error: ', error )
-	} )
-
-}
 
 export async function importCodesFromArray( password='', codes=[] ) {
 
@@ -117,6 +80,20 @@ export async function listenToEventMeta( eventId, cb ) {
 
 		const data = snap.data()
 		log( `Retreived event metadata: `, data )
+		cb( data )
+
+	} )
+
+}
+
+export async function listen_to_claim_challenge( challenge_id, cb ) {
+
+	const d = doc( db, 'claim_challenges', challenge_id )
+
+	return onSnapshot( d, snap => {
+
+		const data = snap.data()
+		log( `Retreived claim challenge: `, data )
 		cb( data )
 
 	} )

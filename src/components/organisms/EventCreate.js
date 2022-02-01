@@ -9,7 +9,7 @@ import Main from '../atoms/Main'
 
 // Functionality
 import { registerEvent, trackEvent, getEventDataFromCode } from '../../modules/firebase'
-import { log, dateOnXDaysFromNow, monthNameToNumber } from '../../modules/helpers'
+import { log, dateOnXDaysFromNow, monthNameToNumber, dev } from '../../modules/helpers'
 import Papa from 'papaparse'
 import { useHistory } from 'react-router-dom'
 
@@ -23,7 +23,7 @@ export default function Admin( ) {
   // ///////////////////////////////
   // State handling
   // ///////////////////////////////
-  const [ email, setEmail ] = useState( '' )
+  const [ email, setEmail ] = useState( dev ? 'mentor@poap.io' : '' )
   const [ date, setDate ] = useState( '' )
   const [ name, setName ] = useState( '' )
   const [ csv, setCsv ] = useState(  )
@@ -54,7 +54,7 @@ export default function Admin( ) {
         if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( 'File is not a csv/txt' )
 
         // Set filename to state
-      	setFilename( name )
+        setFilename( name )
 
         // Load csv data
         let data = await parseCsv( csv )

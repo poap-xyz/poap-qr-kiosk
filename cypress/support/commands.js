@@ -15,7 +15,7 @@ beforeEach( () => {
 		// Respond with a stubbed function
 		req.reply( ' () => console.log( "Stubbed Google Analytics" )' )
 
-	} )
+	} ).as( 'google_tag_stub' )
 
 
 } )

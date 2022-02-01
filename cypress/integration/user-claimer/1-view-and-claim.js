@@ -6,13 +6,25 @@ const admin = require( '../../fixtures/admin-user' )
 const twoCodes = require( '../../fixtures/two-correct-codes' )
 const fiveCodes = require( '../../fixtures/five-correct-codes' )
 
+async function extract_challenge_from_url ( response ) {
+
+	const { redirects } = response
+	const [ challenge_url ] = redirects
+	cy.log( `Redirect: `, challenge_url )
+	const [ base, challenge_redirect ] = challenge_url.split( '/#/claim/' )
+	const challenge = challenge_redirect.replace( '307: ' )
+	cy.log( `Challenge extracted: ${challenge}` )
+	return challenge
+
+}
+
 context( 'Claimer can view valid events', () => {
 
 	/* ///////////////////////////////
 	// First event
 	// /////////////////////////////*/
 
-	it( 'Event 1: Creates event', () => {
+	it( 'Event 1: Creates event', function() {
 
 		// Visit creation interface
 		cy.visit( '/create?debug=true' )
@@ -30,8 +42,8 @@ context( 'Claimer can view valid events', () => {
 		cy.url().should( 'include', '/event/admin' )
 
 		// Save the event and admin links for further use
-		cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' )
-		cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' )
+		cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
+		cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
 
 	} )
 
@@ -40,65 +52,117 @@ context( 'Claimer can view valid events', () => {
 		// Visit the public interface
 		cy.visit( this.event_1_publiclink )
 
-		// Accept disclaimer and set physical mode
+		// Accept disclaimer
 		cy.get( '#event-view-accept-disclaimer' ).click()
-		cy.get( '#event-view-mode-physical' ).click()
 
-		// Check that a valid QR is shown
-		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).should( 'be.oneOf', twoCodes )
-
-		// Save the first code shown
-		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_1_firstcode' )
+		// Save the first public auth link shown
+		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_1_public_auth_link' ).then( f => cy.log( `Event 1 public auth link: ${ this.event_1_public_auth_link }` ) )
 
 	} )
 
-	it( 'Event 1: Shows different code after first is scanned', function( ) {
+	it( 'Event 1: Successfully redirects to challenge link', function( ) {
 
-		// Mark the first code as read by simulating a scan
-		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_firstcode }` )
+
+		// Visit the public link
+		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }`, { followRedirect: false } ).as( `request` )
+			.then( extract_challenge_from_url )
+			.then( event_1_first_challenge => {
+
+				// Visit the challenge link
+				cy.visit( `/claim/${ event_1_first_challenge }` )
+
+				// Save challenge link
+				cy.url().as( 'event_1_first_challenge_url' )
+
+				// Check that backend redirected us to the claim page
+				cy.url().should( 'include', '/#/claim' )
+
+				// Expect the interface to check if we are human
+				cy.contains( 'Verifying your humanity' )
+
+				// Wait for code retreival
+				cy.contains( 'POAP link' )
+
+				// Check if POAP link supplies one of the test codes
+				cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
+					const [ base, code ] = text.split( '/claim/' )
+					expect( code ).to.be.oneOf( twoCodes )
+				} )
+
+			} )
+		
+
+	} )
+
+	it( 'Event 1: Shows code marked as used (previous redirect marked as used)', function( ) {
 
 		// Visit the public link
 		cy.visit( this.event_1_publiclink )
 
-		// Accept disclaimer and set physical mode
+
+		// Accept disclaimer
 		cy.get( '#event-view-accept-disclaimer' ).click()
-		cy.get( '#event-view-mode-physical' ).click()
-
-		// Check that the QR shows an unused code and save the second code
-		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_1_secondcode' )
-		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).should( 'eq', twoCodes.find( code => code != this.event_1_firstcode ) )
-
-	} )
-
-	it( 'Event 1: Shows code marked as used', function( ) {
-
-		// Mark the first code as read by simulating a scan
-		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_firstcode }` )
-
-		// Visit the public link
-		cy.visit( this.event_1_publiclink )
-
-		// Accept disclaimer and set physical mode
-		cy.get( '#event-view-accept-disclaimer' ).click()
-		cy.get( '#event-view-mode-physical' ).click()
 
 		// Shows one code as claimed
-		cy.contains( '1 of 2 codes claimed' )
+		cy.contains( '1 of 2 codes' )
+
+	} )
+
+	it( 'Event 1: Previous challenge link no longer works', function( ) {
+
+		// Visit the public link
+		cy.visit( this.event_1_first_challenge_url )
+
+		// Interface should indicate that the link expired
+		cy.contains( 'This link was already used' )
 
 	} )
 
 	it( 'Event 1: Shows no codes after both are scanned', function( ) {
 
-		// Mark the second code as read by simulating a scan
-		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_secondcode }` )
+		// Visit the public link to the second code as read by simulating a scan
+		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }`, { followRedirect: false } ).as( `request` )
+			.then( extract_challenge_from_url )
+			.then( event_1_second_challenge => {
+
+				// Visit the challenge link
+				cy.visit( `/claim/${ event_1_second_challenge }` )
+
+				// Wait for code retreival
+				cy.contains( 'POAP link' )
+
+				// Check if POAP link supplies one of the test codes
+				cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
+					const [ base, code ] = text.split( '/claim/' )
+					expect( code ).to.be.oneOf( twoCodes )
+				} )
+
+			} )
+
+		// Visit public event link
 		cy.visit( this.event_1_publiclink )
 
-		// Accept disclaimer and set physical mode
+		// Accept disclaimer
 		cy.get( '#event-view-accept-disclaimer' ).click()
-		cy.get( '#event-view-mode-physical' ).click()
 
-		cy.contains( 'No codes available' )
-		cy.get( 'svg[data-code]' ).should( 'not.exist' )
+		cy.contains( '2 of 2 codes' )
+
+	} )
+
+	it( 'Event 1: Shows error if link was used after codes ran out', function( ) {
+
+		// Visit the public link to the second code as read by simulating a scan
+		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }`, { followRedirect: false } ).as( `request` )
+			.then( extract_challenge_from_url )
+			.then( event_1_second_challenge => {
+
+				// Visit the challenge link
+				cy.visit( `/claim/${ event_1_second_challenge }` )
+
+				// // Wait for code retreival
+				cy.contains( 'No more POAP' )
+
+			} )
 
 	} )
 
@@ -106,7 +170,7 @@ context( 'Claimer can view valid events', () => {
 	// Second event
 	// /////////////////////////////*/
 
-	it( 'Event 2: Creates event', () => {
+	it( 'Event 2: Creates event', function() {
 
 		// Visit creation interface
 		cy.visit( '/create?debug=true' )
@@ -124,8 +188,9 @@ context( 'Claimer can view valid events', () => {
 		cy.url().should( 'include', '/event/admin' )
 
 		// Save the event and admin links for further use
-		cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_2_publiclink' )
-		cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_2_secretlink' )
+		cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_2_publiclink' ).then( f => cy.log( this.event_2_publiclink ) )
+		cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_2_secretlink' ).then( f => cy.log( this.event_2_secretlink ) )
+
 
 	} )
 
@@ -134,50 +199,70 @@ context( 'Claimer can view valid events', () => {
 		// Visit the public interface
 		cy.visit( this.event_2_publiclink )
 
-		// Accept disclaimer and set physical mode
+		// Accept disclaimer
 		cy.get( '#event-view-accept-disclaimer' ).click()
-		cy.get( '#event-view-mode-physical' ).click()
 
-		// Check that a valid QR is shown
-		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).should( 'be.oneOf', fiveCodes )
-
-		// Save the first code shown
-		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_2_firstcode' )
+		// Save the first public auth link shown
+		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_2_public_auth_link' ).then( f => cy.log( `Event 2 public auth link: ${ this.event_2_public_auth_link }` ) )
 
 	} )
 
-	it( 'Event 2: Shows different code after first is scanned', function( ) {
+	
+	it( 'Event 2: Successfully redirects to challenge link', function( ) {
 
-		// Mark the first code as read by simulating a scan
-		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_2_firstcode }` )
+
+		// Visit the public link
+		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_2_public_auth_link }`, { followRedirect: false } ).as( `request` )
+			.then( extract_challenge_from_url )
+			.then( event_2_first_challenge => {
+
+				// Visit the challenge link
+				cy.visit( `/claim/${ event_2_first_challenge }` )
+
+				// Save challenge link
+				cy.url().as( 'event_2_first_challenge_url' )
+
+				// Check that backend redirected us to the claim page
+				cy.url().should( 'include', '/#/claim' )
+
+				// Expect the interface to check if we are human
+				cy.contains( 'Verifying your humanity' )
+
+				// Wait for code retreival
+				cy.contains( 'POAP link' )
+
+				// Check if POAP link supplies one of the test codes
+				cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
+					const [ base, code ] = text.split( '/claim/' )
+					expect( code ).to.be.oneOf( fiveCodes )
+				} )
+
+			} )
+		
+
+	} )
+
+	it( 'Event 2: Shows code marked as used (previous redirect marked as used)', function( ) {
 
 		// Visit the public link
 		cy.visit( this.event_2_publiclink )
 
-		// Accept disclaimer and set physical mode
+
+		// Accept disclaimer
 		cy.get( '#event-view-accept-disclaimer' ).click()
-		cy.get( '#event-view-mode-physical' ).click()
-
-		// Check that the QR shows an unused code and save the second code
-		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_2_secondcode' )
-		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).should( 'eq', fiveCodes.find( code => code != this.event_2_firstcode ) )
-
-	} )
-
-	it( 'Event 2: Shows code marked as used', function( ) {
-
-		// Mark the first code as read by simulating a scan
-		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_2_firstcode }` )
-
-		// Visit the public link
-		cy.visit( this.event_2_publiclink )
-
-		// Accept disclaimer and set physical mode
-		cy.get( '#event-view-accept-disclaimer' ).click()
-		cy.get( '#event-view-mode-physical' ).click()
 
 		// Shows one code as claimed
-		cy.contains( '1 of 5 codes claimed' )
+		cy.contains( '1 of 5 codes' )
+
+	} )
+
+	it( 'Event 2: Previous challenge link no longer works', function( ) {
+
+		// Visit the public link
+		cy.visit( this.event_2_first_challenge_url )
+
+		// Interface should indicate that the link expired
+		cy.contains( 'This link was already used' )
 
 	} )
 

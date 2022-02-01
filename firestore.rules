@@ -6,10 +6,11 @@ service cloud.firestore {
       // Disallow by default
       allow read, write: if false;
 
-      // Allow reading codes
-      match /codes/{code} {
+      // Allow reading challenges
+      match /claim_challenges/{challenge} {
 
-        allow read: if true;
+        // Only allow reads of a single document, but not listing or querying
+        allow get: if true;
 
       }
 

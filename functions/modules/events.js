@@ -7,11 +7,20 @@ const { sendEventAdminEmail } = require( './email' )
 const functions = require( 'firebase-functions' )
 const { kiosk } = functions.config()
 
+// Public auth helper, used here and in the claimcode handler
+const generate_new_event_public_auth = ( expires_in_minutes=5, is_test_event=false ) => ( {
+	token: is_test_event ? `testing-${ uuidv4() }` : uuidv4(),
+	expires: Date.now() + ( expires_in_minutes * 1000 * 60 ),
+	created: Date.now()
+} )
+exports.generate_new_event_public_auth = generate_new_event_public_auth
+
 exports.registerEvent = async function( data, context ) {
 	
 	try {
 
-		const dayInMs = 1000 * 60 * 60 * 24
+		// Add a week grace period in case we need to debug anything
+		const weekInMs = 1000 * 60 * 60 * 24 * 7
 
 		// Appcheck validation
 		if( context.app == undefined ) {
@@ -28,14 +37,16 @@ exports.registerEvent = async function( data, context ) {
 
 		// Create event document
 		const authToken = uuidv4()
+		const is_test_event = codes.find( code => code.includes( 'testing' ) )
 		const { id } = await db.collection( 'events' ).add( {
 			name,
 			email,
-			expires: new Date( date ).getTime() + dayInMs, // Event expiration plus a day
+			expires: new Date( date ).getTime() + weekInMs, // Event expiration plus a day
 			expires_yyyy_mm_dd: date,
 			codes: codes.length,
 			codesAvailable: 0, // This will be updates by the initial scan run in codes.js:updatePublicEventAvailableCodes
 			authToken,
+			public_auth: generate_new_event_public_auth( 5, is_test_event ),
 			created: Date.now(),
 			updated: Date.now()
 		} )
@@ -71,7 +82,7 @@ exports.registerEvent = async function( data, context ) {
 				created: Date.now(),
 				updated: Date.now(),
 				event: id,
-				expires: new Date( date ).getTime() + dayInMs
+				expires: new Date( date ).getTime() + weekInMs
 			}, { merge: true } )
 
 		} ) )
@@ -113,8 +124,8 @@ exports.updatePublicEventData = async function( change, context ) {
 	if( !after.exists ) return db.collection( 'publicEventData' ).doc( eventId ).delete()
 
 	// If this was an update, grab the public properties and set them
-	const { name, codes, codesAvailable, expires } = after.data()
-	return db.collection( 'publicEventData' ).doc( eventId ).set( { name, codes, expires, codesAvailable: codesAvailable || 0, updated: Date.now() }, { merge: true } )
+	const { name, codes, codesAvailable, expires, public_auth } = after.data()
+	return db.collection( 'publicEventData' ).doc( eventId ).set( { name, public_auth, codes, expires, codesAvailable: codesAvailable || 0, updated: Date.now() }, { merge: true } )
 
 }
 

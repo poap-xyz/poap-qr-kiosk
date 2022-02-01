@@ -23,14 +23,17 @@ import Network from '../molecules/NetworkStatusBar'
 export default function ViewQR( ) {
 
   const history = useHistory()
+
+  // Event ID form url
   const { eventId, viewMode } = useParams()
+
+  // Event ID from pushed state
   const { eventId: stateEventId } = history.location
 
   // ///////////////////////////////
   // State handling
   // ///////////////////////////////
   const defaultScanInerval = 2 * 60 * 1000
-  const [ code, setCode ] = useState( null )
   const [ loading, setLoading ] = useState( 'Setting up your Kiosk' )
   const [ event, setEvent ] = useState(  )
 	const [ internalEventId, setInternalEventId ] = useState( eventId || stateEventId )
@@ -43,113 +46,67 @@ export default function ViewQR( ) {
   // Lifecycle handling
   // ///////////////////////////////
 
-  // Mode handling
-  useEffect( ( ) => {
+  // Set url event ID to localstorage and remove it from the URL
+  useEffect( (  ) => {
 
-		log( `Url mode ${ viewMode }, state mode ${ mode }` )
+    // if no event id in URL, exit
+    if( !eventId ) return log( 'No event ID in url, leaving localStorage as is' )
 
-		// If this is stream mode, hide the event Id from the URL
-		if( mode == 'stream' ) {
-			log( `Stream mode enabled for ${ eventId }, redirecting` )
-			history.push( '/event/', {
-				eventId
-			} )
-		}
+    // Set event ID to localstorage and internal state
+    log( `Event ID changed to `, eventId )
+    localStorage.setItem( 'cached_event_id', eventId )
+    setInternalEventId( eventId )
 
-  }, [ viewMode, mode ] )
-
-  // Start code listener
-  useEffect( f => {
-
-    let cancelled = false
-
-    log( `Listening to codes for ${ internalEventId }` )
-
-    if( !internalEventId ) {
-			alert( `Make sure to open this page through the link you received by email!` )
-			return history.push( '/' )
-    }
-
-    const codeListener = listenToCode( internalEventId, newCode => {
-
-      // Set new code to state
-      if( !cancelled ) {
-        setCode( newCode.id )
-        trackEvent( 'qr_view_code_loaded' )
-      }
-      if( !cancelled && newCode.id ) setLoading( false )
-
+    // Remove eventId from url by pushing with state
+    history.push( '/event/', {
+        eventId
     } )
 
-    return () => {
-      cancelled = true
-      return codeListener
+
+  }, [ eventId ] )
+
+  // Make sure relevant event ID is found, if not error
+  useEffect( (  ) => {
+
+    try {
+
+      if( eventId ) return log( `Event ID present in url, ignoring localstorage` )
+      log( `No event ID in url, loading event ID from localstorage` )
+      const cached_event_id = localStorage.getItem( 'cached_event_id' )
+      if( !cached_event_id ) throw new Error( `Error: No event ID known.\n\nMake sure to open this page through the event link from the admin interface.\n\nThis is an anti-abuse measure.` )
+      setInternalEventId( cached_event_id )
+      setLoading( 'Loading event data' )
+
+    } catch( e ) {
+
+      log( `Error ocurred: `, e )
+      alert( e.message )
+
     }
 
-  }, [ internalEventId ] )
-
-  // No code? Manual refresh timer
-  useEffect( f => {
-
-    let cancelled = false
-
-    // If there is a code, do nothing
-    if( code?.length ) return
+  }, [ eventId ] )
 
 
-    // If there is no code, after a delay take away the loading indicator
-    const maxWaitForFirstCode = 5000
-    const timeout = setTimeout( f => {
-
-      // Ask backend to update all old codes
-      trackEvent( 'qr_view_force_backend_refresh' )
-      requestManualCodeRefresh().then( res => {
-        log( `Backend refresh complete with `, res )
-        if( !cancelled ) setLoading( false )
-      } )
-
-    }, maxWaitForFirstCode )
-    log( `New timeout ${ timeout } set` )
-
-    // Give useEffect a cancel funtion
-    return f => {
-      cancelled = true
-      log( `Code changed to ${ code }, cancel previous refresh `, timeout )
-      clearTimeout( timeout )
-    }
-
-  }, [ code ] )
-
-  // Get event details on load
+  // Listen to event details on event ID change
   useEffect( () => {
 
-		log( `New event ID ${ internalEventId } detected, grabbing event meta` )
-		if( internalEventId ) return listenToEventMeta( internalEventId, setEvent )
+		log( `New event ID ${ internalEventId } detected, listening to event meta` )
+		if( internalEventId ) return listenToEventMeta( internalEventId, event => {
+      setEvent( event )
+      setLoading( false )
+    } )
 
   }, [ internalEventId ] )
 
   // Update the state of scanned codes periodically
   useInterval( () => {
-
-      // let cancelled = false;
-      
-      ( async () => {
-
-        try {
-
-          log( 'Starting remote scanned code scan' )
-          const { data: { error, updated } } = await refreshScannedCodesStatuses()
-          log( `${ updated } scanned codes updated with error: `, error )
-
-        } catch( e ) {
-          log( `Scanned code update error: `, e )
-        }
-
-      } )()
-
-      // return () => cancelled = true
-
+    refreshScannedCodesStatuses()
+    .then( ( { data } ) => log( `Remote code update response : `, data ) )
+    .catch( e => log( `Code refresh error `, e ) )
   }, scanInterval )
+
+  // Debugging helper
+  useEffect( f => log( `For manual testing: https://qr-kiosk-dev.web.app/claim/${ internalEventId }/${ event?.public_auth?.token }` ),  [ internalEventId, event ] )
 
 
   // ///////////////////////////////
@@ -170,30 +127,6 @@ export default function ViewQR( ) {
 
   </Container>
 
-  if( !mode ) return <Container>
-    
-		<Section>
-
-			<H1 align="center">Are you online or IRL?</H1>
-			<H2 align="center">Physical event mode</H2>
-			<Text align="center">The physical event mode works best if you have one device that is dispensing POAPs. For example an iPad at the check-in of an event.</Text>
-			<Button id="event-view-mode-physical" onClick={ f => setMode( 'physical' ) }>Use physical mode</Button>
-
-		</Section>
-
-		<Section>
-
-			<H2>Online/stream mode</H2>
-			<Text align="center">The streaming mode can be used as a screenshare in for example Discord. It is designed to handle many people scanning at the same time, and has extra farming protections.</Text>
-
-			<Button id="event-view-mode-stream" onClick={ f => setMode( 'stream' ) }>Use streaming mode</Button>
-
-		</Section>
-
-
-    
-  </Container>
-
   // loading screen
   if( loading ) return <Loading message={ loading } />
 
@@ -206,7 +139,7 @@ export default function ViewQR( ) {
   </Container>
 
   // No code error
-  if( !code ) return <Container>
+  if( !event?.public_auth?.expires ) return <Container>
   
     <h1>No codes available</h1>
     <Sidenote onClick={ f => history.push( '/admin' ) }>If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface.</Sidenote>
@@ -221,7 +154,7 @@ export default function ViewQR( ) {
     { <H2 align="center">Scan the QR with your camera to claim your POAP</H2> }
 
     {  /* QR showing code */ }
-    <QR key={ code } className='glow' data-code={ code } value={ `${ REACT_APP_publicUrl }/claim/${ code }` } />
+    <QR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
     { event && <Sidenote>{ event.codes - event.codesAvailable } of { event.codes } codes claimed or pending</Sidenote> }
