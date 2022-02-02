@@ -36,7 +36,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 		await db.collection( 'claim_challenges' ).doc( challenge_auth.token ).set( {
 			eventId: event_id,
 			...challenge_auth,
-			challenges: event.challenges || [ 'captcha', 'game' ]
+			challenges: event.challenges || [ 'game' ]
 		} )
 
 		// Return a redirect to the QR POAP app

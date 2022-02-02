@@ -35,6 +35,9 @@ context( 'Claimer can view valid events', () => {
 		cy.get( '#event-create-email' ).type( admin.email )
 		cy.get( '#event-create-date' ).type( admin.events[0].end )
 
+		// Select no anti-farming
+		cy.get( '#event-create-game-enabled' ).select( 1 )
+
 		// Create event
 		cy.get( '#event-create-submit' ).click()
 
@@ -180,6 +183,9 @@ context( 'Claimer can view valid events', () => {
 		cy.get( '#event-create-name' ).type( admin.events[1].name )
 		cy.get( '#event-create-email' ).type( admin.email )
 		cy.get( '#event-create-date' ).type( admin.events[1].end )
+
+		// Select no anti-farming
+		cy.get( '#event-create-game-enabled' ).select( 1 )
 
 		// Create event
 		cy.get( '#event-create-submit' ).click()

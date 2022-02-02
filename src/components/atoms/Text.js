@@ -4,9 +4,10 @@ export const Text = styled.p`
 	font-size: 1rem;
 	margin: 1rem 0;
 	line-height: 1.5rem;
-	color: ${ ( { theme } ) => theme.colors.text };
+	color: ${ ( { theme, color } ) => color || theme.colors.text };
 	text-align: ${ ( { align } ) => align || 'left' };
 	overflow-wrap: anywhere;
+	background: ${ ( { background='initial' } ) => background };
 `
 
 export const H1 = styled.h1`
@@ -15,7 +16,7 @@ export const H1 = styled.h1`
 	line-height: 1.2;
 	font-family: 'Comfortaa', cursive, sans-serif;
 	text-align: ${ ( { align } ) => align || 'left' };
-	color: ${ ( { theme } ) => theme.colors.primary };
+	color: ${ ( { theme, color } ) => color || theme.colors.primary };
 	overflow-wrap: anywhere;
 `
 

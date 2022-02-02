@@ -106,7 +106,7 @@ export default function ViewQR( ) {
   }, scanInterval )
 
   // Debugging helper
-  useEffect( f => log( `For manual testing: https://qr-kiosk-dev.web.app/claim/${ internalEventId }/${ event?.public_auth?.token }` ),  [ internalEventId, event ] )
+  useEffect( f => log( `For manual testing: https://qr-kiosk-dev.web.app/claim/${ internalEventId }/${ event?.public_auth?.token }?CI=true` ),  [ internalEventId, event ] )
 
 
   // ///////////////////////////////

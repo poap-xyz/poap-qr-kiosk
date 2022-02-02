@@ -8,7 +8,7 @@ const functions = require( 'firebase-functions' )
 const { kiosk } = functions.config()
 
 // Public auth helper, used here and in the claimcode handler
-const generate_new_event_public_auth = ( expires_in_minutes=5, is_test_event=false ) => ( {
+const generate_new_event_public_auth = ( expires_in_minutes=2, is_test_event=false ) => ( {
 	token: is_test_event ? `testing-${ uuidv4() }` : uuidv4(),
 	expires: Date.now() + ( expires_in_minutes * 1000 * 60 ),
 	created: Date.now()
@@ -29,7 +29,7 @@ exports.registerEvent = async function( data, context ) {
 		}
 
 		// Validations
-		const { name='', email='', date='', codes=[] } = data
+		const { name='', email='', date='', codes=[], challenges=[] } = data
 		if( !codes.length ) throw new Error( 'Csv has 0 entries' )
 		if( !name.length ) throw new Error( 'Please specify an event name' )
 		if( !email.includes( '@' ) ) throw new Error( 'Please specify a valid email address' )
@@ -46,6 +46,7 @@ exports.registerEvent = async function( data, context ) {
 			codes: codes.length,
 			codesAvailable: 0, // This will be updates by the initial scan run in codes.js:updatePublicEventAvailableCodes
 			authToken,
+			challenges,
 			public_auth: generate_new_event_public_auth( 5, is_test_event ),
 			created: Date.now(),
 			updated: Date.now()
@@ -124,8 +125,8 @@ exports.updatePublicEventData = async function( change, context ) {
 	if( !after.exists ) return db.collection( 'publicEventData' ).doc( eventId ).delete()
 
 	// If this was an update, grab the public properties and set them
-	const { name, codes, codesAvailable, expires, public_auth } = after.data()
-	return db.collection( 'publicEventData' ).doc( eventId ).set( { name, public_auth, codes, expires, codesAvailable: codesAvailable || 0, updated: Date.now() }, { merge: true } )
+	const { name, codes, codesAvailable, expires, public_auth, challenges } = after.data()
+	return db.collection( 'publicEventData' ).doc( eventId ).set( { name, public_auth, codes, expires, challenges, codesAvailable: codesAvailable || 0, updated: Date.now() }, { merge: true } )
 
 }
 

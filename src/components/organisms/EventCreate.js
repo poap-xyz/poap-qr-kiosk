@@ -28,6 +28,7 @@ export default function Admin( ) {
   const [ name, setName ] = useState( '' )
   const [ csv, setCsv ] = useState(  )
   const [ codes, setCodes ] = useState(  )
+  const [ gameEnabled, setGameEnabled ] = useState( true )
   const [ loading, setLoading ] = useState( false )
   const [ filename, setFilename ] = useState( 'codes.txt' )
 
@@ -148,7 +149,7 @@ export default function Admin( ) {
       setLoading( 'Creating event' )
 
       // Create remote event
-      const { data: newEvent } = await registerEvent( { name, email, date, codes } )
+      const { data: newEvent } = await registerEvent( { name, email, date, codes, challenges: gameEnabled ? [ 'game' ] : [] } )
       log( 'Event created: ', newEvent, { name, email, date, codes } )
       trackEvent( 'admin_event_create' )
 
@@ -193,6 +194,7 @@ export default function Admin( ) {
         <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder='Best launch party ever' label="Event name" info="For your own reference, not visible to the world." value={ name } />
         <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } max={ dateOnXDaysFromNow( 30 ) } type='date' label="Event end date" info={ `After this date your QR kiosk will stop working in your local timezone.\n\n⚠️ You can only schedule up to 30 days in advance.` } value={ date } />
         <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder='revered@organizer.com' label="Your email" info="We will send the QR kiosk link and the admin link there." value={ email } />
+        <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.includes( 'yes' ) ) } label="Enable anti-farming measures?" info={ `Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.` } value={ email } type='dropdown' options={ [ 'yes (recommended for online)', 'no (optional for physical events)' ] } />
       </> }
       
       { codes && <Button id="event-create-submit" onClick={ createEvent }>Create event with { codes.length } codes</Button> }

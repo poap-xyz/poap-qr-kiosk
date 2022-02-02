@@ -8,13 +8,13 @@ const Input = styled.div`
 	margin: 1rem 0;
 	width: 100%;
 	
-	& input, & p {
+	& select, input, & p {
 		background: ${ ( { theme } ) => theme.colors.backdrop };
 		border: none;
 		border-left: 2px solid ${ ( { theme, highlight } ) => highlight ? theme.colors.accent : theme.colors.primary };
 	}
 
-	& input, & p {
+	& select, input, & p {
 		padding: 1rem 2rem 1rem 1rem;
 		width: 100%;
 	}
@@ -47,14 +47,19 @@ const Input = styled.div`
 
 `
 
-export default ( { onChange, type, label, info, highlight, id, title, onClick, ...props } ) => {
+export default ( { onChange, type, label, info, highlight, id, title, onClick, options, ...props } ) => {
 
 	const { current: internalId } = useRef( id || `input-${ Math.random() }` )
 
 	return <Input onClick={ onClick } highlight={ highlight }>
 
 		{ label && <label htmlFor={ internalId }>{ label } { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
-		{ !title && <input data-testid={ internalId } { ...props } id={ internalId } onChange={ onChange } type={ type || 'text' } /> }
+
+		{ !title && type != 'dropdown' && <input data-testid={ internalId } { ...props } id={ internalId } onChange={ onChange } type={ type || 'text' } /> }
+		{ !title && type == 'dropdown' && <select id={ internalId } onChange={ onChange }>
+			{ options.map( option => <option key={ option } value={ option }>{ option }</option> ) }
+		</select> }
+
 		{ title && <p>{ title }</p> }
 		
 	</Input>

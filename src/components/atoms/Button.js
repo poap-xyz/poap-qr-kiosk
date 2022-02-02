@@ -6,7 +6,7 @@ export default styled.button`
 	border: 2px solid ${ ( { color='primary', theme } ) => theme.colors[ color ] || color };
 	color: ${ ( { color='primary', theme } ) => theme.colors[ color ] || color };
 	font-size: 1rem;
-	background: none;
+	background: ${ ( { background='none' } ) => background };
 	border-radius: 5px;
 	&:hover {
 		cursor: pointer;

@@ -406,8 +406,8 @@ exports.get_code_by_challenge = async ( challenge_id, context ) => {
 
 	try {
 
-		// 1 minute grace period for completion, this is additional to the window of generate_new_event_public_auth
-		const grace_period_in_ms = 1000 * 60
+		// Grace period for completion, this is additional to the window of generate_new_event_public_auth
+		const grace_period_in_ms = 1000 * 5
 
 		// Validate caller
 		if( context.app == undefined ) {
