@@ -60,6 +60,7 @@ context( 'Organiser successful event creation', () => {
 		// Clear inputs
 		cy.get( '#event-create-name' ).clear()
 		cy.get( '#event-create-date' ).clear()
+		cy.get( '#event-create-email' ).clear()
 
 		cy.get( '#event-create-submit' ).click()
 		cy.get( '#event-create-name' ).type( admin.events[0].name )
