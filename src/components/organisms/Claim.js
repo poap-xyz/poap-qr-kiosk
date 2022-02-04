@@ -206,7 +206,7 @@ export default function ViewQR( ) {
   // ///////////////////////////////
 
   // If game challenge requested, show
-  if( userValid && ( gameDone || challenge?.challenges?.includes( 'game' ) ) ) return <Stroop duration={ 30 } target_score={ 10 } onWin={ f => setGameDone( true ) } poap_url={ poaplink } />
+  if( userValid && ( gameDone || challenge?.challenges?.includes( 'game' ) ) ) return <Stroop duration={ 30 } target_score={ 5 } onWin={ f => setGameDone( true ) } poap_url={ poaplink } />
 
   // loading screen is default
   return <Loading message={ loading } />

@@ -9,7 +9,8 @@ import { log } from '../../modules/helpers'
 import useInterval from 'use-interval'
 
 // Stroop assets
-const colors = [ 'red', 'green', 'blue', 'coral', 'darkblue', 'darkgreen', 'darkred', 'deeppink', 'lightgreen', 'lightblue', 'magenta', 'turquoise', 'purple', 'black', 'orange', 'grey' ]
+// const colors = [ 'red', 'green', 'blue', 'coral', 'darkblue', 'darkgreen', 'darkred', 'deeppink', 'lightgreen', 'lightblue', 'magenta', 'turquoise', 'purple', 'black', 'orange', 'grey' ]
+const colors = [ 'red', 'green', 'blue', 'darkblue', 'darkgreen', 'darkred', 'lightgreen', 'lightblue', 'purple', 'black', 'orange', 'grey' ]
 const pick_random_array_entry = array => array[ Math.floor( Math.random() * array.length ) ]
 const random_color = except => pick_random_array_entry( colors.filter( color => color != except ) )
 
@@ -45,8 +46,8 @@ export default ( { duration=10, target_score=5, onWin, poap_url, ...props } ) =>
 		const random_colors = [
 			random_color( answer ),
 			random_color( answer ),
-			random_color( answer ),
-			random_color( answer )
+			// random_color( answer ),
+			// random_color( answer )
 		]
 		log( `Random colors: `, random_colors, ' answer: ', answer )
 
@@ -112,22 +113,22 @@ export default ( { duration=10, target_score=5, onWin, poap_url, ...props } ) =>
 
 	if( !started ) return <Container>
 		
-		<H1 align='center'>Play a game to prove your humanity</H1>
-		<H2 align='center'>Get the highest score you can in {duration} seconds</H2>
-		<Text>Instructions: click the button with the right color</Text>
+		<H1 align='center'>Play a game to prove you are human</H1>
+		<H2 align='center'>Instructions: click the button with the right color</H2>
+		<Text align='center'>Get the highest score you can in {duration} seconds</Text>
 		<Button onClick={ f => setStarted( true ) }>Start game</Button>
 
 	</Container>
 
 	return	<Container>
 
-		<H1 align='center'>Click the { answer } button</H1>
+		<H1 align='center'>Click the <span style={ { color: random_color( answer ) } }>{ answer }</span> button</H1>
 		<H2>Score: { score } of { target_score } { score_emoji() }</H2>
 		<Timer onComplete={ tally_score } duration={ duration } />
 
 		<Section direction="row">
 			
-			{ options.map( option => <Button key={ Math.random() + option } color={ 'white' } background={ option } onClick={ f => submit_answer( option ) }>I am not { random_color() }</Button> ) }
+			{ options.map( option => <Button key={ Math.random() + option } color={ 'white' } background={ option } onClick={ f => submit_answer( option ) }>I am { option }</Button> ) }
 
 		</Section>
 
