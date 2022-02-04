@@ -436,7 +436,7 @@ exports.get_code_by_challenge = async ( challenge_id, context ) => {
 		await db.collection( 'codes' ).doc( oldestCode.uid ).set( {
 			updated: Date.now(),
 			scanned: true,
-			claimed: oldestCode.uid.includes( 'testing' ) ? true : 'unknown'
+			claimed: true
 		}, { merge: true } )
 
 		// Delete challenge to prevent reuse
