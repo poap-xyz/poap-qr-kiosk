@@ -220,7 +220,7 @@ exports.getEventDataFromCode = async function ( code, context ) {
 // ///////////////////////////////
 // Check status of old unknowns
 // ///////////////////////////////
-exports.refreshOldUnknownCodes = async ( source, context ) => {
+exports.refresh_unknown_and_unscanned_codes = async ( source, context ) => {
 
 	// If this was called with context (cron) use delay check
 	// if there was no context (frontend asked) then run with no delay
@@ -436,7 +436,7 @@ exports.get_code_by_challenge = async ( challenge_id, context ) => {
 		await db.collection( 'codes' ).doc( oldestCode.uid ).set( {
 			updated: Date.now(),
 			scanned: true,
-			claimed: true
+			claimed: oldestCode.uid.includes( 'testing' ) ? true : 'unknown'
 		}, { merge: true } )
 
 		// Delete challenge to prevent reuse

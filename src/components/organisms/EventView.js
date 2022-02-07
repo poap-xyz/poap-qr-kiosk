@@ -1,6 +1,6 @@
 // Data management
 import { useState, useEffect } from 'react'
-import { listenToCode, requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses, trackEvent } from '../../modules/firebase'
+import { requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses, trackEvent } from '../../modules/firebase'
 import { log } from '../../modules/helpers'
 import { useHistory, useParams } from 'react-router-dom'
 import useInterval from 'use-interval'
@@ -97,6 +97,15 @@ export default function ViewQR( ) {
     } )
 
   }, [ internalEventId ] )
+
+  // On mount, do single force-refresh
+  useEffect( () => {
+
+    requestManualCodeRefresh()
+    .then( ( { data } ) => log( `Force refresh update response : `, data ) )
+    .catch( e => log( `Force refresh error `, e ) )
+
+  }, [] )
 
   // Update the state of scanned codes periodically
   useInterval( () => {
