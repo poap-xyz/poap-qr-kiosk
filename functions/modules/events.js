@@ -119,7 +119,7 @@ exports.registerEvent = async function( data, context ) {
 
 exports.updatePublicEventData = async function( change, context ) {
 
-	const { after } = change
+	const { after, before } = change
 	const { eventId } = context.params
 
 	// If this was a deletion, delete public data

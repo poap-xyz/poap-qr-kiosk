@@ -43,7 +43,7 @@ exports.claimMiddleware = functions.https.onRequest( claimMiddleware )
 // Housekeeping
 // ///////////////////////////////
 
-const { deleteExpiredCodes, updatePublicEventAvailableCodes } = require( './modules/codes' )
+const { deleteExpiredCodes, updateEventAvailableCodes } = require( './modules/codes' )
 const { deleteCodesOfDeletedEvent, updatePublicEventData } = require( './modules/events' )
 
 // Delete items where parents were deleted
@@ -52,8 +52,7 @@ exports.deleteCodesOfDeletedEvent = functions.firestore.document( `events/{event
 
 // Update items where parents were updated
 exports.updatePublicEventData = functions.firestore.document( `events/{eventId}` ).onWrite( updatePublicEventData )
-exports.updatePublicEventAvailableCodes = functions.firestore.document( `codes/{codeId}` ).onWrite( updatePublicEventAvailableCodes )
-
+exports.updateEventAvailableCodes = functions.firestore.document( `codes/{codeId}` ).onWrite( updateEventAvailableCodes )
 
 
 /* ///////////////////////////////

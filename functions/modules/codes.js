@@ -341,7 +341,7 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 // Public event data updater
 // /////////////////////////////*/
 
-exports.updatePublicEventAvailableCodes = async function( change, context ) {
+exports.updateEventAvailableCodes = async function( change, context ) {
 
 	const { before, after } = change
 
@@ -363,11 +363,11 @@ exports.updatePublicEventAvailableCodes = async function( change, context ) {
 	// unknown > false = +1
 
 	if( prevClaimed === false && [ 'unknown', true ].includes( claimed ) ) {
-		return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now() }, { merge: true } )
+		return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now() }, { merge: true } )
 	}
 	
 	if( [ true, 'unknown' ].includes( prevClaimed ) && claimed === false ) {
-		return db.collection( 'publicEventData' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now() }, { merge: true } )
+		return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now() }, { merge: true } )
 	}	
 
 
