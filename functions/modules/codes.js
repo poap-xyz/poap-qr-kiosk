@@ -2,6 +2,7 @@
 const functions = require( 'firebase-functions' )
 const { db, dataFromSnap, increment } = require( './firebase' )
 const dev = !!process.env.development
+if( dev ) console.log( `⚠️ Dev mode on` )
 // Secrets
 const { auth0 } = functions.config()
 
@@ -28,14 +29,15 @@ async function getAccessToken() {
 		method: 'POST',
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify( {
-			audience: 'POAP-QR-Kiosk',
+			audience: auth0.audience,
 			grant_type: 'client_credentials',
 			client_id: client_id,
 			client_secret: client_secret
 		} )
 	}
-	const { access_token: new_access_token, expires_in } = await fetch( endpoint, options ).then( res => res.json() )
-
+	if( dev ) console.log( `Getting access token at ${ endpoint } with `, options )
+	const { access_token: new_access_token, expires_in, ...rest } = await fetch( endpoint, options ).then( res => res.json() )
+	if( dev ) console.log( `New token: `, new_access_token, ' unexpected output: ', rest )
 	// Set new token to firestore cache
 	await db.collection( 'secrets' ).doc( 'poap-api' ).set( {
 		access_token: new_access_token,

@@ -19,7 +19,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 		const event = await db.collection( 'events' ).doc( event_id ).get().then( dataFromSnap )
 
 		// If the auth expired, write a new one but let the current scanner continue
-		if( event.public_auth.expires < Date.now() ) {
+		if( event.public_auth?.expires < Date.now() ) {
 			await db.collection( 'events' ).doc( event_id ).set( {
 				public_auth: generate_new_event_public_auth()
 			}, { merge: true } )
