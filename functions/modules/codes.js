@@ -38,6 +38,10 @@ async function getAccessToken() {
 	if( dev ) console.log( `Getting access token at ${ endpoint } with `, options )
 	const { access_token: new_access_token, expires_in, ...rest } = await fetch( endpoint, options ).then( res => res.json() )
 	if( dev ) console.log( `New token: `, new_access_token, ' unexpected output: ', rest )
+
+	// If no access token, error
+	if( !new_access_token ) throw new Error( rest )
+
 	// Set new token to firestore cache
 	await db.collection( 'secrets' ).doc( 'poap-api' ).set( {
 		access_token: new_access_token,
