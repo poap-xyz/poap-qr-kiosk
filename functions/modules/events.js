@@ -19,7 +19,7 @@ exports.generate_new_event_public_auth = generate_new_event_public_auth
 exports.registerEvent = async function( data, context ) {
 
 	// Throttle config
-	const maxInProgress = 50
+	const maxInProgress = 500
 	
 	try {
 
@@ -81,9 +81,7 @@ exports.registerEvent = async function( data, context ) {
 		} )
 
 		// Check for code clashes in a throttled manner
-		await Throttle.all( code_clash_queue, {
-			maxInProgress: maxInProgress
-		} )
+		await Throttle.all( code_clash_queue, { maxInProgress } )
 
 		// Load the codes into firestore
 		const code_writing_queue = saneCodes.map( code => async () => {
@@ -101,9 +99,7 @@ exports.registerEvent = async function( data, context ) {
 		} )
 
 		// Write codes to firestore with a throttle
-		await Throttle.all( code_writing_queue, {
-			maxInProgress: maxInProgress
-		} )
+		await Throttle.all( code_writing_queue, { maxInProgress } )
 
 		// Send email to user with event and admin links
 		await sendEventAdminEmail( {
@@ -182,6 +178,9 @@ exports.deleteEvent = async function( data, context ) {
 
 exports.deleteCodesOfDeletedEvent = async function( snap, context ) {
 
+	// Throttle config
+	const maxInProgress = 500
+
 	try {
 
 		// Get parameters
@@ -189,7 +188,8 @@ exports.deleteCodesOfDeletedEvent = async function( snap, context ) {
 
 		// Delete obsolete codes
 		const snap = await db.collection( 'codes' ).where( 'event', '==', eventId ).get()
-		await Promise.all( snap.docs.map( doc => doc.ref.delete() ) )
+		const deletion_queue = snap.docs.map( doc => () => doc.ref.delete() )
+		await Throttle( deletion_queue, { maxInProgress s} )
 
 	} catch( e ) {
 		console.error( 'deleteCodesOfDeletedEvent error: ', e )

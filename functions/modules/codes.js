@@ -128,7 +128,7 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
 	const ageInSeconds = 5 * 60
 	const ageInMs = 1000 * ageInSeconds
 	const errorSlowdownFactor = 10
-	const maxInProgress = 10
+	const maxInProgress = 500
 
 
 	try {
