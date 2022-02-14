@@ -27,6 +27,15 @@ export default function ViewQR( ) {
   /* ///////////////////////////////
   // Component functions
   // /////////////////////////////*/
+  function handleWin( score ) {
+    setGameDone( true )
+    trackEvent( `claim_game_won_with_${ score }` )
+  }
+  function handleLose( score ) {
+    setGameDone( false )
+    trackEvent( `claim_game_lost_with_${ score }` )
+  }
+
   async function stall_then_error() {
 
     trackEvent( 'claim_spammer_stall_triggered' )
@@ -57,6 +66,7 @@ export default function ViewQR( ) {
     // Handle code errors
     if( claim_code.error ) throw new Error( claim_code.error )
     log( `Received code: `, claim_code )
+    trackEvent( `claim_code_received` )
 
     // Formulate redirect 
     const link = `https://poap.xyz/claim/${ claim_code }`
@@ -81,7 +91,10 @@ export default function ViewQR( ) {
         const { data: health } = await health_check()
         log( `Systems health: `, health )
         if( cancelled ) return log( `Health effect cancelled` )
-        if( !dev && !health.healthy ) return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+        if( !dev && !health.healthy ) {
+          trackEvent( `claim_system_down` )
+          return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+        }
 
       } catch( e ) {
         log( `Error getting system health: `, e )
@@ -157,7 +170,10 @@ export default function ViewQR( ) {
         if( !userValid ) return log( `User not (yet) validated` )
 
         // Validate for expired challenge
-        if( userValid && !challenge ) throw new Error( `This link was already used, please scan the QR again` )
+        if( userValid && !challenge ) {
+          trackEvent( `claim_challenge_expired` )
+          throw new Error( `This link was already used, please scan the QR again` )
+        }
 
         log( `Challenge received: `, challenge )
 
@@ -228,7 +244,7 @@ export default function ViewQR( ) {
   // ///////////////////////////////
 
   // If game challenge requested, show
-  if( userValid && ( gameDone || challenge?.challenges?.includes( 'game' ) ) ) return <Stroop duration={ 30 } target_score={ 5 } onWin={ f => setGameDone( true ) } poap_url={ poaplink } />
+  if( userValid && ( gameDone || challenge?.challenges?.includes( 'game' ) ) ) return <Stroop duration={ 30 } target_score={ 5 } onLose={ handleLose } onWin={ handleWin } poap_url={ poaplink } />
 
   // loading screen is default
   return <Loading message={ loading } />

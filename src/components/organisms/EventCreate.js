@@ -114,11 +114,15 @@ export default function Admin( ) {
         if( !event ) throw new Error( `This event appears to have expired!` )
 
         // Set event details to state
-        setName( event.name )
-        const [ day, monthName, year ] = event.expiry_date.split( '-' )
-        const endDate = `${year}-${monthNameToNumber( monthName )}-${ day.length == 1 ? `0${ day }` : day }`
-        log( `Computed end date from ${event.expiry_date}: `, endDate )
-        setDate( endDate )
+        if( event.name ) setName( event.name )
+        if( event.expiry_date ) {
+
+          const [ day, monthName, year ] = event.expiry_date.split( '-' )
+          const endDate = `${year}-${monthNameToNumber( monthName )}-${ day.length == 1 ? `0${ day }` : day }`
+          log( `Computed end date from ${event.expiry_date}: `, endDate )
+          setDate( endDate )
+          
+        }
 
         if( !cancelled ) setLoading( false )
 

@@ -10,7 +10,6 @@ const { REACT_APP_publicUrl } = process.env
 log( 'Frontend using live url', REACT_APP_publicUrl )
 
 // Components
-import Section from '../atoms/Section'
 import QR from '../atoms/QR'
 import Button from '../atoms/Button'
 import Loading from '../molecules/Loading'
@@ -27,7 +26,7 @@ export default function ViewQR( ) {
   const history = useHistory()
 
   // Event ID form url
-  const { eventId, viewMode } = useParams()
+  const { eventId } = useParams()
 
   // Event ID from pushed state
   const { eventId: stateEventId } = history.location
@@ -42,7 +41,6 @@ export default function ViewQR( ) {
 
   const [ scanInterval, setScanInterval ] = useState( defaultScanInerval )
   const [ acceptedTerms, setAcceptedTerms ] = useState( false )
-  const [ mode, setMode ] = useState( viewMode )
 
   // ///////////////////////////////
   // Lifecycle handling
@@ -60,7 +58,10 @@ export default function ViewQR( ) {
         const { data: health } = await health_check()
         log( `Systems health: `, health )
         if( cancelled ) return log( `Health effect cancelled` )
-        if( !dev && !health.healthy ) return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+        if( !dev && !health.healthy ) {
+          trackEvent( `event_view_event_system_down` )
+          return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+        }
 
       } catch( e ) {
         log( `Error getting system health: `, e )
@@ -100,6 +101,7 @@ export default function ViewQR( ) {
       log( `No event ID in url, loading event ID from localstorage` )
       const cached_event_id = localStorage.getItem( 'cached_event_id' )
       if( !cached_event_id ) throw new Error( `Error: No event ID known.\n\nMake sure to open this page through the event link from the admin interface.\n\nThis is an anti-abuse measure.` )
+      trackEvent( `event_view_event_id_from_cache` )
       setInternalEventId( cached_event_id )
       setLoading( 'Loading event data' )
 
@@ -131,7 +133,7 @@ export default function ViewQR( ) {
 
     log( `Triggering remote refresh of unknown and unscanned codes` )
     requestManualCodeRefresh( internalEventId )
-    .then( ( { data } ) => log( `Force refresh update response : `, data ) )
+    .then( ( { data } ) => log( `Force refresh update response: `, data ) )
     .catch( e => log( `Force refresh error `, e ) )
 
   }, [ internalEventId ] )

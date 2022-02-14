@@ -26,7 +26,7 @@ const Timer = ( { duration, onComplete } ) => {
 	return <Text>Timer: { duration - timePassed }</Text>
 }
 
-export default ( { duration=10, target_score=5, onWin, poap_url, ...props } ) => {
+export default ( { duration=10, target_score=5, onWin, onLose, poap_url, ...props } ) => {
 
 	const [ started, setStarted ] = useState( false )
 	const [ answer, setAnswer ] = useState( random_color() )
@@ -85,7 +85,7 @@ export default ( { duration=10, target_score=5, onWin, poap_url, ...props } ) =>
 		if( score > target_score * 3 ) return '🤯'
 		if( score > target_score * 2 ) return '😱'
 		if( score > target_score * 1.5 ) return '🤩'
-		if( score > target_score ) return '😁'
+		if( score >= target_score ) return '😁'
 		if( score > target_score / 2 ) return '🤨'
 		return '😞'
 
@@ -95,7 +95,8 @@ export default ( { duration=10, target_score=5, onWin, poap_url, ...props } ) =>
 
 		log( 'Game complete!' )
 		setDone( true )
-		if( score > target_score && onWin ) onWin( score, Date.now() )
+		if( score >= target_score && onWin ) return onWin( score, Date.now() )
+		if( onLose ) return onLose( score, Date.now() )
 
 	}
 
