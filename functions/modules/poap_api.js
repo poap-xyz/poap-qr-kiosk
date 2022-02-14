@@ -122,6 +122,7 @@ exports.call_poap_endpoint = async ( endpoint='', data, method='GET', format='js
 		}
 		log( `Calling ${ url } with `, options )
 		const res = await fetch( url, options )
+		const backup_res = res.clone()
 
 		// Parse the response
 		try {
@@ -134,14 +135,14 @@ exports.call_poap_endpoint = async ( endpoint='', data, method='GET', format='js
 		} catch {
 
 			// If json fails, try as text
-			const text = await res.text()
+			const text = await backup_res.text().catch( e => e.message )
 			log( 'API text response: ', text )
 			return {
 				error: `Error calling ${ apiUrl }`,
 				message: text
 			}
 
-	}
+		}
 
 
 }

@@ -129,6 +129,7 @@ export default function ViewQR( ) {
 
     if( !internalEventId ) return log( `No internal event ID, cancelling manual code refresh` )
 
+    log( `Triggering remote refresh of unknown and unscanned codes` )
     requestManualCodeRefresh( internalEventId )
     .then( ( { data } ) => log( `Force refresh update response : `, data ) )
     .catch( e => log( `Force refresh error `, e ) )
