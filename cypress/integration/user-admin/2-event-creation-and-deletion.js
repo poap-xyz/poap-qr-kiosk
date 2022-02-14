@@ -26,7 +26,7 @@ context( 'Organiser successful event creation', () => {
 		// Relevant inputs appear
 		cy.contains( 'label', 'Event name' )
 		cy.contains( 'label', 'Your email' )
-		cy.contains( 'label', 'Event end date' )
+		cy.contains( 'label', 'QR dispenser expiry date' )
 
 		// Inputs are prefilled with expected values (generated based on backend testing defaults)
 		cy.get( 'input#event-create-name' ).should( input => {

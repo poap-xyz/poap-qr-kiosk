@@ -21,7 +21,7 @@ const checkCodeStatus = async code => {
 	const dayMonthYear = `${ tomorrow.getDate() }-${ tomorrow.toString().match( /(?:\w* )([A-Z]{1}[a-z]{2})/ )[1] }-${ tomorrow.getFullYear() }`
 	
 	// For testing codes, always reset on refresh
-	if( code.includes( 'testing' ) ) return { claimed: false, event: { end_date: dayMonthYear, name: `Test Event ${ Math.random() }` } }
+	if( code.includes( 'testing' ) ) return { claimed: false, event: { end_date: dayMonthYear, expiry_date: dayMonthYear, name: `Test Event ${ Math.random() }` } }
 
 	// Get API data
 	return call_poap_endpoint( `/actions/claim-qr`, { qr_hash: code } )
@@ -163,13 +163,13 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
 		const oldUnknowns = await db.collection( 'codes' )
 								.where( 'claimed', '==', 'unknown' )
 								.where( 'updated', '<', Date.now() - ageInMs )
-								.where( 'eventId', '==', event_id )
+								.where( 'event', '==', event_id )
 								.get().then( dataFromSnap )
 
 		// Get unchecked codes
 		const uncheckedCodes = await db.collection( 'codes' )
 								.where( 'amountOfRemoteStatusChecks', '==', 0 )
-								.where( 'eventId', '==', event_id )
+								.where( 'event', '==', event_id )
 								.get().then( dataFromSnap )
 
 		// Split codes with previous errors

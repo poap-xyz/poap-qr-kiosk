@@ -71,7 +71,7 @@ exports.registerEvent = async function( data, context ) {
 		} ).filter( ( code='' ) => !!code.length )
 
 		// First check if all codes are unused by another event
-		const code_clash_queue = saneCodes.map( () => async code => {
+		const code_clash_queue = saneCodes.map( code => async () => {
 
 			// Check if code already exists and is claimed
 			const oldDocRef = await db.collection( 'codes' ).doc( code ).get()
@@ -86,7 +86,7 @@ exports.registerEvent = async function( data, context ) {
 		} )
 
 		// Load the codes into firestore
-		const code_writing_queue = saneCodes.map( () => async code => {
+		const code_writing_queue = saneCodes.map( code => async () => {
 
 			return db.collection( 'codes' ).doc( code ).set( {
 				claimed: false,
