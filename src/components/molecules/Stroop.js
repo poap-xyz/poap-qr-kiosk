@@ -106,9 +106,9 @@ export default ( { duration=10, target_score=5, onWin, onLose, poap_url, ...prop
 
 	if( done ) return <Container>
 		
-		<H1 align='center'>You { score > target_score ? 'won' : 'lost' }!</H1>
+		<H1 align='center'>You { score >= target_score ? 'won' : 'lost' }!</H1>
 		<H2>Your score: { score } { score_emoji() }</H2>
-		{ score > target_score && <Button onClick={ claim_poap }>{ poap_url ? 'Claim your POAP' : 'Loading your POAP...' }</Button> }
+		{ score >= target_score && <Button onClick={ claim_poap }>{ poap_url ? 'Claim your POAP' : 'Loading your POAP...' }</Button> }
 
 	</Container>
 
