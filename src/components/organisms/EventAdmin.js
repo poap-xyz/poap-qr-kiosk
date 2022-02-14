@@ -7,9 +7,9 @@ import Loading from '../molecules/Loading'
 import { Text, H1 } from '../atoms/Text'
 
 // Functionality
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
-import { deleteEvent, trackEvent } from '../../modules/firebase'
+import { deleteEvent, trackEvent, health_check } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 const { REACT_APP_publicUrl } = process.env
 
@@ -24,6 +24,30 @@ export default function EventAdmin( ) {
 	const eventLink = `${ dev ? 'http://localhost:3000' : REACT_APP_publicUrl }/#/event/${ eventId }`
 	const adminLink = `${ dev ? 'http://localhost:3000' : REACT_APP_publicUrl }/#/event/admin/${ eventId }/${ authToken }`
 	const clipboardAPI = !!navigator.clipboard
+
+	// Health check
+	useEffect( (  ) => {
+
+		let cancelled = false;
+
+		( async () => {
+
+			try {
+
+				const { data: health } = await health_check()
+				log( `Systems health: `, health )
+				if( cancelled ) return log( `Health effect cancelled` )
+				if( !health.healthy ) return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+
+			} catch( e ) {
+				log( `Error getting system health: `, e )
+			}
+
+		} )( )
+
+		return () => cancelled = true
+
+	}, [] )
 
 	// ///////////////////////////////
 	// State management

@@ -14,6 +14,8 @@ import stream from '../../assets/undraw_conference_call_b0w6_modified.svg'
 
 // Functionality
 import { useHistory } from 'react-router-dom'
+import { health_check } from '../../modules/firebase'
+import { log, dev } from '../../modules/helpers'
 
 
 // ///////////////////////////////
@@ -29,8 +31,32 @@ export default function ComponentName( ) {
 	// Lifecycle management
 	// /////////////////////////////*/
 
-	// Note to self/team: this is not meant to be secure, it is a low-effort beta-gate
-	useEffect( f => setAllowAccess( password.toLowerCase() == 'erc721' ), [ password ] )
+	// Health check
+	useEffect( (	) => {
+
+		let cancelled = false;
+
+		( async () => {
+
+			try {
+
+				const { data: health } = await health_check()
+				log( `Systems health: `, health )
+				if( cancelled ) return log( `Health effect cancelled` )
+				if( !dev && !health.healthy ) {
+					setAllowAccess( false )
+					return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+				}
+
+			} catch( e ) {
+				log( `Error getting system health: `, e )
+			}
+
+		} )( )
+
+		return () => cancelled = true
+
+		}, [] )
 
 	// ///////////////////////////////
 	// Render component

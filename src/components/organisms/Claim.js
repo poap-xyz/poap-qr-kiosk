@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { log, dev, wait } from '../../modules/helpers'
 import { useParams } from 'react-router-dom'
-import { validateCallerDevice, trackEvent, listen_to_claim_challenge, get_code_by_challenge, requestManualCodeRefresh } from '../../modules/firebase'
+import { validateCallerDevice, trackEvent, listen_to_claim_challenge, get_code_by_challenge, requestManualCodeRefresh, health_check } from '../../modules/firebase'
 
 // Components
 import Loading from '../molecules/Loading'
@@ -68,8 +68,30 @@ export default function ViewQR( ) {
   // ///////////////////////////////
   // Lifecycle handling
   // ///////////////////////////////
-  useEffect( (  ) => log( `✅ MOUNT` ), [] )
-  useEffect( (  ) => log( `🚨RERENDER` ) )
+
+  // Health check
+  useEffect( (  ) => {
+
+    let cancelled = false;
+
+    ( async () => {
+
+      try {
+
+        const { data: health } = await health_check()
+        log( `Systems health: `, health )
+        if( cancelled ) return log( `Health effect cancelled` )
+        if( !dev && !health.healthy ) return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+
+      } catch( e ) {
+        log( `Error getting system health: `, e )
+      }
+
+    } )( )
+
+    return () => cancelled = true
+
+  }, [] )
 
   // Validate client as non bot
   useEffect( f => {

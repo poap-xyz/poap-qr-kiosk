@@ -8,7 +8,7 @@ import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 
 // Functionality
-import { registerEvent, trackEvent, getEventDataFromCode } from '../../modules/firebase'
+import { registerEvent, trackEvent, getEventDataFromCode, health_check } from '../../modules/firebase'
 import { log, dateOnXDaysFromNow, monthNameToNumber, dev } from '../../modules/helpers'
 import Papa from 'papaparse'
 import { useHistory } from 'react-router-dom'
@@ -35,6 +35,30 @@ export default function Admin( ) {
   // ///////////////////////////////
   // Lifecycle handling
   // ///////////////////////////////
+
+  // Health check
+  useEffect( (  ) => {
+
+    let cancelled = false;
+
+    ( async () => {
+
+      try {
+
+        const { data: health } = await health_check()
+        log( `Systems health: `, health )
+        if( cancelled ) return log( `Health effect cancelled` )
+        if( !health.healthy ) return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+
+      } catch( e ) {
+        log( `Error getting system health: `, e )
+      }
+
+    } )( )
+
+    return () => cancelled = true
+
+  }, [] )
 
   // File validations and loading
   useEffect( f => {

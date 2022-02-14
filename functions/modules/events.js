@@ -24,7 +24,6 @@ exports.registerEvent = async function( data, context ) {
 
 		// Appcheck validation
 		if( context.app == undefined ) {
-			console.log( context )
 			throw new Error( `App context error` )
 		}
 
@@ -44,7 +43,7 @@ exports.registerEvent = async function( data, context ) {
 			expires: new Date( date ).getTime() + weekInMs, // Event expiration plus a day
 			expires_yyyy_mm_dd: date,
 			codes: codes.length,
-			codesAvailable: 0, // This will be updated by the initial scan run in codes.js:updatePublicEventAvailableCodes
+			codesAvailable: codes.length, // This will be updated by the initial scan run in codes.js:updatePublicEventAvailableCodes
 			authToken,
 			challenges,
 			public_auth: generate_new_event_public_auth( 5, is_test_event ),
@@ -78,7 +77,7 @@ exports.registerEvent = async function( data, context ) {
 		await Promise.all( saneCodes.map( async code => {
 
 			return db.collection( 'codes' ).doc( code ).set( {
-				claimed: 'unknown',
+				claimed: false,
 				scanned: false,
 				amountOfRemoteStatusChecks: 0,
 				created: Date.now(),

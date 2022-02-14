@@ -1,9 +1,11 @@
 // Data management
 import { useState, useEffect } from 'react'
-import { requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses, trackEvent } from '../../modules/firebase'
-import { log } from '../../modules/helpers'
+import { requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses, trackEvent, health_check } from '../../modules/firebase'
+import { log, dev } from '../../modules/helpers'
 import { useHistory, useParams } from 'react-router-dom'
 import useInterval from 'use-interval'
+
+// Debugging data
 const { REACT_APP_publicUrl } = process.env
 log( 'Frontend using live url', REACT_APP_publicUrl )
 
@@ -45,6 +47,30 @@ export default function ViewQR( ) {
   // ///////////////////////////////
   // Lifecycle handling
   // ///////////////////////////////
+
+  // Health check
+  useEffect( (  ) => {
+
+    let cancelled = false;
+
+    ( async () => {
+
+      try {
+
+        const { data: health } = await health_check()
+        log( `Systems health: `, health )
+        if( cancelled ) return log( `Health effect cancelled` )
+        if( !dev && !health.healthy ) return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+
+      } catch( e ) {
+        log( `Error getting system health: `, e )
+      }
+
+    } )( )
+
+    return () => cancelled = true
+
+  }, [] )
 
   // Set url event ID to localstorage and remove it from the URL
   useEffect( (  ) => {

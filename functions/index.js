@@ -3,12 +3,14 @@ const generousRuntime = {
 	timeoutSeconds: 540,
 	memory: '4GB'
 }
+const { log } = require( './modules/helpers' )
+log( `⚠️ Dev mode on` )
 
 // ///////////////////////////////
 // Code status managers
 // ///////////////////////////////
 
-const { checkIfCodeHasBeenClaimed, refreshScannedCodesStatuses, refresh_unknown_and_unscanned_codes, getEventDataFromCode } = require( './modules/codes' )
+const { refreshScannedCodesStatuses, refresh_unknown_and_unscanned_codes, getEventDataFromCode } = require( './modules/codes' )
 
 // Get event data of a code
 exports.getEventDataFromCode = functions.https.onCall( getEventDataFromCode )
@@ -66,3 +68,9 @@ exports.validateCallerDevice = functions.https.onCall( validateCallerDevice )
 // /////////////////////////////*/
 const { get_code_by_challenge } = require( './modules/codes' )
 exports.get_code_by_challenge = functions.https.onCall( get_code_by_challenge )
+
+/* ///////////////////////////////
+// Health check
+// /////////////////////////////*/
+const { health_check } = require( './modules/health' )
+exports.health_check = functions.https.onCall( health_check )

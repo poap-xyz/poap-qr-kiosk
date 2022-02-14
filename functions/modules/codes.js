@@ -1,58 +1,16 @@
 // Firebase interactors
 const functions = require( 'firebase-functions' )
 const { db, dataFromSnap, increment } = require( './firebase' )
-const dev = !!process.env.development
-if( dev ) console.log( `⚠️ Dev mode on` )
-// Secrets
-const { auth0 } = functions.config()
+const { log, dev } = require( './helpers' )
+
+const { call_poap_endpoint } = require( './poap_api' )
 
 // Libraries
-const fetch = require( 'isomorphic-fetch' )
 const Throttle = require( 'promise-parallel-throttle' )
 
 // ///////////////////////////////
 // Code helpers
 // ///////////////////////////////
-
-// Get auth token from auth0
-async function getAccessToken() {
-
-	// Get API secrets
-	const { access_token, expires } = await db.collection( 'secrets' ).doc( 'poap-api' ).get().then( dataFromSnap )
-	const { client_id, client_secret, endpoint } = auth0
-
-	// If token is valid for another hour, keep it
-	if( expires > ( Date.now() + 1000 * 60 * 10 ) ) return access_token
-
-	// If the access token expires soon, get a new one
-	const options = {
-		method: 'POST',
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify( {
-			audience: auth0.audience,
-			grant_type: 'client_credentials',
-			client_id: client_id,
-			client_secret: client_secret
-		} )
-	}
-	if( dev ) console.log( `Getting access token at ${ endpoint } with `, options )
-	const { access_token: new_access_token, expires_in, ...rest } = await fetch( endpoint, options ).then( res => res.json() )
-	if( dev ) console.log( `New token: `, new_access_token, ' unexpected output: ', rest )
-
-	// If no access token, error
-	if( !new_access_token ) throw new Error( JSON.stringify( rest ) )
-
-	// Set new token to firestore cache
-	await db.collection( 'secrets' ).doc( 'poap-api' ).set( {
-		access_token: new_access_token,
-		expires: Date.now() + ( expires_in * 1000 ),
-		updated: Date.now()
-	}, { merge: true } )
-
-	return new_access_token
-
-
-}
 
 // Remote api checker, this ALWAYS resolves
 // this is because I am not sure that this API will not suddenly be throttled or authenticated.
@@ -66,50 +24,8 @@ const checkCodeStatus = async code => {
 	if( code.includes( 'testing' ) ) return { claimed: false, event: { end_date: dayMonthYear, name: `Test Event ${ Math.random() }` } }
 
 	// Get API data
-	const apiUrl = dev ? 'https://dev-api.poap.tech' : 'https://api.poap.tech'
-	const access_token = await getAccessToken()
-	if( dev ) console.log( `Calling ${ apiUrl } with token ${ access_token }` )
+	return call_poap_endpoint( `/actions/claim-qr`, { qr_hash: code } )
 
-	return fetch( `${ apiUrl }/actions/claim-qr?qr_hash=${ code }`, {
-		headers: {
-			Authorization: `Bearer ${ access_token }`
-		}
-	} )
-	.then( async res => {
-
-		try {
-
-			// Try to access response as json first
-			const json = await res.json()
-			return json
-
-		} catch {
-
-			// If json fails, try as text
-			const text = await res.text()
-			return {
-				error: 'checkCodeStatus error',
-				message: `${text}. Did you upload old or expired codes?`
-			}
-
-		}
-
-	} )
-	.then( json => {
-		if( dev ) console.log( 'Response: ', json )
-		return json
-	} )
-	.catch( e => {
-
-		// Log for my reference
-		console.error( 'checkCodeStatus error: ', e )
-
-		// Return object so the updateCodeStatus function can continue
-		return {
-			error: `checkCodeStatus error`,
-			message: e.message
-		}
-	} )
 }
 
 // Code updater
@@ -165,7 +81,10 @@ async function updateCodeStatus( code, cachedResponse ) {
 	}
 
 	// Set updated status to firestore
-	return db.collection( 'codes' ).doc( code ).set( updates, { merge: true } )
+	await db.collection( 'codes' ).doc( code ).set( updates, { merge: true } )
+
+	// Return the status for use in other places
+	return updates.claimed
 
 }
 
@@ -194,33 +113,6 @@ exports.getEventDataFromCode = async function ( code, context ) {
 
 }
 
-// ///////////////////////////////
-// Manual code check
-// ///////////////////////////////
-// exports.checkIfCodeHasBeenClaimed = async ( code, context ) => {
-
-// 	try {
-
-// 		if( context.app == undefined ) {
-// 			throw new Error( `App context error` )
-// 		}
-
-// 		// Check claim status on claim backend
-// 		const status = await checkCodeStatus( code )
-// 		const { claimed, error } = status
-
-// 		// If claimed, or there was an error, mark it so
-// 		if( claimed === true || error ) await updateCodeStatus( code, status )
-
-// 		// Always trigger a return from a callable
-// 		return true
-
-
-// 	} catch( e ) {
-// 		console.error( 'checkIfCodeHasBeenClaimed error: ', e )
-// 	}
-
-// }
 
 
 // ///////////////////////////////
@@ -299,7 +191,6 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 
 		// Appcheck validation
 		if( !dev && context.app == undefined ) {
-			console.log( context.app )
 			throw new Error( `App context error` )
 		}
 
@@ -429,27 +320,40 @@ exports.get_code_by_challenge = async ( challenge_id, context ) => {
 		// Check if challenge expired already
 		if( challenge.expires < ( Date.now() + grace_period_in_ms ) ) throw new Error( `This link expired, please make sure to claim your POAP right after scanning the QR.` )
 
-		// Grab oldest available code
-		const [ oldestCode ] = await db.collection( 'codes' )
-									.where( 'event', '==', challenge.eventId )
-									.where( 'claimed', '==', false )
-									.orderBy( 'updated', 'desc' )
-									.limit( 1 ).get().then( dataFromSnap )
+		/* ///////////////////////////////
+		// Get a verified available code */
+		let valid_code = undefined
+		while( !valid_code ) {
 
-		if( !oldestCode || !oldestCode.uid ) throw new Error( `No more POAPs available for this event!` )
+			// Grab oldest available code
+			const [ oldestCode ] = await db.collection( 'codes' )
+										.where( 'event', '==', challenge.eventId )
+										.where( 'claimed', '==', false )
+										.orderBy( 'updated', 'desc' )
+										.limit( 1 ).get().then( dataFromSnap )
 
-		// Mark oldest code as unknown status
-		await db.collection( 'codes' ).doc( oldestCode.uid ).set( {
-			updated: Date.now(),
-			scanned: true,
-			claimed: oldestCode.uid.includes( 'testing' ) ? true : 'unknown'
-		}, { merge: true } )
+			if( !oldestCode || !oldestCode.uid ) throw new Error( `No more POAPs available for this event!` )
+
+			// Mark oldest code as unknown status so other users don't get it suggested
+			await db.collection( 'codes' ).doc( oldestCode.uid ).set( {
+				updated: Date.now(),
+				scanned: true,
+				claimed: oldestCode.uid.includes( 'testing' ) ? true : 'unknown'
+			}, { merge: true } )
+
+			// Check whether the code is actuallt valid
+			const is_available = await checkCodeStatus( oldestCode.uid )
+
+			// If this code is confirmed available, send it to the user
+			if( is_available ) valid_code = oldestCode
+
+		}
 
 		// Delete challenge to prevent reuse
 		await db.collection( 'claim_challenges' ).doc( challenge_id ).delete()
 
 		// Return valid code to the frontend
-		return oldestCode.uid
+		return valid_code.uid
 
 	} catch( e ) {
 

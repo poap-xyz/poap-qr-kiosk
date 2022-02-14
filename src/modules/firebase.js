@@ -49,6 +49,7 @@ export const validateCallerDevice = httpsCallable( functions, 'validateCallerDev
 export const refreshScannedCodesStatuses = httpsCallable( functions, 'refreshScannedCodesStatuses' )
 export const getEventDataFromCode = httpsCallable( functions, 'getEventDataFromCode' )
 export const get_code_by_challenge = httpsCallable( functions, 'get_code_by_challenge' )
+export const health_check = httpsCallable( functions, 'health_check' )
 
 // ///////////////////////////////
 // Code actions
