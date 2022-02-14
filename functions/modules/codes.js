@@ -95,9 +95,9 @@ exports.getEventDataFromCode = async function ( code, context ) {
 
 	try {
 
-		if( context.app == undefined ) {
-			throw new Error( `App context error` )
-		}
+		// if( context.app == undefined ) {
+		// 	throw new Error( `App context error` )
+		// }
 
 		// Get code meta from API
 		const { event, error, message } = await checkCodeStatus( code )

@@ -111,6 +111,7 @@ export default function Admin( ) {
         const { data: { event, error } } = await getEventDataFromCode( data[0] )
         log( 'Code data received ', event, error )
         if( error ) throw new Error( error )
+        if( !event ) throw new Error( `This event appears to have expired!` )
 
         // Set event details to state
         setName( event.name )

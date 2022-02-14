@@ -84,14 +84,14 @@ exports.call_poap_endpoint = async ( endpoint='', data, method='GET', format='js
 			}, '?' )
 
 			// Append querystring to url
-			apiUrl += queryString
+			endpoint += queryString
 
 		}
 
 		/* ///////////////////////////////
 		// Authentication */
 		const access_token = await getAccessToken()
-		log( `Calling ${ apiUrl } with token ${ access_token?.slice( 0, 10 ) } and data ${ data && Object.keys( data ).join( ', ' ) }` )
+		log( `Calling ${ apiUrl }${ endpoint } with token ${ access_token?.slice( 0, 10 ) } and data ${ data && Object.keys( data ).join( ', ' ) }` )
 
 		/* ///////////////////////////////
 		// Call the API
