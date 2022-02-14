@@ -29,6 +29,7 @@ export default function Admin( ) {
   const [ csv, setCsv ] = useState(  )
   const [ codes, setCodes ] = useState(  )
   const [ gameEnabled, setGameEnabled ] = useState( true )
+  const [ dateCameFromBackend, setDateCameFromBackend ] = useState( false )
   const [ loading, setLoading ] = useState( false )
   const [ filename, setFilename ] = useState( 'codes.txt' )
 
@@ -39,26 +40,26 @@ export default function Admin( ) {
   // Health check
   useEffect( (  ) => {
 
-    let cancelled = false;
+      let cancelled = false;
 
-    ( async () => {
+      ( async () => {
 
-      try {
+        try {
 
-        const { data: health } = await health_check()
-        log( `Systems health: `, health )
-        if( cancelled ) return log( `Health effect cancelled` )
-        if( !health.healthy ) return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+          const { data: health } = await health_check()
+          log( `Systems health: `, health )
+          if( cancelled ) return log( `Health effect cancelled` )
+          if( !health.healthy ) return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
 
-      } catch( e ) {
-        log( `Error getting system health: `, e )
-      }
+        } catch( e ) {
+          log( `Error getting system health: `, e )
+        }
 
-    } )( )
+      } )( )
 
-    return () => cancelled = true
+      return () => cancelled = true
 
-  }, [] )
+    }, [] )
 
   // File validations and loading
   useEffect( f => {
@@ -115,10 +116,11 @@ export default function Admin( ) {
 
         // Set event details to state
         setName( event.name )
-        const [ day, monthName, year ] = event.end_date.split( '-' )
+        const [ day, monthName, year ] = event.expiry_date.split( '-' )
         const endDate = `${year}-${monthNameToNumber( monthName )}-${ day.length == 1 ? `0${ day }` : day }`
-        log( `Computed end date from ${event.end_date}: `, endDate )
+        log( `Computed end date from ${event.expiry_date}: `, endDate )
         setDate( endDate )
+        setDateCameFromBackend( true )
 
         if( !cancelled ) setLoading( false )
 
@@ -217,7 +219,7 @@ export default function Admin( ) {
 
       { codes && <>
         <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder='Best launch party ever' label="Event name" info="For your own reference, not visible to the world." value={ name } />
-        <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } max={ dateOnXDaysFromNow( 30 ) } type='date' label="Event end date" info={ `After this date your QR kiosk will stop working in your local timezone.\n\n⚠️ You can only schedule up to 30 days in advance.` } value={ date } />
+        { !dateCameFromBackend && <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } max={ dateOnXDaysFromNow( 30 ) } type='date' label="Event end date" info={ `After this date your QR kiosk will stop working in your local timezone.\n\n⚠️ You can only schedule up to 30 days in advance.` } value={ date } /> }
         <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder='revered@organizer.com' label="Your email" info="We will send the QR kiosk link and the admin link there." value={ email } />
         <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.includes( 'yes' ) ) } label="Enable anti-farming measures?" info={ `Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.` } value={ email } type='dropdown' options={ [ 'yes (recommended for online)', 'no (optional for physical events)' ] } />
       </> }

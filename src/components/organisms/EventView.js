@@ -127,11 +127,13 @@ export default function ViewQR( ) {
   // On mount, do single force-refresh
   useEffect( () => {
 
-    requestManualCodeRefresh()
+    if( !internalEventId ) return log( `No internal event ID, cancelling manual code refresh` )
+
+    requestManualCodeRefresh( internalEventId )
     .then( ( { data } ) => log( `Force refresh update response : `, data ) )
     .catch( e => log( `Force refresh error `, e ) )
 
-  }, [] )
+  }, [ internalEventId ] )
 
   // Update the state of scanned codes periodically
   useInterval( () => {

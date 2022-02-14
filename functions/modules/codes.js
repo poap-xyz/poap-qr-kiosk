@@ -118,7 +118,7 @@ exports.getEventDataFromCode = async function ( code, context ) {
 // ///////////////////////////////
 // Check status of old unknowns
 // ///////////////////////////////
-exports.refresh_unknown_and_unscanned_codes = async ( source, context ) => {
+exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
 
 	// If this was called with context (cron) use delay check
 	// if there was no context (frontend asked) then run with no delay
@@ -138,9 +138,41 @@ exports.refresh_unknown_and_unscanned_codes = async ( source, context ) => {
 			throw new Error( `App context error` )
 		}
 
+		// Input validation
+		if( !event_id ) throw new Error( `Event ID was not passed to refresh` )
+
+		/* ///////////////////////////////
+		// Clash throttle */
+		const currently_running = await db.collection( 'meta' ).doc( `event_refresh_blocker_${ event_id }` ).get().then( dataFromSnap )
+
+		// If there is a running refresh ...
+		// and it is the first refresh ever (ie .ended exists)...
+		// or this is not the first, but the last run did not finish yet ...
+		if( currently_running && ( !currently_running.ended || currently_running.started > currently_running.ended ) ) {
+
+			// ...and it is younger than 5 minutes, exit
+			const five_minutes_from_now = Date.now() + ( 1000 * 60 * 5 )
+			if( currently_running.started < five_minutes_from_now ) return
+
+		}
+
+		// Set this run as the running one
+		await db.collection( 'meta' ).doc( `event_refresh_${ event_id }` ).set( { started: Date.now(), started_human: new Date().toString() }, { merge: true } )
+
 		// Get old unknown codes
-		const oldUnknowns = await db.collection( 'codes' ).where( 'claimed', '==', 'unknown' ).where( 'updated', '<', Date.now() - ageInMs ).get().then( dataFromSnap )
-		const uncheckedCodes = await db.collection( 'codes' ).where( 'amountOfRemoteStatusChecks', '==', 0 ).get().then( dataFromSnap )
+		const oldUnknowns = await db.collection( 'codes' )
+								.where( 'claimed', '==', 'unknown' )
+								.where( 'updated', '<', Date.now() - ageInMs )
+								.where( 'eventId', '==', event_id )
+								.get().then( dataFromSnap )
+
+		// Get unchecked codes
+		const uncheckedCodes = await db.collection( 'codes' )
+								.where( 'amountOfRemoteStatusChecks', '==', 0 )
+								.where( 'eventId', '==', event_id )
+								.get().then( dataFromSnap )
+
+		// Split codes with previous errors
 		const [ clean, withErrors ] = oldUnknowns.reduce( ( acc, val ) => {
 
 			const [ cleanAcc, errorAcc ] = acc
@@ -153,16 +185,40 @@ exports.refresh_unknown_and_unscanned_codes = async ( source, context ) => {
 		const olderWithErrors = withErrors.filter( ( { updated } ) => updated < ( Date.now() - ( ageInMs * errorSlowdownFactor ) ) )
 
 		// Build action queue
-		const queue = [ ...uncheckedCodes, ...clean, ...olderWithErrors ].map( ( { uid } ) => function() {
+		const old_unknown_queue = [ ...uncheckedCodes, ...clean, ...olderWithErrors ].map( ( { uid } ) => function() {
 
 			return updateCodeStatus( uid )
 
 		} )
 
-		// For every unknown, check the status against live API
-		await Throttle.all( queue, {
+		// Check old unknowns against the live API
+		await Throttle.all( old_unknown_queue, {
 			maxInProgress: maxInProgress
 		} )
+
+		// Build action queue
+		const unscanned_queue = [ ...uncheckedCodes ].map( ( { uid } ) => function() {
+
+			return updateCodeStatus( uid )
+
+		} )
+
+		// Check unscanned against live qpi
+		const unscanned_statusses = await Throttle.all( unscanned_queue, {
+			maxInProgress: maxInProgress
+		} )
+
+		// Update public event counter
+		const codes_already_claimed = unscanned_statusses.reduce( ( acc, val ) => {
+			if( val == true ) return acc + 1
+			return acc
+		}, 0 )
+
+		// Increment event database
+		await db.collection( 'events' ).doc( event_id ).set( { codesAvailable: increment( -codes_already_claimed ), updated: Date.now() }, { merge: true } )
+
+		// Mark this run as finished
+		await db.collection( 'meta' ).doc( `event_refresh_${ event_id }` ).set( { ended: Date.now(), ended_human: new Date().toString() }, { merge: true } )
 
 		return 'success'
 
@@ -247,10 +303,14 @@ exports.updateEventAvailableCodes = async function( change, context ) {
 
 	const { codeId } = context.params
 	const { claimed: prevClaimed } = before.data() || {}
-	const { event, claimed } = after.data()
+	const { event, claimed, amountOfRemoteStatusChecks } = after.data()
 
 	// Do nothing if no change
 	if( prevClaimed === claimed ) return
+
+	// If this is the first update, do not increment the public event data
+	// this is being done manually in refresh_unknown_and_unscanned_codes
+	if( amountOfRemoteStatusChecks <= 1 ) return
 
 	// Scenarios:
 	// false > unknown = -1

@@ -2,6 +2,7 @@
 const { db, dataFromSnap } = require( './firebase' )
 const { v4: uuidv4 } = require('uuid')
 const { sendEventAdminEmail } = require( './email' )
+const Throttle = require( 'promise-parallel-throttle' )
 
 // Configs
 const functions = require( 'firebase-functions' )
@@ -16,6 +17,9 @@ const generate_new_event_public_auth = ( expires_in_minutes=2, is_test_event=fal
 exports.generate_new_event_public_auth = generate_new_event_public_auth
 
 exports.registerEvent = async function( data, context ) {
+
+	// Throttle config
+	const maxInProgress = 50
 	
 	try {
 
@@ -51,6 +55,9 @@ exports.registerEvent = async function( data, context ) {
 			updated: Date.now()
 		} )
 
+		/* ///////////////////////////////
+		// Throttled code writing, see https://cloud.google.com/firestore/docs/best-practices and https://cloud.google.com/firestore/quotas#writes_and_transactions */
+
 		// Sanetise codes
 		const saneCodes = codes.map( ( code='' ) => {
 
@@ -64,17 +71,22 @@ exports.registerEvent = async function( data, context ) {
 		} ).filter( ( code='' ) => !!code.length )
 
 		// First check if all codes are unused by another event
-		await Promise.all( saneCodes.map( async code => {
+		const code_clash_queue = saneCodes.map( () => async code => {
 
 			// Check if code already exists and is claimed
 			const oldDocRef = await db.collection( 'codes' ).doc( code ).get()
 			const oldDocData = oldDocRef.data()
 			if( oldDocRef.exists && oldDocData.event != id ) throw new Error( `Code ${ code } is already in use by another event.` )
 
-		} ) )
+		} )
+
+		// Check for code clashes in a throttled manner
+		await Throttle.all( code_clash_queue, {
+			maxInProgress: maxInProgress
+		} )
 
 		// Load the codes into firestore
-		await Promise.all( saneCodes.map( async code => {
+		const code_writing_queue = saneCodes.map( () => async code => {
 
 			return db.collection( 'codes' ).doc( code ).set( {
 				claimed: false,
@@ -86,7 +98,12 @@ exports.registerEvent = async function( data, context ) {
 				expires: new Date( date ).getTime() + weekInMs
 			}, { merge: true } )
 
-		} ) )
+		} )
+
+		// Write codes to firestore with a throttle
+		await Throttle.all( code_writing_queue, {
+			maxInProgress: maxInProgress
+		} )
 
 		// Send email to user with event and admin links
 		await sendEventAdminEmail( {
