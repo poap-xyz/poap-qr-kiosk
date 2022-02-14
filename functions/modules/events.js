@@ -189,7 +189,7 @@ exports.deleteCodesOfDeletedEvent = async function( snap, context ) {
 		// Delete obsolete codes
 		const snap = await db.collection( 'codes' ).where( 'event', '==', eventId ).get()
 		const deletion_queue = snap.docs.map( doc => () => doc.ref.delete() )
-		await Throttle( deletion_queue, { maxInProgress s} )
+		await Throttle.all( deletion_queue, { maxInProgress } )
 
 	} catch( e ) {
 		console.error( 'deleteCodesOfDeletedEvent error: ', e )

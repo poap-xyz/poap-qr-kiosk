@@ -54,7 +54,7 @@ exports.deleteCodesOfDeletedEvent = functions.firestore.document( `events/{event
 
 // Update items where parents were updated
 exports.updatePublicEventData = functions.firestore.document( `events/{eventId}` ).onWrite( updatePublicEventData )
-exports.updateEventAvailableCodes = functions.firestore.document( `codes/{codeId}` ).onWrite( updateEventAvailableCodes )
+exports.updateEventAvailableCodes = functions.firestore.document( `codes/{codeId}` ).onUpdate( updateEventAvailableCodes )
 
 
 /* ///////////////////////////////
