@@ -29,8 +29,10 @@ export default function Admin( ) {
   const [ csv, setCsv ] = useState(  )
   const [ codes, setCodes ] = useState(  )
   const [ gameEnabled, setGameEnabled ] = useState( true )
+  const [ gameDuration, setGameDuration ] = useState( 30 )
   const [ loading, setLoading ] = useState( false )
   const [ filename, setFilename ] = useState( 'codes.txt' )
+  const [ isHealthy, setIsHealthy ] = useState( true )
 
   // ///////////////////////////////
   // Lifecycle handling
@@ -48,7 +50,10 @@ export default function Admin( ) {
           const { data: health } = await health_check()
           log( `Systems health: `, health )
           if( cancelled ) return log( `Health effect cancelled` )
-          if( !health.healthy ) return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+          if( !health.healthy ) {
+            setIsHealthy( false )
+            return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+          }
 
         } catch( e ) {
           log( `Error getting system health: `, e )
@@ -163,6 +168,12 @@ export default function Admin( ) {
 
     try {
 
+      // Health noti
+      if( !isHealthy ) {
+        const ignore_unhealthy = confirm( `The POAP API is under maintenance, you can continue but this might cause unexpected behaviour.` )
+        if( !ignore_unhealthy ) throw new Error( `Event creation cancelled` )
+      }
+
       // Validations
       if( !codes.length ) throw new Error( 'Csv has 0 entries' )
       if( !name.length ) throw new Error( 'Please specify an event name' )
@@ -178,7 +189,15 @@ export default function Admin( ) {
       setLoading( 'Creating event' )
 
       // Create remote event
-      const { data: newEvent } = await registerEvent( { name, email, date, codes, challenges: gameEnabled ? [ 'game' ] : [] } )
+      const { data: newEvent } = await registerEvent( {
+        name,
+        email,
+        date,
+        codes,
+        challenges: gameEnabled ? [ 'game' ] : [],
+        game_config: { duration: gameDuration, target_score: Math.ceil( gameDuration / 5 ) }
+      } )
+
       log( 'Event created: ', newEvent, { name, email, date, codes } )
       trackEvent( 'admin_event_create' )
 
@@ -223,7 +242,8 @@ export default function Admin( ) {
         <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder='Best launch party ever' label="Event name" info="For your own reference, not visible to the world." value={ name } />
         <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } max={ dateOnXDaysFromNow( 30 ) } type='date' label="QR dispenser expiry date" info={ `After this date your QR kiosk will stop working in your local timezone.\n\n⚠️ You can only schedule up to 30 days in advance.` } value={ date } />
         <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder='revered@organizer.com' label="Your email" info="We will send the QR kiosk link and the admin link there." value={ email } />
-        <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.includes( 'yes' ) ) } label="Enable anti-farming measures?" info={ `Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.` } value={ email } type='dropdown' options={ [ 'yes (recommended for online)', 'no (optional for physical events)' ] } />
+        <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.includes( 'yes' ) ) } label="Enable anti-farming game?" info={ `Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.` } type='dropdown' options={ [ 'yes (recommended for online)', 'no (optional for physical events)' ] } />
+        { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label="How many seconds should the anti-farming game last?" info="The longer you set this, the harder it becomes for humans to farm your POAP drop" options={ [ 30, 10, 20, 60 ] } /> }
       </> }
       
       { codes && <Button id="event-create-submit" onClick={ createEvent }>Create event with { codes.length } codes</Button> }

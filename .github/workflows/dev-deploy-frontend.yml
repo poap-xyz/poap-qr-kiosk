@@ -53,15 +53,13 @@ jobs:
         run: |
           echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
 
-      # Testing
-      - name: Run e2e tests
-        run: npm run test:ci
-      - name: Testing failed
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v2
+      # Run cypress tests with a retry (in case a functions deploy clash caused the fail)
+      - name: Run e2e frontend tests
+        uses: nick-invision/retry@v2
         with:
-          name: cypress-videos
-          path: cypress/videos # or path/to/artifact
+          timeout_minutes: 30 # this command should never time out
+          max_attempts: 2 # A function deploy can never take longer than a CI run, so two is enough
+          command: npm run test:ci
 
       # Deployment
       - name: Build website files

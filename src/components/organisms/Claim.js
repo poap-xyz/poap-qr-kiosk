@@ -244,7 +244,7 @@ export default function ViewQR( ) {
   // ///////////////////////////////
 
   // If game challenge requested, show
-  if( userValid && ( gameDone || challenge?.challenges?.includes( 'game' ) ) ) return <Stroop duration={ 30 } target_score={ 5 } onLose={ handleLose } onWin={ handleWin } poap_url={ poaplink } />
+  if( userValid && ( gameDone || challenge?.challenges?.includes( 'game' ) ) ) return <Stroop duration={ challenge?.game_config?.duration || 30 } target_score={ challenge?.game_config?.target_score || 5 } onLose={ handleLose } onWin={ handleWin } poap_url={ poaplink } />
 
   // loading screen is default
   return <Loading message={ loading } />
