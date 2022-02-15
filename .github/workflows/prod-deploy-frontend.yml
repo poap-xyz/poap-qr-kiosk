@@ -50,6 +50,9 @@ jobs:
         run: |
           echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
 
+      - name: Wait for a few minutes in case functions are deploying
+        run: sleep 240 && date
+
       # Run cypress tests with a retry (in case a functions deploy clash caused the fail)
       - name: Run e2e frontend tests
         uses: nick-invision/retry@v2
