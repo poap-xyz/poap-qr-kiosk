@@ -330,32 +330,6 @@ exports.updateEventAvailableCodes = async function( change, context ) {
 
 }
 
-// ///////////////////////////////
-// Delete expired codes
-// ///////////////////////////////
-exports.deleteExpiredCodes = async () => {
-
-
-	try {
-
-		// An extra day of expiry distance in case of timezone weirdness
-		const dayInMs = 1000 * 60 * 60 * 24
-
-		// Get all expired codes
-		const { docs: expiredCodes } = await db.collection( 'codes' ).where( 'expires', '>', Date.now() + dayInMs ).get()
-
-		// Log for reference
-		console.log( `Deleting ${ expiredCodes.length } expired codes` )
-
-		// Delete expired codes
-		await Promise.all( expiredCodes.map( doc => doc.ref.delete() ) )
-
-	} catch( e ) {
-		console.error( 'deleteExpiredCodes error ', e )
-	}
-
-}
-
 /* ///////////////////////////////
 // Get code based on valid challenge
 // /////////////////////////////*/

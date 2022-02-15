@@ -27,9 +27,12 @@ const allow_only_these_properties = ( obj, allowed_properties ) => {
 
 }
 
+const wait = ( durationinMs=1000 ) => new Promise( resolve => setTimeout( resolve, durationinMs ) )
+
 module.exports = {
 	dev,
 	log,
 	require_properties,
-	allow_only_these_properties
+	allow_only_these_properties,
+	wait
 }

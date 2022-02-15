@@ -3,6 +3,7 @@
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "runtime": "firebase functions:config:get > .runtimeconfig.json",
+    "runtime:production": "firebase functions:config:get > .runtimeconfig.prod.json",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "development=true npm run shell",
