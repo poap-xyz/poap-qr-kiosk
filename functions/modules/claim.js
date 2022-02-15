@@ -17,6 +17,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 		// Check whether the event needs new auth data
 		const { event_id, public_auth_token } = req.params
 		const event = await db.collection( 'events' ).doc( event_id ).get().then( dataFromSnap )
+		if( !event.uid ) throw new Error( `Event ${ event_id } does not exist` )
 
 		// If the auth expired, write a new one but let the current scanner continue
 		if( event.public_auth?.expires < Date.now() ) {
