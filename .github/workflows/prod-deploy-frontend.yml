@@ -56,9 +56,11 @@ jobs:
 
       - name: Wait for a few minutes in case functions are deploying
         run: |
-          if echo "$steps.changed-files.outputs.all_changed_files" | grep -q "functions/"; then
+          if echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -q "functions/"; then
             echo "Functions files changed, waiting for 4 minutes"
             sleep 240
+          else
+            echo "No functions changes, not waiting"  
           fi
 
       # Run cypress tests with a retry (in case a functions deploy clash caused the fail)
