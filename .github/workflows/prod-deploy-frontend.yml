@@ -50,8 +50,16 @@ jobs:
         run: |
           echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v15
+
       - name: Wait for a few minutes in case functions are deploying
-        run: sleep 240 && date
+        run: |
+          if echo "$steps.changed-files.outputs.all_changed_files" | grep -q "functions/"; then
+            echo "Functions files changed, waiting for 4 minutes"
+            sleep 240
+          fi
 
       # Run cypress tests with a retry (in case a functions deploy clash caused the fail)
       - name: Run e2e frontend tests
