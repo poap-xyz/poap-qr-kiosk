@@ -29,7 +29,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 		if( !event_id || !public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot` )
 
 		// Check whether the auth token is still valid
-		if( event.public_auth.token != public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot` )
+		if( event?.public_auth?.token != public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot` )
 
 		// Write a challenge ID to the cache with an expired
 		const challenge_auth = generate_new_event_public_auth()
@@ -46,7 +46,8 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
 	} catch( e ) {
 
-		console.error( '/claim/:event_id/:public_auth_token error', e )
+		const { event_id, public_auth_token } = req.params || {}
+		console.error( `/claim/${ event_id }/${ public_auth_token } error`, e )
 		return res.send( `Error validating your QR` )
 
 	}
