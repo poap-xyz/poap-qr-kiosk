@@ -41,6 +41,9 @@ exports.clean_up_expired_items = async () => {
 
 	const maxInProgress = 500
 
+	// Block this function for manual use only
+	return
+
 	try {
 
 		// An extra day of expiry distance in case of timezone weirdness
