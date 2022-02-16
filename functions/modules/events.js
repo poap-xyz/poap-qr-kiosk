@@ -44,7 +44,7 @@ exports.registerEvent = async function( data, context ) {
 		const { id } = await db.collection( 'events' ).add( {
 			name,
 			email,
-			expires: new Date( date ).getTime() + weekInMs, // Event expiration plus a day
+			expires: new Date( date ).getTime() + weekInMs, // Event expiration plus a week
 			expires_yyyy_mm_dd: date,
 			codes: codes.length,
 			codesAvailable: codes.length, // This will be updated by the initial scan run in codes.js:updatePublicEventAvailableCodes

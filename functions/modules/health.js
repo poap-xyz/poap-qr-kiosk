@@ -44,12 +44,11 @@ exports.clean_up_expired_items = async () => {
 	try {
 
 		// An extra day of expiry distance in case of timezone weirdness
-		const dayInMs = 1000 * 60 * 60 * 24
-		const twoDayInMs = 1000 * 60 * 60 * 24 * 2
+		const yearInMs = 1000 * 60 * 60 * 24 * 365
 
 		// Delete expired events
-		const { docs: expiredEvents } = await db.collection( 'events' ).where( 'expires', '>', Date.now() + dayInMs ).get()
-		const { docs: expiredChallenges } = await db.collection( 'claim_challenges' ).where( 'expires', '>', Date.now() + dayInMs ).get()
+		const { docs: expiredEvents } = await db.collection( 'events' ).where( 'expires', '>', Date.now() + yearInMs ).get()
+		const { docs: expiredChallenges } = await db.collection( 'claim_challenges' ).where( 'expires', '>', Date.now() + yearInMs ).get()
 
 		console.log( `Deleting ${ expiredEvents.length } expired events and ${ expiredChallenges.length } expired challenges` )
 
@@ -62,7 +61,7 @@ exports.clean_up_expired_items = async () => {
 		await wait( 30000 )
 
 		// Get all expired codes
-		const { docs: expiredCodes } = await db.collection( 'events' ).where( 'expires', '>', Date.now() + twoDayInMs ).get()
+		const { docs: expiredCodes } = await db.collection( 'events' ).where( 'expires', '>', Date.now() + yearInMs ).get()
 
 		console.log( `Deleting ${ expiredCodes.length } expired codes` )
 
