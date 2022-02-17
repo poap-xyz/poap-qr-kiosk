@@ -32,8 +32,10 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 		// Check whether the auth token is still valid
 		if( event?.public_auth?.token != public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot` )
 
-		// Write a challenge ID to the cache with an expired
-		const challenge_auth = generate_new_event_public_auth()
+		// Write a challenge ID to the cache with an expires setting of the game duration plus a grace period
+		const challenge_grace_length_in_mins = 1
+		const challenge_validity_in_mins = event?.game_config?.duration && ( challenge_grace_length_in_mins + ( event?.game_config?.duration / 60 ) )
+		const challenge_auth = generate_new_event_public_auth( challenge_validity_in_mins || 2 )
 		await db.collection( 'claim_challenges' ).doc( challenge_auth.token ).set( {
 			eventId: event_id,
 			...challenge_auth,

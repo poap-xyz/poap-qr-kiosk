@@ -19,5 +19,6 @@ module.exports = {
 	db: db,
 	app: app,
 	dataFromSnap: dataFromSnap,
-	increment: FieldValue.increment
+	increment: FieldValue.increment,
+	arrayUnion: FieldValue.arrayUnion
 }

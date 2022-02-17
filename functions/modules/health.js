@@ -40,36 +40,32 @@ exports.health_check = async () => {
 exports.clean_up_expired_items = async () => {
 
 	const maxInProgress = 500
-
-	// Block this function for manual use only
-	return
+	const day_in_ms = 1000 * 60 * 60 * 24
+	const time_to_keep_after_expiry = day_in_ms * 90
 
 	try {
 
-		// An extra day of expiry distance in case of timezone weirdness
-		const yearInMs = 1000 * 60 * 60 * 24 * 365
-
 		// Delete expired events
-		const { docs: expiredEvents } = await db.collection( 'events' ).where( 'expires', '>', Date.now() + yearInMs ).get()
-		const { docs: expiredChallenges } = await db.collection( 'claim_challenges' ).where( 'expires', '>', Date.now() + yearInMs ).get()
+		const { docs: expiredEvents } = await db.collection( 'events' ).where( 'expires', '<', Date.now() + time_to_keep_after_expiry ).get()
+		const { docs: expiredChallenges } = await db.collection( 'claim_challenges' ).where( 'expires', '<', Date.now() + time_to_keep_after_expiry ).get()
 
-		console.log( `Deleting ${ expiredEvents.length } expired events and ${ expiredChallenges.length } expired challenges` )
+		console.log( `${ expiredEvents.length } expired events and ${ expiredChallenges.length } expired challenges` )
 
-		const event_and_challenge_queue = [ ...expiredEvents, ...expiredChallenges ].map( doc => () => doc.ref.delete() )
+		// const event_and_challenge_queue = [ ...expiredEvents, ...expiredChallenges ].map( doc => () => doc.ref.delete() )
 
 		// Throttled delete
-		await Throttle.all( event_and_challenge_queue, { maxInProgress } )
+		// await Throttle.all( event_and_challenge_queue, { maxInProgress } )
 
 		// Wait for 30 seconds after the throttle to make sure the codes that are linked are deleted
-		await wait( 30000 )
+		// await wait( 30000 )
 
 		// Get all expired codes
-		const { docs: expiredCodes } = await db.collection( 'events' ).where( 'expires', '>', Date.now() + yearInMs ).get()
+		const { docs: expiredCodes } = await db.collection( 'events' ).where( 'expires', '<', Date.now() + time_to_keep_after_expiry ).get()
 
-		console.log( `Deleting ${ expiredCodes.length } expired codes` )
+		console.log( `${ expiredCodes.length } expired codes` )
 
 		// Delete expired codes
-		await Throttle.all( expiredCodes.map( doc => () => doc.ref.delete() ), { maxInProgress } )
+		// await Throttle.all( expiredCodes.map( doc => () => doc.ref.delete() ), { maxInProgress } )
 
 	} catch( e ) {
 		console.error( 'deleteExpiredCodes error ', e )

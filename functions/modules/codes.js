@@ -338,12 +338,15 @@ exports.get_code_by_challenge = async ( challenge_id, context ) => {
 	try {
 
 		// Grace period for completion, this is additional to the window of generate_new_event_public_auth
-		const grace_period_in_ms = 1000 * 5
+		const grace_period_in_ms = 1000 * 30
 
 		// Validate caller
 		if( context.app == undefined ) {
 			throw new Error( `App context error` )
 		}
+
+		/* ///////////////////////////////
+		// Validate the challenge */
 
 		// Get challenge
 		const challenge = await db.collection( 'claim_challenges' ).doc( challenge_id ).get().then( dataFromSnap )

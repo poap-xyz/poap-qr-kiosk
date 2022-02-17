@@ -1,5 +1,5 @@
 // Firebase interactors
-const { db, dataFromSnap } = require( './firebase' )
+const { db, dataFromSnap, arrayUnion, increment } = require( './firebase' )
 const { v4: uuidv4 } = require('uuid')
 const { sendEventAdminEmail } = require( './email' )
 const Throttle = require( 'promise-parallel-throttle' )
@@ -111,6 +111,14 @@ exports.registerEvent = async function( data, context ) {
 				adminlink: `${ kiosk.public_url }/#/event/admin/${ id }/${ authToken }`
 			}
 		} )
+
+		// Keep track of event admin emails
+		await db.collection( 'user_data' ).doc( email ).set( {
+			events: arrayUnion( id ),
+			events_organised: increment( 1 ),
+			updated: Date.now(),
+			updated_human: new Date().toString()
+		}, { merge: true } )
 
 		// Return event data
 		return {
