@@ -4,7 +4,7 @@
 	"requestTimeout": 60000,
 	"video": true,
 	"videoCompression": false,
-	"screenscreenshotOnRunFailureshots": true
-	
+	"screenscreenshotOnRunFailureshots": true,
+	"chromeWebSecurity": false
 }
 
