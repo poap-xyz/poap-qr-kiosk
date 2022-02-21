@@ -9,8 +9,7 @@ const request_options = {
 	headers: {
 		Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host
 	},
-	failOnStatusCode: false,
-	followRedirect: false
+	failOnStatusCode: false
 }
 
 async function extract_challenge_from_url ( response ) {
@@ -74,7 +73,7 @@ context( 'Claimer can view valid events', () => {
 
 
 		// Visit the public link
-		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }`, request_options ).as( `request` )
+		cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
 			.then( extract_challenge_from_url )
 			.then( event_1_first_challenge => {
 
@@ -131,7 +130,7 @@ context( 'Claimer can view valid events', () => {
 	it( 'Event 1: Shows no codes after both are scanned', function( ) {
 
 		// Visit the public link to the second code as read by simulating a scan
-		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }`, request_options ).as( `request` )
+		cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
 			.then( extract_challenge_from_url )
 			.then( event_1_second_challenge => {
 
@@ -162,7 +161,7 @@ context( 'Claimer can view valid events', () => {
 	it( 'Event 1: Shows error if link was used after codes ran out', function( ) {
 
 		// Visit the public link to the second code as read by simulating a scan
-		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }`, request_options ).as( `request` )
+		cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
 			.then( extract_challenge_from_url )
 			.then( event_1_second_challenge => {
 
@@ -225,7 +224,7 @@ context( 'Claimer can view valid events', () => {
 
 
 		// Visit the public link
-		cy.request( `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_2_public_auth_link }`, request_options ).as( `request` )
+		cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_2_public_auth_link }` } ).as( `request` )
 			.then( extract_challenge_from_url )
 			.then( event_2_first_challenge => {
 
