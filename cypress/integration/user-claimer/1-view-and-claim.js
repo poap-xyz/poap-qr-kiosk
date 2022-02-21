@@ -7,10 +7,10 @@ const twoCodes = require( '../../fixtures/two-correct-codes' )
 const fiveCodes = require( '../../fixtures/five-correct-codes' )
 const request_options = {
 	headers: {
-		Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host,
-		failOnStatusCode: false,
-		followRedirect: false
-	}
+		Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host
+	},
+	failOnStatusCode: false,
+	followRedirect: false
 }
 
 async function extract_challenge_from_url ( response ) {
