@@ -1,10 +1,10 @@
-# POAP QR Kiosk MVP
+# POAP QR Kiosk
 
-[Live url]( https://poap-qr-kiosk.web.app/ ) (please do not claim the codes in it).
+[Live url: qr.poap.tech]( https://qr.poap.tech/ ).
 
-This is an MVP of a kiosk app that displays QR codes based on a list of event codes uploaded by the event manager.
+[Dev url: qr.poap.tech]( https://qr-kiosk-dev.web.app/ ).
 
-There is a non-trivial chance it will be rewritten if the concept proves viable.
+This is a kiosk app that displays QR codes based on a list of event codes uploaded by the event manager.
 
 Product owner: @actualymentor
 

@@ -9,6 +9,10 @@
       {
         "source": "/claim/**",
         "function": "claimMiddleware"
+      },
+      {
+        "source": "/health/",
+        "function": "public_health_check"
       }
     ],
     "ignore": [
