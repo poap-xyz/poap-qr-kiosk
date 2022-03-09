@@ -73,5 +73,8 @@ exports.get_code_by_challenge = functions.https.onCall( get_code_by_challenge )
 /* ///////////////////////////////
 // Health check
 // /////////////////////////////*/
-const { health_check } = require( './modules/health' )
+const { health_check, public_health_check } = require( './modules/health' )
 exports.health_check = functions.https.onCall( health_check )
+
+// Public health check
+exports.public_health_check = functions.https.onRequest( public_health_check )

@@ -3,7 +3,7 @@ const { log, wait } = require( './helpers' )
 const { db } = require( './firebase' )
 const Throttle = require( 'promise-parallel-throttle' )
 
-exports.health_check = async () => {
+const health_check = async () => {
 
 	const status = {
 		healthy: false,
@@ -33,6 +33,21 @@ exports.health_check = async () => {
 			...status,
 			error: e.message
 		}
+	}
+
+}
+
+exports.health_check = health_check
+
+exports.public_health_check = async ( req, res ) => {
+
+	try {
+
+		const status =  await health_check()
+		return res.json( status )
+
+	} catch( e ) {
+		return res.json( { error: e.message } )
 	}
 
 }
