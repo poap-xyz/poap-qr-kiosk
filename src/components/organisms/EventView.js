@@ -157,8 +157,6 @@ export default function ViewQR( ) {
   if( !acceptedTerms ) return <Container>
     
     <H1 align="center">Before we begin</H1>
-    <H2 align="center">Scan QRs with a camera app</H2>
-    <Text align="center">Do not scan codes with the POAP app, they will not work. This is an anti-abuse measure.</Text>
 
     <H2>Keep your internet on</H2>
     <Text align="center">Without an internet connection new codes will stop loading. You will receive a notification if the dispenser notices you are offline.</Text>

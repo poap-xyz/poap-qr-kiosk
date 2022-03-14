@@ -26,7 +26,7 @@ const Timer = ( { duration, onComplete } ) => {
 	return <Text>Timer: { duration - timePassed }</Text>
 }
 
-export default ( { duration=10, target_score=5, onWin, onLose, poap_url, ...props } ) => {
+export default ( { duration_input, target_score_input, onWin, onLose, poap_url, ...props } ) => {
 
 	const [ started, setStarted ] = useState( false )
 	const [ answer, setAnswer ] = useState( random_color() )
@@ -35,9 +35,29 @@ export default ( { duration=10, target_score=5, onWin, onLose, poap_url, ...prop
 	const [ attempts, setAttempts ] = useState( 0 )
 	const [ done, setDone ] = useState( false )
 
-	useEffect( (  ) => log( `Game start` ), [] )
-	useEffect( (  ) => log( `Game render with `, poap_url ) )
+	// Game state management
+	// Note: duration & target_score change as challenge changes. If it does from something to undefined, that is because the challenge was completed and nothing should change
+	const [ duration, set_duration ] = useState( duration_input )
+	const [ target_score, set_target_score ] = useState( target_score_input )
+	useEffect( (  ) => {
 
+		// Logging
+		log( `Input duration input/state ${ duration_input }/${ duration }` )
+		log( `Input target_score input/state ${ target_score_input }/${ target_score }` )
+
+		// If the state was empty, set it to the new value
+		if( !duration && duration_input ) set_duration( duration_input )
+		if( !target_score && target_score_input ) set_target_score( target_score_input )
+
+		// If the state was full, and this is a change, set the change
+		if( target_score_input && target_score != target_score_input ) set_target_score( target_score_input )
+		if( duration_input && duration != duration_input ) set_duration( duration_input )
+
+	}, [ target_score_input, duration_input ] )
+
+	// Debugging info
+	useEffect( (  ) => log( `Configuring game of ${ duration } seconds, target_score: ${ target_score }. onWin ${ !!onWin }, onLose ${ !!onLose }` ), [ duration, target_score ] )
+	useEffect( (  ) => log( `POAP code `, poap_url ), [ poap_url ] )
 
 	// Generate options on the giving of an answer
 	useEffect( () => {
@@ -93,7 +113,7 @@ export default ( { duration=10, target_score=5, onWin, onLose, poap_url, ...prop
 
 	function tally_score() {
 
-		log( 'Game complete!' )
+		log( 'Game complete! Score:', score, ' target: ', target_score )
 		setDone( true )
 		if( score >= target_score && onWin ) return onWin( score, Date.now() )
 		if( onLose ) return onLose( score, Date.now() )
