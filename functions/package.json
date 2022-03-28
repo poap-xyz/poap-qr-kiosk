@@ -6,7 +6,8 @@
     "runtime:production": "firebase functions:config:get > .runtimeconfig.prod.json",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
-    "start": "development=true npm run shell",
+    "start": "development=true && firebase use development && npm run runtime && npm run shell",
+    "start:production": "development=true && firebase use production && npm run runtime:production && npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },

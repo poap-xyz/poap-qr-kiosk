@@ -1,6 +1,6 @@
 const { live_access_token, call_poap_endpoint } = require( './poap_api' ) 
 const { log, wait } = require( './helpers' )
-const { db } = require( './firebase' )
+const { db, dataFromSnap } = require( './firebase' )
 const Throttle = require( 'promise-parallel-throttle' )
 
 const health_check = async () => {
@@ -78,6 +78,12 @@ exports.clean_up_expired_items = async () => {
 		const { docs: expiredCodes } = await db.collection( 'events' ).where( 'expires', '<', Date.now() + time_to_keep_after_expiry ).get()
 
 		console.log( `${ expiredCodes.length } expired codes` )
+
+		// Get all malformed codes
+		const { docs: all_codes } = await db.collection( 'codes' ).get().then( dataFromSnap )
+		const no_event = all_codes?.filter( ( { event } ) => !!event )
+
+		console.log( `${ no_event?.length } codes without event` )
 
 		// Delete expired codes
 		// await Throttle.all( expiredCodes.map( doc => () => doc.ref.delete() ), { maxInProgress } )

@@ -31,3 +31,5 @@ yarn-error.log*
 cypress/downloads
 cypress/screenshots
 cypress/videos
+.env*
+!.env.project
