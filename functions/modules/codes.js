@@ -238,7 +238,6 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 	// const oneHour = 1000 * 60 * 60
 	const fiveMinutes = 1000 * 60 * 5
 	const checkCodesAtLeast = 2
-	const codeResetTimeout = fiveMinutes
 	const checkCooldown = 1000 * 30
 	const maxInProgress = 10
 
@@ -249,6 +248,12 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 		if( !dev && context.app == undefined ) {
 			throw new Error( `App context error` )
 		}
+
+		// Get event data
+		const event = await db.collection( 'events' ).doc( eventId ).get().then( dataFromSnap )
+
+		// Set the code reset timeout to the length of the anti-farming game plus 10 seconds buffer
+		const codeResetTimeout = ( 1000 * 10 ) + ( event?.game_config?.duration || ( 1000 * 60 ) )
 
 
 		// Codes that have been scanned and have not been claimed
