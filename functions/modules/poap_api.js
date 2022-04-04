@@ -4,7 +4,7 @@ const { db, dataFromSnap, increment } = require( './firebase' )
 const { log, dev } = require( './helpers' )
 
 // Secrets
-const { auth0 } = functions.config()
+const { auth0, poap } = functions.config()
 
 // Libraries
 const fetch = require( 'isomorphic-fetch' )
@@ -99,6 +99,11 @@ exports.call_poap_endpoint = async ( endpoint='', data, method='GET', format='js
 
 		// Build headers
 		let headers = {
+			
+			// authorization for cloudflare */
+			'X-API-Key': `${ poap?.api_key }`,
+
+			// Authorize with Bearer access token
 			Authorization: `Bearer ${ access_token }`,
 
 			// If this is a request with json data
