@@ -10,7 +10,7 @@ context( 'Organiser successful event creation', () => {
 
 		cy.visit( '/create?debug=true' )
 		cy.get( 'button' ).should( 'not.exist' )
-		cy.contains( 'label', 'Select .txt file with codes' )
+		cy.contains( 'label', 'Select .txt file that' )
 
 	} )
 
@@ -19,12 +19,12 @@ context( 'Organiser successful event creation', () => {
 		cy.visit( '/create?debug=true' )
 
 		// Select file
-		cy.contains( 'label', 'Select .txt file with codes' )
+		cy.contains( 'label', 'Select .txt file that' )
 		cy.get( 'input[type=file]' ).attachFile( `two-correct-codes.txt` )
-		cy.contains( 'Checking your codes' )
+		cy.contains( 'Checking your mint links' )
 
 		// Relevant inputs appear
-		cy.contains( 'label', 'Event name' )
+		cy.contains( 'label', 'Drop name' )
 		cy.contains( 'label', 'Your email' )
 		cy.contains( 'label', 'QR dispenser expiry date' )
 
@@ -42,7 +42,7 @@ context( 'Organiser successful event creation', () => {
 		const YMD = `${ tomorrow.getFullYear() }-${ month }-${ day }`
 		cy.get( 'input#event-create-date' ).should( 'have.value', YMD )
 
-		cy.contains( 'Create event with 2 codes' )
+		cy.contains( 'Create dispenser with 2 codes' )
 		
 
 	} )
@@ -73,10 +73,10 @@ context( 'Organiser successful event creation', () => {
 
 		cy.get( '#event-create-submit' ).click()
 
-		cy.contains( 'Creating event' )
+		cy.contains( 'Creating QR Dispenser' )
 		cy.url().should( 'include', '/event/admin' )
 
-		cy.contains( 'Your public event link' )
+		cy.contains( 'Your public QR Dispenser link' )
 		cy.contains( 'Your secret admin link' )
 
 	} )
@@ -90,8 +90,8 @@ context( 'Organiser successful event creation', () => {
 			expect( response ).to.contain( 'Are you sure' )
 		} )
 
-		cy.contains( 'Delete event' ).click()
-		cy.contains( 'Deleting event' )
+		cy.contains( 'Delete QR dispenser' ).click()
+		cy.contains( 'Delete QR Dispenser' )
 
 		cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
 
