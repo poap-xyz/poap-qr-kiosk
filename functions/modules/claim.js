@@ -19,18 +19,11 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 		const event = await db.collection( 'events' ).doc( event_id ).get().then( dataFromSnap )
 		if( !event.uid ) throw new Error( `Event ${ event_id } does not exist` )
 
-		// If the auth expired, write a new one but let the current scanner continue
-		if( event.public_auth?.expires < Date.now() ) {
-			await db.collection( 'events' ).doc( event_id ).set( {
-				public_auth: generate_new_event_public_auth()
-			}, { merge: true } )
-		}
-
 		// Get the code from the url
 		if( !event_id || !public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot` )
 
 		// Check whether the auth token is still valid
-		if( event?.public_auth?.token != public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot` )
+		if( event?.public_auth?.token != public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot/${ public_auth_token }_miss` )
 
 		// Write a challenge ID to the cache with an expires setting of the game duration plus a grace period
 		const challenge_grace_length_in_mins = 1
@@ -42,6 +35,13 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 			challenges: event.challenges || [ 'game' ],
 			game_config: event.game_config || { duration: 30, target_score: 5 }
 		} )
+
+		// If the auth expired, write a new one but only after the current scanner was let through
+		if( event.public_auth?.expires < Date.now() ) {
+			await db.collection( 'events' ).doc( event_id ).set( {
+				public_auth: generate_new_event_public_auth()
+			}, { merge: true } )
+		}
 
 		// Return a redirect to the QR POAP app
 		// 307: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_redirection
