@@ -32,7 +32,7 @@ const db = getFirestore( app )
 const functions = getFunctions( app )
 
 // App check config
-if( process.env.NODE_ENV === 'development' ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = REACT_APP_APPCHECK_DEBUG_TOKEN || true
+if( process.env.NODE_ENV === 'development' || REACT_APP_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = REACT_APP_APPCHECK_DEBUG_TOKEN || true
 log( 'Initialising app check with ', REACT_APP_APPCHECK_DEBUG_TOKEN )
 const appcheck = initializeAppCheck( app, {
 	provider: new ReCaptchaV3Provider( REACT_APP_recaptcha_site_key ),
