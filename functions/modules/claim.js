@@ -23,7 +23,18 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 		if( !event_id || !public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot` )
 
 		// Check whether the auth token is still valid
-		if( event?.public_auth?.token != public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot/${ public_auth_token }_miss` )
+		const previous_auth_grace_ms = 1000 * 10
+		const { public_auth={}, previous_public_auth={} } = event || {}
+		const valid_public_auth = public_auth?.token == public_auth_token
+		const valid_previous_public_auth = previous_public_auth?.token == public_auth_token
+		const previous_auth_within_grace_period = previous_public_auth?.expires < ( Date.now() + previous_auth_grace_ms )
+
+		// If the auth is invalid AND the auth is not the previous auth within the grace period, mark as robot
+		if( !valid_public_auth && !( valid_previous_public_auth && previous_auth_within_grace_period ) ) {
+
+			return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot/${ public_auth_token }_miss_${ valid_public_auth }_${ valid_previous_public_auth }_${ previous_auth_within_grace_period }` )
+
+		}
 
 		// Write a challenge ID to the cache with an expires setting of the game duration plus a grace period
 		const challenge_grace_length_in_mins = 1
@@ -38,8 +49,11 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
 		// If the auth expired, write a new one but only after the current scanner was let through
 		if( event.public_auth?.expires < Date.now() ) {
+
+			// Write new public auth AND save previous
 			await db.collection( 'events' ).doc( event_id ).set( {
-				public_auth: generate_new_event_public_auth()
+				public_auth: generate_new_event_public_auth(),
+				previous_public_auth: event?.public_auth || {}
 			}, { merge: true } )
 		}
 
