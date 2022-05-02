@@ -46,7 +46,7 @@ export default function ViewQR( ) {
     setLoading( '🧐 You look a bit suspicious my friend...' )
     await wait( 5000 )
     setLoading( 'Please scan a new QR code' )
-    throw new Error( `Verification failed! Either you took too long, or a lot of people are scanning at the same time, please scan again :).\n\nDebug info: ${ error_code }, ${ challenge_code }, ${ trail }` )
+    throw new Error( `Verification failed! Either you took too long, or a lot of people are scanning at the same time, please scan again :).\n\nDebug info: ${ error_code }, bc ${ challenge_code }, fe ${ trail }` )
 
   }
 
@@ -119,7 +119,7 @@ export default function ViewQR( ) {
         log( `Starting client validation` )
 
 				// Backend marked this device as invalid
-				if( challenge_code == 'robot' ) await stall_then_error( 'robot' )
+				if( challenge_code == 'robot' ) await stall_then_error( 'ch_c robot' )
         if( cancelled ) return
 
         // Validate device using appcheck
@@ -135,7 +135,7 @@ export default function ViewQR( ) {
 
 
         // if the challenge is invalid, stall and error
-        if( !isValid || challenge?.expires < Date.now() ) return stall_then_error( 'expired' )
+        if( !isValid || challenge?.expires < Date.now() ) return stall_then_error( `${ isValid ? 'v' : 'iv' }_expired` )
 
         // If the challenge is valid, continue
         if( cancelled ) return
@@ -224,7 +224,7 @@ export default function ViewQR( ) {
       } catch( e ) {
 
         log( 'Error getting POAP: ', e )
-        trackEvent( 'claim_device_validation_failed' )
+        trackEvent( 'claim_poap_fetch_failed' )
         alert( e.message )
         if( !cancelled ) setLoading( e.message )
 

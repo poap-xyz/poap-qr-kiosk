@@ -16,11 +16,14 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
 		// Check whether the event needs new auth data
 		const { event_id, public_auth_token } = req.params
+
+		// Get the code from the url
+		if( !event_id || !public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot/syntax_error` )
+
+		// Get the event from firestore
 		const event = await db.collection( 'events' ).doc( event_id ).get().then( dataFromSnap )
 		if( !event.uid ) throw new Error( `Event ${ event_id } does not exist` )
 
-		// Get the code from the url
-		if( !event_id || !public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot` )
 
 		// Check whether the auth token is still valid
 		const previous_auth_grace_ms = 1000 * 10
