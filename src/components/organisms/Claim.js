@@ -16,7 +16,7 @@ export default function ViewQR( ) {
   // ///////////////////////////////
   // State handling
   // ///////////////////////////////
-  const { challenge_code } = useParams( )
+  const { challenge_code, error_code } = useParams( )
   const [ loading, setLoading ] = useState( `Verifying your humanity, you'll be forwarded soon` )
   const [ userValid, setUserValid ] = useState( false )
   const [ gameDone, setGameDone ] = useState( false )
@@ -36,7 +36,7 @@ export default function ViewQR( ) {
     trackEvent( `claim_game_lost_with_${ score }` )
   }
 
-  async function stall_then_error() {
+  async function stall_then_error( trail ) {
 
     trackEvent( 'claim_spammer_stall_triggered' )
     // Wait to keep the spammer busy
@@ -46,7 +46,7 @@ export default function ViewQR( ) {
     setLoading( '🧐 You look a bit suspicious my friend...' )
     await wait( 5000 )
     setLoading( 'Please scan a new QR code' )
-    throw new Error( `Verification failed! Either you took too long, or a lot of people are scanning at the same time, please scan again :)` )
+    throw new Error( `Verification failed! Either you took too long, or a lot of people are scanning at the same time, please scan again :).\n\nDebug info: ${ error_code }, ${ challenge_code }, ${ trail }` )
 
   }
 
@@ -119,7 +119,7 @@ export default function ViewQR( ) {
         log( `Starting client validation` )
 
 				// Backend marked this device as invalid
-				if( challenge_code == 'robot' ) await stall_then_error()
+				if( challenge_code == 'robot' ) await stall_then_error( 'robot' )
         if( cancelled ) return
 
         // Validate device using appcheck
@@ -135,7 +135,7 @@ export default function ViewQR( ) {
 
 
         // if the challenge is invalid, stall and error
-        if( !isValid || challenge?.expires < Date.now() ) return stall_then_error()
+        if( !isValid || challenge?.expires < Date.now() ) return stall_then_error( 'expired' )
 
         // If the challenge is valid, continue
         if( cancelled ) return

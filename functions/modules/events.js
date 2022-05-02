@@ -77,7 +77,7 @@ exports.registerEvent = async function( data, context ) {
 			// Check if code already exists and is claimed
 			const oldDocRef = await db.collection( 'codes' ).doc( code ).get()
 			const oldDocData = oldDocRef.data()
-			if( oldDocRef.exists && oldDocData.event != id ) throw new Error( `This QR Dispenser has already been created! If you were the creator, please check your email for a message with the subject "POAP - Your QR Kiosk".\nDebug data for POAP programmers: duplicate entry is ${ code }.` )
+			if( oldDocRef.exists && oldDocData.event != id ) throw new Error( `This QR Dispenser has already been created! If you were the creator, please check your email for a message with the subject "POAP - Your QR Kiosk".\nDebug data for POAP programmers: duplicate entry is ${ code }..` )
 
 		} )
 
