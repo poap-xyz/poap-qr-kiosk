@@ -21,10 +21,10 @@ import './commands'
 
 Cypress.on('uncaught:exception', (err, runnable) => {
 
-	Cypress.log( `Received uncaught error: `, err )
+	Cypress.log( err )
 
 	// returning false here prevents Cypress from
 	// failing the test
 	return false
-	
+
 })
