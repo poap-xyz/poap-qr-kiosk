@@ -26,11 +26,11 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
 
 		// Check whether the auth token is still valid
-		const previous_auth_grace_ms = 1000 * 10
+		const previous_auth_grace_ms = 1000 * 5
 		const { public_auth={}, previous_public_auth={} } = event || {}
 		const valid_public_auth = public_auth?.token == public_auth_token
 		const valid_previous_public_auth = previous_public_auth?.token == public_auth_token
-		const previous_auth_within_grace_period = previous_public_auth?.expires < ( Date.now() + previous_auth_grace_ms )
+		const previous_auth_within_grace_period = previous_public_auth?.expires > ( Date.now() - previous_auth_grace_ms )
 
 		// If the auth is invalid AND the auth is not the previous auth within the grace period, mark as robot
 		if( !valid_public_auth && !( valid_previous_public_auth && previous_auth_within_grace_period ) ) {
