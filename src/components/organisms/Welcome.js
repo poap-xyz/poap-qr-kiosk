@@ -68,7 +68,7 @@ export default function ComponentName( ) {
 
 				<H1>Magic POAP Dispenser <Sup>beta</Sup></H1>
 				<H2>Get POAPs to your friends IRL</H2>
-				<Text>Just input your .txt file, and watch your phone turn into a POAP QR dispenser at the click of a button. You&apos;ll be able to show QR codes for everyone to scan one by one.</Text>
+				<Text>Just input your .txt file of mint links and watch your phone turn into a POAP QR dispenser at the click of a button. You&apos;ll be able to display QR codes for attendees to scan one-by-one.</Text>
 				{ allowAccess && <Button onClick={ f => history.push( '/create' ) }>Create QR dispenser</Button> }
 
 			</Hero>
@@ -81,7 +81,7 @@ export default function ComponentName( ) {
 
 				<Column>
 					<H2>Physical POAP distribution made easy</H2>
-					<Text>Easily set up a device at your physical event that dispenses unique POAP QR codes to visitors.</Text>
+					<Text>For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees.</Text>
 				</Column>				
 
 			</Section>
@@ -90,7 +90,7 @@ export default function ComponentName( ) {
 
 				<Column>
 					<H2>Stream-friendly QR sharing</H2>
-					<Text>Set up a screenshare that displays POAP QRs in a farming-resistant way.</Text>
+					<Text>During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner.</Text>
 				</Column>		
 
 				<Column>

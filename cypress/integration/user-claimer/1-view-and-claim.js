@@ -290,8 +290,8 @@ context( 'Claimer can view valid events', () => {
 			expect( response ).to.contain( 'Are you sure' )
 		} )
 
-		cy.contains( 'Delete event' ).click()
-		cy.contains( 'Deleting event' )
+		cy.contains( 'Delete QR dispenser' ).click()
+		cy.contains( 'Delete QR Dispenser' )
 
 		cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
 	} )
@@ -307,8 +307,8 @@ context( 'Claimer can view valid events', () => {
 			expect( response ).to.contain( 'Are you sure' )
 		} )
 
-		cy.contains( 'Delete event' ).click()
-		cy.contains( 'Deleting event' )
+		cy.contains( 'Delete QR dispenser' ).click()
+		cy.contains( 'Delete QR Dispenser' )
 
 		cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
 	} )

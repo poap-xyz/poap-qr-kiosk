@@ -6,13 +6,13 @@ html( lang='en' )
 		h1 POAP kiosk: #{ event.name }
 		h2 Your QR delivery kiosk is ready for use
 
-		p Open the public event link on the device you want to serve the QR codes from. This could be a tablet device at the check-in of your event for example.
+		p Open your public QR Dispenser link on the device from which you want to dispense QR codes. For example, this could be a tablet at the check-in of your IRL event.
 		input( type='text' value=event.eventlink )
 		a.button( href=event.eventlink ) Open QR kiosk in browser
 
 		p The link below is your secret admin link. Never share this in public. It allows you to edit or delete your event.
 		input( type='text' value=event.adminlink )
-		a.button( href=event.adminlink ) Event admin link
+		a.button( href=event.adminlink ) QR kiosk admin link
 
 		p If you have any questions or suggestions, please do not hesitate to reach out to us on discord.
 		p Enjoy your event!
