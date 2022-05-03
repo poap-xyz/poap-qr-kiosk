@@ -3,8 +3,8 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
-const twoCodes = require( '../../fixtures/two-correct-codes' )
-const fiveCodes = require( '../../fixtures/five-correct-codes' )
+const twoCodes = require( `../../fixtures/two-correct-codes${ Cypress.env('LOCAL') ? '' : '-ci' }` )
+const fiveCodes = require( `../../fixtures/five-correct-codes${ Cypress.env('LOCAL') ? '' : '-ci' }` )
 const request_options = {
 	headers: {
 		Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host
