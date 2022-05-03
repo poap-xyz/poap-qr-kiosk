@@ -36,7 +36,7 @@ context( 'Claimer can view valid events', () => {
 		cy.visit( '/create?debug=true' )
 
 		// Input the event data
-		cy.get( 'input[type=file]' ).attachFile( `two-correct-codes.txt` )
+		cy.get( 'input[type=file]' ).attachFile( Cypress.env('LOCAL') ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
 		cy.get( '#event-create-name' ).type( admin.events[0].name )
 		cy.get( '#event-create-email' ).type( admin.email )
 		cy.get( '#event-create-date' ).type( admin.events[0].end )
@@ -185,7 +185,7 @@ context( 'Claimer can view valid events', () => {
 		cy.visit( '/create?debug=true' )
 
 		// Input the event data
-		cy.get( 'input[type=file]' ).attachFile( `five-correct-codes.txt` )
+		cy.get( 'input[type=file]' ).attachFile( Cypress.env('LOCAL') ? `five-correct-codes.txt` : `five-correct-codes-ci.txt` )
 		cy.get( '#event-create-name' ).type( admin.events[1].name )
 		cy.get( '#event-create-email' ).type( admin.email )
 		cy.get( '#event-create-date' ).type( admin.events[1].end )

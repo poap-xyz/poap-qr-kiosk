@@ -20,7 +20,7 @@ context( 'Organiser successful event creation', () => {
 
 		// Select file
 		cy.contains( 'label', 'Select .txt file that' )
-		cy.get( 'input[type=file]' ).attachFile( `two-correct-codes.txt` )
+		cy.get( 'input[type=file]' ).attachFile( Cypress.env('LOCAL') ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
 		cy.contains( 'Checking your mint links' )
 
 		// Relevant inputs appear
