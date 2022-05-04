@@ -249,6 +249,8 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 			throw new Error( `App context error` )
 		}
 
+		if( !eventId ) throw new Error( `Code refresh called without event ID` )
+
 		// Get event data
 		const event = await db.collection( 'events' ).doc( eventId ).get().then( dataFromSnap )
 
