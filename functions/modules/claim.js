@@ -26,18 +26,36 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
 
 		// Check whether the auth token is still valid
-		const previous_auth_grace_ms = 1000 * 5
+		const grace_period_in_ms = 1000 * 5
 		const { public_auth={}, previous_public_auth={} } = event || {}
 		const valid_public_auth = public_auth?.token == public_auth_token
 		const valid_previous_public_auth = previous_public_auth?.token == public_auth_token
-		const previous_auth_within_grace_period = previous_public_auth?.expires > ( Date.now() - previous_auth_grace_ms )
+		const new_auth_age_within_grace_period = public_auth?.created > ( Date.now() - grace_period_in_ms )
+
+		/* ///////////////////////////////
+		// Failure cases */
+
+		// Auth is not new QR or old QR
+		const completely_invalid = !valid_public_auth && !valid_previous_public_auth
+
+		// Auth is old QR outside of grace period
+		const outside_grace_period = valid_previous_public_auth && !new_auth_age_within_grace_period
 
 		// If the auth is invalid AND the auth is not the previous auth within the grace period, mark as robot
-		if( !valid_public_auth && !( valid_previous_public_auth && previous_auth_within_grace_period ) ) {
+		if( completely_invalid || outside_grace_period ) {
 
-			return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot/${ public_auth_token }_miss_${ valid_public_auth }_${ valid_previous_public_auth }_${ previous_auth_within_grace_period }` )
+			let url = `${ redirect_baseurl }/#/claim/robot/${ public_auth_token }_miss_`
+			url += completely_invalid ? 'compinv' : 'ncompinv'
+			url += outside_grace_period ? 'outgr' : 'noutgr'
+			url += valid_public_auth ? 'valpub' : 'nvalpub'
+			url += valid_previous_public_auth ? 'valprev' : 'nvalprev'
+			url += new_auth_age_within_grace_period ? 'nwauthwgrac' : 'nnwauthwgrac'
+			return res.redirect( 307, url )
 
 		}
+
+		/* ///////////////////////////////
+		// Success case */
 
 		// Write a challenge ID to the cache with an expires setting of the game duration plus a grace period
 		const challenge_grace_length_in_mins = 1
