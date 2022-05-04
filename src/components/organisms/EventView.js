@@ -140,7 +140,10 @@ export default function ViewQR( ) {
 
   // Update the state of scanned codes periodically
   useInterval( () => {
-    refreshScannedCodesStatuses()
+
+    if( !internalEventId ) return log( `No internal event ID, cancelling scanned code refresh` )
+
+    refreshScannedCodesStatuses( internalEventId )
     .then( ( { data } ) => log( `Remote code update response : `, data ) )
     .catch( e => log( `Code refresh error `, e ) )
   }, scanInterval )
