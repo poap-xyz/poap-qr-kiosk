@@ -26,7 +26,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
 
 		// Check whether the auth token is still valid
-		const grace_period_in_ms = 1000 * 5
+		const grace_period_in_ms = 1000 * 10
 		const { public_auth={}, previous_public_auth={} } = event || {}
 		const valid_public_auth = public_auth?.token == public_auth_token
 		const valid_previous_public_auth = previous_public_auth?.token == public_auth_token
@@ -45,11 +45,11 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 		if( completely_invalid || outside_grace_period ) {
 
 			let url = `${ redirect_baseurl }/#/claim/robot/${ public_auth_token }_miss_`
-			url += completely_invalid ? 'compinv' : 'ncompinv'
-			url += outside_grace_period ? 'outgr' : 'noutgr'
-			url += valid_public_auth ? 'valpub' : 'nvalpub'
-			url += valid_previous_public_auth ? 'valprev' : 'nvalprev'
-			url += new_auth_age_within_grace_period ? 'nwauthwgrac' : 'nnwauthwgrac'
+			url += completely_invalid ? 'compinv_' : 'ncompinv_'
+			url += outside_grace_period ? 'outgr_' : 'noutgr_'
+			url += valid_public_auth ? 'valpub_' : 'nvalpub_'
+			url += valid_previous_public_auth ? 'valprev_' : 'nvalprev_'
+			url += new_auth_age_within_grace_period ? 'nwauthwgrac_' : 'nnwauthwgrac_'
 			return res.redirect( 307, url )
 
 		}
