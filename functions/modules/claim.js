@@ -26,7 +26,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
 
 		// Check whether the auth token is still valid
-		const grace_period_in_ms = 1000 * 10
+		const grace_period_in_ms = 1000 * 30
 		const { public_auth={}, previous_public_auth={} } = event || {}
 		const valid_public_auth = public_auth?.token == public_auth_token
 		const valid_previous_public_auth = previous_public_auth?.token == public_auth_token
