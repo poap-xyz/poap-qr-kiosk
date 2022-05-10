@@ -5,6 +5,7 @@
 	"video": true,
 	"videoCompression": false,
 	"screenscreenshotOnRunFailureshots": true,
-	"chromeWebSecurity": false
+	"chromeWebSecurity": false,
+	"watchForFileChanges": false
 }
 

@@ -12,6 +12,7 @@ const { kiosk } = functions.config()
 const generate_new_event_public_auth = ( expires_in_minutes=2, is_test_event=false ) => ( {
 	token: is_test_event ? `testing-${ uuidv4() }` : uuidv4(),
 	expires: Date.now() + ( expires_in_minutes * 1000 * 60 ),
+	expiry_interval: expires_in_minutes,
 	created: Date.now()
 } )
 exports.generate_new_event_public_auth = generate_new_event_public_auth
@@ -41,6 +42,7 @@ exports.registerEvent = async function( data, context ) {
 		// Create event document
 		const authToken = uuidv4()
 		const is_test_event = codes.find( code => code.includes( 'testing' ) )
+		const public_auth_expiry_interval_minutes = is_test_event ? .5 : 2
 		const { id } = await db.collection( 'events' ).add( {
 			name,
 			email,
@@ -51,7 +53,7 @@ exports.registerEvent = async function( data, context ) {
 			authToken,
 			challenges,
 			game_config,
-			public_auth: generate_new_event_public_auth( 5, is_test_event ),
+			public_auth: generate_new_event_public_auth( public_auth_expiry_interval_minutes, is_test_event ),
 			created: Date.now(),
 			updated: Date.now()
 		} )
