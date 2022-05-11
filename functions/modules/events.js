@@ -3,6 +3,7 @@ const { db, dataFromSnap, arrayUnion, increment } = require( './firebase' )
 const { v4: uuidv4 } = require('uuid')
 const { sendEventAdminEmail } = require( './email' )
 const Throttle = require( 'promise-parallel-throttle' )
+const { throttle_and_retry } = require( './helpers' )
 
 // Configs
 const functions = require( 'firebase-functions' )
@@ -187,7 +188,7 @@ exports.deleteEvent = async function( data, context ) {
 
 }
 
-exports.deleteCodesOfDeletedEvent = async function( snap, context ) {
+exports.delete_data_of_deleted_event = async function( snap, context ) {
 
 	// Throttle config
 	const maxInProgress = 500
@@ -197,10 +198,15 @@ exports.deleteCodesOfDeletedEvent = async function( snap, context ) {
 		// Get parameters
 		const { eventId } = context.params
 
-		// Delete obsolete codes
-		const snap = await db.collection( 'codes' ).where( 'event', '==', eventId ).get()
-		const deletion_queue = snap.docs.map( doc => () => doc.ref.delete() )
-		await Throttle.all( deletion_queue, { maxInProgress } )
+		/* ///////////////////////////////
+		// Delete obsolete codes & challenges */
+
+		// Grab codes and challenges of deleted event
+		const { docs: codes_snap } = await db.collection( 'codes' ).where( 'event', '==', eventId ).get()
+		const { docs: challenges_snap } = await db.collection( 'claim_challenges' ).where( 'eventId', '==', eventId ).get()
+
+		const deletion_queue = [ ...codes_snap, ...challenges_snap ].map( doc => () => doc.ref.delete() )
+		await throttle_and_retry( deletion_queue, maxInProgress, `delete data of deleted event`, 5, 5 )
 
 	} catch( e ) {
 		console.error( 'deleteCodesOfDeletedEvent error: ', e )

@@ -1,5 +1,5 @@
 const { live_access_token, call_poap_endpoint } = require( './poap_api' ) 
-const { log, wait } = require( './helpers' )
+const { log, wait, throttle_and_retry } = require( './helpers' )
 const { db, dataFromSnap } = require( './firebase' )
 const Throttle = require( 'promise-parallel-throttle' )
 
@@ -56,37 +56,40 @@ exports.clean_up_expired_items = async () => {
 
 	const maxInProgress = 500
 	const day_in_ms = 1000 * 60 * 60 * 24
-	const time_to_keep_after_expiry = day_in_ms * 90
+	const time_to_keep_after_expiry = day_in_ms * 1
 
 	try {
 
-		// Delete expired events
-		const { docs: expiredEvents } = await db.collection( 'events' ).where( 'expires', '<', Date.now() + time_to_keep_after_expiry ).get()
-		const { docs: expiredChallenges } = await db.collection( 'claim_challenges' ).where( 'expires', '<', Date.now() + time_to_keep_after_expiry ).get()
+		/* ///////////////////////////////
+		// Grab expired events */
+		const grace_period_events = Date.now() - time_to_keep_after_expiry
+		const { docs: expired_events } = await db.collection( 'events' ).where( 'expires', '<', grace_period_events ).get()
 
-		console.log( `${ expiredEvents.length } expired events and ${ expiredChallenges.length } expired challenges` )
+		console.log( `${ expired_events.length } expired events` )
 
-		// const event_and_challenge_queue = [ ...expiredEvents, ...expiredChallenges ].map( doc => () => doc.ref.delete() )
+		// Generate action queue
+		const event_deletion_queue = expired_events.map( doc => () => doc.ref.delete() )
 
 		// Throttled delete
-		// await Throttle.all( event_and_challenge_queue, { maxInProgress } )
+		await throttle_and_retry( event_deletion_queue, maxInProgress, `event deletion`, 5, 5 )
 
-		// Wait for 30 seconds after the throttle to make sure the codes that are linked are deleted
-		// await wait( 30000 )
+		/* ///////////////////////////////
+		// Delete orphaned data */
+		const grace_period_orphans = Date.now() - ( time_to_keep_after_expiry * 2 )
+		const { docs: expired_challenges } = await db.collection( 'claim_challenges' ).where( 'expires', '<', grace_period_orphans ).get()
+		const { docs: expired_codes } = await db.collection( 'codes' ).where( 'expires', '<', grace_period_orphans ).get()
 
-		// Get all expired codes
-		const { docs: expiredCodes } = await db.collection( 'events' ).where( 'expires', '<', Date.now() + time_to_keep_after_expiry ).get()
+		console.log( `${ expired_challenges.length } expired challenges` )
+		console.log( `${ expired_codes.length } expired codes` )
 
-		console.log( `${ expiredCodes.length } expired codes` )
+		// Generate action queue
+		const orphan_deletion_queue = [ ...expired_challenges, ...expired_codes ].map( doc => () => doc.ref.delete() )
 
-		// Get all malformed codes
-		const { docs: all_codes } = await db.collection( 'codes' ).get().then( dataFromSnap )
-		const no_event = all_codes?.filter( ( { event } ) => !!event )
+		// Throttled delete
+		await throttle_and_retry( orphan_deletion_queue, maxInProgress, `orphan deletion`, 5, 5 )
 
-		console.log( `${ no_event?.length } codes without event` )
+		console.log( `Successfully deleted ${expired_events.length } events, ${ expired_codes.length } codes, ${ expired_challenges.length } challenges` )
 
-		// Delete expired codes
-		// await Throttle.all( expiredCodes.map( doc => () => doc.ref.delete() ), { maxInProgress } )
 
 	} catch( e ) {
 		console.error( 'deleteExpiredCodes error ', e )

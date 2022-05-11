@@ -25,6 +25,7 @@
     "isomorphic-fetch": "^3.0.0",
     "juice": "^8.0.0",
     "promise-parallel-throttle": "^3.3.0",
+    "promise-retry": "^2.0.1",
     "pug": "^3.0.2",
     "uuid": "^8.3.2"
   },

@@ -46,12 +46,12 @@ exports.claimMiddleware = functions.https.onRequest( claimMiddleware )
 // ///////////////////////////////
 
 const { updateEventAvailableCodes } = require( './modules/codes' )
-const { deleteCodesOfDeletedEvent, updatePublicEventData } = require( './modules/events' )
+const { delete_data_of_deleted_event, updatePublicEventData } = require( './modules/events' )
 const { clean_up_expired_items } = require( './modules/health' )
 
 // Delete items where parents were deleted
 exports.clean_up_expired_items = functions.runWith( generousRuntime ).pubsub.schedule( 'every 24 hours' ).onRun( clean_up_expired_items )
-exports.deleteCodesOfDeletedEvent = functions.firestore.document( `events/{eventId}` ).onDelete( deleteCodesOfDeletedEvent )
+exports.delete_data_of_deleted_event = functions.firestore.document( `events/{eventId}` ).onDelete( delete_data_of_deleted_event )
 
 // Update items where parents were updated
 exports.updatePublicEventData = functions.firestore.document( `events/{eventId}` ).onWrite( updatePublicEventData )
