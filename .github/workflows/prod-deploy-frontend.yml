@@ -90,7 +90,7 @@ jobs:
         with:
           args: deploy --only hosting,firestore --project=production
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
 
       # Notify Mentor
       - name: Send push notification
