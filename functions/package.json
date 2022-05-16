@@ -8,7 +8,8 @@
     "shell": "firebase functions:shell",
     "start": "development=true && firebase use development && npm run runtime && npm run shell",
     "start:production": "development=true && firebase use production && npm run runtime:production && npm run shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy:development": "firebase use development && firebase deploy --only functions",
+    "deploy:production": "firebase use production && firebase deploy --only functions; firebase use development",
     "logs": "firebase functions:log"
   },
   "engines": {
