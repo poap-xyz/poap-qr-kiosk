@@ -340,29 +340,53 @@ exports.updateEventAvailableCodes = async function( change, context ) {
 /* ///////////////////////////////
 // Get code based on valid challenge
 // /////////////////////////////*/
-exports.get_code_by_challenge = async ( challenge_id, context ) => {
+exports.get_code_by_challenge = async ( data, context ) => {
 
 	try {
 
+		const { challenge_code, captcha_response } = data
+		log( `Get code for challenge: ${ challenge_code }` )
+
 		// Grace period for completion, this is additional to the window of generate_new_event_public_auth
-		const grace_period_in_ms = 1000 * 30
+		let grace_period_in_ms = 1000 * 30
+
+		// Captcha requests get an extra 3 minutes of grace period
+		if( captcha_response ) grace_period_in_ms += ( 1000 * 60 * 3 )
 
 		// Validate caller
-		if( context.app == undefined ) {
+		if( !captcha_response && context.app == undefined ) {
 			throw new Error( `App context error` )
+		}
+
+		// Validate by captcha
+		if( captcha_response ) {
+
+			log( `Validating captcha: ${ captcha_response }` )
+			const { valid, expires, ...captcha_meta } = await db.collection( 'recaptcha' ).doc( captcha_response ).get().then( dataFromSnap )
+
+			// Invalid failure modes
+			log( `Captcha data: `, valid, expires, captcha_meta )
+			if( !valid ) throw new Error( `Invalid recaptcha` )
+			if( expires < Date.now() ) throw new Error( `Expired recaptcha` )
+
+
 		}
 
 		/* ///////////////////////////////
 		// Validate the challenge */
 
 		// Get challenge
-		const challenge = await db.collection( 'claim_challenges' ).doc( challenge_id ).get().then( dataFromSnap )
+		const challenge = await db.collection( 'claim_challenges' ).doc( challenge_code ).get().then( dataFromSnap )
 		
 		// Check if challenge still exists
 		if( !challenge || !challenge.eventId ) throw new Error( `This link was already used by somebody else, scan the QR code again please` )
 
 		// Check if challenge expired already
-		if( challenge.expires < ( Date.now() + grace_period_in_ms ) ) throw new Error( `This link expired, please make sure to claim your POAP right after scanning the QR.` )
+		const now_minus_grace_period = Date.now() - grace_period_in_ms
+		if( challenge.expires < now_minus_grace_period ) {
+			log( `Challenge expired at ${ challenge.expires } which is ${ ( now_minus_grace_period - challenge.expires ) / 1000 } seconds ago` )
+			throw new Error( `This link expired, please make sure to claim your POAP right after scanning the QR.` )
+		}
 
 		/* ///////////////////////////////
 		// Get a verified available code */
@@ -394,13 +418,17 @@ exports.get_code_by_challenge = async ( challenge_id, context ) => {
 		}
 
 		// Delete challenge to prevent reuse
-		await db.collection( 'claim_challenges' ).doc( challenge_id ).delete()
+		await db.collection( 'claim_challenges' ).doc( challenge_code ).delete()
+
+		// In case of success, remove cached captcha
+		if( captcha_response ) await db.collection( 'recaptcha' ).doc( captcha_response ).delete()
 
 		// Return valid code to the frontend
 		return valid_code.uid
 
 	} catch( e ) {
 
+		log( `Error getting code: `, e )
 		return { error: e.message }
 
 	}

@@ -11,7 +11,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 	try {
 
 		// Check whether this request came from a CI instance, set the relevant return URL based on that
-		const { CI } = req.query
+		const { CI, FORCE_INVALID_APPCHECK } = req.query
 		const redirect_baseurl = CI ? `http://localhost:3000/` : kiosk.public_url
 
 		// Get event id and authentication from request
@@ -97,6 +97,9 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 		// Return a redirect to the QR POAP app
 		// 307: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_redirection
 		let redirect_link = `${ redirect_baseurl }/#/claim/${ challenge_auth.token }`
+
+		// Tell fronted to force invalid appcheck, this is so that we can simulate this scenarion in cypress
+		if( FORCE_INVALID_APPCHECK ) redirect_link += `/force_failed_appcheck`
 
 		// Debugging info in the URL
 		if( is_test_event || CI ) {

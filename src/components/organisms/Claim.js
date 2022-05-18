@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react'
 import { log, dev, wait } from '../../modules/helpers'
 import { useParams } from 'react-router-dom'
-import { validateCallerDevice, trackEvent, listen_to_claim_challenge, get_code_by_challenge, requestManualCodeRefresh, health_check } from '../../modules/firebase'
+import { validateCallerDevice, validateCallerCaptcha, trackEvent, listen_to_claim_challenge, get_code_by_challenge, requestManualCodeRefresh, health_check } from '../../modules/firebase'
 
 // Components
 import Loading from '../molecules/Loading'
 import Stroop from '../molecules/Stroop'
+import Captcha from '../molecules/Captcha'
 
 // ///////////////////////////////
 // Render component
@@ -22,6 +23,7 @@ export default function ViewQR( ) {
   const [ gameDone, setGameDone ] = useState( false )
   const [ challenge, setChallenge ] = useState( {} )
   const [ poaplink, setPoaplink ] = useState(  )
+  const [ captchaResponse, setCaptchaResponse ] = useState(  )
 
 
   /* ///////////////////////////////
@@ -36,30 +38,33 @@ export default function ViewQR( ) {
     trackEvent( `claim_game_lost_with_${ score }` )
   }
 
-  async function stall_then_error( trail ) {
+  async function stall( trail, step_delay=5000, error=true ) {
+
+    log( `Stalling for ${ trail } with ${ step_delay }, end in ${ error ? 'error' : 'continue' }` )
 
     trackEvent( 'claim_spammer_stall_triggered' )
     // Wait to keep the spammer busy
-    await wait( 5000 )
+    await wait( step_delay )
     setLoading( '👀 Have I seen you before?' )
-    await wait( 5000 )
+    await wait( step_delay )
     setLoading( '🧐 You look a bit suspicious my friend...' )
-    await wait( 5000 )
+    await wait( step_delay )
     setLoading( 'Please scan a new QR code' )
-    throw new Error( `Verification failed! Either you took too long, or a lot of people are scanning at the same time, please scan again :).\n\nDebug info: ${ error_code }, bc ${ challenge_code }, fe ${ trail }` )
+    if( error ) throw new Error( `Verification failed! Either you took too long, or a lot of people are scanning at the same time, please scan again :).\n\nDebug info: ${ error_code }, bc ${ challenge_code }, fe ${ trail }` )
+    setLoading( false )
 
   }
 
   async function get_poap_link() {
 
     log( `Getting code for ${ challenge_code }: `, challenge )
-    let { data: claim_code } = await get_code_by_challenge( challenge_code )
+    let { data: claim_code } = await get_code_by_challenge( { challenge_code, captcha_response: captchaResponse } )
 
     // On first fail, refresh codes and try again
     if( claim_code.error ) {
       const { data } = await requestManualCodeRefresh().catch( e => ( { data: e } ) )
       log( `Remote code update response : `, data )
-      const { data: retried_claim_code } = await get_code_by_challenge( challenge_code )
+      const { data: retried_claim_code } = await get_code_by_challenge( { challenge_code, captcha_response: captchaResponse } )
       claim_code = retried_claim_code
     }
 
@@ -118,13 +123,20 @@ export default function ViewQR( ) {
 
         log( `Starting client validation` )
 
-				// Backend marked this device as invalid
-				if( challenge_code == 'robot' ) await stall_then_error( 'ch_c robot' )
+				/* ///////////////////////////////
+        // Failure mode 1: Backend marked this device as invalid */
+				if( challenge_code == 'robot' ) await stall( 'ch_c robot', 2000, false )
         if( cancelled ) return
 
         // Validate device using appcheck
-        const { data: isValid } = await validateCallerDevice()
+        let { data: isValid } = await validateCallerDevice()
         if( cancelled ) return
+
+        // Allow for a manual triggering of invalid device
+        if( error_code == 'force_failed_appcheck' ) {
+          log( `Simulating failed appcheck through force_failed_appcheck parameter` )
+          isValid = false
+        }
 
         // Always wait an extra second
         await wait( 2000 )
@@ -134,11 +146,34 @@ export default function ViewQR( ) {
         if( cancelled ) return
 
 
+        /* ///////////////////////////////
+        // Failure mode 2: challenge link is invalid */
+        
         // if the challenge is invalid, stall and error
-        if( !isValid || challenge?.expires < Date.now() ) return stall_then_error( `${ isValid ? 'v' : 'iv' }_expired` )
+        if( challenge?.expires < Date.now() ) return stall( `${ isValid ? 'v' : 'iv' }_expired` )
+
+        /* ///////////////////////////////
+        // Failure mode 3: Invalid captcha 3, no captcha 2 data yet */
+
+        if( !isValid && !captchaResponse ) return stall( `Stall before captcha`, 3000, false )
+
+        /* ///////////////////////////////
+        // Failure mode 4: fallback captcha is not valid */
+
+        // Check local captcha response with backend
+        if( !isValid && captchaResponse ) {
+
+          const { data: captchaIsValid } = await validateCallerCaptcha( captchaResponse )
+
+          // If captcha is invalid, trigger fail
+          if( !captchaIsValid ) await stall( `cfail` )
+
+        }
+
+        /* ///////////////////////////////
+        // Success mode: nothing failed */
 
         // If the challenge is valid, continue
-        if( cancelled ) return
         trackEvent( 'claim_device_validation_success' )
         setUserValid( true )
 
@@ -155,7 +190,7 @@ export default function ViewQR( ) {
 
     return () => cancelled = true
 
-  }, [ challenge_code ] )
+  }, [ challenge_code, captchaResponse ] )
 
   // Once the user is validated, trigger the next step
   useEffect( (  ) => {
@@ -242,6 +277,9 @@ export default function ViewQR( ) {
   // ///////////////////////////////
   // Render component
   // ///////////////////////////////
+
+  // If user is not valid, and no captcha response is known, show captcha
+  if( !userValid && !captchaResponse && !loading ) return <Captcha onChange={ response => setCaptchaResponse( response ) } />
 
   // If game challenge requested, show
   if( userValid && ( gameDone || challenge?.challenges?.includes( 'game' ) ) ) return <Stroop duration_input={ challenge?.game_config?.duration } target_score_input={ challenge?.game_config?.target_score } onLose={ handleLose } onWin={ handleWin } poap_url={ poaplink } />

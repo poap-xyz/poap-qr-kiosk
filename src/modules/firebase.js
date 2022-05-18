@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app"
 import { getFirestore, collection, setDoc, doc, onSnapshot, query, where, limit, orderBy } from "firebase/firestore"
 import { getAnalytics, logEvent } from "firebase/analytics"
-import { getFunctions, httpsCallable } from 'firebase/functions'
+import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 
 import { log, dev } from './helpers'
@@ -46,10 +46,18 @@ export const deleteEvent = httpsCallable( functions, 'deleteEvent' )
 export const checkIfCodeHasBeenClaimed = httpsCallable( functions, 'checkIfCodeHasBeenClaimed' )
 export const requestManualCodeRefresh = httpsCallable( functions, 'requestManualCodeRefresh' )
 export const validateCallerDevice = httpsCallable( functions, 'validateCallerDevice' )
+export const validateCallerCaptcha = httpsCallable( functions, 'validateCallerCaptcha' )
 export const refreshScannedCodesStatuses = httpsCallable( functions, 'refreshScannedCodesStatuses' )
 export const getEventDataFromCode = httpsCallable( functions, 'getEventDataFromCode' )
 export const get_code_by_challenge = httpsCallable( functions, 'get_code_by_challenge' )
 export const health_check = httpsCallable( functions, 'health_check' )
+
+// Offline functions emulator
+// Connect to functions emulator
+if( process.env.REACT_APP_useEmulator ) {
+	connectFunctionsEmulator( functions, 'localhost', 5001 )
+	log( `Using firebase functions emulator` )
+}
 
 // ///////////////////////////////
 // Code actions

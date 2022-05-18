@@ -61,8 +61,9 @@ exports.updateEventAvailableCodes = functions.firestore.document( `codes/{codeId
 /* ///////////////////////////////
 // Security
 // /////////////////////////////*/
-const { validateCallerDevice } = require( './modules/security' )
+const { validateCallerDevice, validateCallerCaptcha } = require( './modules/security' )
 exports.validateCallerDevice = functions.https.onCall( validateCallerDevice )
+exports.validateCallerCaptcha = functions.https.onCall( validateCallerCaptcha )
 
 /* ///////////////////////////////
 // Code claiming

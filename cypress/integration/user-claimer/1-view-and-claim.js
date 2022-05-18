@@ -175,9 +175,9 @@ context( 'Claimer can view valid events', () => {
 
 	} )
 
-	/* ///////////////////////////////
+	///////////////////////////////
 	// Second event
-	// /////////////////////////////*/
+	// /////////////////////////////
 
 	it( 'Event 2: Creates event', function() {
 
@@ -275,6 +275,26 @@ context( 'Claimer can view valid events', () => {
 
 		// Interface should indicate that the link expired
 		cy.contains( 'This link was already used' )
+
+	} )
+
+	it( 'Event 2: failed appcheck foreward to manual captcha', function( ) {
+
+		cy.get_challenge_from_qr_public_auth( this.event_2_public_auth_link, `challenge_for_failed_appcheck` ).then( challenge_string => {
+
+			// Visit the challenge link
+			cy.visit( `/claim/${ challenge_string.replace( '?', `/force_failed_appcheck/?` ) }` )
+
+			// Check that backend redirected us to the claim page
+			cy.url().should( 'include', '/#/claim' )
+
+			cy.contains( 'Verifying your humanity' )
+			cy.contains( 'Have I seen you before' )
+			cy.contains( 'Please check the box below to proceed' )
+
+		} )
+
+		
 
 	} )
 

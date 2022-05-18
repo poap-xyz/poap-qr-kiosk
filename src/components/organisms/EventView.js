@@ -6,7 +6,9 @@ import { useHistory, useParams } from 'react-router-dom'
 import useInterval from 'use-interval'
 
 // Debugging data
-const { REACT_APP_publicUrl } = process.env
+let { REACT_APP_publicUrl, REACT_APP_useEmulator } = process.env
+const emulatorUrl = 'http://localhost:5001/'
+if( REACT_APP_useEmulator ) REACT_APP_publicUrl = emulatorUrl
 log( 'Frontend using live url', REACT_APP_publicUrl )
 
 // Components
@@ -151,7 +153,7 @@ export default function ViewQR( ) {
   // Debugging helper
   useEffect( f => {
 
-    log( `For manual testing: https://qr-kiosk-dev.web.app/claim/${ internalEventId }/${ event?.public_auth?.token }?CI=true` )
+    log( `For manual testing: ${REACT_APP_publicUrl}/${ internalEventId }/${ event?.public_auth?.token }?CI=true` )
 
   },  [ internalEventId, event ] )
 
