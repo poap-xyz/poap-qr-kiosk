@@ -33,6 +33,8 @@ export default function ViewQR( ) {
   // Event ID from pushed state
   const { eventId: stateEventId } = history.location
 
+  const force_appcheck_fail = window?.location?.href?.includes( 'FORCE_INVALID_APPCHECK' )
+
   // ///////////////////////////////
   // State handling
   // ///////////////////////////////
@@ -40,7 +42,6 @@ export default function ViewQR( ) {
   const [ loading, setLoading ] = useState( 'Setting up your Kiosk' )
   const [ event, setEvent ] = useState(  )
 	const [ internalEventId, setInternalEventId ] = useState( eventId || stateEventId )
-
   const [ scanInterval, setScanInterval ] = useState( defaultScanInerval )
   const [ acceptedTerms, setAcceptedTerms ] = useState( false )
 
@@ -201,7 +202,7 @@ export default function ViewQR( ) {
     { <H2 align="center">Scan the QR with your camera to claim your POAP</H2> }
 
     {  /* QR showing code */ }
-    <QR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }` } />
+    <QR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
     { event && <Sidenote>{ event.codes - event.codesAvailable } of { event.codes } codes claimed or pending</Sidenote> }
