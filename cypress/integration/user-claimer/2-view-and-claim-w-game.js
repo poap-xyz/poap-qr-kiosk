@@ -25,11 +25,7 @@ async function extract_challenge_from_url ( response ) {
 
 }
 
-<<<<<<< HEAD
-context( 'User can claim POAP after succeeding at challenge game', () => {
-=======
 context( 'Claimer can view valid events with game', () => {
->>>>>>> 65fea9dc9af08e2f5f712cfdcfae1adba351e072
 
 	/* ///////////////////////////////
 	// First event
@@ -78,11 +74,7 @@ context( 'Claimer can view valid events with game', () => {
 
 	} )
 
-<<<<<<< HEAD
 	it( 'Event 1: Successfully redirects to challenge link and play game', function( ) {
-=======
-	it( 'Event 1: Successfully redirects to challenge link', function( ) {
->>>>>>> 65fea9dc9af08e2f5f712cfdcfae1adba351e072
 
 		// Visit the public link with games
 		cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
@@ -114,23 +106,13 @@ context( 'Claimer can view valid events with game', () => {
 				cy.contains( 'Score: 0 of' )
 
 				// Find buttons in page and click the one with h1 span value
-<<<<<<< HEAD
 				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( { force: true } ) })
-=======
-				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( {force: true} ) })
-				cy.wait(1000)
->>>>>>> 65fea9dc9af08e2f5f712cfdcfae1adba351e072
 
 				// Expect score text
 				cy.contains( 'Score: 1 of' )
 
 				// Find buttons in page and click the one with h1 span value
-<<<<<<< HEAD
 				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( { force: true } ) })
-=======
-				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( {force: true} ) })
-				cy.wait(1000)
->>>>>>> 65fea9dc9af08e2f5f712cfdcfae1adba351e072
 
 				// Expect score text
 				cy.contains( 'Score: 2 of' )
@@ -211,23 +193,13 @@ context( 'Claimer can view valid events with game', () => {
 				cy.contains( 'Score: 0 of' )
 
 				// Find buttons in page and click the one with h1 span value
-<<<<<<< HEAD
 				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( { force: true } ) })
-=======
-				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( {force: true} ) })
-				cy.wait(1000)
->>>>>>> 65fea9dc9af08e2f5f712cfdcfae1adba351e072
 
 				// Expect score text
 				cy.contains( 'Score: 1 of' )
 
 				// Find buttons in page and click the one with h1 span value
-<<<<<<< HEAD
 				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( { force: true } ) })
-=======
-				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( {force: true} ) })
-				cy.wait(1000)
->>>>>>> 65fea9dc9af08e2f5f712cfdcfae1adba351e072
 
 				// Expect score text
 				cy.contains( 'Score: 2 of' )
@@ -256,10 +228,6 @@ context( 'Claimer can view valid events with game', () => {
 		} )
 
 		cy.contains( 'Delete QR dispenser' ).click()
-<<<<<<< HEAD
-=======
-		cy.contains( 'Delete QR Dispenser' )
->>>>>>> 65fea9dc9af08e2f5f712cfdcfae1adba351e072
 
 		cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
 	} )
