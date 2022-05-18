@@ -328,7 +328,6 @@ context( 'Claimer can view valid events', () => {
 		} )
 
 		cy.contains( 'Delete QR dispenser' ).click()
-		cy.contains( 'Delete QR Dispenser' )
 
 		cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
 	} )
