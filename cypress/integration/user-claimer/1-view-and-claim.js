@@ -38,10 +38,10 @@ context( 'Claimer can view valid events', () => {
 		// Input the event data
 		cy.get( 'input[type=file]' ).attachFile( Cypress.env('LOCAL') ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
 		cy.get( '#event-create-name' ).type( admin.events[0].name )
-		cy.get( '#event-create-email' ).type( admin.email )
+		cy.get( '#event-create-email' ).clear().type( admin.email )
 		cy.get( '#event-create-date' ).type( admin.events[0].end )
 
-		// Select no anti-farming
+		// Select NO to anti-farming
 		cy.get( '#event-create-game-enabled' ).select( 1 )
 
 		// Create event
@@ -89,7 +89,7 @@ context( 'Claimer can view valid events', () => {
 				// Expect the interface to check if we are human
 				cy.contains( 'Verifying your humanity' )
 
-				// Wait for code retreival
+				// Wait for code retrieval
 				cy.contains( 'POAP link' )
 
 				// Check if POAP link supplies one of the test codes

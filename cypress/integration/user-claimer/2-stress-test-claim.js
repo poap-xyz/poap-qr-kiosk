@@ -39,7 +39,7 @@ context( 'Claimer can view valid events', () => {
 		// Input the event data
 		cy.get( 'input[type=file]' ).attachFile( Cypress.env('LOCAL') ? `five-correct-codes.txt` : `five-correct-codes-ci.txt` )
 		cy.get( '#event-create-name' ).type( admin.events[1].name )
-		cy.get( '#event-create-email' ).type( admin.email )
+		cy.get( '#event-create-email' ).clear().type( admin.email )
 		cy.get( '#event-create-date' ).type( admin.events[1].end )
 
 		// Select no anti-farming
