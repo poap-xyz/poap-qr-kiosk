@@ -18,6 +18,7 @@
   "main": "index.js",
   "dependencies": {
     "@sendgrid/mail": "^7.6.0",
+    "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "csso": "^4.2.0",
     "express": "^4.17.1",

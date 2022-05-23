@@ -59,6 +59,10 @@ exports.live_access_token = async f => {
 
 /**
 * Authenticated API call in JSON format
+* @param {string} endpoint Endpoint to call, e.g. /events
+* @param {(string|Object)} data Data to send in the request body
+* @param {string} [method=GET] - HTTP verb to call with
+* @param {string} [format=json] - format to send the body in
 * @returns {Object} response API response as documented at https://api.poap.xyz/documentation/static/index.html#/ and https://github.com/poap-xyz/poap-server/blob/development/src/apps/events/routes.ts#L57
 * @returns {string} response.error Error message if one is given
 * @returns {string} response.message Contains error details if this was an error
