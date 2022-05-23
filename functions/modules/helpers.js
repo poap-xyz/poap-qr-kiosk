@@ -1,10 +1,10 @@
 const functions = require( 'firebase-functions' )
 const { environment } = functions.config()
-const dev = !!process.env.development || environment?.development
+const dev = !!process.env.development
 
 // Dev Logger
 const log = ( ...comments ) => {
-	if( dev ) console.log( ...comments )
+	if( dev || environment?.verbose ) console.log( ...comments )
 }
 
 // Object properties checker
