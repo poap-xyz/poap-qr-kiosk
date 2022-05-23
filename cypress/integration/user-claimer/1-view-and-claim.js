@@ -42,7 +42,7 @@ context( 'Claimer can view valid events', () => {
 		cy.get( '#event-create-date' ).type( admin.events[0].end )
 
 		// Select NO to anti-farming
-		cy.get( '#event-create-game-enabled' ).select( 1 )
+		cy.get( '#event-create-game-enabled' ).select( 0 )
 
 		// Create event
 		cy.get( '#event-create-submit' ).click()
@@ -191,7 +191,7 @@ context( 'Claimer can view valid events', () => {
 		cy.get( '#event-create-date' ).type( admin.events[1].end )
 
 		// Select no anti-farming
-		cy.get( '#event-create-game-enabled' ).select( 1 )
+		cy.get( '#event-create-game-enabled' ).select( 0 )
 
 		// Create event
 		cy.get( '#event-create-submit' ).click()
@@ -278,7 +278,7 @@ context( 'Claimer can view valid events', () => {
 
 	} )
 
-	it( 'Event 2: failed appcheck foreward to manual captcha', function( ) {
+	it( 'Event 2: failed appcheck forward to manual captcha', function( ) {
 
 		cy.get_challenge_from_qr_public_auth( this.event_2_public_auth_link, `challenge_for_failed_appcheck` ).then( challenge_string => {
 
@@ -290,7 +290,7 @@ context( 'Claimer can view valid events', () => {
 
 			cy.contains( 'Verifying your humanity' )
 			cy.contains( 'Have I seen you before' )
-			cy.contains( 'Please check the box below to proceed' )
+			cy.contains( 'Please check' )
 
 		} )
 

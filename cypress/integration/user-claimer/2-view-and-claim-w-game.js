@@ -43,7 +43,7 @@ context( 'Claimer can view valid events with game', () => {
 		cy.get( '#event-create-date' ).type( admin.events[0].end )
 
 		// Select YES to anti-farming
-		cy.get( '#event-create-game-enabled' ).select( 0 )
+		cy.get( '#event-create-game-enabled' ).select( 1 )
 
 		// Select anti-farming timing (10s)
 		cy.get( '#event-create-game-duration' ).select( 1 )
