@@ -36,11 +36,14 @@ app.get( '/generate/:event_id/', async ( req, res ) => {
 		// If no kiosk exists, create a new entry
 		if( !existing_kiosk.uid ) {
 
+			// Get drop metadata
 			const drop_data = await call_poap_endpoint( `/event/id/${ event_id }` )
 			const { name, expiry_date } = drop_data
 
-			const codes = await db
+			// Returns [ { qrhash: String, claimed: Boolean } ]
+			const codes = await call_poap_endpoint( `/event/${ event_id }/qr-codes`, { secret_code }, 'POST' )
 
+			// Write new kiosk to database
 			const new_kiosk = await db.collection( 'events' ).add( {
 				name,
 				email,
