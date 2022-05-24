@@ -166,7 +166,12 @@ export default function ViewQR( ) {
           const { data: captchaIsValid } = await validateCallerCaptcha( captchaResponse )
 
           // If captcha is invalid, trigger fail
-          if( !captchaIsValid ) await stall( `cfail` )
+          if( !captchaIsValid ) {
+            trackEvent( 'claim_device_captcha_fail' )
+            await stall( `cfail` )
+          } else {
+            trackEvent( 'claim_device_captcha_success' )
+          }
 
         }
 

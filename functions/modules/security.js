@@ -46,7 +46,7 @@ exports.validateCallerCaptcha = async ( captcha_response, context ) => {
 
 
 	} catch( e ) {
-		console.error( e )
+		log( 'Captach validation error: ', e )
 		return false
 	}
 

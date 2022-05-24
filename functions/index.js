@@ -3,8 +3,8 @@ const generousRuntime = {
 	timeoutSeconds: 540,
 	memory: '4GB'
 }
-const { log } = require( './modules/helpers' )
-log( `⚠️ Dev mode on` )
+const { log, dev } = require( './modules/helpers' )
+log( `⚠️ Verbose mode on, ${ dev ? '⚙️ dev mode on' : '🚀 production mode on' }` )
 
 // ///////////////////////////////
 // Code status managers
