@@ -3,7 +3,6 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
-const oneCode = require( `../../fixtures/one-correct-code${ Cypress.env('LOCAL') ? '' : '-ci' }` )
 const request_options = {
 
 	headers: {
@@ -37,7 +36,7 @@ context( 'User can claim POAP after succeeding at challenge game', () => {
 		cy.visit( '/create?debug=true' )
 
 		// Input the event data
-		cy.get( 'input[type=file]' ).attachFile( `one-correct-code.txt` )
+		cy.get( 'input[type=file]' ).attachFile( Cypress.env('LOCAL') ? `one-correct-code.txt` : `one-correct-code-ci.txt` )
 		cy.get( '#event-create-name' ).type( admin.events[0].name )
 		cy.get( '#event-create-email' ).clear().type( admin.email )
 		cy.get( '#event-create-date' ).type( admin.events[0].end )

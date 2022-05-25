@@ -37,7 +37,7 @@ context( 'Claimer can view valid events with game', () => {
 		cy.visit( '/create?debug=true' )
 
 		// Input the event data
-		cy.get( 'input[type=file]' ).attachFile( `one-correct-code.txt` )
+		cy.get( 'input[type=file]' ).attachFile( Cypress.env('LOCAL') ? `one-correct-code.txt` : `one-correct-code-ci.txt` )
 		cy.get( '#event-create-name' ).type( admin.events[0].name )
 		cy.get( '#event-create-email' ).clear().type( admin.email )
 		cy.get( '#event-create-date' ).type( admin.events[0].end )
