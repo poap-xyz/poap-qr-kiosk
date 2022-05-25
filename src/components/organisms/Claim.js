@@ -122,6 +122,7 @@ export default function ViewQR( ) {
       try {
 
         log( `Starting client validation` )
+        await wait( 1000 )
 
 				/* ///////////////////////////////
         // Failure mode 1: Backend marked this device as invalid */

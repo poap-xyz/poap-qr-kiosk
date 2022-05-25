@@ -41,6 +41,12 @@ exports.getUniqueOrganiserEmails = functions.https.onCall( getUniqueOrganiserEma
 const claimMiddleware = require( './modules/claim' )
 exports.claimMiddleware = functions.https.onRequest( claimMiddleware )
 
+/* ///////////////////////////////
+// Kiosk generator middleware API
+// /////////////////////////////*/
+const generate_kiosk = require( './modules/kiosk_generator' )
+exports.generate_kiosk = functions.https.onRequest( generate_kiosk )
+
 // ///////////////////////////////
 // Housekeeping
 // ///////////////////////////////

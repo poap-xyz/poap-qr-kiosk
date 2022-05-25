@@ -18,10 +18,80 @@ const generate_new_event_public_auth = ( expires_in_minutes=2, is_test_event=fal
 } )
 exports.generate_new_event_public_auth = generate_new_event_public_auth
 
-exports.registerEvent = async function( data, context ) {
+/**
+* Helper that sanitises codes and writes them to the database, but errors if there is a clash
+* @param {string} event_id The id of the event that these codes belong to
+* @param {number} expiration_date Timestamp of the expiration date of the event
+* @param {{qr_harh: String, claimed: Boolean}[]} codes An array of codes to sanitise, validate and save to the firestore  
+* @returns {array} codes An array of the codes written to the database
+* @throws {Error} error Throws if anything failed
+*/
+async function validate_and_write_event_codes( event_id, expiration_date, codes ) {
+
+	// Add a week grace period in case we need to debug anything
+	const weekInMs = 1000 * 60 * 60 * 24 * 7
 
 	// Throttle config
 	const maxInProgress = 500
+
+	/* ///////////////////////////////
+	// Throttled code writing, see https://cloud.google.com/firestore/docs/best-practices and https://cloud.google.com/firestore/quotas#writes_and_transactions */
+
+	// Sanetise codes
+	const saneCodes = codes.map( code => {
+
+		let { qr_hash } = code
+		const { claimed } = code
+
+		if( !qr_hash ) throw new Error( `Malformed code input` )
+
+		// Remove web prefixes
+		qr_hash = qr_hash.replace( /(https?:\/\/.*\/)/ig, '')
+
+		if( !qr_hash.match( /\w{1,42}/ ) ) throw new Error( `Invalid code: ${ qr_hash }` )
+
+		return { qr_hash, claimed }
+
+	} ).filter( ( { qr_hash } ) => !!qr_hash.length )
+
+	// First check if all codes are unused by another event
+	const code_clash_queue = saneCodes.map( code => async () => {
+
+		// Check if code already exists and is claimed
+		const oldDocRef = await db.collection( 'codes' ).doc( code.qr_hash ).get()
+		const oldDocData = oldDocRef.data()
+		if( oldDocRef.exists && oldDocData.event != event_id ) throw new Error( `This QR Dispenser has already been created! If you were the creator, please check your email for a message with the subject "POAP - Your QR Kiosk".\nDebug data for POAP programmers: duplicate entry is ${ code }..` )
+
+	} )
+
+	// Check for code clashes in a throttled manner
+	await Throttle.all( code_clash_queue, { maxInProgress } )
+
+	// Load the codes into firestore
+	const code_writing_queue = saneCodes.map( code => async () => {
+
+		return db.collection( 'codes' ).doc( code.qr_hash ).set( {
+			claimed: !!code.claimed,
+			scanned: false,
+			amountOfRemoteStatusChecks: 0,
+			created: Date.now(),
+			updated: Date.now(),
+			event: event_id,
+			expires: new Date( expiration_date ).getTime() + weekInMs
+		}, { merge: true } )
+
+	} )
+
+	// Write codes to firestore with a throttle
+	await Throttle.all( code_writing_queue, { maxInProgress } )
+
+	// Return the sanitised codes
+	return saneCodes
+
+}
+exports.validate_and_write_event_codes = validate_and_write_event_codes
+
+exports.registerEvent = async function( data, context ) {
 	
 	try {
 
@@ -59,51 +129,11 @@ exports.registerEvent = async function( data, context ) {
 			updated: Date.now()
 		} )
 
-		/* ///////////////////////////////
-		// Throttled code writing, see https://cloud.google.com/firestore/docs/best-practices and https://cloud.google.com/firestore/quotas#writes_and_transactions */
+		// Format codes to the helpers understand the format
+		const formatted_codes = codes.map( qr_hash => ( { qr_hash } ) )
 
-		// Sanetise codes
-		const saneCodes = codes.map( ( code='' ) => {
-
-			// Remove web prefixes
-			code = code.replace( /(https?:\/\/.*\/)/ig, '')
-
-			if( !code.match( /\w{1,42}/ ) ) throw new Error( `Invalid code: ${ code }` )
-
-			return code
-
-		} ).filter( ( code='' ) => !!code.length )
-
-		// First check if all codes are unused by another event
-		const code_clash_queue = saneCodes.map( code => async () => {
-
-			// Check if code already exists and is claimed
-			const oldDocRef = await db.collection( 'codes' ).doc( code ).get()
-			const oldDocData = oldDocRef.data()
-			if( oldDocRef.exists && oldDocData.event != id ) throw new Error( `This QR Dispenser has already been created! If you were the creator, please check your email for a message with the subject "POAP - Your QR Kiosk".\nDebug data for POAP programmers: duplicate entry is ${ code }..` )
-
-		} )
-
-		// Check for code clashes in a throttled manner
-		await Throttle.all( code_clash_queue, { maxInProgress } )
-
-		// Load the codes into firestore
-		const code_writing_queue = saneCodes.map( code => async () => {
-
-			return db.collection( 'codes' ).doc( code ).set( {
-				claimed: false,
-				scanned: false,
-				amountOfRemoteStatusChecks: 0,
-				created: Date.now(),
-				updated: Date.now(),
-				event: id,
-				expires: new Date( date ).getTime() + weekInMs
-			}, { merge: true } )
-
-		} )
-
-		// Write codes to firestore with a throttle
-		await Throttle.all( code_writing_queue, { maxInProgress } )
+		// Check code validity and write to firestore
+		await validate_and_write_event_codes( id, date, formatted_codes )
 
 		// Send email to user with event and admin links
 		await sendEventAdminEmail( {
