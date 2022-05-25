@@ -38,12 +38,12 @@ context( 'Claimer can view valid events', () => {
 
 		// Input the event data
 		cy.get( 'input[type=file]' ).attachFile( Cypress.env('LOCAL') ? `five-correct-codes.txt` : `five-correct-codes-ci.txt` )
-		cy.get( '#event-create-name' ).type( admin.events[1].name )
-		cy.get( '#event-create-email' ).type( admin.email )
-		cy.get( '#event-create-date' ).type( admin.events[1].end )
+		cy.get( '#event-create-name' ).clear().type( admin.events[1].name )
+		cy.get( '#event-create-email' ).clear().type( admin.email )
+		cy.get( '#event-create-date' ).clear().type( admin.events[1].end )
 
 		// Select no anti-farming
-		cy.get( '#event-create-game-enabled' ).select( 1 )
+		cy.get( '#event-create-game-enabled' ).select( 0 )
 
 		// Create event
 		cy.get( '#event-create-submit' ).click()
@@ -67,7 +67,7 @@ context( 'Claimer can view valid events', () => {
 		cy.get( '#event-view-accept-disclaimer' ).click()
 
 		// Save the first public auth link shown
-		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'public_auth_link' ).then( f => cy.log( `Event 2 public auth link: ${ this.public_auth_link }` ) )
+		cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'public_auth_link' ).then( f => cy.log( `Event public auth link: ${ this.public_auth_link }` ) )
 
 	} )
 
