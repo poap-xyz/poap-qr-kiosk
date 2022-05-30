@@ -26,7 +26,9 @@ app.post( '/generate/:event_id/', async ( req, res ) => {
 		const redirect_baseurl = CI ? `http://localhost:3000/` : kiosk.public_url
 
 		// Validations
-		if( !event_id || !secret_code || !email ) throw new Error( `Malformed request` )
+
+		// If data is missing, the email client probably does not support POST forms yet
+		if( !event_id || !secret_code || !email ) throw new Error( `Your email client does not support generating QR kiosks. Please create one manually at qr.poap.xyz.` )
 
 		// Formulate redirect basis
 		let redirect_link = `${ redirect_baseurl }/#/event/`
@@ -55,7 +57,7 @@ app.post( '/generate/:event_id/', async ( req, res ) => {
 			log( `Received codes: `, codes )
 			if( codes.error ) {
 				log( `Problem with codes: `, codes )
-				throw new Error( `Error in POAP codes API: ${ codes.error }` )
+				throw new Error( `Error in POAP codes API: ${ codes.error }. This is probably not your fault.` )
 			}
 
 
@@ -95,7 +97,7 @@ app.post( '/generate/:event_id/', async ( req, res ) => {
 	} catch( e ) {
 
 		console.error( `Kiosk generation error: `, e )
-		return res.send( `Kiosk error: ${ e.message }` )
+		return res.send( `An error ocurred. ${ e.message }` )
 
 	}
 
