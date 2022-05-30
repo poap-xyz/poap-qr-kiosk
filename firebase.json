@@ -15,7 +15,7 @@
         "function": "public_health_check"
       },
       {
-        "source": "/generate/",
+        "source": "/generate/**",
         "function": "generate_kiosk"
       }
     ],
