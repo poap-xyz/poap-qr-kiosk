@@ -1,4 +1,4 @@
-const { db, dataFromSnap } = require('./firebase')
+const { db, dataFromSnap, arrayUnion, increment } = require('./firebase')
 const { call_poap_endpoint } = require( './poap_api' )
 const app = require( './express' )()
 const { generate_new_event_public_auth, validate_and_write_event_codes } = require( './events' )
@@ -9,6 +9,15 @@ const { v4: uuidv4 } = require('uuid')
 const functions = require( 'firebase-functions' )
 const { kiosk } = functions.config()
 
+/**
+* Generate a new kiosk through a POST request (or return an existing one)
+* @param {object} req - request object
+* @param {string} req.params.event_id - Url parameter of the event id /generate/:event_id/
+* @param {string} req.body.secret_code - The secret edit code of the event aka drop
+* @param {string} req.body.email - The email address of the event organiser
+* @param {string} req.query.CI - Make the redirect baseurl into localhost for testing
+* @returns 301 redirect 
+*/
 app.post( '/generate/:event_id/', async ( req, res ) => {
 
 	try {
@@ -30,15 +39,14 @@ app.post( '/generate/:event_id/', async ( req, res ) => {
 		// If data is missing, the email client probably does not support POST forms yet
 		if( !event_id || !secret_code || !email ) throw new Error( `Your email client does not support generating QR kiosks. Please create one manually at qr.poap.xyz.` )
 
-		// Formulate redirect basis
-		let redirect_link = `${ redirect_baseurl }/#/event/`
-
+		// Store the kiosk id for use in url
+		let kiosk_id = undefined
 
 		// Check if this kiosk exists in the db
 		log( `Finding event where event_id is ${ event_id } and secret_code is ${ secret_code }` )
 		const [ existing_kiosk ] = await db.collection( 'events' ).where( 'event_id', '==', event_id ).where( 'secret_code', '==', secret_code ).get().then( dataFromSnap )
 		log( `Existing kiosk: `, existing_kiosk )
-		if( existing_kiosk ) redirect_link += existing_kiosk.uid
+		if( existing_kiosk ) kiosk_id = existing_kiosk.uid
 		
 		// If no kiosk exists, create a new entry
 		if( !existing_kiosk ) {
@@ -85,12 +93,20 @@ app.post( '/generate/:event_id/', async ( req, res ) => {
 			await validate_and_write_event_codes( new_kiosk.id, expiry_date, codes )
 
 			// Format redirect link
-			redirect_link += new_kiosk.id
+			kiosk_id = new_kiosk.uid
 
 		}
+		// Keep track of event admin emails
+		await db.collection( 'user_data' ).doc( email ).set( {
+			events: arrayUnion( kiosk_id ),
+			events_organised: increment( 1 ),
+			updated: Date.now(),
+			updated_human: new Date().toString()
+		}, { merge: true } )
 		
 		
 		// Send redirect request to browser
+		let redirect_link = `${ redirect_baseurl }/#/event/${ kiosk_id }`
 		log( `Sending redirect to: `, redirect_link )
 		return res.redirect( 307, redirect_link )
 

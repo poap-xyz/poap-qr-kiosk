@@ -45,7 +45,8 @@ jobs:
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only=functions --project=production
+          # Enable --force since merging from dev should never require a manual deploy
+          args: deploy --force --only=functions --project=production
         env:
           GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
 

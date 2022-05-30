@@ -13,6 +13,10 @@
       {
         "source": "/health/",
         "function": "public_health_check"
+      },
+      {
+        "source": "/generate/",
+        "function": "generate_kiosk"
       }
     ],
     "ignore": [

@@ -23,7 +23,7 @@ exports.generate_new_event_public_auth = generate_new_event_public_auth
 * @param {string} event_id The id of the event that these codes belong to
 * @param {number} expiration_date Timestamp of the expiration date of the event
 * @param {{qr_harh: String, claimed: Boolean}[]} codes An array of codes to sanitise, validate and save to the firestore  
-* @returns {array} codes An array of the codes written to the database
+* @returns {Promise<array>} codes An array of the codes written to the database
 * @throws {Error} error Throws if anything failed
 */
 async function validate_and_write_event_codes( event_id, expiration_date, codes ) {
