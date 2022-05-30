@@ -81,7 +81,7 @@ export async function importCodesFromArray( password='', codes=[] ) {
 /* ///////////////////////////////
 // Event actions
 // /////////////////////////////*/
-export async function listenToEventMeta( eventId, cb ) {
+export function listenToEventMeta( eventId, cb ) {
 
 	const d = doc( db, 'publicEventData', eventId )
 
@@ -95,7 +95,7 @@ export async function listenToEventMeta( eventId, cb ) {
 
 }
 
-export async function listen_to_claim_challenge( challenge_id, cb ) {
+export function listen_to_claim_challenge( challenge_id, cb ) {
 
 	const d = doc( db, 'claim_challenges', challenge_id )
 

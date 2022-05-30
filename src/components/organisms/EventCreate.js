@@ -11,14 +11,14 @@ import Main from '../atoms/Main'
 import { registerEvent, trackEvent, getEventDataFromCode, health_check } from '../../modules/firebase'
 import { log, dateOnXDaysFromNow, monthNameToNumber, dev } from '../../modules/helpers'
 import Papa from 'papaparse'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
 export default function Admin( ) {
 
-  const history = useHistory(  )
+  const navigate = useNavigate(  )
 
   // ///////////////////////////////
   // State handling
@@ -205,7 +205,7 @@ export default function Admin( ) {
       if( newEvent.error ) throw new Error( newEvent.error )
 
       // Send to admin interface
-      return history.push( `/event/admin/${ newEvent.id }/${ newEvent.authToken }` )
+      return navigate( `/event/admin/${ newEvent.id }/${ newEvent.authToken }` )
 
     } catch( e ) {
 

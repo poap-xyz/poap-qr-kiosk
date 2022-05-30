@@ -1,6 +1,6 @@
 // Providers
 import Theme from './components/atoms/Theme'
-import { HashRouter as Router, Switch, Route } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 
 // Pages
 import ViewQR from './components/organisms/EventView'
@@ -17,16 +17,29 @@ export default function App( ) {
   return <Theme>
     <Router>
 
-      <Switch>
+      <Routes>
 
-        <Route exact path='/' component={ Welcome } />
-        <Route exact path='/create' component={ CreateEvent } />
-        <Route path='/event/admin/:eventId/:authToken' component={ EventAdmin } />
-        <Route path='/event/:eventId?/:viewMode?' component={ ViewQR } />
-        <Route path='/claim/:challenge_code/:error_code?' component={ Claim } />
+        <Route exact path='/' element={ <Welcome /> } />
+        <Route exact path='/create' element={ <CreateEvent /> } />
+        <Route path='/event/admin/:eventId/:authToken' element={ <EventAdmin /> } />
+        
+        <Route path='/event'>
+
+          <Route path=':eventId/:viewMode' element={ <ViewQR /> } />
+          <Route path=':eventId' element={ <ViewQR /> } />
+          <Route path='' element={ <ViewQR /> } />
+          
+        </Route>
+        
+        <Route path='/claim/' >
+
+          <Route path=':challenge_code/:error_code' element={ <Claim /> } />
+          <Route path=':challenge_code' element={ <Claim /> } />
+
+        </Route>
 
 
-      </Switch>
+      </Routes>
 
     </Router>
   </Theme>

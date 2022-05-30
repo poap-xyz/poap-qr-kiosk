@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses, trackEvent, health_check } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import useInterval from 'use-interval'
 
 // Debugging data
@@ -25,13 +25,14 @@ import Network from '../molecules/NetworkStatusBar'
 // ///////////////////////////////
 export default function ViewQR( ) {
 
-  const history = useHistory()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   // Event ID form url
   const { eventId } = useParams()
 
   // Event ID from pushed state
-  const { eventId: stateEventId } = history.location
+  const { eventId: stateEventId } = location
 
   const force_appcheck_fail = window?.location?.href?.includes( 'FORCE_INVALID_APPCHECK' )
 
@@ -88,7 +89,7 @@ export default function ViewQR( ) {
     setInternalEventId( eventId )
 
     // Remove eventId from url by pushing with state
-    history.push( '/event/', {
+    navigate( '/event/', {
         eventId
     } )
 
@@ -149,6 +150,7 @@ export default function ViewQR( ) {
     refreshScannedCodesStatuses( internalEventId )
     .then( ( { data } ) => log( `Remote code update response : `, data ) )
     .catch( e => log( `Code refresh error `, e ) )
+    
   }, scanInterval )
 
   // Debugging helper
@@ -190,7 +192,7 @@ export default function ViewQR( ) {
   if( !event?.public_auth?.expires ) return <Container>
   
     <h1>No codes available</h1>
-    <Sidenote onClick={ f => history.push( '/admin' ) }>If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface.</Sidenote>
+    <Sidenote onClick={ f => navigate( '/admin' ) }>If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface.</Sidenote>
     
   </Container>
   

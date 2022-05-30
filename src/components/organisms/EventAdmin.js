@@ -8,7 +8,7 @@ import { Text, H1 } from '../atoms/Text'
 
 // Functionality
 import { useState, useEffect } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { deleteEvent, trackEvent, health_check } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 const { REACT_APP_publicUrl } = process.env
@@ -20,7 +20,7 @@ const { REACT_APP_publicUrl } = process.env
 export default function EventAdmin( ) {
 
 	const { eventId, authToken } = useParams( )
-	const history = useHistory()
+	const navigate = useNavigate()
 	const eventLink = `${ dev ? 'http://localhost:3000' : REACT_APP_publicUrl }/#/event/${ eventId }`
 	const adminLink = `${ dev ? 'http://localhost:3000' : REACT_APP_publicUrl }/#/event/admin/${ eventId }/${ authToken }`
 	const clipboardAPI = !!navigator.clipboard
@@ -82,7 +82,7 @@ export default function EventAdmin( ) {
 
 			alert( `Deletion success!\n\nYour QR Dispenser has been deleted.\n\nClick OK to be redirected to the home page. ` )
 			trackEvent( 'admin_event_deleted' )
-			return history.push( '/' )
+			return navigate( '/' )
 
 		} catch( e ) {
 			alert( `Error Delete QR Dispenser: ${ e.message }` )

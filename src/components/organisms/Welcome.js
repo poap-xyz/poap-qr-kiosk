@@ -13,7 +13,7 @@ import checkin from '../../assets/undraw_designer_life_re_6ywf_modified.svg'
 import stream from '../../assets/undraw_conference_call_b0w6_modified.svg'
 
 // Functionality
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { health_check } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 
@@ -23,7 +23,7 @@ import { log, dev } from '../../modules/helpers'
 // ///////////////////////////////
 export default function ComponentName( ) {
 
-	const history = useHistory()
+	const navigate = useNavigate()
 	const [ allowAccess, setAllowAccess ] = useState( true )
 
 	/* ///////////////////////////////
@@ -69,7 +69,7 @@ export default function ComponentName( ) {
 				<H1>Magic POAP Dispenser <Sup>beta</Sup></H1>
 				<H2>Get POAPs to your friends IRL</H2>
 				<Text>Just input your .txt file of mint links and watch your phone turn into a POAP QR dispenser at the click of a button. You&apos;ll be able to display QR codes for attendees to scan one-by-one.</Text>
-				{ allowAccess && <Button onClick={ f => history.push( '/create' ) }>Create QR dispenser</Button> }
+				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>Create QR dispenser</Button> }
 
 			</Hero>
 
@@ -102,7 +102,7 @@ export default function ComponentName( ) {
 			<Section height='500px'>
 
 					<H2>Get started now</H2>
-					{ allowAccess && <Button onClick={ f => history.push( '/create' ) }>Create QR dispenser</Button> }
+					{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>Create QR dispenser</Button> }
 
 			</Section>
 
