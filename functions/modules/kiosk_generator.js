@@ -40,7 +40,7 @@ app.post( '/generate/:event_id', async ( req, res ) => {
 		if( !event_id || !secret_code || !email ) throw new Error( `Your email client does not support generating QR kiosks. Please create one manually at qr.poap.xyz.` )
 
 		// Store the kiosk id for use in url
-		let redirect_url = `${ redirect_baseurl }/#/event`
+		let redirect_url = `${ redirect_baseurl }/#/event/admin`
 
 		// Check if this kiosk exists in the db
 		log( `Finding event where event_id is ${ event_id } and secret_code is ${ secret_code }` )
