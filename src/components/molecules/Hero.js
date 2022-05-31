@@ -12,7 +12,7 @@ export default styled( Section )`
 	& * {
 		max-width: 750px;
 	}
-	& p {
+	& > p {
 		margin: 0 0 4rem;
 	}
 `

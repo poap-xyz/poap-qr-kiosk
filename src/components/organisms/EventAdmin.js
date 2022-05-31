@@ -4,7 +4,8 @@ import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 import Section from '../atoms/Section'
 import Loading from '../molecules/Loading'
-import { Text, H1 } from '../atoms/Text'
+import { Text, H1, H2 } from '../atoms/Text'
+import Hero from '../molecules/Hero'
 
 // Functionality
 import { useState, useEffect } from 'react'
@@ -98,41 +99,58 @@ export default function EventAdmin( ) {
 	if( loading ) return <Loading message={ loading } />
 	return <Container>
 
-		<Main align="flex-start" width='600px'>
+		<Main align="flex-start" justify="space-between" direction="row">
 
-			<H1>QR Dispenser links</H1>
-			
-			<Section align="flex-start">
-				<Text>Open your public QR Dispenser link in a new tab on the browser of your device to distribute POAPs to all your closest frens.</Text>
-				<Input
-					id='admin-eventlink-public' 
-					readOnly
-					onClick={ focus }
-					label="Your public QR Dispenser link"
-					value={ eventLink }
-					info="This link takes you to your QR Dispenser page. For example, you can display this page on an iPad at your check-in desk."
-				/>
-				{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>Copy QR Dispenser link to clipboard</Button> }
+			<Hero>
+
+				<H1>Magic POAP Dispenser</H1>
+				<H2>Your unique QR dispenser link</H2>
+				<Section margin="0">
+					<Text>This link is intended to be displayed on a physical device, or through a screenshare during a stream. <b>NEVER</b> send it to anyone.</Text>
+					<Input
+						id='admin-eventlink-public' 
+						readOnly
+						onClick={ focus }
+						label="Your public QR Dispenser link"
+						value={ eventLink }
+						info="This link takes you to your QR Dispenser page. For example, you can display this page on an iPad at your check-in desk."
+					/>
+				</Section>
+				<Section padding="0" margin="0" justify="flex-start" direction="row">
+					<Button margin=".5em .5rem .5rem 0" onClick={ f => window.open( eventLink, '_self' ) }>Open link & start distributing POAPs</Button>
+					{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>Copy to clipboard</Button> }
+				</Section>
+
+			</Hero>
+
+			<Section margin="0" align="flex-start">
+				<H1>Secret Admin Section</H1>
+
+				<Section align="flex-start">
+					<H2>Delete this QR dispenser</H2>
+					<Text>Want to create a new QR dispenser for this drop? Delete this QR dispenser first, and then create a new dispenser when you are ready.</Text>
+					<Button onClick={ safelyDeleteEvent }>Delete QR dispenser</Button>
+				</Section>
+
+
+				<Section align="flex-start">
+					<H2>Admin link</H2>
+					<Text>Your admin link is yours to make changes to this instance of the magic POAP dispenser. Don&apos;t share this with anyone!</Text>
+					<Input
+						id='admin-eventlink-secret'
+						readOnly
+						onClick={ focus }
+						label="Your secret admin link"
+						value={ adminLink }
+						info="The link to this admin page, the page you are seeing now. This link allows you to delete your QR Dispenser. Keep it secret!"
+					/>
+					{ clipboardAPI && <Button onClick={ f => clipboard( adminLink ) }>Copy secret admin link to clipboard</Button> }
+				</Section>
+
+				
+
 			</Section>
 
-			<Section>
-				<Text>Your admin link is yours to make changes to this instance of the magic POAP dispenser. Don&apos;t share this with anyone!</Text>
-				<Input
-					id='admin-eventlink-secret'
-					readOnly
-					onClick={ focus }
-					label="Your secret admin link"
-					value={ adminLink }
-					info="The link to this admin page, the page you are seeing now. This link allows you to delete your QR Dispenser. Keep it secret!"
-				/>
-				{ clipboardAPI && <Button onClick={ f => clipboard( adminLink ) }>Copy secret admin link to clipboard</Button> }
-			</Section>
-
-			<H1>Admin actions</H1>
-			<Section>
-				<Text>Want to create a new QR dispenser for this drop? Delete this QR dispenser first, and then create a new dispenser when you are ready.</Text>
-				<Button onClick={ safelyDeleteEvent }>Delete QR dispenser</Button>
-			</Section>
 
 		</Main>
 		
