@@ -1,4 +1,5 @@
 // Providers
+import { Suspense } from 'react'
 import Theme from './components/atoms/Theme'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 
@@ -14,34 +15,36 @@ import Claim from './components/organisms/Claim'
 // ///////////////////////////////
 export default function App( ) {
 
-  return <Theme>
-    <Router>
+  return <Suspense fallback={null}>
+    <Theme>
+      <Router>
 
-      <Routes>
+        <Routes>
 
-        <Route exact path='/' element={ <Welcome /> } />
-        <Route exact path='/create' element={ <CreateEvent /> } />
-        <Route path='/event/admin/:eventId/:authToken' element={ <EventAdmin /> } />
-        
-        <Route path='/event'>
-
-          <Route path=':eventId/:viewMode' element={ <ViewQR /> } />
-          <Route path=':eventId' element={ <ViewQR /> } />
-          <Route path='' element={ <ViewQR /> } />
+          <Route exact path='/' element={ <Welcome /> } />
+          <Route exact path='/create' element={ <CreateEvent /> } />
+          <Route path='/event/admin/:eventId/:authToken' element={ <EventAdmin /> } />
           
-        </Route>
-        
-        <Route path='/claim/' >
+          <Route path='/event'>
 
-          <Route path=':challenge_code/:error_code' element={ <Claim /> } />
-          <Route path=':challenge_code' element={ <Claim /> } />
+            <Route path=':eventId/:viewMode' element={ <ViewQR /> } />
+            <Route path=':eventId' element={ <ViewQR /> } />
+            <Route path='' element={ <ViewQR /> } />
+            
+          </Route>
+          
+          <Route path='/claim/' >
 
-        </Route>
+            <Route path=':challenge_code/:error_code' element={ <Claim /> } />
+            <Route path=':challenge_code' element={ <Claim /> } />
+
+          </Route>
 
 
-      </Routes>
+        </Routes>
 
-    </Router>
-  </Theme>
-
+      </Router>
+    </Theme>
+  </Suspense>
+  
 }
