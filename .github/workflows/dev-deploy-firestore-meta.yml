@@ -12,8 +12,8 @@ on:
       - 'firestore.rules'
   pull_request:
     types: [ closed ]
-    branches:
-      - development
+    branches-ignore:
+      - '!development'
     paths:
       - '.firebaserc'
       - '.github/workflows/dev-deploy-firestore-meta.yml'

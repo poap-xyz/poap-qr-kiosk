@@ -4,6 +4,8 @@ name: Deploy frontend on push/merge
 on:
   # Trigger on PR close
   pull_request:
+    branches:
+      - main
     types: [ closed ]
     paths:
       - '*.json'
@@ -11,8 +13,7 @@ on:
       - 'src/**'
       - 'cypress/**'
       - '.github/workflows/prod-deploy-frontend.yml'
-    branches:
-      - main
+
   
   # Trigger on push to master (edge case, local merge)
   push:

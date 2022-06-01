@@ -8,9 +8,9 @@ on:
       - '.github/workflows/prod-deploy-functions.yml'
       - 'functions/**'
   pull_request:
-    types: [ closed ]
     branches:
       - main
+    types: [ closed ]
     paths:
       - '.github/workflows/prod-deploy-functions.yml'
       - 'functions/**'

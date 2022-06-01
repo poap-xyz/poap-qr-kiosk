@@ -11,8 +11,8 @@ on:
       - 'functions/**'
   pull_request:
     types: [ closed ]
-    branches:
-      - development
+    branches-ignore:
+      - '!development'
     paths:
       - '.firebaserc'
       - '.github/workflows/dev-deploy-functions.yml'

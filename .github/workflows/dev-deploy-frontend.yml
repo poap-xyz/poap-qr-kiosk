@@ -12,8 +12,8 @@ on:
       - 'src/**'
       - 'cypress/**'
       - '.github/workflows/dev-deploy-frontend.yml'
-    branches:
-      - development
+    branches-ignore:
+      - '!development'
   
   # Trigger on push to master (edge case, local merge)
   push:
