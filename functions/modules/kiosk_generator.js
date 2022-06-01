@@ -35,18 +35,47 @@ app.post( '/generate/:event_id', async ( req, res ) => {
 		const redirect_baseurl = CI ? `http://localhost:3000/` : kiosk.public_url
 
 		// Validations
-
 		// If data is missing, the email client probably does not support POST forms yet
 		if( !event_id || !secret_code || !email ) throw new Error( `Your email client does not support generating QR kiosks. Please create one manually at qr.poap.xyz.` )
 
 		// Store the kiosk id for use in url
 		let redirect_url = `${ redirect_baseurl }/#/event/admin`
+		let kiosk_uid = undefined
+		let kiosk_expiry_date = undefined
+		let old_codes = []
+
+		/* ///////////////////////////////
+		// Step 1: Grab remote codes */
+
+		// Returns [ { qrhash: String, claimed: Boolean } ]
+		const codes = await call_poap_endpoint( `/event/${ event_id }/qr-codes`, { secret_code }, 'POST' )
+		log( `Received codes: `, codes )
+		if( codes.error ) {
+			log( `Problem with codes: `, codes )
+			throw new Error( `Error in POAP codes API: ${ codes.error }. This is probably not your fault.` )
+		}
+
+		/* ///////////////////////////////
+		// Step 2: grab or create event */
 
 		// Check if this kiosk exists in the db
 		log( `Finding event where event_id is ${ event_id } and secret_code is ${ secret_code }` )
 		const [ existing_kiosk ] = await db.collection( 'events' ).where( 'event_id', '==', event_id ).where( 'secret_code', '==', secret_code ).get().then( dataFromSnap )
 		log( `Existing kiosk: `, existing_kiosk )
-		if( existing_kiosk ) redirect_url += `/${ existing_kiosk.uid }/${ existing_kiosk.authToken }`
+
+		if( existing_kiosk ) {
+
+			// Grab the existing codes
+			old_codes = await db.collection( 'codes' ).where( 'event', '==', existing_kiosk.uid ).get().then( dataFromSnap )
+			old_codes = old_codes.map( ( { uid, claimed } ) => ( { qr_hash: uid, claimed } ) )
+			log( `Grabbed ${ old_codes.length } old codes for event ${ existing_kiosk.uid }` )
+
+			// Set globals for later use
+			redirect_url += `/${ existing_kiosk.uid }/${ existing_kiosk.authToken }`
+			kiosk_uid = existing_kiosk.uid
+			kiosk_expiry_date = existing_kiosk.expires
+
+		}
 		
 		// If no kiosk exists, create a new entry
 		if( !existing_kiosk ) {
@@ -59,15 +88,6 @@ app.post( '/generate/:event_id', async ( req, res ) => {
 				log( `Problem with drop meta request: `, errors )
 				throw new Error( `Drop error ${ drop_error }` )
 			}
-
-			// Returns [ { qrhash: String, claimed: Boolean } ]
-			const codes = await call_poap_endpoint( `/event/${ event_id }/qr-codes`, { secret_code }, 'POST' )
-			log( `Received codes: `, codes )
-			if( codes.error ) {
-				log( `Problem with codes: `, codes )
-				throw new Error( `Error in POAP codes API: ${ codes.error }. This is probably not your fault.` )
-			}
-
 
 			// Write new kiosk to database
 			const authToken = uuidv4()
@@ -89,11 +109,10 @@ app.post( '/generate/:event_id', async ( req, res ) => {
 				updated_human: new Date().toString()
 			} )
 
-			// Write the codes to firestore
-			await validate_and_write_event_codes( new_kiosk.id, expiry_date, codes )
-
 			// Format redirect link
 			redirect_url += `/${ new_kiosk.id }/${ authToken }`
+			kiosk_uid = new_kiosk.id
+			kiosk_expiry_date = expiry_date
 
 			// Keep track of event admin emails
 			log( `Updating data for ${ email } to include ${ new_kiosk.id } in the owned events list` )
@@ -106,7 +125,11 @@ app.post( '/generate/:event_id', async ( req, res ) => {
 
 		}
 		
-		
+		/* ///////////////////////////////
+		// Step 3: write/update codes of event */
+		// Write the codes to firestore
+		await validate_and_write_event_codes( kiosk_uid, kiosk_expiry_date, codes, old_codes )
+
 		
 		// Send redirect request to browser
 		log( `Sending redirect to: `, redirect_url )

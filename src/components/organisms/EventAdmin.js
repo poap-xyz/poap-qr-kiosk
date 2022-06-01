@@ -10,7 +10,7 @@ import Hero from '../molecules/Hero'
 // Functionality
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { deleteEvent, trackEvent, health_check } from '../../modules/firebase'
+import { deleteEvent, trackEvent, health_check, listenToEventMeta } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 const { REACT_APP_publicUrl } = process.env
 
@@ -21,6 +21,7 @@ const { REACT_APP_publicUrl } = process.env
 export default function EventAdmin( ) {
 
 	const { eventId, authToken } = useParams( )
+	const [ event, setEvent ] = useState( { loading: true } )
 	const navigate = useNavigate()
 	const eventLink = `${ dev ? 'http://localhost:3000' : REACT_APP_publicUrl }/#/event/${ eventId }`
 	const adminLink = `${ dev ? 'http://localhost:3000' : REACT_APP_publicUrl }/#/event/admin/${ eventId }/${ authToken }`
@@ -54,6 +55,22 @@ export default function EventAdmin( ) {
 	// State management
 	// ///////////////////////////////
 	const [ loading, setLoading ] = useState( false )
+
+	/* ///////////////////////////////
+	// Lifecycle management
+	// /////////////////////////////*/
+
+	// Listen to event details on event ID change
+	useEffect( () => {
+
+		log( `New event ID ${ eventId } detected, listening to event meta` )
+		if( eventId ) return listenToEventMeta( eventId, event => {
+			setEvent( event )
+			log( `Event data detected: `, event )
+			setLoading( false )
+		} )
+
+	}, [ eventId ] )
 
 	// ///////////////////////////////
 	// Component functions
@@ -104,22 +121,34 @@ export default function EventAdmin( ) {
 			<Hero>
 
 				<H1>Magic POAP Dispenser</H1>
-				<H2>Your unique QR dispenser link</H2>
-				<Section margin="0">
-					<Text>This link is intended to be displayed on a physical device, or through a screenshare during a stream. <b>NEVER</b> send it to anyone.</Text>
-					<Input
-						id='admin-eventlink-public' 
-						readOnly
-						onClick={ focus }
-						label="Your public QR Dispenser link"
-						value={ eventLink }
-						info="This link takes you to your QR Dispenser page. For example, you can display this page on an iPad at your check-in desk."
-					/>
-				</Section>
-				<Section padding="0" margin="0" justify="flex-start" direction="row">
-					<Button margin=".5em .5rem .5rem 0" onClick={ f => window.open( eventLink, '_self' ) }>Open link & start distributing POAPs</Button>
-					{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>Copy to clipboard</Button> }
-				</Section>
+				{ ( !event.loading && !event.codes ) ? <H2>⚠️ Your event is being reviewed</H2>: <H2>Your unique QR dispenser link</H2> }
+
+				{ /* Event meta loaded, codes available */ }
+				{ !event.loading && event.codes && <>
+					<Section margin="0">
+						<Text>This link is intended to be displayed on a physical device, or through a screenshare during a stream. <b>NEVER</b> send it to anyone.</Text>
+						<Input
+							id='admin-eventlink-public' 
+							readOnly
+							onClick={ focus }
+							label="Your public QR Dispenser link"
+							value={ eventLink }
+							info="This link takes you to your QR Dispenser page. For example, you can display this page on an iPad at your check-in desk."
+						/>
+					</Section>
+					<Section padding="0" margin="0" justify="flex-start" direction="row">
+						<Button margin=".5em .5rem .5rem 0" onClick={ f => window.open( eventLink, '_self' ) }>Open link & start distributing POAPs</Button>
+						{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>Copy to clipboard</Button> }
+					</Section>
+				</> }
+
+				{ /* Event meta loaded, no codes available */ }
+
+				{ !event.loading && !event.codes && <Section align='flex-start' margin="0">
+
+					<Text>This QR dispenser will become available once the curation team approves your event.</Text>
+					<Text>You will receive an email when your event is approved. This email will also send you the manual claim links in a links.txt file. You don&apos;t have to use them, but it is ok to use them in combination with this QR dispenser.</Text>
+				</Section> }
 
 			</Hero>
 

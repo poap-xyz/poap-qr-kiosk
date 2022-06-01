@@ -3,7 +3,7 @@ const { db, dataFromSnap, arrayUnion, increment } = require( './firebase' )
 const { v4: uuidv4 } = require('uuid')
 const { sendEventAdminEmail } = require( './email' )
 const Throttle = require( 'promise-parallel-throttle' )
-const { throttle_and_retry } = require( './helpers' )
+const { throttle_and_retry, log } = require( './helpers' )
 
 // Configs
 const functions = require( 'firebase-functions' )
@@ -22,11 +22,14 @@ exports.generate_new_event_public_auth = generate_new_event_public_auth
 * Helper that sanitises codes and writes them to the database, but errors if there is a clash
 * @param {string} event_id The id of the event that these codes belong to
 * @param {number} expiration_date Timestamp of the expiration date of the event
-* @param {{qr_harh: String, claimed: Boolean}[]} codes An array of codes to sanitise, validate and save to the firestore  
+* @param {{qr_hash: String, claimed: Boolean}[]} codes An array of codes to sanitise, validate and save to the firestore
+* @param {{qr_hash: String, claimed: Boolean}[]} existing_codes An array of codes to expect to already exist
 * @returns {Promise<array>} codes An array of the codes written to the database
 * @throws {Error} error Throws if anything failed
 */
-async function validate_and_write_event_codes( event_id, expiration_date, codes ) {
+async function validate_and_write_event_codes( event_id, expiration_date, codes, existing_codes=[] ) {
+
+	log( `Writing ${ codes?.length } (of which ${ existing_codes?.length } old) for event ${ event_id } (expired ${ expiration_date })` )
 
 	// Add a week grace period in case we need to debug anything
 	const weekInMs = 1000 * 60 * 60 * 24 * 7
@@ -34,9 +37,10 @@ async function validate_and_write_event_codes( event_id, expiration_date, codes 
 	// Throttle config
 	const maxInProgress = 500
 
-	/* ///////////////////////////////
-	// Throttled code writing, see https://cloud.google.com/firestore/docs/best-practices and https://cloud.google.com/firestore/quotas#writes_and_transactions */
 
+	/* ///////////////////////////////
+	// Step 1: validations and clash handling */
+	
 	// Sanetise codes
 	const saneCodes = codes.map( code => {
 
@@ -48,14 +52,17 @@ async function validate_and_write_event_codes( event_id, expiration_date, codes 
 		// Remove web prefixes
 		qr_hash = qr_hash.replace( /(https?:\/\/.*\/)/ig, '')
 
+		// Make sure hash matches wallet hash length
 		if( !qr_hash.match( /\w{1,42}/ ) ) throw new Error( `Invalid code: ${ qr_hash }` )
 
 		return { qr_hash, claimed }
 
 	} ).filter( ( { qr_hash } ) => !!qr_hash.length )
 
+	// Parse out codes that are expected to be new, so keep only codes that are not found in the existing_code array
+	const new_codes = saneCodes.filter( ( { qr_hash } ) => !existing_codes?.find( existing_code => existing_code.qr_hash == qr_hash ) )
 	// First check if all codes are unused by another event
-	const code_clash_queue = saneCodes.map( code => async () => {
+	const code_clash_queue = new_codes.map( code => async () => {
 
 		// Check if code already exists and is claimed
 		const oldDocRef = await db.collection( 'codes' ).doc( code.qr_hash ).get()
@@ -64,6 +71,9 @@ async function validate_and_write_event_codes( event_id, expiration_date, codes 
 
 	} )
 
+	/* ///////////////////////////////
+	// Step 2: Throttled code writing, see https://cloud.google.com/firestore/docs/best-practices and https://cloud.google.com/firestore/quotas#writes_and_transactions */
+	
 	// Check for code clashes in a throttled manner
 	await Throttle.all( code_clash_queue, { maxInProgress } )
 
@@ -76,6 +86,7 @@ async function validate_and_write_event_codes( event_id, expiration_date, codes 
 			amountOfRemoteStatusChecks: 0,
 			created: Date.now(),
 			updated: Date.now(),
+			updated_human: new Date().toString(),
 			event: event_id,
 			expires: new Date( expiration_date ).getTime() + weekInMs
 		}, { merge: true } )
