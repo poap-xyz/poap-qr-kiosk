@@ -18,9 +18,6 @@ exports.getEventDataFromCode = functions.https.onCall( getEventDataFromCode )
 // Refresh all codes ( trigger from frontend )
 exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.onCall( refresh_unknown_and_unscanned_codes )
 
-// Check status of single code
-// exports.checkIfCodeHasBeenClaimed = functions.https.onCall( checkIfCodeHasBeenClaimed )
-
 // Allow frontend to trigger updates for scanned codes
 exports.refreshScannedCodesStatuses = functions.runWith( generousRuntime ).https.onCall( refreshScannedCodesStatuses )
 

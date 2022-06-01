@@ -49,7 +49,7 @@ app.post( '/generate/:event_id', async ( req, res ) => {
 
 		// Returns [ { qrhash: String, claimed: Boolean } ]
 		const codes = await call_poap_endpoint( `/event/${ event_id }/qr-codes`, { secret_code }, 'POST' )
-		log( `Received codes: `, codes )
+		log( `Received ${ codes.length } codes, exerpt: `, codes[0] )
 		if( codes.error ) {
 			log( `Problem with codes: `, codes )
 			throw new Error( `Error in POAP codes API: ${ codes.error }. This is probably not your fault.` )
