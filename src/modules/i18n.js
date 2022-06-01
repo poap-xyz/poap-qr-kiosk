@@ -17,13 +17,14 @@ i18n
             // translation file path
             loadPath: '/locales/{{ns}}/{{lng}}.json',
         },
+        supportedLngs: [ 'en', 'nl' ],
         fallbackLng: 'en',
         interpolation: {
             escapeValue: false,
             formatSeparator: ',',
         },
         debug: process.env.NODE_ENV === 'development',
-        ns: [ 'general', 'client', 'admin' ], 
+        ns: [ 'general' ], 
     })
 
 export default i18n

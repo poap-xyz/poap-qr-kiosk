@@ -10,13 +10,16 @@ import Welcome from './components/organisms/Welcome'
 import EventAdmin from './components/organisms/EventAdmin'
 import Claim from './components/organisms/Claim'
 
+// Components
+import Loading from './components/molecules/Loading'
+
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
 export default function App( ) {
 
-  return <Suspense fallback={null}>
-    <Theme>
+  return <Theme>
+    <Suspense fallback={ <Loading /> }>
       <Router>
 
         <Routes>
@@ -40,11 +43,11 @@ export default function App( ) {
 
           </Route>
 
-
         </Routes>
 
       </Router>
-    </Theme>
-  </Suspense>
+    </Suspense>
+  </Theme>
   
 }
+
