@@ -54,7 +54,7 @@ export default function EventAdmin( ) {
 	// ///////////////////////////////
 	// State management
 	// ///////////////////////////////
-	const [ loading, setLoading ] = useState( false )
+	const [ loading, setLoading ] = useState( `Loading QR dispenser` )
 
 	/* ///////////////////////////////
 	// Lifecycle management
@@ -68,6 +68,7 @@ export default function EventAdmin( ) {
 			setEvent( event )
 			log( `Event data detected: `, event )
 			setLoading( false )
+			if( !event ) setLoading( `Invalid event admin link` )
 		} )
 
 	}, [ eventId ] )
