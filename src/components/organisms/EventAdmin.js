@@ -11,7 +11,7 @@ import Hero from '../molecules/Hero'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { deleteEvent, trackEvent, health_check, listenToEventMeta } from '../../modules/firebase'
-import { log, dev } from '../../modules/helpers'
+import { log, dev, wait } from '../../modules/helpers'
 const { REACT_APP_publicUrl } = process.env
 
 
@@ -63,13 +63,27 @@ export default function EventAdmin( ) {
 	// Listen to event details on event ID change
 	useEffect( () => {
 
+		let cancelled = false
+
 		log( `New event ID ${ eventId } detected, listening to event meta` )
 		if( eventId ) return listenToEventMeta( eventId, event => {
 			setEvent( event )
 			log( `Event data detected: `, event )
 			setLoading( false )
-			if( !event ) setLoading( `Invalid event admin link` )
+			if( !event ) {
+
+				// Wait for 5 seconds in case the backend is refreshng public event mets
+				wait( 5000 )
+				if( !cancelled ) setLoading( `Double-checking admin link validity` )
+
+				// If after 10 seconds it is still down, trigger failure
+				wait( 5000 )
+				if( !cancelled ) setLoading( `Invalid event admin link` )
+
+			}
 		} )
+
+		return () => cancelled = true
 
 	}, [ eventId ] )
 
