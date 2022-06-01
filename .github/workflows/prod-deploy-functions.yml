@@ -8,8 +8,8 @@ on:
       - '.github/workflows/prod-deploy-functions.yml'
       - 'functions/**'
   pull_request:
-    branches:
-      - main
+    branches-ignore:
+      - '!development'
     types: [ closed ]
     paths:
       - '.github/workflows/prod-deploy-functions.yml'

@@ -4,8 +4,8 @@ name: Deploy frontend on push/merge
 on:
   # Trigger on PR close
   pull_request:
-    branches:
-      - main
+    branches-ignore:
+      - '!development'
     types: [ closed ]
     paths:
       - '*.json'
