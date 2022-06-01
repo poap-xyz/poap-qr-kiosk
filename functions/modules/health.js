@@ -13,15 +13,19 @@ const health_check = async () => {
 
 	try {
 
+		// Check if we have an access token to the POAP API
 		const has_token = await live_access_token().catch( e => {
 			log( e )
 			return false
 		} )
+
+		// Check the self-reported health of the POAP api
 		const api_health = await call_poap_endpoint( `/health-check` ).catch( e => {
 			log( e )
 			return false
 		} )
 
+		// Update status object to reflect new data
 		status.healthy = !!( has_token && api_health )
 		status.poap_api = !!api_health
 		status.poap_api_auth = !!has_token
