@@ -76,6 +76,14 @@ jobs:
           max_attempts: 2 # A function deploy can never take longer than a CI run, so two is enough
           command: npm run test:ci
 
+      # If CI failed, upload the videos for debugging
+      - name: Testing failed
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-videos
+          path: cypress/videos # or path/to/artifact
+
       # Deployment
       - name: Build website files
         env:

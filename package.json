@@ -18,10 +18,10 @@
   "scripts": {
     "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
     "build": "react-scripts build",
-    "cypress": "NODE_ENV=development $(npm bin)/cypress open",
-    "test": "CYPRESS_LOCAL=true NODE_ENV=development start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress open\"",
-    "test:production": "npm run build && NODE_ENV=production start-server-and-test 'serve build' 3000 \"$(npm bin)/cypress open\"",
-    "test:ci": "NODE_ENV=production CI=true start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --config 60000\"",
+    "cypress": "NODE_ENV=development $(npm bin)/cypress open --browser chrome",
+    "test": "CYPRESS_LOCAL=true NODE_ENV=development start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress open --browser chrome\"",
+    "test:production": "npm run build && NODE_ENV=production start-server-and-test 'serve build' 3000 \"$(npm bin)/cypress open --browser chrome\"",
+    "test:ci": "NODE_ENV=production CI=true start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --browser chrome --config 60000\"",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
