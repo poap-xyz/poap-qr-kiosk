@@ -29,7 +29,7 @@ export default function ViewQR( ) {
   const location = useLocation()
 
   // Event ID form url
-  const { eventId } = useParams()
+  const { eventId, viewMode } = useParams()
 
   // Event ID from pushed state
   const { eventId: stateEventId } = location
@@ -44,7 +44,7 @@ export default function ViewQR( ) {
   const [ event, setEvent ] = useState(  )
 	const [ internalEventId, setInternalEventId ] = useState( eventId || stateEventId )
   const [ scanInterval, setScanInterval ] = useState( defaultScanInerval )
-  const [ acceptedTerms, setAcceptedTerms ] = useState( false )
+  const [ acceptedTerms, setAcceptedTerms ] = useState( viewMode == 'silent' )
 
   // ///////////////////////////////
   // Lifecycle handling

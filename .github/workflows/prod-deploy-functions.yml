@@ -9,7 +9,7 @@ on:
       - 'functions/**'
   pull_request:
     branches-ignore:
-      - '!development'
+      - '!main'
     types: [ closed ]
     paths:
       - '.github/workflows/prod-deploy-functions.yml'
