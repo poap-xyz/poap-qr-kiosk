@@ -3,6 +3,8 @@ import { Suspense } from 'react'
 import Theme from './components/atoms/Theme'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 
+import './modules/i18n'
+
 // Pages
 import ViewQR from './components/organisms/EventView'
 import CreateEvent from './components/organisms/EventCreate'

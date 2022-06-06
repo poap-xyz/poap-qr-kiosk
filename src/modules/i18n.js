@@ -21,10 +21,9 @@ i18n
         fallbackLng: 'en',
         interpolation: {
             escapeValue: false,
-            formatSeparator: ',',
         },
         debug: process.env.NODE_ENV === 'development',
-        ns: [ 'general' ], 
+        ns: [ 'dispenser' ], 
     })
 
 export default i18n
