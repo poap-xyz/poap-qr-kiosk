@@ -4,10 +4,10 @@ import Main from '../atoms/Main'
 import Hero from '../molecules/Hero'
 import Section from '../atoms/Section'
 import Column from '../atoms/Column'
-import Input from '../atoms/Input'
 import Image from '../atoms/Image'
 import { Text, H1, H2, Sup } from '../atoms/Text'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import checkin from '../../assets/undraw_designer_life_re_6ywf_modified.svg'
 import stream from '../../assets/undraw_conference_call_b0w6_modified.svg'
@@ -17,6 +17,8 @@ import { useNavigate } from 'react-router-dom'
 import { health_check } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 
+// Components
+import LanguageSwitcher from '../atoms/LanguageSwitcher'
 
 // ///////////////////////////////
 // Render component
@@ -25,6 +27,8 @@ export default function ComponentName( ) {
 
 	const navigate = useNavigate()
 	const [ allowAccess, setAllowAccess ] = useState( true )
+
+	const { t } = useTranslation( [ 'dispenser' ] )
 
 	/* ///////////////////////////////
 	// Lifecycle management
@@ -55,7 +59,7 @@ export default function ComponentName( ) {
 
 		return () => cancelled = true
 
-		}, [] )
+	}, [] )
 
 	// ///////////////////////////////
 	// Render component
@@ -64,12 +68,14 @@ export default function ComponentName( ) {
 
 		<Main justify='flex-start'>
 
+			<LanguageSwitcher />
+
 			<Hero>
 
-				<H1>Magic POAP Dispenser <Sup>beta</Sup></H1>
-				<H2>Get POAPs to your friends IRL</H2>
-				<Text>Just input your .txt file of mint links and watch your phone turn into a POAP QR dispenser at the click of a button. You&apos;ll be able to display QR codes for attendees to scan one-by-one.</Text>
-				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>Create QR dispenser</Button> }
+				<H1>{t('title')} <Sup>beta</Sup></H1>
+				<H2>{t('hero.subheading')}</H2>
+				<Text>{t('hero.description')}</Text>
+				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>{t('createButton')}</Button> }
 
 			</Hero>
 
@@ -80,8 +86,8 @@ export default function ComponentName( ) {
 				</Column>
 
 				<Column>
-					<H2>Physical POAP distribution made easy</H2>
-					<Text>For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees.</Text>
+					<H2>{t('checkin.title')}</H2>
+					<Text>{t('checkin.description')}</Text>
 				</Column>				
 
 			</Section>
@@ -89,8 +95,8 @@ export default function ComponentName( ) {
 			<Section height='600px' justify='space-around' direction="row">
 
 				<Column>
-					<H2>Stream-friendly QR sharing</H2>
-					<Text>During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner.</Text>
+					<H2>{t('stream.title')}</H2>
+					<Text>{t('stream.description')}</Text>
 				</Column>		
 
 				<Column>
@@ -101,8 +107,8 @@ export default function ComponentName( ) {
 
 			<Section height='500px'>
 
-					<H2>Get started now</H2>
-					{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>Create QR dispenser</Button> }
+				<H2>{t('startedtext')}</H2>
+				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>{t('createButton')}</Button> }
 
 			</Section>
 

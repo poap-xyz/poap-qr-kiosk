@@ -1,6 +1,9 @@
 // Providers
+import { Suspense } from 'react'
 import Theme from './components/atoms/Theme'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+
+import './modules/i18n'
 
 // Pages
 import ViewQR from './components/organisms/EventView'
@@ -9,39 +12,44 @@ import Welcome from './components/organisms/Welcome'
 import EventAdmin from './components/organisms/EventAdmin'
 import Claim from './components/organisms/Claim'
 
+// Components
+import Loading from './components/molecules/Loading'
+
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
 export default function App( ) {
 
   return <Theme>
-    <Router>
+    <Suspense fallback={ <Loading /> }>
+      <Router>
 
-      <Routes>
+        <Routes>
 
-        <Route exact path='/' element={ <Welcome /> } />
-        <Route exact path='/create' element={ <CreateEvent /> } />
-        <Route path='/event/admin/:eventId/:authToken' element={ <EventAdmin /> } />
-        
-        <Route path='/event'>
-
-          <Route path=':eventId/:viewMode' element={ <ViewQR /> } />
-          <Route path=':eventId' element={ <ViewQR /> } />
-          <Route path='' element={ <ViewQR /> } />
+          <Route exact path='/' element={ <Welcome /> } />
+          <Route exact path='/create' element={ <CreateEvent /> } />
+          <Route path='/event/admin/:eventId/:authToken' element={ <EventAdmin /> } />
           
-        </Route>
-        
-        <Route path='/claim/' >
+          <Route path='/event'>
 
-          <Route path=':challenge_code/:error_code' element={ <Claim /> } />
-          <Route path=':challenge_code' element={ <Claim /> } />
+            <Route path=':eventId/:viewMode' element={ <ViewQR /> } />
+            <Route path=':eventId' element={ <ViewQR /> } />
+            <Route path='' element={ <ViewQR /> } />
+            
+          </Route>
+          
+          <Route path='/claim/' >
 
-        </Route>
+            <Route path=':challenge_code/:error_code' element={ <Claim /> } />
+            <Route path=':challenge_code' element={ <Claim /> } />
 
+          </Route>
 
-      </Routes>
+        </Routes>
 
-    </Router>
+      </Router>
+    </Suspense>
   </Theme>
-
+  
 }
+
