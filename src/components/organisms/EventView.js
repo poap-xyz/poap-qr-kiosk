@@ -42,6 +42,7 @@ export default function ViewQR( ) {
   const defaultScanInerval = 2 * 60 * 1000
   const [ loading, setLoading ] = useState( 'Setting up your Kiosk' )
   const [ event, setEvent ] = useState(  )
+  const [ template, setTemplate ] = useState( {} )
 	const [ internalEventId, setInternalEventId ] = useState( eventId || stateEventId )
   const [ scanInterval, setScanInterval ] = useState( defaultScanInerval )
   const [ acceptedTerms, setAcceptedTerms ] = useState( viewMode == 'silent' )
@@ -125,6 +126,7 @@ export default function ViewQR( ) {
 		log( `New event ID ${ internalEventId } detected, listening to event meta` )
 		if( internalEventId ) return listenToEventMeta( internalEventId, event => {
       setEvent( event )
+      if( event?.template?.id ) setTemplate( event.template )
       setLoading( false )
     } )
 
@@ -197,11 +199,12 @@ export default function ViewQR( ) {
   </Container>
   
   // Display QR
-  return <Container>
+  log( template )
+  return <Container background={ template?.footer_icon }>
 
     {  /* Event metadata */ }
-    { event && <H1 align="center">{ event.name }</H1> }
-    { <H2 align="center">Scan the QR with your camera to claim your POAP</H2> }
+    { event && <H1 color={ template?.main_color } align="center">{ event.name }</H1> }
+    { <H2 color={ template?.header_link_color } align="center">Scan the QR with your camera to claim your POAP</H2> }
 
     {  /* QR showing code */ }
     <QR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />

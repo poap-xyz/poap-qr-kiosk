@@ -26,7 +26,7 @@ export const H2 = styled.h2`
 	line-height: 1.2;
 	font-weight: 400;
 	text-align: ${ ( { align } ) => align || 'left' };
-	color: ${ ( { theme } ) => theme.colors.accent };
+	color: ${ ( { theme, color } ) => color || theme.colors.accent };
 	overflow-wrap: anywhere;
 `
 
