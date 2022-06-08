@@ -10,7 +10,7 @@ export default styled( Section )`
 		text-align: left;
 	}
 	& * {
-		max-width: 800px;
+		max-width: 750px;
 	}
 	& > p {
 		margin: 0 0 4rem;
