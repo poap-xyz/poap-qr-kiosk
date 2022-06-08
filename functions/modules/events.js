@@ -128,7 +128,7 @@ async function get_event_template_by_code( an_event_qr_hash ) {
 	} catch( e ) {
 
 		log( `get_event_template_if_exists error: `, e )
-		throw new Error( `Could not load event template: ${ e.message }` )
+		return {}
 
 	}
 
