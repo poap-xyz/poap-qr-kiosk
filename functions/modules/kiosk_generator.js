@@ -1,7 +1,7 @@
 const { db, dataFromSnap, arrayUnion, increment } = require('./firebase')
 const { call_poap_endpoint } = require( './poap_api' )
 const app = require( './express' )()
-const { generate_new_event_public_auth, validate_and_write_event_codes } = require( './events' )
+const { generate_new_event_public_auth, validate_and_write_event_codes, get_event_template_by_code } = require( './events' )
 const { log } = require( './helpers' )
 const { v4: uuidv4 } = require('uuid')
 
@@ -99,6 +99,7 @@ app.post( '/generate/:event_id', async ( req, res ) => {
 				codes: codes.length,
 				codesAvailable: codes.length,
 				authToken,
+				template: await get_event_template_by_code( codes[0] ),
 				game_config: {},
 				challenges: [],
 				expires: new Date( expiry_date ).getTime() + weekInMs,

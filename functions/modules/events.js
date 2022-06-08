@@ -7,6 +7,7 @@ const { throttle_and_retry, log } = require( './helpers' )
 
 // Configs
 const functions = require( 'firebase-functions' )
+const { call_poap_endpoint } = require('./poap_api')
 const { kiosk } = functions.config()
 
 // Public auth helper, used here and in the claimcode handler
@@ -102,6 +103,38 @@ async function validate_and_write_event_codes( event_id, expiration_date, codes,
 }
 exports.validate_and_write_event_codes = validate_and_write_event_codes
 
+/**
+* Get the event template by event ID
+* @param {string} an_event_qr_hash - One of the codes belonging to the event
+* @returns {object} template_data - empty object if none, details if exists: https://documentation.poap.tech/reference/getevent-templates-3 
+*/
+async function get_event_template_by_code( an_event_qr_hash ) {
+
+	try {
+
+		// Get event ID as known within the POAP system
+		const { event } = await call_poap_endpoint( `/actions/claim-qr`, { qr_hash: an_event_qr_hash } )
+		const { event_template_id } = event
+
+		// If no template data, return empty
+		if( !event_template_id ) return {}
+
+		// Grab template data
+		const template_data = await call_poap_endpoint( `/event-templates/${ event_template_id }` )
+		log( `Template id ${ event_template_id } is called ${ template_data.name }` )
+
+		return template_data
+
+	} catch( e ) {
+
+		log( `get_event_template_if_exists error: `, e )
+		throw new Error( `Could not load event template: ${ e.message }` )
+
+	}
+
+}
+exports.get_event_template_by_code = get_event_template_by_code
+
 exports.registerEvent = async function( data, context ) {
 	
 	try {
@@ -135,6 +168,7 @@ exports.registerEvent = async function( data, context ) {
 			authToken,
 			challenges,
 			game_config,
+			template: await get_event_template_by_code( codes[0] ),
 			public_auth: generate_new_event_public_auth( public_auth_expiry_interval_minutes, is_test_event ),
 			created: Date.now(),
 			updated: Date.now()
@@ -191,8 +225,19 @@ exports.updatePublicEventData = async function( change, context ) {
 	if( !after.exists ) return db.collection( 'publicEventData' ).doc( eventId ).delete()
 
 	// If this was an update, grab the public properties and set them
-	const { name, codes, codesAvailable, expires, public_auth, challenges, game_config } = after.data()
-	return db.collection( 'publicEventData' ).doc( eventId ).set( { name, public_auth, codes, expires, challenges, game_config, codesAvailable: codesAvailable || 0, updated: Date.now() }, { merge: true } )
+	const { name, codes, codesAvailable, expires, public_auth, challenges, game_config, template } = after.data()
+	const public_data_object = {
+		name,
+		public_auth,
+		codes,
+		expires,
+		challenges,
+		game_config,
+		...( template && { template } ),
+		codesAvailable: codesAvailable || 0,
+		updated: Date.now()
+	}
+	return db.collection( 'publicEventData' ).doc( eventId ).set( public_data_object, { merge: true } )
 
 }
 

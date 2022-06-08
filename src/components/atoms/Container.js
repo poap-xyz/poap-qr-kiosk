@@ -3,7 +3,7 @@ import styled from 'styled-components'
 // Image that behaves like a background image
 import logo from '../../assets/logo.svg'
 const BackgroundImage = styled.img.attrs( props => ( {
-	src: logo
+	src: props.src || logo
 } ) )`
 	position: absolute;
 	z-index: -1;
@@ -32,7 +32,7 @@ const Wrapper = styled.div`
 `
 
 // Container that always has the background image
-export default ( { children, ...props } ) => <Wrapper { ...props }>
-	<BackgroundImage key='background' />
+export default ( { children, background, ...props } ) => <Wrapper { ...props }>
+	<BackgroundImage src={ background } key='background' />
 	{ children }
 </Wrapper>
