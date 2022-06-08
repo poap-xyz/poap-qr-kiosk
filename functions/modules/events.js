@@ -226,7 +226,18 @@ exports.updatePublicEventData = async function( change, context ) {
 
 	// If this was an update, grab the public properties and set them
 	const { name, codes, codesAvailable, expires, public_auth, challenges, game_config, template } = after.data()
-	return db.collection( 'publicEventData' ).doc( eventId ).set( { name, public_auth, codes, expires, challenges, game_config, template, codesAvailable: codesAvailable || 0, updated: Date.now() }, { merge: true } )
+	const public_data_object = {
+		name,
+		public_auth,
+		codes,
+		expires,
+		challenges,
+		game_config,
+		...( template && { template } ),
+		codesAvailable: codesAvailable || 0,
+		updated: Date.now()
+	}
+	return db.collection( 'publicEventData' ).doc( eventId ).set( public_data_object, { merge: true } )
 
 }
 
