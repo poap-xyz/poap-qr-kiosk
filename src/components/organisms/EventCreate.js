@@ -236,7 +236,7 @@ export default function Admin( ) {
         label={ t( 'general.input.label' ) }
         info={ t( 'general.input.info' )}
         accept=".csv,.txt"
-        title={ csv && codes && `[ ${filename} ] - ${ codes.length } codes detected.` }
+        title={ csv && codes && `[ ${filename} ] - ${ t( 'general.file.codesDetected', { count: codes.length } ) }` }
         onClick={ !filename ? undefined : () => setCsv( undefined ) }
         onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
       />
