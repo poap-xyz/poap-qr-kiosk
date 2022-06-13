@@ -27,8 +27,8 @@
       "acceptedFormat": "File is not a csv/txt",
       "noCodes": "No codes found",
       "codesDetected": "{{count}} codes detected.",
-      "codesDetected_one": "{{count}} code detected.",
-      "codesDetected_two": "{{count}} codes detected.",
+      "codesDetected_one": "{{ count }} code detected.",
+      "codesDetected_two": "{{ count }} codes detected.",
       "mintCheck": "Checking your mint links",
       "codeFormat": " codes had an invalid format. Example of a malformed code: ",
       "csvNoEntries": "Csv has 0 entries"
@@ -36,9 +36,14 @@
     "event": {
       "eventExpired": "This event appears to have expired!",
       "eventCancelled": "Event creation cancelled",
+      "eventCreate": "Create dispenser with {{ count }} codes",
+      "eventCreate_one": "Create dispenser with {{ count }} code",
+      "eventCreate_two": "Create dispenser with {{ count }} codes",
       "noName": "Please specify an event name",
       "noEmail": "Please specify a valid email address",
-      "wrongDate": "Please specify the date in YYYY-MM-DD, for example 2021-11-25"
+      "wrongDate": "Please specify the date in YYYY-MM-DD, for example 2021-11-25",
+      "dropName": "Drop name",
+      "dropNameInfo": "For your own reference, not visible to the world."
     },
     "input": {
       "label": "Select .txt file that contains your POAP mint links",
