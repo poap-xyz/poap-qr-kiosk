@@ -28,7 +28,10 @@
       "noCodes": "Geen codes gevonden",
       "codeFormat": " codes hadden een ongeldig formaat. Voorbeeld van een foutieve code: ",
       "csvNoEntries": "Csv heeft 0 regels",
-      "mintCheck": "Je mint-links controleren"
+      "mintCheck": "Je mint-links controleren",
+      "codesDetected_zero": "{{count}} codes gedetecteerd.",
+      "codesDetected_one": "{{count}} code gedetecteerd.",
+      "codesDetected_two": "{{count}} codes gedetecteerd."
     },
     "event": {
       "eventExpired": "Dit evenement lijkt te zijn verlopen!",

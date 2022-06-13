@@ -26,6 +26,9 @@
     "file": {
       "acceptedFormat": "File is not a csv/txt",
       "noCodes": "No codes found",
+      "codesDetected": "{{count}} codes detected.",
+      "codesDetected_one": "{{count}} code detected.",
+      "codesDetected_two": "{{count}} codes detected.",
       "mintCheck": "Checking your mint links",
       "codeFormat": " codes had an invalid format. Example of a malformed code: ",
       "csvNoEntries": "Csv has 0 entries"
