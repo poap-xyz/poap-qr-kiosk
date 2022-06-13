@@ -29,7 +29,7 @@
       "codeFormat": " codes hadden een ongeldig formaat. Voorbeeld van een foutieve code: ",
       "csvNoEntries": "Csv heeft 0 regels",
       "mintCheck": "Je mint-links controleren",
-      "codesDetected_zero": "{{count}} codes gedetecteerd.",
+      "codesDetected": "{{count}} codes gedetecteerd.",
       "codesDetected_one": "{{count}} code gedetecteerd.",
       "codesDetected_two": "{{count}} codes gedetecteerd."
     },
@@ -38,7 +38,12 @@
       "eventCancelled": "Evenement geannuleerd",
       "noName": "Geef een evenementnaam op",
       "noEmail": "Geef een geldig e-mailadres op",
-      "wrongDate": "Geef de datum op in JJJJ-MM-DD, bijvoorbeeld 2021-11-25"
+      "wrongDate": "Geef de datum op in JJJJ-MM-DD, bijvoorbeeld 2021-11-25",
+      "dropName": "Evenement naam",
+      "dropNameInfo": "Voor uw eigen referentie, niet zichtbaar voor de wereld.",
+      "eventCreate": "Maak dispenser met {{ count }} codes",
+      "eventCreate_one": "Maak dispenser met {{ count }} code",
+      "eventCreate_two": "Maak dispenser met {{ count }} codes"
     },
     "input": {
       "label": "Selecteer .txt-bestand dat uw POAP-mint-links bevat",
