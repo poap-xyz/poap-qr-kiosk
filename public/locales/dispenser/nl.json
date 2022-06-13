@@ -1,20 +1,45 @@
-
 {
+  "title": "Magische POAP Dispenser",
+  "createButton": "Creëer QR-dispenser",
+  "startedtext": "Begin nu",
+  "hero": {
     "title": "Magische POAP Dispenser",
-    "createButton": "Creëer QR-dispenser",
-    "startedtext": "Begin nu",
-    "hero": {
-        "title": "Magische POAP Dispenser",
-        "subheading": "Breng POAPs naar je vrienden IRL",
-        "description": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen."
-        
+    "subheading": "Breng POAPs naar je vrienden IRL",
+    "description": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen."
+  },
+  "checkin": {
+    "title": "Fysieke POAP-distributie makkelijk gemaakt",
+    "description": "Stel voor IRL-evenementen eenvoudig een apparaat of meerdere apparaten in om unieke POAP QR-codes weer te geven aan deelnemers."
+  },
+  "stream": {
+    "title": "Stream-vriendelijk QR-delen",
+    "description": "Stel tijdens een livestream een screenshare in die POAP QR-codes weergeeft."
+  },
+  "general": {
+    "health": {
+      "check": "Systeem status: ",
+      "maintenance": "NL The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.",
+      "cancelled": "Health effect geannuleerd",
+      "errorStatus": "Fout bij ophalen systeem status: ",
+      "maintenanceApi": "De POAP API is in onderhoud, u kunt doorgaan maar dit kan onverwacht gedrag veroorzaken."
     },
-    "checkin": {
-        "title": "Fysieke POAP-distributie makkelijk gemaakt",
-        "description": "Stel voor IRL-evenementen eenvoudig een apparaat of meerdere apparaten in om unieke POAP QR-codes weer te geven aan deelnemers."
+    "file": {
+      "acceptedFormat": "Het bestandsformaat is geen csv/txt",
+      "noCodes": "Geen codes gevonden",
+      "codeFormat": " codes hadden een ongeldig formaat. Voorbeeld van een foutieve code: ",
+      "csvNoEntries": "Csv heeft 0 regels",
+      "mintCheck": "Je mint-links controleren"
     },
-    "stream": {
-        "title": "Stream-vriendelijk QR-delen",
-        "description": "Stel tijdens een livestream een screenshare in die POAP QR-codes weergeeft."
+    "event": {
+      "eventExpired": "Dit evenement lijkt te zijn verlopen!",
+      "eventCancelled": "Evenement geannuleerd",
+      "noName": "Geef een evenementnaam op",
+      "noEmail": "Geef een geldig e-mailadres op",
+      "wrongDate": "Geef de datum op in JJJJ-MM-DD, bijvoorbeeld 2021-11-25"
+    },
+    "input": {
+      "label": "Selecteer .txt-bestand dat uw POAP-mint-links bevat",
+      "info": "Dit is het .txt-bestand dat je via e-mail hebt ontvangen nadat je je POAP-drop hebt gemaakt op https://app.poap.xyz/admin"
     }
+  }
 }

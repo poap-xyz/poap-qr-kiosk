@@ -1,18 +1,45 @@
 {
-    "title": "Magic POAP Dispenser ",
-    "createButton": "Create QR dispenser",
-    "startedtext": "Get started now",
-    "hero": {
-        "title": "Magic POAP Dispenser",
-        "subheading": "Get POAPs to your friends IRL",
-        "description": "Just input your .txt file of mint links and watch your phone turn into a POAP QR dispenser at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one."
+  "title": "Magic POAP Dispenser ",
+  "createButton": "Create QR dispenser",
+  "startedtext": "Get started now",
+  "hero": {
+    "title": "Magic POAP Dispenser",
+    "subheading": "Get POAPs to your friends IRL",
+    "description": "Just input your .txt file of mint links and watch your phone turn into a POAP QR dispenser at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one."
+  },
+  "checkin": {
+    "title": "Physical POAP distribution made easy",
+    "description": "For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees."
+  },
+  "stream": {
+    "title": "Stream-friendly QR sharing",
+    "description": "During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner."
+  },
+  "general": {
+    "health": {
+      "check": "Systems health: ",
+      "maintenance": "The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.",
+      "maintenanceApi": "The POAP API is under maintenance, you can continue but this might cause unexpected behaviour.",
+      "errorStatus": "Error getting system health: ",
+      "cancelled": "Health effect cancelled"
     },
-    "checkin": {
-        "title": "Physical POAP distribution made easy",
-        "description": "For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees."
+    "file": {
+      "acceptedFormat": "File is not a csv/txt",
+      "noCodes": "No codes found",
+      "mintCheck": "Checking your mint links",
+      "codeFormat": " codes had an invalid format. Example of a malformed code: ",
+      "csvNoEntries": "Csv has 0 entries"
     },
-    "stream": {
-        "title": "Stream-friendly QR sharing",
-        "description": "During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner."
+    "event": {
+      "eventExpired": "This event appears to have expired!",
+      "eventCancelled": "Event creation cancelled",
+      "noName": "Please specify an event name",
+      "noEmail": "Please specify a valid email address",
+      "wrongDate": "Please specify the date in YYYY-MM-DD, for example 2021-11-25"
+    },
+    "input": {
+      "label": "Select .txt file that contains your POAP mint links",
+      "info": "This is the .txt file you received via email after you created your POAP drop at https://app.poap.xyz/admin"
     }
+  }
 }

@@ -35,7 +35,7 @@ export default function ComponentName( ) {
 	// /////////////////////////////*/
 
 	// Health check
-	useEffect( (	) => {
+	useEffect( (  ) => {
 
 		let cancelled = false;
 
@@ -44,15 +44,15 @@ export default function ComponentName( ) {
 			try {
 
 				const { data: health } = await health_check()
-				log( `Systems health: `, health )
-				if( cancelled ) return log( `Health effect cancelled` )
+				log( `${ t( 'general.health.check' ) }`, health )
+				if( cancelled ) return log( `${ t( 'general.health.cancelled' ) }` )
 				if( !dev && !health.healthy ) {
 					setAllowAccess( false )
-					return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+					return alert( `${ t( 'general.health.maintenance' ) }` )
 				}
 
 			} catch( e ) {
-				log( `Error getting system health: `, e )
+				log( `${ t( 'general.health.errorStatus' ) }`, e )
 			}
 
 		} )( )
@@ -72,10 +72,10 @@ export default function ComponentName( ) {
 
 			<Hero>
 
-				<H1>{t('title')} <Sup>beta</Sup></H1>
-				<H2>{t('hero.subheading')}</H2>
-				<Text>{t('hero.description')}</Text>
-				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>{t('createButton')}</Button> }
+				<H1>{ t( 'title' ) } <Sup>beta</Sup></H1>
+				<H2>{ t( 'hero.subheading' ) }</H2>
+				<Text>{ t( 'hero.description' ) }</Text>
+				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'createButton' ) }</Button> }
 
 			</Hero>
 
@@ -86,8 +86,8 @@ export default function ComponentName( ) {
 				</Column>
 
 				<Column>
-					<H2>{t('checkin.title')}</H2>
-					<Text>{t('checkin.description')}</Text>
+					<H2>{ t( 'checkin.title' ) }</H2>
+					<Text>{ t( 'checkin.description' ) }</Text>
 				</Column>				
 
 			</Section>
@@ -95,8 +95,8 @@ export default function ComponentName( ) {
 			<Section height='600px' justify='space-around' direction="row">
 
 				<Column>
-					<H2>{t('stream.title')}</H2>
-					<Text>{t('stream.description')}</Text>
+					<H2>{ t( 'stream.title' ) }</H2>
+					<Text>{ t( 'stream.description' ) }</Text>
 				</Column>		
 
 				<Column>
@@ -107,8 +107,8 @@ export default function ComponentName( ) {
 
 			<Section height='500px'>
 
-				<H2>{t('startedtext')}</H2>
-				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>{t('createButton')}</Button> }
+				<H2>{ t( 'startedtext' ) }</H2>
+				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'createButton' ) }</Button> }
 
 			</Section>
 
