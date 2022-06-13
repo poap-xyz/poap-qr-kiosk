@@ -12,6 +12,7 @@ import { registerEvent, trackEvent, getEventDataFromCode, health_check } from '.
 import { log, dateOnXDaysFromNow, monthNameToNumber, dev } from '../../modules/helpers'
 import Papa from 'papaparse'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 // ///////////////////////////////
 // Render component
@@ -34,6 +35,8 @@ export default function Admin( ) {
   const [ filename, setFilename ] = useState( 'codes.txt' )
   const [ isHealthy, setIsHealthy ] = useState( true )
 
+  const { t } = useTranslation( [ 'dispenser' ] )
+
   // ///////////////////////////////
   // Lifecycle handling
   // ///////////////////////////////
@@ -48,15 +51,15 @@ export default function Admin( ) {
         try {
 
           const { data: health } = await health_check()
-          log( `Systems health: `, health )
-          if( cancelled ) return log( `Health effect cancelled` )
+          log( `${ t( 'general.health.check' ) }`, health )
+          if( cancelled ) return log( `${ t( 'general.health.cancelled' ) }` )
           if( !health.healthy ) {
             setIsHealthy( false )
-            return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+            return alert( `${ t( 'general.health.maintenance' ) }` )
           }
 
         } catch( e ) {
-          log( `Error getting system health: `, e )
+          log( `${ t( 'general.health.errorStatus' ) }`, e )
         }
 
       } )( )
@@ -77,11 +80,11 @@ export default function Admin( ) {
       try {
 
         // Loading animation
-        setLoading( `Checking your mint links` )
+        setLoading( `${ t( 'general.file.mintCheck' )}` )
 
         // Validations
         const { name } = csv
-        if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( 'File is not a csv/txt' )
+        if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( `${ t( 'general.file.acceptedFormat' )}` )
 
         // Set filename to state
         setFilename( name )
@@ -91,7 +94,7 @@ export default function Admin( ) {
         log( 'Raw codes loaded: ', data )
 
         // Remove website prefix
-        data = data.map( code => code.replace( /(https?:\/\/.*\/)/ig, '') )
+        data = data.map( code => code.replace( /(https?:\/\/.*\/)/ig, '' ) )
 
         // Take out empty lines
         data = data.filter( code => code.length != 0 )
@@ -103,20 +106,20 @@ export default function Admin( ) {
         if( erroredCodes.length ) {
 
           log( 'Errored codes: ', erroredCodes )
-          throw new Error( `${ erroredCodes.length } codes had an invalid format. Example of a malformed code: ${ erroredCodes[0] }` )
+          throw new Error( `${ erroredCodes.length } ${ t( 'general.file.codeFormat' )} ${ erroredCodes[0] }` )
 
         }
 
         // Validated and sanetised codes
         log( 'Sanetised codes: ', data )
-        if( !data.length ) throw new Error( `No codes in the file you selected` )
+        if( !data.length ) throw new Error( `${ t( 'general.file.noCodes' )}` )
         if( !cancelled ) setCodes( data )
 
         // Load event data based on codes
         const { data: { event, error } } = await getEventDataFromCode( data[0] )
         log( 'Code data received ', event, error )
         if( error ) throw new Error( error )
-        if( !event ) throw new Error( `This event appears to have expired!` )
+        if( !event ) throw new Error( `${ t( 'general.event.eventExpired' ) }` )
 
         // Set event details to state
         if( event.name ) setName( event.name )
@@ -170,15 +173,15 @@ export default function Admin( ) {
 
       // Health noti
       if( !isHealthy ) {
-        const ignore_unhealthy = confirm( `The POAP API is under maintenance, you can continue but this might cause unexpected behaviour.` )
-        if( !ignore_unhealthy ) throw new Error( `Event creation cancelled` )
+        const ignore_unhealthy = confirm( `${ t( 'general.health.maintenanceApi' ) }` )
+        if( !ignore_unhealthy ) throw new Error( `${ t( 'general.event.eventCancelled' ) }` )
       }
 
       // Validations
-      if( !codes.length ) throw new Error( 'Csv has 0 entries' )
-      if( !name.length ) throw new Error( 'Please specify an event name' )
-      if( !email.includes( '@' ) ) throw new Error( 'Please specify a valid email address' )
-      if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( 'Please specify the date in YYYY-MM-DD, for example 2021-11-25' )
+      if( !codes.length ) throw new Error( `${ t( 'general.file.csvNoEntries' ) }` )
+      if( !name.length ) throw new Error( `${ t( 'general.event.noName' ) }` )
+      if( !email.includes( '@' ) ) throw new Error( `${ t( 'general.event.noEmail' ) }` )
+      if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'general.event.wrongDate' ) }` )
 
       // Confirm date
       const confirmed = confirm( `Please confirm that this is correct:\n\nDrop name: ${ name }\n\nAdministrator email: ${ email }\n\nQR dispenser expires at: ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
@@ -230,8 +233,8 @@ export default function Admin( ) {
       <Input
         highlight={ !codes } 
         id="event-create-file"
-        label="Select .txt file that contains your POAP mint links"
-        info="This is the .txt file you received via email after you created your POAP drop at https://app.poap.xyz/admin"
+        label={ t( 'general.input.label' ) }
+        info={ t( 'general.input.info' )}
         accept=".csv,.txt"
         title={ csv && codes && `[ ${filename} ] - ${ codes.length } codes detected.` }
         onClick={ !filename ? undefined : () => setCsv( undefined ) }
