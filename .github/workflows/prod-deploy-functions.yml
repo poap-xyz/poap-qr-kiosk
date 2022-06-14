@@ -7,13 +7,6 @@ on:
     paths:
       - '.github/workflows/prod-deploy-functions.yml'
       - 'functions/**'
-  pull_request:
-    branches-ignore:
-      - '!main'
-    types: [ closed ]
-    paths:
-      - '.github/workflows/prod-deploy-functions.yml'
-      - 'functions/**'
 
 jobs:
   build:

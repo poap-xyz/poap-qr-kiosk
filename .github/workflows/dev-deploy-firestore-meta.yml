@@ -10,16 +10,6 @@ on:
       - 'firebase.json'
       - 'firebase.indexes.json'
       - 'firestore.rules'
-  pull_request:
-    types: [ closed ]
-    branches-ignore:
-      - '!development'
-    paths:
-      - '.firebaserc'
-      - '.github/workflows/dev-deploy-firestore-meta.yml'
-      - 'firebase.json'
-      - 'firebase.indexes.json'
-      - 'firestore.rules'
 
 jobs:
   build:

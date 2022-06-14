@@ -1,21 +1,6 @@
 name: Deploy frontend on push/merge
 
-# Only trigger on PR/push and only for frontend files
 on:
-  # Trigger on PR close
-  pull_request:
-    branches-ignore:
-      - '!development'
-    types: [ closed ]
-    paths:
-      - '*.json'
-      - '*.js'
-      - 'src/**'
-      - 'cypress/**'
-      - '.github/workflows/prod-deploy-frontend.yml'
-
-  
-  # Trigger on push to master (edge case, local merge)
   push:
     branches:
       - main

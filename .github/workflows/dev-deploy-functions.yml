@@ -1,7 +1,6 @@
 name: Deploy functions on push/merge
 
 on:
-  # Trigger: on new tag push
   push:
     branches:
       - development
@@ -9,15 +8,6 @@ on:
       - '.firebaserc'
       - '.github/workflows/dev-deploy-functions.yml'
       - 'functions/**'
-  pull_request:
-    types: [ closed ]
-    branches-ignore:
-      - '!development'
-    paths:
-      - '.firebaserc'
-      - '.github/workflows/dev-deploy-functions.yml'
-      - 'functions/**'
-
 jobs:
   build:
     name: Publish changes
