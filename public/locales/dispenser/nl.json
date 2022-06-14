@@ -44,6 +44,7 @@
       "noName": "Geef een evenementnaam op",
       "noEmail": "Geef een geldig e-mailadres op",
       "wrongDate": "Geef de datum op in JJJJ-MM-DD, bijvoorbeeld 2021-11-25",
+      "creationMessage": "NL Please confirm that this is correct:\n\nDrop name: {{ name }}\n\nAdministrator email: {{ email }}\n\nQR dispenser expires at: ",
       "dropName": {
         "label": "Drop naam",
         "placeholder": "beste lanceringsfeest ooit",
@@ -99,5 +100,6 @@
       "label": "Selecteer .txt-bestand dat uw POAP-mint-links bevat",
       "info": "Dit is het .txt-bestand dat je via e-mail hebt ontvangen nadat je je POAP-drop hebt gemaakt op https://app.poap.xyz/admin"
     }
-  }
+  },
+  "creatingDispenser": "QR-dispenser maken"
 }
