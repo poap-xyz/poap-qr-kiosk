@@ -46,10 +46,20 @@ export default function ViewQR( ) {
 	const [ internalEventId, setInternalEventId ] = useState( eventId || stateEventId )
   const [ scanInterval, setScanInterval ] = useState( defaultScanInerval )
   const [ acceptedTerms, setAcceptedTerms ] = useState( viewMode == 'silent' )
+  const [ iframeMode, setIframeMode ] = useState( false )
 
   // ///////////////////////////////
   // Lifecycle handling
   // ///////////////////////////////
+
+  // Mode handling
+  useEffect( f => {
+
+    if( !viewMode ) return
+    if( viewMode == 'silent' ) setAcceptedTerms( true )
+    if( viewMode == 'iframe' ) setIframeMode( true )
+
+  }, [ viewMode  ] )
 
   // Health check
   useEffect( (  ) => {
@@ -152,7 +162,7 @@ export default function ViewQR( ) {
     refreshScannedCodesStatuses( internalEventId )
     .then( ( { data } ) => log( `Remote code update response : `, data ) )
     .catch( e => log( `Code refresh error `, e ) )
-    
+
   }, scanInterval )
 
   // Debugging helper
@@ -167,9 +177,12 @@ export default function ViewQR( ) {
   // Render component
   // ///////////////////////////////
 
+  // If iframe mode, render only QR
+  if( iframeMode ) return <QR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+
   // Show welcome screen
   if( !acceptedTerms ) return <Container>
-    
+
     <H1 align="center">Before we begin</H1>
 
     <H2>Keep your internet on</H2>
@@ -184,20 +197,20 @@ export default function ViewQR( ) {
 
   // Expired event error
   if( event?.expires && event.expires < Date.now() ) return <Container>
-  
+
     <h1>QR Kiosk expired</h1>
     <Sidenote>This kiosk was set to expire on { new Date( event.expires ).toString(  ) } by the organiser.</Sidenote>
-    
+
   </Container>
 
   // No code error
   if( !event?.public_auth?.expires ) return <Container>
-  
+
     <h1>No codes available</h1>
     <Sidenote onClick={ f => navigate( '/admin' ) }>If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface.</Sidenote>
-    
+
   </Container>
-  
+
   // Display QR
   log( template )
   return <Container background={ template?.footer_icon }>

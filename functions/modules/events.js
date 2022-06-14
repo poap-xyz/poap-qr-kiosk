@@ -112,6 +112,8 @@ async function get_event_template_by_code( an_event_qr_hash ) {
 
 	try {
 
+		if( an_event_qr_hash.includes( 'testing'  ) ) return {}
+
 		// Get event ID as known within the POAP system
 		const { event } = await call_poap_endpoint( `/actions/claim-qr`, { qr_hash: an_event_qr_hash } )
 		const { event_template_id } = event
@@ -136,7 +138,7 @@ async function get_event_template_by_code( an_event_qr_hash ) {
 exports.get_event_template_by_code = get_event_template_by_code
 
 exports.registerEvent = async function( data, context ) {
-	
+
 	try {
 
 		// Add a week grace period in case we need to debug anything
