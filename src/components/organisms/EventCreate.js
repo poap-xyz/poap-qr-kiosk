@@ -184,12 +184,12 @@ export default function Admin( ) {
       if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'general.event.wrongDate' ) }` )
 
       // Confirm date
-      const confirmed = confirm( `Please confirm that this is correct:\n\nDrop name: ${ name }\n\nAdministrator email: ${ email }\n\nQR dispenser expires at: ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
+      const confirmed = confirm( `${ t( 'general.event.creationMessage' , { name: name, email: email } ) } ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
       log( 'Confirmation status: ', confirmed )
-      if( !confirmed ) throw new Error( `Event creation cancelled.` )
+      if( !confirmed ) throw new Error( `${ t( 'general.event.eventCancelled' ) }` )
 
       // Call the cloud importer
-      setLoading( 'Creating QR Dispenser' )
+      setLoading( `${ t( 'creatingDispenser' ) }` )
 
       // Create remote event
       const { data: newEvent } = await registerEvent( {

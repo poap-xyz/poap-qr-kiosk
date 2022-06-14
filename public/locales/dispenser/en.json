@@ -37,13 +37,14 @@
     },
     "event": {
       "eventExpired": "This event appears to have expired!",
-      "eventCancelled": "Event creation cancelled",
+      "eventCancelled": "Event creation cancelled.",
       "eventCreate": "Create dispenser with {{ count }} codes",
       "eventCreate_one": "Create dispenser with {{ count }} code",
       "eventCreate_two": "Create dispenser with {{ count }} codes",
       "noName": "Please specify an event name",
       "noEmail": "Please specify a valid email address",
       "wrongDate": "Please specify the date in YYYY-MM-DD, for example 2021-11-25",
+      "creationMessage": "Please confirm that this is correct:\n\nDrop name: {{ name }}\n\nAdministrator email: {{ email }}\n\nQR dispenser expires at: ",
       "dropName": {
         "label": "Drop name",
         "placeholder": "Best launch party ever",
@@ -75,22 +76,23 @@
       "gameTime": {
         "label": "How many seconds should the anti-farming game last?",
         "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",
-        "options": [ 
-          { 
-            "label": "30 sec", 
-            "value": "30" 
-          }, 
-          { 
-            "label": "10 sec", 
-            "value": "10" 
-          }, 
-          { "label": "20 sec", 
-            "value": "20" 
-          }, 
-          { 
-            "label": "60 sec", 
-            "value": "60" 
-          } 
+        "options": [
+          {
+            "label": "30 sec",
+            "value": "30"
+          },
+          {
+            "label": "10 sec",
+            "value": "10"
+          },
+          {
+            "label": "20 sec",
+            "value": "20"
+          },
+          {
+            "label": "60 sec",
+            "value": "60"
+          }
         ]
       }
     },
@@ -98,5 +100,6 @@
       "label": "Select .txt file that contains your POAP mint links",
       "info": "This is the .txt file you received via email after you created your POAP drop at https://app.poap.xyz/admin"
     }
-  }
+  },
+  "creatingDispenser": "Creating QR Dispenser"
 }
