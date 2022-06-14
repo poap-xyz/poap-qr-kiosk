@@ -212,7 +212,6 @@ export default function ViewQR( ) {
   </Container>
 
   // Display QR
-  log( template )
   return <Container background={ template?.footer_icon }>
 
     {  /* Event metadata */ }
