@@ -236,17 +236,17 @@ export default function Admin( ) {
         label={ t( 'general.input.label' ) }
         info={ t( 'general.input.info' )}
         accept=".csv,.txt"
-        title={ csv && codes && `[ ${filename} ] - ${ t( 'general.file.codesDetected', { count: codes.length } ) }` }
+        title={ csv && codes && `[ ${filename} ] - ${ t( 'general.file.codesDetected' , { count: codes.length } ) }` }
         onClick={ !filename ? undefined : () => setCsv( undefined ) }
         onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
       />
 
       { codes && <>
-        <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder='Best launch party ever' label={ t( 'general.event.dropName' ) } info={ t( 'general.event.dropNameInfo' ) } value={ name } />
-        <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label="QR dispenser expiry date" info={ `After this date in your local timezone, your QR kiosk will stop working\n\n⚠️ You can only schedule up to 30 days in advance.` } value={ date } />
-        <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder='revered@organizer.com' label="Your email" info="We will send the QR kiosk link and the admin link there." value={ email } />
-        <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label="Enable anti-farming game?" info={ `Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.` } type='dropdown' options={ [ 'No (optional for physical events)', 'Yes (recommended for online)' ] } />
-        { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label="How many seconds should the anti-farming game last?" info="The longer you set this, the harder it becomes for humans to farm your POAP drop" options={ [ 30, 10, 20, 60 ] } /> }
+        <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'general.event.dropName.placeholder' ) } label={ t( 'general.event.dropName.label' ) } info={ t( 'general.event.dropName.info' ) } value={ name } />
+        <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'general.event.dropDate.label' ) } info={ `${ t( 'general.event.dropDate.info' ) }` } value={ date } />
+        <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'general.event.dropEmail.placeholder' ) } label={ t( 'general.event.dropEmail.label' ) } info={ t( 'general.event.dropEmail.info' ) } value={ email } />
+        <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label={ t( 'general.event.dropGame.label' ) } info={ `${ t( 'general.event.dropGame.info' ) }` } type='dropdown' options={ t( 'general.event.dropGame.options', { returnObjects: true } ) } />
+        { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'general.event.gameTime.label' ) } info={ t( 'general.event.gameTime.info' ) } options={ t( 'general.event.gameTime.options', { returnObjects: true } ) } /> }
       </> }
       
       { codes && <Button id="event-create-submit" onClick={ createEvent }>{ t( 'general.event.eventCreate', { count: codes.length } ) }</Button> }

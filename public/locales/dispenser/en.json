@@ -2,18 +2,20 @@
   "title": "Magic POAP Dispenser ",
   "createButton": "Create QR dispenser",
   "startedtext": "Get started now",
-  "hero": {
-    "title": "Magic POAP Dispenser",
-    "subheading": "Get POAPs to your friends IRL",
-    "description": "Just input your .txt file of mint links and watch your phone turn into a POAP QR dispenser at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one."
-  },
-  "checkin": {
-    "title": "Physical POAP distribution made easy",
-    "description": "For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees."
-  },
-  "stream": {
-    "title": "Stream-friendly QR sharing",
-    "description": "During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner."
+  "welcome": {
+    "hero": {
+      "title": "Magic POAP Dispenser ",
+      "subheading": "Get POAPs to your friends IRL",
+      "description": "Just input your .txt file of mint links and watch your phone turn into a POAP QR dispenser at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one."
+    },
+    "checkin": {
+      "title": "Physical POAP distribution made easy",
+      "description": "For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees."
+    },
+    "stream": {
+      "title": "Stream-friendly QR sharing",
+      "description": "During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner."
+    }
   },
   "general": {
     "health": {
@@ -26,7 +28,7 @@
     "file": {
       "acceptedFormat": "File is not a csv/txt",
       "noCodes": "No codes found",
-      "codesDetected": "{{count}} codes detected.",
+      "codesDetected": "{{ count }} codes detected.",
       "codesDetected_one": "{{ count }} code detected.",
       "codesDetected_two": "{{ count }} codes detected.",
       "mintCheck": "Checking your mint links",
@@ -42,8 +44,55 @@
       "noName": "Please specify an event name",
       "noEmail": "Please specify a valid email address",
       "wrongDate": "Please specify the date in YYYY-MM-DD, for example 2021-11-25",
-      "dropName": "Drop name",
-      "dropNameInfo": "For your own reference, not visible to the world."
+      "dropName": {
+        "label": "Drop name",
+        "placeholder": "Best launch party ever",
+        "info": "For your own reference, not visible to the world."
+      },
+      "dropDate": {
+        "label": "QR dispenser expiry date",
+        "info": "After this date in your local timezone, your QR kiosk will stop working\n\n⚠️ You can only schedule up to 30 days in advance."
+      },
+      "dropEmail": {
+        "label": "Your email",
+        "placeholder": "revered@organizer.com",
+        "info": "We will send the QR kiosk link and the admin link there."
+      },
+      "dropGame": {
+        "label": "Enable anti-farming game?",
+        "info": "Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.",
+        "options": [
+          {
+            "label": "No (optional for physical events)",
+            "value": "no"
+          },
+          {
+            "label": "Yes (recommended for online)",
+            "value": "yes"
+          }
+        ]
+      },
+      "gameTime": {
+        "label": "How many seconds should the anti-farming game last?",
+        "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",
+        "options": [ 
+          { 
+            "label": "30 sec", 
+            "value": "30" 
+          }, 
+          { 
+            "label": "10 sec", 
+            "value": "10" 
+          }, 
+          { "label": "20 sec", 
+            "value": "20" 
+          }, 
+          { 
+            "label": "60 sec", 
+            "value": "60" 
+          } 
+        ]
+      }
     },
     "input": {
       "label": "Select .txt file that contains your POAP mint links",
