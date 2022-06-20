@@ -124,14 +124,10 @@ context( 'Claimer can view valid events with game', () => {
 				cy.contains( 'button', 'Claim your' ).click()
 
 				// Wait for code retrieval
-				cy.contains( 'POAP Claim' )
+				cy.url().should( 'include', 'app.poap.xyz' )
 
 				// Check if POAP link supplies one of the test codes
-				cy.get( 'input' ).invoke( 'val' ).then( val => {
-					
-					expect( val ).to.be.oneOf( oneCode )
-
-				} )
+				cy.url().should( 'include', oneCode )
 
 			} )
 		
