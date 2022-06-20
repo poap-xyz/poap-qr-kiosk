@@ -14,6 +14,8 @@ import { deleteEvent, trackEvent, health_check, listenToEventMeta } from '../../
 import { log, dev, wait } from '../../modules/helpers'
 const { REACT_APP_publicUrl } = process.env
 
+import { useTranslation } from 'react-i18next'
+
 
 // ///////////////////////////////
 // Render component
