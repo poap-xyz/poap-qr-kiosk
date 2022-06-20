@@ -2,29 +2,17 @@
   "title": "Magische POAP Dispenser",
   "createButton": "Creëer QR-dispenser",
   "startedtext": "Begin nu",
-  "welcome": {
-    "hero": {
-      "title": "Magische POAP Dispenser ",
-      "subheading": "Breng POAPs naar je vrienden IRL",
-      "description": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen."
-    },
-    "checkin": {
-      "title": "Fysieke POAP-distributie makkelijk gemaakt",
-      "description": "Stel voor IRL-evenementen eenvoudig een apparaat of meerdere apparaten in om unieke POAP QR-codes weer te geven aan deelnemers."
-    },
-    "stream": {
-      "title": "Stream-vriendelijk QR-delen",
-      "description": "Stel tijdens een livestream een screenshare in die POAP QR-codes weergeeft."
-    }
+
+  "health": {
+    "check": "Systeem status: ",
+    "maintenance": "NL The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.",
+    "cancelled": "Health effect geannuleerd",
+    "errorStatus": "Fout bij ophalen systeem status: ",
+    "maintenanceApi": "De POAP API is in onderhoud, u kunt doorgaan maar dit kan onverwacht gedrag veroorzaken."
   },
+
   "general": {
-    "health": {
-      "check": "Systeem status: ",
-      "maintenance": "NL The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.",
-      "cancelled": "Health effect geannuleerd",
-      "errorStatus": "Fout bij ophalen systeem status: ",
-      "maintenanceApi": "De POAP API is in onderhoud, u kunt doorgaan maar dit kan onverwacht gedrag veroorzaken."
-    },
+
     "file": {
       "acceptedFormat": "Het bestandsformaat is geen csv/txt",
       "noCodes": "Geen codes gevonden",

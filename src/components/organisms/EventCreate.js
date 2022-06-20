@@ -19,6 +19,8 @@ import { useTranslation } from 'react-i18next'
 // ///////////////////////////////
 export default function Admin( ) {
 
+
+
   const navigate = useNavigate(  )
 
   // ///////////////////////////////
@@ -35,7 +37,7 @@ export default function Admin( ) {
   const [ filename, setFilename ] = useState( 'codes.txt' )
   const [ isHealthy, setIsHealthy ] = useState( true )
 
-  const { t } = useTranslation( [ 'dispenser' ] )
+  const { t } = useTranslation( [ 'eventCreate', 'dispenser' ] )
 
   // ///////////////////////////////
   // Lifecycle handling
@@ -51,15 +53,15 @@ export default function Admin( ) {
         try {
 
           const { data: health } = await health_check()
-          log( `${ t( 'general.health.check' ) }`, health )
-          if( cancelled ) return log( `${ t( 'general.health.cancelled' ) }` )
-          if( !health.healthy ) {
-            setIsHealthy( false )
-            return alert( `${ t( 'general.health.maintenance' ) }` )
+          log( `Systems health: `, health )
+          if( cancelled ) return log( `Health effect cancelled` )
+          if( !dev && !health.healthy ) {
+            trackEvent( `event_view_event_system_down` )
+            return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
           }
 
         } catch( e ) {
-          log( `${ t( 'general.health.errorStatus' ) }`, e )
+            log( `Error getting system health: `, e )
         }
 
       } )( )
@@ -80,11 +82,11 @@ export default function Admin( ) {
       try {
 
         // Loading animation
-        setLoading( `${ t( 'general.file.mintCheck' )}` )
+        setLoading( `${ t( 'file.mintCheck' )}` )
 
         // Validations
         const { name } = csv
-        if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( `${ t( 'general.file.acceptedFormat' )}` )
+        if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( `${ t( 'file.acceptedFormat' )}` )
 
         // Set filename to state
         setFilename( name )
@@ -106,20 +108,20 @@ export default function Admin( ) {
         if( erroredCodes.length ) {
 
           log( 'Errored codes: ', erroredCodes )
-          throw new Error( `${ erroredCodes.length } ${ t( 'general.file.codeFormat' )} ${ erroredCodes[0] }` )
+          throw new Error( `${ erroredCodes.length } ${ t( 'file.codeFormat' )} ${ erroredCodes[0] }` )
 
         }
 
         // Validated and sanetised codes
         log( 'Sanetised codes: ', data )
-        if( !data.length ) throw new Error( `${ t( 'general.file.noCodes' )}` )
+        if( !data.length ) throw new Error( `${ t( 'file.noCodes' )}` )
         if( !cancelled ) setCodes( data )
 
         // Load event data based on codes
         const { data: { event, error } } = await getEventDataFromCode( data[0] )
         log( 'Code data received ', event, error )
         if( error ) throw new Error( error )
-        if( !event ) throw new Error( `${ t( 'general.event.eventExpired' ) }` )
+        if( !event ) throw new Error( `${ t( 'event.eventExpired' ) }` )
 
         // Set event details to state
         if( event.name ) setName( event.name )
@@ -173,20 +175,20 @@ export default function Admin( ) {
 
       // Health noti
       if( !isHealthy ) {
-        const ignore_unhealthy = confirm( `${ t( 'general.health.maintenanceApi' ) }` )
-        if( !ignore_unhealthy ) throw new Error( `${ t( 'general.event.eventCancelled' ) }` )
+        const ignore_unhealthy = confirm( `${ t( 'health.maintenanceApi' ) }` )
+        if( !ignore_unhealthy ) throw new Error( `${ t( 'event.eventCancelled' ) }` )
       }
 
       // Validations
-      if( !codes.length ) throw new Error( `${ t( 'general.file.csvNoEntries' ) }` )
-      if( !name.length ) throw new Error( `${ t( 'general.event.noName' ) }` )
-      if( !email.includes( '@' ) ) throw new Error( `${ t( 'general.event.noEmail' ) }` )
-      if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'general.event.wrongDate' ) }` )
+      if( !codes.length ) throw new Error( `${ t( 'file.csvNoEntries' ) }` )
+      if( !name.length ) throw new Error( `${ t( 'event.noName' ) }` )
+      if( !email.includes( '@' ) ) throw new Error( `${ t( 'event.noEmail' ) }` )
+      if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'event.wrongDate' ) }` )
 
       // Confirm date
-      const confirmed = confirm( `${ t( 'general.event.creationMessage' , { name: name, email: email } ) } ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
+      const confirmed = confirm( `${ t( 'event.creationMessage' , { name: name, email: email } ) } ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
       log( 'Confirmation status: ', confirmed )
-      if( !confirmed ) throw new Error( `${ t( 'general.event.eventCancelled' ) }` )
+      if( !confirmed ) throw new Error( `${ t( 'event.eventCancelled' ) }` )
 
       // Call the cloud importer
       setLoading( `${ t( 'creatingDispenser' ) }` )
@@ -233,23 +235,23 @@ export default function Admin( ) {
       <Input
         highlight={ !codes } 
         id="event-create-file"
-        label={ t( 'general.input.label' ) }
-        info={ t( 'general.input.info' )}
+        label={ t( 'input.label' ) }
+        info={ t( 'input.info' )}
         accept=".csv,.txt"
-        title={ csv && codes && `[ ${filename} ] - ${ t( 'general.file.codesDetected' , { count: codes.length } ) }` }
+        title={ csv && codes && `[ ${filename} ] - ${ t( 'file.codesDetected' , { count: codes.length } ) }` }
         onClick={ !filename ? undefined : () => setCsv( undefined ) }
         onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
       />
 
       { codes && <>
-        <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'general.event.dropName.placeholder' ) } label={ t( 'general.event.dropName.label' ) } info={ t( 'general.event.dropName.info' ) } value={ name } />
-        <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'general.event.dropDate.label' ) } info={ `${ t( 'general.event.dropDate.info' ) }` } value={ date } />
-        <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'general.event.dropEmail.placeholder' ) } label={ t( 'general.event.dropEmail.label' ) } info={ t( 'general.event.dropEmail.info' ) } value={ email } />
-        <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label={ t( 'general.event.dropGame.label' ) } info={ `${ t( 'general.event.dropGame.info' ) }` } type='dropdown' options={ t( 'general.event.dropGame.options', { returnObjects: true } ) } />
-        { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'general.event.gameTime.label' ) } info={ t( 'general.event.gameTime.info' ) } options={ t( 'general.event.gameTime.options', { returnObjects: true } ) } /> }
+        <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'event.dropName.placeholder' ) } label={ t( 'event.dropName.label' ) } info={ t( 'event.dropName.info' ) } value={ name } />
+        <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'event.dropDate.label' ) } info={ `${ t( 'event.dropDate.info' ) }` } value={ date } />
+        <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'event.dropEmail.placeholder' ) } label={ t( 'event.dropEmail.label' ) } info={ t( 'event.dropEmail.info' ) } value={ email } />
+        <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label={ t( 'event.dropGame.label' ) } info={ `${ t( 'event.dropGame.info' ) }` } type='dropdown' options={ t( 'event.dropGame.options', { returnObjects: true } ) } />
+        { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'event.gameTime.label' ) } info={ t( 'event.gameTime.info' ) } options={ t( 'event.gameTime.options', { returnObjects: true } ) } /> }
       </> }
       
-      { codes && <Button id="event-create-submit" onClick={ createEvent }>{ t( 'general.event.eventCreate', { count: codes.length } ) }</Button> }
+      { codes && <Button id="event-create-submit" onClick={ createEvent }>{ t( 'event.eventCreate', { count: codes.length } ) }</Button> }
       { /* codes && <Button id="event-create-reset" color='hint' onClick={ f => setCodes( null ) }>Upload different codes</Button> */ }
     </Main>
 

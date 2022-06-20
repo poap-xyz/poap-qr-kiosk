@@ -1,0 +1,18 @@
+{
+  "title": "Magische POAP Dispenser",
+  "createButton": "Creëer QR-dispenser",
+  "startedtext": "Begin nu",
+  "hero": {
+    "title": "Magische POAP Dispenser ",
+    "subheading": "Breng POAPs naar je vrienden IRL",
+    "description": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen."
+  },
+  "checkin": {
+    "title": "Fysieke POAP-distributie makkelijk gemaakt",
+    "description": "Stel voor IRL-evenementen eenvoudig een apparaat of meerdere apparaten in om unieke POAP QR-codes weer te geven aan deelnemers."
+  },
+  "stream": {
+    "title": "Stream-vriendelijk QR-delen",
+    "description": "Stel tijdens een livestream een screenshare in die POAP QR-codes weergeeft."
+  }
+}

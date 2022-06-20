@@ -20,6 +20,8 @@ const { REACT_APP_publicUrl } = process.env
 // ///////////////////////////////
 export default function EventAdmin( ) {
 
+	const { t } = useTranslation( [ 'eventAdmin' , 'dispenser' ] )
+
 	const { eventId, authToken } = useParams( )
 	const [ event, setEvent ] = useState( { loading: true } )
 	const navigate = useNavigate()
@@ -39,7 +41,7 @@ export default function EventAdmin( ) {
 				const { data: health } = await health_check()
 				log( `Systems health: `, health )
 				if( cancelled ) return log( `Health effect cancelled` )
-				if( !health.healthy ) return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+				return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
 
 			} catch( e ) {
 				log( `Error getting system health: `, e )
