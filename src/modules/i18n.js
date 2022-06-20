@@ -13,17 +13,18 @@ i18n
 	.use(initReactI18next)
 
     .init({
+        load: 'languageOnly',
         backend: {
             // translation file path
             loadPath: '/locales/{{ns}}/{{lng}}.json',
         },
-        supportedLngs: [ 'en', 'nl' ],
+        supportedLngs: [ 'en', 'nl', 'en-US' ],
         fallbackLng: 'en',
+        nonExplicitSupportedLngs: true,
         interpolation: {
             escapeValue: false,
         },
-        debug: process.env.NODE_ENV === 'development',
-        ns: [ 'dispenser' ], 
+        debug: process.env.NODE_ENV === 'development'
     })
 
 export default i18n

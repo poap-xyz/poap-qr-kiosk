@@ -25,6 +25,8 @@ import Network from '../molecules/NetworkStatusBar'
 // ///////////////////////////////
 export default function ViewQR( ) {
 
+  const { t } = useTranslation( [ 'eventView' , 'dispenser' ] )
+
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -65,7 +67,7 @@ export default function ViewQR( ) {
         if( cancelled ) return log( `Health effect cancelled` )
         if( !dev && !health.healthy ) {
           trackEvent( `event_view_event_system_down` )
-          return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+          return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
         }
 
       } catch( e ) {
