@@ -4,6 +4,8 @@ import { log, dev, wait } from '../../modules/helpers'
 import { useParams } from 'react-router-dom'
 import { validateCallerDevice, validateCallerCaptcha, trackEvent, listen_to_claim_challenge, get_code_by_challenge, requestManualCodeRefresh, health_check } from '../../modules/firebase'
 
+import { useTranslation } from 'react-i18next'
+
 // Components
 import Loading from '../molecules/Loading'
 import Stroop from '../molecules/Stroop'
@@ -14,7 +16,7 @@ import Captcha from '../molecules/Captcha'
 // ///////////////////////////////
 export default function ViewQR( ) {
 
-  const { t } = useTranslation( [ 'claim' , 'dispenser' ] )
+  const { t } = useTranslation( [ 'dispenser' , 'claim' ] )
 
   // ///////////////////////////////
   // State handling

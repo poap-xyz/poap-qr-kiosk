@@ -1,20 +1,25 @@
 {
-  "title": "Magische POAP Dispenser",
-  "createButton": "Creëer QR-dispenser",
-  "startedtext": "Begin nu",
-  "welcome": {
-    "hero": {
-      "title": "Magische POAP Dispenser ",
-      "subheading": "Breng POAPs naar je vrienden IRL",
-      "description": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen."
-    },
-    "checkin": {
-      "title": "Fysieke POAP-distributie makkelijk gemaakt",
-      "description": "Stel voor IRL-evenementen eenvoudig een apparaat of meerdere apparaten in om unieke POAP QR-codes weer te geven aan deelnemers."
-    },
-    "stream": {
-      "title": "Stream-vriendelijk QR-delen",
-      "description": "Stel tijdens een livestream een screenshare in die POAP QR-codes weergeeft."
-    }
+  "eventLoading": "Evenementdata inladen",
+  "eventNoCache": "Fout: Geen gebeurtenis-ID bekend.\n\n\nZorg ervoor dat u deze pagina opent via de gebeurtenislink vanuit de beheerdersinterface.\n\n\nDit is een maatregel tegen misbruik.",
+  "setKiosk": "Uw kiosk instellen",
+  "expiredKiosk": "Setting up your Kiosk",
+  "terms": {
+    "title": "Voordat we beginnen",
+    "subheading": "Houd je internet aan",
+    "description": "Zonder internetverbinding worden nieuwe codes niet meer geladen. \nU ontvangt een melding als de dispenser merkt dat u offline bent.",
+    "acceptBtn": "Ik begrijp het, laten we gaan!"
+  },
+  "expired": {
+    "title": "QR-kiosk verlopen",
+    "description": "Deze kiosk is door de organisator ingesteld om op {{ expireDate }} te verlopen."
+  },
+  "codes": {
+    "title": "Geen codes beschikbaar",
+    "description": "Als je net nieuwe codes hebt geüpload, geef de backend dan even de tijd om te verwerken. \nAls er een tijdje niets gebeurt, klik dan hier om de beheerdersinterface te openen."
+  },
+  "view": {
+    "title": "",
+    "subheading": "Scan de QR met je camera om je POAP te claimen",
+    "claimed": "{{ beschikbaar }} van {{ codes }} codes geclaimd of in behandeling"
   }
 }

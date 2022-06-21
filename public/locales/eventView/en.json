@@ -1,20 +1,25 @@
 {
-  "title": "Magic POAP Dispenser ",
-  "createButton": "Create QR dispenser",
-  "startedtext": "Get started now",
-  "welcome": {
-    "hero": {
-      "title": "Magic POAP Dispenser ",
-      "subheading": "Get POAPs to your friends IRL",
-      "description": "Just input your .txt file of mint links and watch your phone turn into a POAP QR dispenser at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one."
-    },
-    "checkin": {
-      "title": "Physical POAP distribution made easy",
-      "description": "For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees."
-    },
-    "stream": {
-      "title": "Stream-friendly QR sharing",
-      "description": "During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner."
-    }
+  "eventLoading": "Loading event data",
+  "eventNoCache": "Error: No event ID known.\n\nMake sure to open this page through the event link from the admin interface.\n\nThis is an anti-abuse measure.",
+  "setKiosk": "Setting up your Kiosk",
+  "expiredKiosk": "Setting up your Kiosk",
+  "terms": {
+    "title": "Before we begin",
+    "subheading": "Keep your internet on",
+    "description": "Without an internet connection new codes will stop loading. You will receive a notification if the dispenser notices you are offline.",
+    "acceptBtn": "I understand, let's go!"
+  },
+  "expired": {
+    "title": "QR Kiosk expired",
+    "description": "This kiosk was set to expire on {{ expireDate }} by the organiser."
+  },
+  "codes": {
+    "title": "No codes available",
+    "description": "If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface."
+  },
+  "view": {
+    "title": "",
+    "subheading": "Scan the QR with your camera to claim your POAP",
+    "claimed": "{{ available }} of {{ codes }} codes claimed or pending"
   }
 }
