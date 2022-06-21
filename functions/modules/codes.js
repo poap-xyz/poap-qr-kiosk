@@ -2,7 +2,7 @@
 const functions = require( 'firebase-functions' )
 const { db, dataFromSnap, increment } = require( './firebase' )
 const { log, dev } = require( './helpers' )
-
+const { throw_on_failed_app_check } = require( './security' )
 const { call_poap_endpoint } = require( './poap_api' )
 
 // Libraries
@@ -95,9 +95,7 @@ exports.getEventDataFromCode = async function ( code, context ) {
 
 	try {
 
-		// if( context.app == undefined ) {
-		// 	throw new Error( `App context error` )
-		// }
+		throw_on_failed_app_check( context )
 
 		// Get code meta from API
 		const { event, error, message } = await checkCodeStatus( code )
@@ -134,9 +132,7 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
 	try {
 
 		// Appcheck validation
-		if( context.app == undefined ) {
-			throw new Error( `App context error` )
-		}
+		throw_on_failed_app_check( context )
 
 		// Input validation
 		if( !event_id ) throw new Error( `Event ID was not passed to refresh` )
@@ -245,9 +241,7 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 	try {
 
 		// Appcheck validation
-		if( !dev && context.app == undefined ) {
-			throw new Error( `App context error` )
-		}
+		throw_on_failed_app_check( context )
 
 		if( !eventId ) throw new Error( `Code refresh called without event ID` )
 
