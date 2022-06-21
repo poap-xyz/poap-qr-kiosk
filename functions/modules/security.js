@@ -9,6 +9,9 @@ exports.validateCallerDevice = ( data, context ) => {
 	return true
 
 }
+exports.throw_on_failed_app_check = context => {
+	if( context.app == undefined ) throw new Error( `Failed appcheck` )
+}
 
 /* ///////////////////////////////
 // reCaptcha v2 validation */

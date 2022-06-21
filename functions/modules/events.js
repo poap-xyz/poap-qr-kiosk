@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid')
 const { sendEventAdminEmail } = require( './email' )
 const Throttle = require( 'promise-parallel-throttle' )
 const { throttle_and_retry, log } = require( './helpers' )
+const { throw_on_failed_app_check } = require( './security' )
 
 // Configs
 const functions = require( 'firebase-functions' )
@@ -145,9 +146,7 @@ exports.registerEvent = async function( data, context ) {
 		const weekInMs = 1000 * 60 * 60 * 24 * 7
 
 		// Appcheck validation
-		if( context.app == undefined ) {
-			throw new Error( `App context error` )
-		}
+		throw_on_failed_app_check( context )
 
 		// Validations
 		const { name='', email='', date='', codes=[], challenges=[], game_config={ duration: 30, target_score: 5 } } = data
@@ -247,9 +246,7 @@ exports.deleteEvent = async function( data, context ) {
 	
 	try {
 
-		if( context.app == undefined ) {
-			throw new Error( `App context error` )
-		}
+		throw_on_failed_app_check( context )
 
 		// Validations
 		const { eventId, authToken } = data
