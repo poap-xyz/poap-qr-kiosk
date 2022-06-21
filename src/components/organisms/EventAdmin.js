@@ -43,7 +43,7 @@ export default function EventAdmin( ) {
 				const { data: health } = await health_check()
 				log( `Systems health: `, health )
 				if( cancelled ) return log( `Health effect cancelled` )
-				return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
+				if( !health.healthy ) return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
 
 			} catch( e ) {
 				log( `Error getting system health: `, e )

@@ -1,20 +1,14 @@
 {
-  "title": "Magische POAP Dispenser",
-  "createButton": "Creëer QR-dispenser",
-  "startedtext": "Begin nu",
-  "welcome": {
-    "hero": {
-      "title": "Magische POAP Dispenser ",
-      "subheading": "Breng POAPs naar je vrienden IRL",
-      "description": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen."
-    },
-    "checkin": {
-      "title": "Fysieke POAP-distributie makkelijk gemaakt",
-      "description": "Stel voor IRL-evenementen eenvoudig een apparaat of meerdere apparaten in om unieke POAP QR-codes weer te geven aan deelnemers."
-    },
-    "stream": {
-      "title": "Stream-vriendelijk QR-delen",
-      "description": "Stel tijdens een livestream een screenshare in die POAP QR-codes weergeeft."
-    }
+  "setLoading": "Verifying your humanity, you'll be forwarded soon",
+  "formulateRedirect": "Claimlink gegenereerd:",
+  "preppingMessage": "Je POAP voorbereiden",
+  "stall": {
+    "loadingPrimary": "👀 Heb ik je eerder gezien?",
+    "loadingSecondary": "🧐 Je kijkt een beetje wantrouwend mijn vriend...",
+    "loadingNewScan": "Scan a.u.b. een nieuwe QR-code",
+    "loadingError": "Verificatie mislukt! \nOf het heeft te lang geduurd, of er zijn veel mensen tegelijk aan het scannen, scan alstublieft nog een keer :).\n\n\nFoutopsporingsinformatie: {{ error_code }}, bc {{ challenge_code }}, fe {{ trail }}"
+  },
+  "validation": {
+    "alreadyUsed": "Deze link werd al gebruikt, scan de QR opnieuw"
   }
 }

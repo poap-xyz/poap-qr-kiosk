@@ -20,6 +20,6 @@
   "view": {
     "title": "",
     "subheading": "Scan de QR met je camera om je POAP te claimen",
-    "claimed": "{{ beschikbaar }} van {{ codes }} codes geclaimd of in behandeling"
+    "claimed": "{{ available }} van {{ codes }} codes geclaimd of in behandeling"
   }
 }
