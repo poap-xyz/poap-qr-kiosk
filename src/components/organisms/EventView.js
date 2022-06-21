@@ -88,6 +88,7 @@ export default function ViewQR( ) {
 
   }, [] )
 
+
   // Set url event ID to localstorage and remove it from the URL
   useEffect( (  ) => {
 
@@ -124,6 +125,9 @@ export default function ViewQR( ) {
 
       log( `Error ocurred: `, e )
       alert( e.message )
+
+      // If no event ID is known (both in local storage and url), forward to homepage
+      navigate( '/' )
 
     }
 
