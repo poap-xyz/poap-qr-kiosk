@@ -1,20 +1,52 @@
 {
-  "title": "Magic POAP Dispenser ",
-  "createButton": "Create QR dispenser",
-  "startedtext": "Get started now",
-  "welcome": {
-    "hero": {
-      "title": "Magic POAP Dispenser ",
-      "subheading": "Get POAPs to your friends IRL",
-      "description": "Just input your .txt file of mint links and watch your phone turn into a POAP QR dispenser at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one."
+  "title": "Magic POAP Dispenser",
+  "loadingDispenser": "Loading QR dispenser",
+  "setLoadingDispenser": "Delete QR Dispenser",
+  "loadingValidity": "Double-checking admin link validity",
+  "invalidValidity": "Invalid event admin link",
+  "confirmDeleteDispenser": "Are you sure you want to delete your QR Dispenser?\n\nThis cannot be undone, but you can always create a new QR Dispenser following the same simple steps you used to make this one.",
+  "succesDeleteDispenser": "Deletion success!\n\nYour QR Dispenser has been deleted.\n\nClick OK to be redirected to the home page. ",
+  "deletionCancelled": "Deletion cancelled, your event still exists.",
+  "errorDeleteDispenser": "Error Delete QR Dispenser: {{ message }}",
+  
+  "hero": {
+    "subheading": {
+      "reviewed": "⚠️ Your event is being reviewed",
+      "unique": "Your unique QR dispenser link"
     },
-    "checkin": {
-      "title": "Physical POAP distribution made easy",
-      "description": "For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees."
+    "description": {
+      "pre": "This link is intended to be displayed on a physical device, or through a screenshare during a stream. ",
+      "bold": "NEVER",
+      "post": " send it to anyone."
     },
-    "stream": {
-      "title": "Stream-friendly QR sharing",
-      "description": "During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner."
+    "input": {
+      "label": "Your public QR Dispenser link",
+      "info": "This link takes you to your QR Dispenser page. For example, you can display this page on an iPad at your check-in desk."
+    },
+    "distribute": {
+      "button": "Open link & start distributing POAPs",
+      "clipboard": "Copy to clipboard"
+    },
+    "notavailable": {
+      "title": "This QR dispenser will become available once the curation team approves your event.",
+      "description": "You will receive an email when your event is approved. This email will also send you the manual claim links in a links.txt file. You don&apos;t have to use them, but it is ok to use them in combination with this QR dispenser."
     }
+  },
+  "deleteDispenser": {
+    "title": "Secret Admin Section",
+    "subheading": "Delete this QR dispenser",
+    "description": "Want to create a new QR dispenser for this drop? Delete this QR dispenser first, and then create a new dispenser when you are ready.",
+    "deleteBtn": "Delete QR dispenser"
+  },  
+  "adminDispenser": {
+    "title": "Admin link",
+    "description": "Your admin link is yours to make changes to this instance of the magic POAP dispenser. Don't share this with anyone!",
+    "input": {
+      "label": "Your secret admin link",
+      "info": "The link to this admin page, the page you are seeing now. This link allows you to delete your QR Dispenser. Keep it secret!"
+    },
+    "clipboard": "Copy secret admin link to clipboard"
   }
+  
 }
+

@@ -58,7 +58,7 @@ export default function EventAdmin( ) {
 	// ///////////////////////////////
 	// State management
 	// ///////////////////////////////
-	const [ loading, setLoading ] = useState( `Loading QR dispenser` )
+	const [ loading, setLoading ] = useState( `${ t( 'loadingDispenser' ) }` )
 
 	/* ///////////////////////////////
 	// Lifecycle management
@@ -78,11 +78,11 @@ export default function EventAdmin( ) {
 
 				// Wait for 5 seconds in case the backend is refreshng public event mets
 				wait( 5000 )
-				if( !cancelled ) setLoading( `Double-checking admin link validity` )
+				if( !cancelled ) setLoading( `${ t( 'loadingValidity' ) }` )
 
 				// If after 10 seconds it is still down, trigger failure
 				wait( 5000 )
-				if( !cancelled ) setLoading( `Invalid event admin link` )
+				if( !cancelled ) setLoading( `${ t( 'invalidValidity' ) }` )
 
 			}
 		} )
@@ -107,9 +107,9 @@ export default function EventAdmin( ) {
 
 		try {
 
-			if( !confirm( `Are you sure you want to delete your QR Dispenser?\n\nThis cannot be undone, but you can always create a new QR Dispenser following the same simple steps you used to make this one.` ) ) throw new Error( `Deletion cancelled, your event still exists.` )
+			if( !confirm( `${ t( 'confirmDeleteDispenser' ) }` ) ) throw new Error( `${ t( 'deletionCancelled' ) }` )
 
-			setLoading( 'Delete QR Dispenser' )
+			setLoading( `${ t( 'setLoadingDispenser' ) }` )
 			const { data: { error } } = await deleteEvent( {
 				eventId,
 				authToken
@@ -117,12 +117,12 @@ export default function EventAdmin( ) {
 
 			if( error ) throw new Error( error )
 
-			alert( `Deletion success!\n\nYour QR Dispenser has been deleted.\n\nClick OK to be redirected to the home page. ` )
+			alert( `${ t( 'succesDeleteDispenser' ) }` )
 			trackEvent( 'admin_event_deleted' )
 			return navigate( '/' )
 
 		} catch( e ) {
-			alert( `Error Delete QR Dispenser: ${ e.message }` )
+			alert( `${ t( 'errorDeleteDispenser', { message: e.message } ) }` )
 			log( e )
 			setLoading( false )
 		}
@@ -139,25 +139,27 @@ export default function EventAdmin( ) {
 
 			<Hero>
 
-				<H1>Magic POAP Dispenser</H1>
-				{ ( !event.loading && !event.codes ) ? <H2>⚠️ Your event is being reviewed</H2>: <H2>Your unique QR dispenser link</H2> }
+				<H1>{ t( 'title' ) }</H1>
+				{ ( !event.loading && !event.codes ) ? <H2>{ t( 'hero.subheading.reviewed' ) }</H2>: <H2>{ t( 'hero.subheading.unique' ) }</H2> }
 
 				{ /* Event meta loaded, codes available */ }
 				{ !event.loading && event.codes && <>
 					<Section margin="0">
-						<Text>This link is intended to be displayed on a physical device, or through a screenshare during a stream. <b>NEVER</b> send it to anyone.</Text>
+						<Text>
+						{ t( 'hero.description.pre' ) }<b>{ t( 'hero.description.bold' ) }</b>{ t( 'hero.description.post' ) }
+						</Text>
 						<Input
 							id='admin-eventlink-public' 
 							readOnly
 							onClick={ focus }
-							label="Your public QR Dispenser link"
+							label={ t( 'hero.input.label' ) }
 							value={ eventLink }
-							info="This link takes you to your QR Dispenser page. For example, you can display this page on an iPad at your check-in desk."
+							info={ t( 'hero.input.info' ) }
 						/>
 					</Section>
 					<Section padding="0" margin="0" justify="flex-start" direction="row">
-						<Button margin=".5em .5rem .5rem 0" onClick={ f => window.open( eventLink, '_self' ) }>Open link & start distributing POAPs</Button>
-						{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>Copy to clipboard</Button> }
+						<Button margin=".5em .5rem .5rem 0" onClick={ f => window.open( eventLink, '_self' ) }>{ t( 'hero.distribute.button' ) }</Button>
+						{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>{ t( 'hero.distribute.clipboard' ) }</Button> }
 					</Section>
 				</> }
 
@@ -165,34 +167,34 @@ export default function EventAdmin( ) {
 
 				{ !event.loading && !event.codes && <Section align='flex-start' margin="0">
 
-					<Text>This QR dispenser will become available once the curation team approves your event.</Text>
-					<Text>You will receive an email when your event is approved. This email will also send you the manual claim links in a links.txt file. You don&apos;t have to use them, but it is ok to use them in combination with this QR dispenser.</Text>
+					<Text>{ t( 'hero.notavailable.title' ) }</Text>
+					<Text>{ t( 'hero.notavailable.description' ) }</Text>
 				</Section> }
 
 			</Hero>
 
 			<Section margin="0" align="flex-start">
-				<H1>Secret Admin Section</H1>
+				<H1>{ t( 'deleteDispenser.title' ) }</H1>
 
 				<Section align="flex-start">
-					<H2>Delete this QR dispenser</H2>
-					<Text>Want to create a new QR dispenser for this drop? Delete this QR dispenser first, and then create a new dispenser when you are ready.</Text>
-					<Button onClick={ safelyDeleteEvent }>Delete QR dispenser</Button>
+					<H2>{ t( 'deleteDispenser.subheading' ) }</H2>
+					<Text>{ t( 'deleteDispenser.description' ) }</Text>
+					<Button onClick={ safelyDeleteEvent }>{ t( 'deleteDispenser.deleteBtn' ) }</Button>
 				</Section>
 
 
 				<Section align="flex-start">
-					<H2>Admin link</H2>
-					<Text>Your admin link is yours to make changes to this instance of the magic POAP dispenser. Don&apos;t share this with anyone!</Text>
+					<H2>{ t( 'adminDispenser.title' ) }</H2>
+					<Text>{ t( 'adminDispenser.description' ) }</Text>
 					<Input
 						id='admin-eventlink-secret'
 						readOnly
 						onClick={ focus }
-						label="Your secret admin link"
+						label={ t( 'adminDispenser.input.label' ) }
 						value={ adminLink }
-						info="The link to this admin page, the page you are seeing now. This link allows you to delete your QR Dispenser. Keep it secret!"
+						info={ t( 'adminDispenser.input.info' ) }
 					/>
-					{ clipboardAPI && <Button onClick={ f => clipboard( adminLink ) }>Copy secret admin link to clipboard</Button> }
+					{ clipboardAPI && <Button onClick={ f => clipboard( adminLink ) }>{ t( 'adminDispenser.clipboard' ) }</Button> }
 				</Section>
 
 				

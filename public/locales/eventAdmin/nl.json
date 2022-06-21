@@ -1,20 +1,49 @@
 {
   "title": "Magische POAP Dispenser",
-  "createButton": "Creëer QR-dispenser",
-  "startedtext": "Begin nu",
-  "welcome": {
-    "hero": {
-      "title": "Magische POAP Dispenser ",
-      "subheading": "Breng POAPs naar je vrienden IRL",
-      "description": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen."
+  "loadingDispenser": "QR-dispenser laden",
+  "setLoadingDispenser": "QR-dispenser verwijderen",
+  "loadingValidity": "Geldigheid van beheerderslink controleren",
+  "invalidValidity": "Ongeldige link voor evenementbeheerder",
+  "confirmDeleteDispenser": "Weet u zeker dat u uw QR-dispenser wilt verwijderen?\n\n\nDit kan niet ongedaan worden gemaakt, maar u kunt altijd een nieuwe QR-dispenser maken door dezelfde eenvoudige stappen te volgen die u hebt gebruikt om deze te maken.",
+  "succesDeleteDispenser": "Succes met verwijderen!\n\n\nUw QR-dispenser is verwijderd.\n\n\nKlik op OK om doorgestuurd te worden naar de startpagina.",
+  "deletionCancelled": "Verwijdering geannuleerd, je evenement bestaat nog steeds.",
+  "errorDeleteDispenser": "Fout bij verwijderen QR-dispenser: {{ message }}",
+  "hero": {
+    "subheading": {
+      "reviewed": "⚠️ Je evenement wordt beoordeeld",
+      "unique": "Uw unieke QR-dispenserlink"
     },
-    "checkin": {
-      "title": "Fysieke POAP-distributie makkelijk gemaakt",
-      "description": "Stel voor IRL-evenementen eenvoudig een apparaat of meerdere apparaten in om unieke POAP QR-codes weer te geven aan deelnemers."
+    "description": {
+      "pre": "Deze link is bedoeld om te worden weergegeven op een fysiek apparaat, of via een screenshare tijdens een stream. Deel de link ",
+      "bold": "NIET",
+      "post": " met anderen."
     },
-    "stream": {
-      "title": "Stream-vriendelijk QR-delen",
-      "description": "Stel tijdens een livestream een screenshare in die POAP QR-codes weergeeft."
+    "input": {
+      "label": "Uw openbare QR Dispenser-link",
+      "info": "Deze link brengt u naar uw QR Dispenser-pagina. \nU kunt deze pagina bijvoorbeeld op een iPad tonen bij uw incheckbalie."
+    },
+    "distribute": {
+      "button": "Open link",
+      "clipboard": "Kopieer naar klembord"
+    },
+    "notavailable": {
+      "title": "Deze QR-dispenser komt beschikbaar zodra het curatorteam uw evenement goedkeurt.",
+      "description": "Je ontvangt een e-mail wanneer je evenement is goedgekeurd. \nDeze e-mail stuurt u ook de handmatige claimlinks in een links.txt-bestand. \njij niet"
     }
+  },
+  "deleteDispenser": {
+    "title": "Geheime beheerderssectie",
+    "subheading": "Deze QR-dispenser verwijderen",
+    "description": "Wilt u een nieuwe QR-dispenser maken voor deze druppel? \nVerwijder eerst deze QR-dispenser en maak vervolgens een nieuwe dispenser als u klaar bent.",
+    "deleteBtn": "QR-dispenser verwijderen"
+  },
+  "adminDispenser": {
+    "title": "Beheerderslink",
+    "description": "Uw beheerderslink is van u om wijzigingen aan te brengen in dit exemplaar van de magische POAP-dispenser. \nDeel dit met niemand!",
+    "input": {
+      "label": "Uw geheime beheerderslink",
+      "info": "De link naar deze beheerderspagina, de pagina die u nu ziet. \nMet deze link kunt u uw QR-dispenser verwijderen. \nHou het geheim!"
+    },
+    "clipboard": "Kopieer beheerderslink naar klembord"
   }
 }
