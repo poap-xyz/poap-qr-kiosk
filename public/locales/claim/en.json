@@ -10,5 +10,28 @@
   },
   "validation": {
     "alreadyUsed": "This link was already used, please scan the QR again"
+  },
+  "stroop": {
+    "timer": "Timer: ",
+    "score": "Your score: ",
+    "you": "You ",
+    "won": "won",
+    "lost": "lost",
+    "claimPoap": "Claim your POAP",
+    "loadPoap": "Loading your POAP...",
+    "game": {
+      "title": "Play a game to prove you are human",
+      "subtitle": "Instructions: click the button with the right color",
+      "description": "Get the highest score you can in {{ duration }} seconds",
+      "btn": "Start game"
+    },
+    "playing": {
+      "preTitle": "Click the ",
+      "postTitle": " button",
+      "subtitle": "Score: {{ score }} of {{ target_score }}",
+      "description": "Get the highest score you can in {{ duration }} seconds",
+      "btn": "Start game"
+    }
+    
   }
 }

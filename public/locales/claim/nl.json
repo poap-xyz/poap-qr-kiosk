@@ -10,5 +10,11 @@
   },
   "validation": {
     "alreadyUsed": "Deze link werd al gebruikt, scan de QR opnieuw"
+  },
+  "stroop": {
+    "timer": "Tijd: ",
+    "won": "gewonnen",
+    "lost": "verloren",
+    "you": "Je hebt "
   }
 }
