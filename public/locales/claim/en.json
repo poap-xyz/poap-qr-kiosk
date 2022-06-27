@@ -28,9 +28,7 @@
     "playing": {
       "preTitle": "Click the ",
       "postTitle": " button",
-      "subtitle": "Score: {{ score }} of {{ target_score }}",
-      "description": "Get the highest score you can in {{ duration }} seconds",
-      "btn": "Start game"
+      "subtitle": "Score: {{ score }} of {{ target_score }}"
     }
     
   }
