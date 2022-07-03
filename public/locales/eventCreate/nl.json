@@ -3,9 +3,9 @@
   "file": {
     "acceptedFormat": "Het bestandsformaat is geen csv/txt",
     "noCodes": "Geen codes gevonden",
-    "codeFormat": " codes hadden een ongeldig formaat. Voorbeeld van een foutieve code: ",
+    "codeFormat": " codes hebben een ongeldig formaat. Voorbeeld van een foutieve code: ",
     "csvNoEntries": "Csv heeft 0 regels",
-    "mintCheck": "Je mint-links controleren",
+    "mintCheck": "Controleren van mint-links",
     "codesDetected": "{{ count }} codes gedetecteerd.",
     "codesDetected_one": "{{ count }} code gedetecteerd.",
     "codesDetected_two": "{{ count }} codes gedetecteerd."
@@ -16,41 +16,41 @@
     "eventCreate": "Maak dispenser met {{ count }} codes",
     "eventCreate_one": "Maak dispenser met {{ count }} code",
     "eventCreate_two": "Maak dispenser met {{ count }} codes",
-    "noName": "Geef een evenementnaam op",
+    "noName": "Geef een naam voor het evenement op",
     "noEmail": "Geef een geldig e-mailadres op",
     "wrongDate": "Geef de datum op in JJJJ-MM-DD, bijvoorbeeld 2021-11-25",
-    "creationMessage": "NL Please confirm that this is correct:\n\nDrop name: {{ name }}\n\nAdministrator email: {{ email }}\n\nQR dispenser expires at: ",
+    "creationMessage": "Zijn de volgende gegevens correct:\n\nNaam van evenement: {{ name }}\n\nBeheerders e-mailadres: {{ email }}\n\nQR-dispenser verloopt op: ",
     "dropName": {
-      "label": "Drop naam",
+      "label": "Naam van evenement",
       "placeholder": "beste lanceringsfeest ooit",
-      "info": "Voor uw eigen referentie, niet zichtbaar voor de wereld."
+      "info": "Voor eigen referentie, niet zichtbaar voor anderen."
     },
     "dropDate": {
       "label": "Vervaldatum QR-dispenser",
-      "info": "Na deze datum in uw lokale tijdzone werkt uw QR-kiosk niet meer\n\n⚠️ Je kunt maximaal 30 dagen van tevoren inplannen."
+      "info": "Na de vervaldatum in je lokale tijdzone werkt de QR-dispenser niet meer\n\n⚠️ Je kunt maximaal 30 dagen van tevoren inplannen."
     },
     "dropEmail": {
       "label": "E-mailadres",
       "placeholder": "revered@organizer.com",
-      "info": "We will send the QR kiosk link and the admin link there."
+      "info": "We versturen de dispenserlink en de beheerderslink naar dit e-mailadres."
     },
     "dropGame": {
       "label": "Anti-farming inschakelen?",
-      "info": "Vooral online evenementen trekken vaak kwaadwillende POAP-farmers aan (mensen die gewoon komen opdagen om zoveel mogelijk POAP's te krijgen zonder nuttige deelnemers te zijn).\n\nAls u deze instelling inschakelt, worden uw deelnemers gedwongen een minuut lang een minigame te spelen voordat ze een POAP krijgen.",
+      "info": "Vooral online evenementen trekken vaak kwaadwillende POAP-farmers aan (mensen die zoveel mogelijk POAP's proberen te verzamelen zonder echte deelnemers te zijn).\n\nAls u deze instelling inschakelt, worden je deelnemers gedwongen een mini-spel te spelen voordat ze een POAP krijgen.",
       "options": [
         {
-          "label": "Nee (optional for physical events)",
+          "label": "Nee (optioneel voor fysieke evenementen)",
           "value": "no"
         },
         {
-          "label": "Ja (recommended for online)",
+          "label": "Ja (aanbevolen voor online evenementen)",
           "value": "yes"
         }
       ]
     },
     "gameTime": {
       "label": "Hoeveel seconden moet het anti-farming spel duren?",
-      "info": "Hoe langer je dit instelt, hoe moeilijker het voor mensen wordt om je POAP-drop te bewerken",
+      "info": "Hoe langer de tijd, hoe moeilijker het voor mensen wordt om je POAP-evenement te verstoren",
       "options": [
         {
           "label": "30 sec",
@@ -72,7 +72,7 @@
     }
   },
   "input": {
-    "label": "Selecteer .txt-bestand dat uw POAP-mint-links bevat",
-    "info": "Dit is het .txt-bestand dat je via e-mail hebt ontvangen nadat je je POAP-drop hebt gemaakt op https://app.poap.xyz/admin"
+    "label": "Selecteer het .txt-bestand met je POAP-mint links",
+    "info": "Dit is het .txt-bestand dat je via e-mail hebt ontvangen nadat je je mint links hebt aangevraagd op https://app.poap.xyz/admin"
   }
 }

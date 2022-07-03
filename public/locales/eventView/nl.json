@@ -1,12 +1,12 @@
 {
-  "eventLoading": "Evenementdata inladen",
-  "eventNoCache": "Fout: Geen gebeurtenis-ID bekend.\n\n\nZorg ervoor dat u deze pagina opent via de gebeurtenislink vanuit de beheerdersinterface.\n\n\nDit is een maatregel tegen misbruik.",
+  "eventLoading": "Laden van evenement",
+  "eventNoCache": "Fout: Geen event-ID bekend.\n\n\nZorg ervoor dat je deze pagina opent via de gebeurtenislink vanuit de beheerdersinterface.\n\n\nDit is een maatregel tegen misbruik.",
   "setKiosk": "Uw kiosk instellen",
   "expiredKiosk": "Setting up your Kiosk",
   "terms": {
     "title": "Voordat we beginnen",
     "subheading": "Houd je internet aan",
-    "description": "Zonder internetverbinding worden nieuwe codes niet meer geladen. \nU ontvangt een melding als de dispenser merkt dat u offline bent.",
+    "description": "Zonder internetverbinding worden nieuwe codes niet meer geladen. \nJe ontvangt een melding als de dispenser offline is.",
     "acceptBtn": "Ik begrijp het, laten we gaan!"
   },
   "expired": {
