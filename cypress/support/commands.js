@@ -1,6 +1,14 @@
 // File upload test helper
 import 'cypress-file-upload'
 
+// Set language cookie default for each test
+// see https://github.com/i18next/i18next-browser-languageDetector
+beforeEach( () => {
+
+	cy.setCookie( 'i18next', 'en' )
+
+} )
+
 // Stub google analytics requests
 beforeEach( () => {
 
