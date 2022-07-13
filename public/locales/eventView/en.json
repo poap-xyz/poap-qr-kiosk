@@ -1,0 +1,25 @@
+{
+  "eventLoading": "Loading event data",
+  "eventNoCache": "Error: No event ID known.\n\nMake sure to open this page through the event link from the admin interface.\n\nThis is an anti-abuse measure.",
+  "setKiosk": "Setting up your Kiosk",
+  "expiredKiosk": "Setting up your Kiosk",
+  "terms": {
+    "title": "Before we begin",
+    "subheading": "Keep your internet on",
+    "description": "Without an internet connection new codes will stop loading. You will receive a notification if the dispenser notices you are offline.",
+    "acceptBtn": "I understand, let's go!"
+  },
+  "expired": {
+    "title": "QR Kiosk expired",
+    "description": "This kiosk was set to expire on {{ expireDate }} by the organiser."
+  },
+  "codes": {
+    "title": "No codes available",
+    "description": "If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface."
+  },
+  "view": {
+    "title": "",
+    "subheading": "Scan the QR with your camera to claim your POAP",
+    "claimed": "{{ available }} of {{ codes }} codes claimed or pending"
+  }
+}

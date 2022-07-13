@@ -4,6 +4,8 @@ import { log, dev, wait } from '../../modules/helpers'
 import { useParams } from 'react-router-dom'
 import { validateCallerDevice, validateCallerCaptcha, trackEvent, listen_to_claim_challenge, get_code_by_challenge, requestManualCodeRefresh, health_check } from '../../modules/firebase'
 
+import { useTranslation } from 'react-i18next'
+
 // Components
 import Loading from '../molecules/Loading'
 import Stroop from '../molecules/Stroop'
@@ -14,11 +16,13 @@ import Captcha from '../molecules/Captcha'
 // ///////////////////////////////
 export default function ViewQR( ) {
 
+  const { t } = useTranslation( [ 'claim', 'dispenser' ] )
+
   // ///////////////////////////////
   // State handling
   // ///////////////////////////////
   const { challenge_code, error_code } = useParams( )
-  const [ loading, setLoading ] = useState( `Verifying your humanity, you'll be forwarded soon` )
+  const [ loading, setLoading ] = useState( `${ t( 'setLoading' ) }` )
   const [ userValid, setUserValid ] = useState( false )
   const [ gameDone, setGameDone ] = useState( false )
   const [ challenge, setChallenge ] = useState( {} )
@@ -45,12 +49,13 @@ export default function ViewQR( ) {
     trackEvent( 'claim_spammer_stall_triggered' )
     // Wait to keep the spammer busy
     await wait( step_delay )
-    setLoading( '👀 Have I seen you before?' )
+    setLoading( `${ t( 'stall.loadingPrimary' ) }` )
     await wait( step_delay )
-    setLoading( '🧐 You look a bit suspicious my friend...' )
+    setLoading( `${ t( 'stall.loadingSecondary' ) }` )
     await wait( step_delay )
-    setLoading( 'Please scan a new QR code' )
-    if( error ) throw new Error( `Verification failed! Either you took too long, or a lot of people are scanning at the same time, please scan again :).\n\nDebug info: ${ error_code }, bc ${ challenge_code }, fe ${ trail }` )
+    setLoading( `${ t( 'stall.loadingNewScan' ) }` )
+    if( error ) throw new Error( `${ t( 'stall.loadingError', {  error_code: error_code, challenge_code: challenge_code, trail: trail } ) }` )
+    
     setLoading( false )
 
   }
@@ -75,7 +80,7 @@ export default function ViewQR( ) {
 
     // Formulate redirect 
     const link = `https://poap.xyz/claim/${ claim_code }`
-    log( `Claim link generated: `, link )
+    log( `${ t( 'formulateRedirect' ) }`, link )
 
     return link
   }
@@ -98,11 +103,11 @@ export default function ViewQR( ) {
         if( cancelled ) return log( `Health effect cancelled` )
         if( !dev && !health.healthy ) {
           trackEvent( `claim_system_down` )
-          return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+          return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
         }
 
       } catch( e ) {
-        log( `Error getting system health: `, e )
+        log( `${ t( 'health.errorStatus', { ns: 'dispenser' } ) }`, e )
       }
 
     } )( )
@@ -142,7 +147,7 @@ export default function ViewQR( ) {
         // Always wait an extra second
         await wait( 2000 )
         if( cancelled ) return
-        setLoading( `Prepping your POAP` )
+        setLoading( `${ t( 'preppingMessage' ) }` )
         await wait( 2000 )
         if( cancelled ) return
 
@@ -208,12 +213,12 @@ export default function ViewQR( ) {
       try {
 
         // Check for presence of challenge data
-        if( !userValid ) return log( `User not (yet) validated` )
+        if( !userValid ) return log( 'User not (yet) validated' )
 
         // Validate for expired challenge
         if( userValid && !challenge ) {
           trackEvent( `claim_challenge_expired` )
-          throw new Error( `This link was already used, please scan the QR again` )
+          throw new Error( `${ t( 'validation.alreadyUsed' ) }` )
         }
 
         log( `Challenge received: `, challenge )

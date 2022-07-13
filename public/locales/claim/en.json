@@ -1,0 +1,35 @@
+{
+  "setLoading": "Verifying your humanity, you'll be forwarded soon",
+  "formulateRedirect": "Claim link generated: ",
+  "preppingMessage": "Prepping your POAP",
+  "stall": {
+    "loadingPrimary": "👀 Have I seen you before?",
+    "loadingSecondary": "🧐 You look a bit suspicious my friend...",
+    "loadingNewScan": "Please scan a new QR code",
+    "loadingError": "Verification failed! Either you took too long, or a lot of people are scanning at the same time, please scan again :).\n\nDebug info: {{ error_code }}, bc {{ challenge_code }}, fe {{ trail }}"
+  },
+  "validation": {
+    "alreadyUsed": "This link was already used, please scan the QR again"
+  },
+  "stroop": {
+    "timer": "Timer: ",
+    "score": "Your score: ",
+    "you": "You ",
+    "won": "won",
+    "lost": "lost",
+    "claimPoap": "Claim your POAP",
+    "loadPoap": "Loading your POAP...",
+    "game": {
+      "title": "Play a game to prove you are human",
+      "subtitle": "Instructions: click the button with the right color",
+      "description": "Get the highest score you can in {{ duration }} seconds",
+      "btn": "Start game"
+    },
+    "playing": {
+      "preTitle": "Click the ",
+      "postTitle": " button",
+      "subtitle": "Score: {{ score }} of {{ target_score }}"
+    }
+    
+  }
+}

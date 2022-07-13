@@ -1,0 +1,49 @@
+{
+  "title": "Magische POAP Dispenser",
+  "loadingDispenser": "QR-dispenser laden",
+  "setLoadingDispenser": "QR-dispenser verwijderen",
+  "loadingValidity": "Geldigheid van beheerderslink controleren",
+  "invalidValidity": "Ongeldige link voor evenementbeheerder",
+  "confirmDeleteDispenser": "Weet je zeker dat je de QR-dispenser wilt verwijderen?\n\n\nDit kan niet ongedaan worden gemaakt, maar je kunt altijd een nieuwe QR-dispenser maken door dezelfde eenvoudige stappen te volgen die je hebt gebruikt om deze te maken.",
+  "succesDeleteDispenser": "Succes met verwijderen!\n\n\nUw QR-dispenser is verwijderd.\n\n\nKlik op OK om doorgestuurd te worden naar de startpagina.",
+  "deletionCancelled": "Verwijdering geannuleerd, je evenement bestaat nog steeds.",
+  "errorDeleteDispenser": "Fout bij verwijderen QR-dispenser: {{ message }}",
+  "hero": {
+    "subheading": {
+      "reviewed": "⚠️ Je evenement wordt beoordeeld",
+      "unique": "Je unieke QR-dispenser link"
+    },
+    "description": {
+      "pre": "Deze link is bedoeld om te worden weergegeven op een fysiek apparaat, of via een screenshare tijdens een stream. Deel de link ",
+      "bold": "NIET",
+      "post": " met anderen."
+    },
+    "input": {
+      "label": "Je openbare QR-dispenser link",
+      "info": "Deze link brengt je naar de QR-dispenser pagina. \nJe kunt deze pagina bijvoorbeeld op een iPad tonen bij een incheckbalie."
+    },
+    "distribute": {
+      "button": "Open link",
+      "clipboard": "Kopieer naar klembord"
+    },
+    "notavailable": {
+      "title": "Deze QR-dispenser komt beschikbaar zodra het curatorteam uw evenement goedkeurt.",
+      "description": "Je ontvangt een e-mail wanneer je evenement is goedgekeurd. \nDeze e-mail stuurt je ook de handmatige claimlinks in een links.txt-bestand. \njij niet"
+    }
+  },
+  "deleteDispenser": {
+    "title": "Geheime beheerderssectie",
+    "subheading": "Deze QR-dispenser verwijderen",
+    "description": "Wil je een nieuwe QR-dispenser maken voor dit evenement? \nVerwijder eerst deze QR-dispenser en maak vervolgens een nieuwe aan als je klaar bent.",
+    "deleteBtn": "QR-dispenser verwijderen"
+  },
+  "adminDispenser": {
+    "title": "Beheerderslink",
+    "description": "De beheerderslink brengt je bij een persoonlijke omgeving om wijzigingen aan te brengen aan de magische QR-dispenser. \nDeel deze link met niemand!",
+    "input": {
+      "label": "Je geheime beheerderslink",
+      "info": "De link naar deze beheerderspagina, de pagina die je nu ziet. \nMet deze link kun je de QR-dispenser verwijderen. \nHou de link geheim!"
+    },
+    "clipboard": "Kopieer beheerderslink naar klembord"
+  }
+}

@@ -4,6 +4,7 @@ import { requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuse
 import { log, dev } from '../../modules/helpers'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import useInterval from 'use-interval'
+import { useTranslation } from 'react-i18next'
 
 // Debugging data
 let { REACT_APP_publicUrl, REACT_APP_useEmulator } = process.env
@@ -25,6 +26,8 @@ import Network from '../molecules/NetworkStatusBar'
 // ///////////////////////////////
 export default function ViewQR( ) {
 
+  const { t } = useTranslation( [ 'eventView' , 'dispenser' ] )
+
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -40,7 +43,7 @@ export default function ViewQR( ) {
   // State handling
   // ///////////////////////////////
   const defaultScanInerval = 2 * 60 * 1000
-  const [ loading, setLoading ] = useState( 'Setting up your Kiosk' )
+  const [ loading, setLoading ] = useState( `${ t( 'setKiosk' ) }` )
   const [ event, setEvent ] = useState(  )
   const [ template, setTemplate ] = useState( {} )
 	const [ internalEventId, setInternalEventId ] = useState( eventId || stateEventId )
@@ -75,7 +78,7 @@ export default function ViewQR( ) {
         if( cancelled ) return log( `Health effect cancelled` )
         if( !dev && !health.healthy ) {
           trackEvent( `event_view_event_system_down` )
-          return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+          return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
         }
 
       } catch( e ) {
@@ -116,10 +119,10 @@ export default function ViewQR( ) {
       if( eventId ) return log( `Event ID present in url, ignoring localstorage` )
       log( `No event ID in url, loading event ID from localstorage` )
       const cached_event_id = localStorage.getItem( 'cached_event_id' )
-      if( !cached_event_id ) throw new Error( `Error: No event ID known.\n\nMake sure to open this page through the event link from the admin interface.\n\nThis is an anti-abuse measure.` )
+      if( !cached_event_id ) throw new Error( `${ t( 'eventNoCache' ) }` )
       trackEvent( `event_view_event_id_from_cache` )
       setInternalEventId( cached_event_id )
-      setLoading( 'Loading event data' )
+      setLoading( `${ t( 'eventLoading' ) }` )
 
     } catch( e ) {
 
@@ -186,13 +189,13 @@ export default function ViewQR( ) {
 
   // Show welcome screen
   if( !acceptedTerms ) return <Container>
+    
+    <H1 align="center">{ t( 'terms.title' ) }</H1>
 
-    <H1 align="center">Before we begin</H1>
+    <H2>{ t( 'terms.subheading' ) }</H2>
+    <Text align="center">{ t( 'terms.description' ) }</Text>
 
-    <H2>Keep your internet on</H2>
-    <Text align="center">Without an internet connection new codes will stop loading. You will receive a notification if the dispenser notices you are offline.</Text>
-
-    <Button id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>I understand, let&apos;s go!</Button>
+    <Button id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>{ t( 'terms.acceptBtn' ) }</Button>
 
   </Container>
 
@@ -201,18 +204,18 @@ export default function ViewQR( ) {
 
   // Expired event error
   if( event?.expires && event.expires < Date.now() ) return <Container>
-
-    <h1>QR Kiosk expired</h1>
-    <Sidenote>This kiosk was set to expire on { new Date( event.expires ).toString(  ) } by the organiser.</Sidenote>
-
+  
+    <h1>{ t( 'expired.title' ) }</h1>
+    <Sidenote>{ t( 'expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Sidenote>
+    
   </Container>
 
   // No code error
   if( !event?.public_auth?.expires ) return <Container>
-
-    <h1>No codes available</h1>
-    <Sidenote onClick={ f => navigate( '/admin' ) }>If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface.</Sidenote>
-
+  
+    <h1>{ t( 'codes.title' ) }</h1>
+    <Sidenote onClick={ f => navigate( '/admin' ) }>{ t( 'codes.description' ) }</Sidenote>
+    
   </Container>
 
   // Display QR
@@ -220,14 +223,14 @@ export default function ViewQR( ) {
 
     {  /* Event metadata */ }
     { event && <H1 color={ template?.main_color } align="center">{ event.name }</H1> }
-    { <H2 color={ template?.header_link_color } align="center">Scan the QR with your camera to claim your POAP</H2> }
+    { <H2 color={ template?.header_link_color } align="center">{ t( 'view.subheading' ) }</H2> }
 
     {  /* QR showing code */ }
     <QR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
-    { event && <Sidenote>{ event.codes - event.codesAvailable } of { event.codes } codes claimed or pending</Sidenote> }
-
+    { event && <Sidenote>{ t( 'view.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
+    
     <Network />
 
   </Container>

@@ -1,0 +1,78 @@
+{
+  "creatingDispenser": "QR-dispenser maken",
+  "file": {
+    "acceptedFormat": "Het bestandsformaat is geen csv/txt",
+    "noCodes": "Geen codes gevonden",
+    "codeFormat": " codes hebben een ongeldig formaat. Voorbeeld van een foutieve code: ",
+    "csvNoEntries": "Csv heeft 0 regels",
+    "mintCheck": "Controleren van mint-links",
+    "codesDetected": "{{ count }} codes gedetecteerd.",
+    "codesDetected_one": "{{ count }} code gedetecteerd.",
+    "codesDetected_two": "{{ count }} codes gedetecteerd."
+  },
+  "event": {
+    "eventExpired": "Dit evenement lijkt te zijn verlopen!",
+    "eventCancelled": "Evenement geannuleerd",
+    "eventCreate": "Maak dispenser met {{ count }} codes",
+    "eventCreate_one": "Maak dispenser met {{ count }} code",
+    "eventCreate_two": "Maak dispenser met {{ count }} codes",
+    "noName": "Geef een naam voor het evenement op",
+    "noEmail": "Geef een geldig e-mailadres op",
+    "wrongDate": "Geef de datum op in JJJJ-MM-DD, bijvoorbeeld 2021-11-25",
+    "creationMessage": "Zijn de volgende gegevens correct:\n\nNaam van evenement: {{ name }}\n\nBeheerders e-mailadres: {{ email }}\n\nQR-dispenser verloopt op: ",
+    "dropName": {
+      "label": "Naam van evenement",
+      "placeholder": "beste lanceringsfeest ooit",
+      "info": "Voor eigen referentie, niet zichtbaar voor anderen."
+    },
+    "dropDate": {
+      "label": "Vervaldatum QR-dispenser",
+      "info": "Na de vervaldatum in je lokale tijdzone werkt de QR-dispenser niet meer\n\n⚠️ Je kunt maximaal 30 dagen van tevoren inplannen."
+    },
+    "dropEmail": {
+      "label": "E-mailadres",
+      "placeholder": "revered@organizer.com",
+      "info": "We versturen de dispenserlink en de beheerderslink naar dit e-mailadres."
+    },
+    "dropGame": {
+      "label": "Anti-farming inschakelen?",
+      "info": "Vooral online evenementen trekken vaak kwaadwillende POAP-farmers aan (mensen die zoveel mogelijk POAP's proberen te verzamelen zonder echte deelnemers te zijn).\n\nAls u deze instelling inschakelt, worden je deelnemers gedwongen een mini-spel te spelen voordat ze een POAP krijgen.",
+      "options": [
+        {
+          "label": "Nee (optioneel voor fysieke evenementen)",
+          "value": "no"
+        },
+        {
+          "label": "Ja (aanbevolen voor online evenementen)",
+          "value": "yes"
+        }
+      ]
+    },
+    "gameTime": {
+      "label": "Hoeveel seconden moet het anti-farming spel duren?",
+      "info": "Hoe langer de tijd, hoe moeilijker het voor mensen wordt om je POAP-evenement te verstoren",
+      "options": [
+        {
+          "label": "30 sec",
+          "value": "30"
+        },
+        {
+          "label": "10 sec",
+          "value": "10"
+        },
+        {
+          "label": "20 sec",
+          "value": "20"
+        },
+        {
+          "label": "60 sec",
+          "value": "60"
+        }
+      ]
+    }
+  },
+  "input": {
+    "label": "Selecteer het .txt-bestand met je POAP-mint links",
+    "info": "Dit is het .txt-bestand dat je via e-mail hebt ontvangen nadat je je mint links hebt aangevraagd op https://app.poap.xyz/admin"
+  }
+}

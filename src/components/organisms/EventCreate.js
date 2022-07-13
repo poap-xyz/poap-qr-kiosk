@@ -12,11 +12,14 @@ import { registerEvent, trackEvent, getEventDataFromCode, health_check } from '.
 import { log, dateOnXDaysFromNow, monthNameToNumber, dev } from '../../modules/helpers'
 import Papa from 'papaparse'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
 export default function Admin( ) {
+
+
 
   const navigate = useNavigate(  )
 
@@ -34,6 +37,8 @@ export default function Admin( ) {
   const [ filename, setFilename ] = useState( 'codes.txt' )
   const [ isHealthy, setIsHealthy ] = useState( true )
 
+  const { t } = useTranslation( [ 'eventCreate', 'dispenser' ] )
+
   // ///////////////////////////////
   // Lifecycle handling
   // ///////////////////////////////
@@ -50,13 +55,13 @@ export default function Admin( ) {
           const { data: health } = await health_check()
           log( `Systems health: `, health )
           if( cancelled ) return log( `Health effect cancelled` )
-          if( !health.healthy ) {
-            setIsHealthy( false )
-            return alert( `The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.` )
+          if( !dev && !health.healthy ) {
+            trackEvent( `event_view_event_system_down` )
+            return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
           }
 
         } catch( e ) {
-          log( `Error getting system health: `, e )
+            log( `Error getting system health: `, e )
         }
 
       } )( )
@@ -77,11 +82,11 @@ export default function Admin( ) {
       try {
 
         // Loading animation
-        setLoading( `Checking your mint links` )
+        setLoading( `${ t( 'file.mintCheck' )}` )
 
         // Validations
         const { name } = csv
-        if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( 'File is not a csv/txt' )
+        if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( `${ t( 'file.acceptedFormat' )}` )
 
         // Set filename to state
         setFilename( name )
@@ -91,7 +96,7 @@ export default function Admin( ) {
         log( 'Raw codes loaded: ', data )
 
         // Remove website prefix
-        data = data.map( code => code.replace( /(https?:\/\/.*\/)/ig, '') )
+        data = data.map( code => code.replace( /(https?:\/\/.*\/)/ig, '' ) )
 
         // Take out empty lines
         data = data.filter( code => code.length != 0 )
@@ -103,20 +108,20 @@ export default function Admin( ) {
         if( erroredCodes.length ) {
 
           log( 'Errored codes: ', erroredCodes )
-          throw new Error( `${ erroredCodes.length } codes had an invalid format. Example of a malformed code: ${ erroredCodes[0] }` )
+          throw new Error( `${ erroredCodes.length } ${ t( 'file.codeFormat' )} ${ erroredCodes[0] }` )
 
         }
 
         // Validated and sanetised codes
         log( 'Sanetised codes: ', data )
-        if( !data.length ) throw new Error( `No codes in the file you selected` )
+        if( !data.length ) throw new Error( `${ t( 'file.noCodes' )}` )
         if( !cancelled ) setCodes( data )
 
         // Load event data based on codes
         const { data: { event, error } } = await getEventDataFromCode( data[0] )
         log( 'Code data received ', event, error )
         if( error ) throw new Error( error )
-        if( !event ) throw new Error( `This event appears to have expired!` )
+        if( !event ) throw new Error( `${ t( 'event.eventExpired' ) }` )
 
         // Set event details to state
         if( event.name ) setName( event.name )
@@ -170,23 +175,23 @@ export default function Admin( ) {
 
       // Health noti
       if( !isHealthy ) {
-        const ignore_unhealthy = confirm( `The POAP API is under maintenance, you can continue but this might cause unexpected behaviour.` )
-        if( !ignore_unhealthy ) throw new Error( `Event creation cancelled` )
+        const ignore_unhealthy = confirm( `${ t( 'health.maintenanceApi' ) }` )
+        if( !ignore_unhealthy ) throw new Error( `${ t( 'event.eventCancelled' ) }` )
       }
 
       // Validations
-      if( !codes.length ) throw new Error( 'Csv has 0 entries' )
-      if( !name.length ) throw new Error( 'Please specify an event name' )
-      if( !email.includes( '@' ) ) throw new Error( 'Please specify a valid email address' )
-      if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( 'Please specify the date in YYYY-MM-DD, for example 2021-11-25' )
+      if( !codes.length ) throw new Error( `${ t( 'file.csvNoEntries' ) }` )
+      if( !name.length ) throw new Error( `${ t( 'event.noName' ) }` )
+      if( !email.includes( '@' ) ) throw new Error( `${ t( 'event.noEmail' ) }` )
+      if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'event.wrongDate' ) }` )
 
       // Confirm date
-      const confirmed = confirm( `Please confirm that this is correct:\n\nDrop name: ${ name }\n\nAdministrator email: ${ email }\n\nQR dispenser expires at: ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
+      const confirmed = confirm( `${ t( 'event.creationMessage' , { name: name, email: email } ) } ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
       log( 'Confirmation status: ', confirmed )
-      if( !confirmed ) throw new Error( `Event creation cancelled.` )
+      if( !confirmed ) throw new Error( `${ t( 'event.eventCancelled' ) }` )
 
       // Call the cloud importer
-      setLoading( 'Creating QR Dispenser' )
+      setLoading( `${ t( 'creatingDispenser' ) }` )
 
       // Create remote event
       const { data: newEvent } = await registerEvent( {
@@ -230,23 +235,23 @@ export default function Admin( ) {
       <Input
         highlight={ !codes } 
         id="event-create-file"
-        label="Select .txt file that contains your POAP mint links"
-        info="This is the .txt file you received via email after you created your POAP drop at https://app.poap.xyz/admin"
+        label={ t( 'input.label' ) }
+        info={ t( 'input.info' )}
         accept=".csv,.txt"
-        title={ csv && codes && `[ ${filename} ] - ${ codes.length } codes detected.` }
+        title={ csv && codes && `[ ${filename} ] - ${ t( 'file.codesDetected' , { count: codes.length } ) }` }
         onClick={ !filename ? undefined : () => setCsv( undefined ) }
         onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
       />
 
       { codes && <>
-        <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder='Best launch party ever' label="Drop name" info="For your own reference, not visible to the world." value={ name } />
-        <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label="QR dispenser expiry date" info={ `After this date in your local timezone, your QR kiosk will stop working\n\n⚠️ You can only schedule up to 30 days in advance.` } value={ date } />
-        <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder='revered@organizer.com' label="Your email" info="We will send the QR kiosk link and the admin link there." value={ email } />
-        <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label="Enable anti-farming game?" info={ `Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.` } type='dropdown' options={ [ 'No (optional for physical events)', 'Yes (recommended for online)' ] } />
-        { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label="How many seconds should the anti-farming game last?" info="The longer you set this, the harder it becomes for humans to farm your POAP drop" options={ [ 30, 10, 20, 60 ] } /> }
+        <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'event.dropName.placeholder' ) } label={ t( 'event.dropName.label' ) } info={ t( 'event.dropName.info' ) } value={ name } />
+        <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'event.dropDate.label' ) } info={ `${ t( 'event.dropDate.info' ) }` } value={ date } />
+        <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'event.dropEmail.placeholder' ) } label={ t( 'event.dropEmail.label' ) } info={ t( 'event.dropEmail.info' ) } value={ email } />
+        <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label={ t( 'event.dropGame.label' ) } info={ `${ t( 'event.dropGame.info' ) }` } type='dropdown' options={ t( 'event.dropGame.options', { returnObjects: true } ) } />
+        { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'event.gameTime.label' ) } info={ t( 'event.gameTime.info' ) } options={ t( 'event.gameTime.options', { returnObjects: true } ) } /> }
       </> }
       
-      { codes && <Button id="event-create-submit" onClick={ createEvent }>Create dispenser with { codes.length } codes</Button> }
+      { codes && <Button id="event-create-submit" onClick={ createEvent }>{ t( 'event.eventCreate', { count: codes.length } ) }</Button> }
       { /* codes && <Button id="event-create-reset" color='hint' onClick={ f => setCodes( null ) }>Upload different codes</Button> */ }
     </Main>
 

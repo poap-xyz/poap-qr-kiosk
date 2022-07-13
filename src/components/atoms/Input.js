@@ -57,7 +57,7 @@ export default ( { onChange, type, label, info, highlight, id, title, onClick, o
 
 		{ !title && type != 'dropdown' && <input data-testid={ internalId } { ...props } id={ internalId } onChange={ onChange } type={ type || 'text' } /> }
 		{ !title && type == 'dropdown' && <select id={ internalId } onChange={ onChange }>
-			{ options.map( option => <option key={ option } value={ option }>{ option }</option> ) }
+			{ options.map( ( option, index ) => <option key={ index } value={ option.value }>{ option.label }</option> ) }
 		</select> }
 
 		{ title && <p>{ title }</p> }

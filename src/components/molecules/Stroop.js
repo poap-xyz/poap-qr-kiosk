@@ -8,6 +8,8 @@ import { useState, useEffect, useRef } from 'react'
 import { log } from '../../modules/helpers'
 import useInterval from 'use-interval'
 
+import { useTranslation } from 'react-i18next'
+
 // Stroop assets
 // const colors = [ 'red', 'green', 'blue', 'coral', 'darkblue', 'darkgreen', 'darkred', 'deeppink', 'lightgreen', 'lightblue', 'magenta', 'turquoise', 'purple', 'black', 'orange', 'grey' ]
 const colors = [ 'red', 'green', 'blue', 'darkblue', 'darkgreen', 'darkred', 'lightgreen', 'lightblue', 'purple', 'black', 'orange', 'grey' ]
@@ -23,10 +25,12 @@ const Timer = ( { duration, onComplete } ) => {
 		setTimePassed( timePassed + 1 )
 	}, 1000 )
 
-	return <Text>Timer: { duration - timePassed }</Text>
+	return <Text>{ t( 'stroop.timer' ) } { duration - timePassed }</Text>
 }
 
 export default ( { duration_input, target_score_input, onWin, onLose, poap_url, ...props } ) => {
+
+	const { t } = useTranslation( [ 'claim' , 'dispenser' ] )
 
 	const [ started, setStarted ] = useState( false )
 	const [ answer, setAnswer ] = useState( random_color() )
@@ -126,25 +130,25 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
 
 	if( done ) return <Container>
 		
-		<H1 align='center'>You { score >= target_score ? 'won' : 'lost' }!</H1>
-		<H2>Your score: { score } { score_emoji() }</H2>
-		{ score >= target_score && <Button onClick={ claim_poap }>{ poap_url ? 'Claim your POAP' : 'Loading your POAP...' }</Button> }
+		<H1 align='center'>{ t( 'stroop.you' ) } { score >= target_score ? t( 'stroop.won' ) : t( 'stroop.lost' ) }!</H1>
+		<H2>{ t( 'stroop.score' ) } { score } { score_emoji() }</H2>
+		{ score >= target_score && <Button onClick={ claim_poap }>{ poap_url ? t( 'stroop.claimPoap' ) : t( 'stroop.loadPoap' ) }</Button> }
 
 	</Container>
 
 	if( !started ) return <Container>
 		
-		<H1 align='center'>Play a game to prove you are human</H1>
-		<H2 align='center'>Instructions: click the button with the right color</H2>
-		<Text align='center'>Get the highest score you can in {duration} seconds</Text>
-		<Button onClick={ f => setStarted( true ) }>Start game</Button>
+		<H1 align='center'>{ t( 'stroop.game.title' ) }</H1>
+		<H2 align='center'>{ t( 'stroop.game.subtitle' ) }</H2>
+		<Text align='center'>{ t( 'stroop.game.description', { duration: duration } ) }</Text>
+		<Button onClick={ f => setStarted( true ) }>{ t( 'stroop.game.btn' ) }</Button>
 
 	</Container>
 
 	return	<Container>
 
-		<H1 align='center'>Click the <span style={ { color: random_color( answer ) } }>{ answer }</span> button</H1>
-		<H2>Score: { score } of { target_score } { score_emoji() }</H2>
+		<H1 align='center'>{ t( 'stroop.playing.preTitle' ) } <span style={ { color: random_color( answer ) } }>{ answer }</span> { t( 'stroop.playing.postTitle' ) }</H1>
+		<H2>{ t( 'stroop.playing.subtitle', { score: score, target_score: target_score } ) } { score_emoji() }</H2>
 		<Timer onComplete={ tally_score } duration={ duration } />
 
 		<Section direction="row">
