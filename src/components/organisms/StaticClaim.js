@@ -60,7 +60,7 @@ export default function StaticClaim() {
     if( loading ) return <Loading message={ loading } />
 
     // If no code meta is available yet, show spinner
-    if( !code_meta ) return <Loading message={ 'Verifying your QR' } />
+    if( code_meta?.event === 'loading' ) return <Loading message={ 'Verifying your QR' } />
 
     // If code was already used, show error message
     if( code_meta?.claimed === true ) return <Container>
@@ -68,7 +68,7 @@ export default function StaticClaim() {
     </Container>
 
     // If no drop meta available, the user is trying to cheat or has a malformed link
-    if( code_meta && !code_meta?.drop_meta ) return <Container>
+    if( !code_meta?.event ) return <Container>
         <Text>You scanned an invalid link, please contact the event organiser.</Text>
     </Container>
 

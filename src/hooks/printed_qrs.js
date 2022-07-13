@@ -4,9 +4,9 @@ import { log } from "../modules/helpers"
 
 export function useCodeMetadata( claim_code ) {
 
-    const [ event, set_event ] = useState()
-    const [ claimed, set_claimed ] = useState()
-    const [ drop_meta, set_drop_meta ] = useState()
+    const [ event, set_event ] = useState( 'loading' )
+    const [ claimed, set_claimed ] = useState( 'loading' )
+    const [ drop_meta, set_drop_meta ] = useState( 'loading' )
 
     // Get event meta from claim_code
     useEffect( (  ) => {
@@ -20,11 +20,11 @@ export function useCodeMetadata( claim_code ) {
                 // Get remote event data
                 const { data } = await check_code_status( claim_code )
                 log( `Received event meta for ${ claim_code }: `, data.event )
-                if( cancelled || !data ) return
+                if( cancelled ) return
 
                 // Set changed data to state
-                if( event?.id !== data?.event?.id ) set_event( data.event )
-                if( data.claimed !== claimed ) set_claimed( data.claimed )
+                set_event( data.event )
+                set_claimed( data.claimed )
     
             } catch( e ) {
                 log( `Error getting event meta for `, claim_code, e )
@@ -39,7 +39,8 @@ export function useCodeMetadata( claim_code ) {
     useEffect( f => {
 
         // Log whether we can listen
-        if( !event?.id ) return log( `No drop ID available for ${ claim_code }, doing nothing. Known meta: `, event )
+        if( !event?.id )return log( `No drop ID available for ${ claim_code }, setting to empty. Known meta: `, event )
+
         log( `Starting listener for static_drop_public/${ event.id }` )
 
         // Handle mock event listening for CI
@@ -59,7 +60,6 @@ export function useCodeMetadata( claim_code ) {
         drop_meta
     }
 
-    log( `New data for ${ claim_code }: `, collated_metadata )
     return collated_metadata
 
 }
