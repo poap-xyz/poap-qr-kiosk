@@ -27,7 +27,12 @@ const allow_only_these_properties = ( obj, allowed_properties ) => {
 
 }
 
+// Async waiter
 const wait = ( durationinMs=1000 ) => new Promise( resolve => setTimeout( resolve, durationinMs ) )
+
+// Email regex validation based on https://emailregex.com/
+const valid_email_regex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
+const isEmail = ( string='' ) => !!string.match( valid_email_regex )
 
 /* ///////////////////////////////
 // Retryable & throttled async
@@ -108,5 +113,6 @@ module.exports = {
 	require_properties,
 	allow_only_these_properties,
 	wait,
-	throttle_and_retry
+	throttle_and_retry,
+	isEmail
 }

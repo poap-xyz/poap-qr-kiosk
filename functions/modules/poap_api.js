@@ -139,10 +139,6 @@ exports.call_poap_endpoint = async ( endpoint='', data, method='GET', format='js
 			// Try to access response as json first
 			const json = await res.json()
 			log( 'API json response: ', json )
-
-			// Check for errors, for some reason the API sometimes only gives { message } when it means { message, error }
-			if( json.message ) throw new Error( `Message found in API, triggering error` )
-
 			return json
 
 		} catch {
