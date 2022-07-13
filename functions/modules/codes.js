@@ -1,7 +1,7 @@
 // Firebase interactors
 const functions = require( 'firebase-functions' )
 const { db, dataFromSnap, increment } = require( './firebase' )
-const { log, dev } = require( './helpers' )
+const { log, dev, isEmail } = require( './helpers' )
 const { throw_on_failed_app_check } = require( './security' )
 const { call_poap_endpoint } = require( './poap_api' )
 
@@ -21,10 +21,57 @@ const checkCodeStatus = async code => {
 	const dayMonthYear = `${ tomorrow.getDate() }-${ tomorrow.toString().match( /(?:\w* )([A-Z]{1}[a-z]{2})/ )[1] }-${ tomorrow.getFullYear() }`
 	
 	// For testing codes, always reset on refresh
-	if( code.includes( 'testing' ) ) return { claimed: false, event: { end_date: dayMonthYear, expiry_date: dayMonthYear, name: `Test Event ${ Math.random() }` } }
+	if( code.includes( 'testing' ) ) {
+
+		// Get cached CI claim data
+		const [ claimed_code ] = await db.collection( `static_drop_claims` ).where( 'claim_code', '==', code ).get().then( dataFromSnap )
+		log( `Code claim match: `, claimed_code )
+		return {
+			claimed: !!claimed_code,
+			secret: `mock_secret`,
+			event: { 
+				id: `mock-event`,
+				end_date: dayMonthYear, 
+				expiry_date: dayMonthYear, 
+				name: `Test Event ${ Math.random() }`
+			}
+		}
+
+	}
 
 	// Get API data
 	return call_poap_endpoint( `/actions/claim-qr`, { qr_hash: code } )
+
+}
+
+// Publically exposed code check
+exports.check_code_status = function( code, context ) {
+
+	throw_on_failed_app_check( context )
+	return checkCodeStatus( code )
+
+}
+
+// Code claiming function
+async function claim_code_to_address( claim_code, drop_id, address, claim_secret ) {
+
+	// Handle mock claiming
+	const is_mock_claim = drop_id.includes( `mock` )
+
+	// Claim remotely, return empty mock response for mock claims
+	const claim_result = is_mock_claim ? ( {  } ) : await call_poap_endpoint( `/actions/claim-qr`, { address, qr_hash: claim_code, secret: claim_secret }, 'POST', 'json' )
+
+	// API error handling
+	const { error, message, Message, statusCode } = claim_result
+	if(	error ) throw new Error( `${ error }: ${ message || Message || statusCode || 'unknown details' }` )
+
+	// If it succeeded, save in local firestore
+	const one_hour = 1000 * 60 * 60
+	const claim_meta = { updated: Date.now(), updated_human: new Date().toString(), is_mock_claim, ...( is_mock_claim && { expires: Date.now() + one_hour } ) }
+	await db.collection( `static_drop_claims` ).add( { address, drop_id, claim_code, claim_secret, ...claim_meta } )
+
+	// If all went well, return 
+	return
 
 }
 
@@ -425,6 +472,39 @@ exports.get_code_by_challenge = async ( data, context ) => {
 		log( `Error getting code: `, e )
 		return { error: e.message }
 
+	}
+
+}
+
+/* ///////////////////////////////
+// Claim code by email
+// /////////////////////////////*/
+exports.claim_code_by_email = async ( data, context ) => {
+
+	try {
+
+		// Validate input
+		let { claim_code, email } = data
+		if(	!isEmail( email ) ) throw new Error( `Invalid email format` )
+		if( !claim_code ) throw new Error( `Missing event data` )
+
+		// Remove all +hack elements of emails
+		email = email.replace( /(\+.*)(?=@)/ig, '' )
+
+		// Grab private drop meta needed for claim
+		const { secret, claimed, event } = await checkCodeStatus( claim_code )
+		if( claimed ) throw new Error( `This QR was already used and is no longer valid.` )
+
+		// Save email to firestore
+		const drop_id = event.id
+
+		// Trigger claim with POAP backend
+		await claim_code_to_address( claim_code, drop_id, email, secret )
+		return { success: true }
+
+	} catch( e ) {
+		console.error( `Error claiming code: `, e.message )
+		return { error: e.message }
 	}
 
 }

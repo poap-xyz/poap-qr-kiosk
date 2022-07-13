@@ -21,6 +21,13 @@ service cloud.firestore {
 
       }
 
+      // Allow reading of public static drop meta
+      match /static_drop_public/{drop_id} {
+
+        allow get: if true;
+
+      }
+
     }
   }
 }

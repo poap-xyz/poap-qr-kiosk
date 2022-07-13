@@ -10,10 +10,13 @@ log( `⚠️ Verbose mode on, ${ dev ? '⚙️ dev mode on' : '🚀 production m
 // Code status managers
 // ///////////////////////////////
 
-const { refreshScannedCodesStatuses, refresh_unknown_and_unscanned_codes, getEventDataFromCode } = require( './modules/codes' )
+const { refreshScannedCodesStatuses, refresh_unknown_and_unscanned_codes, getEventDataFromCode, check_code_status } = require( './modules/codes' )
 
 // Get event data of a code
 exports.getEventDataFromCode = functions.https.onCall( getEventDataFromCode )
+
+// Get all data of a code
+exports.check_code_status = functions.https.onCall( check_code_status )
 
 // Refresh all codes ( trigger from frontend )
 exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.onCall( refresh_unknown_and_unscanned_codes )
@@ -71,8 +74,9 @@ exports.validateCallerCaptcha = functions.https.onCall( validateCallerCaptcha )
 /* ///////////////////////////////
 // Code claiming
 // /////////////////////////////*/
-const { get_code_by_challenge } = require( './modules/codes' )
+const { get_code_by_challenge, claim_code_by_email } = require( './modules/codes' )
 exports.get_code_by_challenge = functions.https.onCall( get_code_by_challenge )
+exports.claim_code_by_email = functions.https.onCall( claim_code_by_email )
 
 /* ///////////////////////////////
 // Health check

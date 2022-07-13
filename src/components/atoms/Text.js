@@ -8,6 +8,10 @@ export const Text = styled.p`
 	text-align: ${ ( { align } ) => align || 'left' };
 	overflow-wrap: anywhere;
 	background: ${ ( { background='initial' } ) => background };
+	display: flex;
+	flex-direction: ${ ( { direction } ) => direction || 'column' };
+	align-items: ${ ( { align } ) => align || 'center' };
+	justify-content: ${ ( { justify } ) => justify || 'center' };
 `
 
 export const H1 = styled.h1`

@@ -1,12 +1,12 @@
 import styled from 'styled-components'
 import { useRef } from 'react'
 
-const Input = styled.div`
+const Input = styled.span`
 
 	display: flex;
 	flex-direction: column;
-	margin: 1rem 0;
-	width: 100%;
+	margin: ${ ( { margin } ) => margin || '1rem 0' };
+	width: ${ ( { width } ) => width || '100%' };
 	
 	& select, input, & p {
 		background: ${ ( { theme } ) => theme.colors.backdrop };
@@ -51,7 +51,7 @@ export default ( { onChange, type, label, info, highlight, id, title, onClick, o
 
 	const { current: internalId } = useRef( id || `input-${ Math.random() }` )
 
-	return <Input onClick={ onClick } highlight={ highlight }>
+	return <Input onClick={ onClick } highlight={ highlight } { ...props }>
 
 		{ label && <label htmlFor={ internalId }>{ label } { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
 

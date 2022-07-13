@@ -82,12 +82,14 @@ exports.clean_up_expired_items = async () => {
 		const grace_period_orphans = Date.now() - ( time_to_keep_after_expiry * 2 )
 		const { docs: expired_challenges } = await db.collection( 'claim_challenges' ).where( 'expires', '<', grace_period_orphans ).get()
 		const { docs: expired_codes } = await db.collection( 'codes' ).where( 'expires', '<', grace_period_orphans ).get()
+		const { docs: expired_ci_claims } = await db.collection( 'static_drop_claims' ).where( 'is_mock_claim', '==', true ).where( 'expires', '<', grace_period_orphans ).get()
 
 		console.log( `${ expired_challenges.length } expired challenges` )
 		console.log( `${ expired_codes.length } expired codes` )
+		console.log( `${ expired_ci_claims } expired CI claims` )
 
 		// Generate action queue
-		const orphan_deletion_queue = [ ...expired_challenges, ...expired_codes ].map( doc => () => doc.ref.delete() )
+		const orphan_deletion_queue = [ ...expired_challenges, ...expired_codes, ...expired_ci_claims ].map( doc => () => doc.ref.delete() )
 
 		// Throttled delete
 		await throttle_and_retry( orphan_deletion_queue, maxInProgress, `orphan deletion`, 5, 5 )
