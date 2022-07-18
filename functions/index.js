@@ -74,15 +74,22 @@ exports.validateCallerCaptcha = functions.https.onCall( validateCallerCaptcha )
 /* ///////////////////////////////
 // Code claiming
 // /////////////////////////////*/
-const { get_code_by_challenge, claim_code_by_email } = require( './modules/codes' )
+const { get_code_by_challenge } = require( './modules/codes' )
 exports.get_code_by_challenge = functions.https.onCall( get_code_by_challenge )
-exports.claim_code_by_email = functions.https.onCall( claim_code_by_email )
 
 /* ///////////////////////////////
 // Health check
 // /////////////////////////////*/
 const { health_check, public_health_check } = require( './modules/health' )
 exports.health_check = functions.https.onCall( health_check )
+
+/* ///////////////////////////////
+// Static QR system
+// /////////////////////////////*/
+const { claim_code_by_email } = require( './modules/codes' )
+const { export_emails_of_static_drop } = require( './modules/static_qr_drop' )
+exports.export_emails_of_static_drop = functions.https.onCall( export_emails_of_static_drop )
+exports.claim_code_by_email = functions.https.onCall( claim_code_by_email )
 
 // Public health check
 exports.public_health_check = functions.https.onRequest( public_health_check )

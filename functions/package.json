@@ -26,6 +26,7 @@
     "firebase-functions": "^3.21.2",
     "isomorphic-fetch": "^3.0.0",
     "juice": "^8.0.0",
+    "papaparse": "^5.3.2",
     "promise-parallel-throttle": "^3.3.0",
     "promise-retry": "^2.0.1",
     "pug": "^3.0.2",
