@@ -56,7 +56,7 @@ export default function StaticClaimAdmin() {
             <H1>Static QR Drop Export</H1>
             <Input type='text' value={ drop_id } onChange={ ( { target } ) => set_drop_id( target.value ) } label='Drop ID' info='The event ID of your drop, this can be found in the confirmation email' />
             <Input type='text' value={ secret_code } onChange={ ( { target } ) => set_secret_code( target.value ) } label='Drop Secret Edit Code' info='The secret edit code of your drop, this can be found in the confirmation email' />
-            <Input type='text' value={ auth_code } onChange={ ( { target } ) => set_auth_code( target.value ) } label='Static QR autentication code' info='The secret edit code of your drop, this can be found in the confirmation email' />
+            <Input type='text' value={ auth_code } onChange={ ( { target } ) => set_auth_code( target.value ) } label='Static QR authentication code' info='The secret edit code of your drop, this can be found in the confirmation email' />
             <Button onClick={ export_drop }>Authenticate and Export CSV</Button>
 
         </Main>

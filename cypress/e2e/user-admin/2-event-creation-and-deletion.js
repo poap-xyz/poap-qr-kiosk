@@ -9,7 +9,7 @@ context( 'Organiser successful event creation', () => {
 	it( 'Shows only file box if no file was selected', () => {
 
 		cy.visit( '/create?debug=true' )
-		cy.get( 'button' ).should( 'not.exist' )
+		cy.get( 'a' ).should( 'not.exist' )
 		cy.contains( 'label', 'Select .txt file that' )
 
 	} )
