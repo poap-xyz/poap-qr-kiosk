@@ -3,7 +3,6 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
-const oneCode = require( `../../fixtures/one-correct-code${ Cypress.env('LOCAL') ? '' : '-ci' }` )
 const request_options = {
 
 	headers: {
@@ -25,7 +24,7 @@ async function extract_challenge_from_url ( response ) {
 
 }
 
-context( 'Claimer can view valid events with game', () => {
+context( 'User can claim POAP after succeeding at challenge game', () => {
 
 	/* ///////////////////////////////
 	// First event
@@ -47,7 +46,7 @@ context( 'Claimer can view valid events with game', () => {
 
 		// Select anti-farming timing (10s)
 		cy.get( '#event-create-game-duration' ).select( 1 )
-		cy.log( 'Game time selected: 20s AKA 4 game turns' )
+		cy.log( 'Game time selected: 10s AKA 2 game turns' )
 
 		// Create event
 		cy.get( '#event-create-submit' ).click()
@@ -74,7 +73,7 @@ context( 'Claimer can view valid events with game', () => {
 
 	} )
 
-	it( 'Event 1: Successfully redirects to challenge link and play game', function( ) {
+	it( 'Event 1: Succesfully redirects to challenge link and fail at game', function( ) {
 
 		// Visit the public link with games
 		cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
@@ -100,41 +99,19 @@ context( 'Claimer can view valid events with game', () => {
 				cy.contains( 'Play a game' )
 
 				// Click start game button
-				cy.contains( 'button', 'Start game' ).click()
+				cy.contains( 'a', 'Start game' ).click()
 
 				// Expect score text
 				cy.contains( 'Score: 0 of' )
 
-				// Find buttons in page and click the one with h1 span value
-				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( { force: true } ) })
-
-				// Expect score text
-				cy.contains( 'Score: 1 of' )
-
-				// Find buttons in page and click the one with h1 span value
-				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( { force: true } ) })
-
-				// Expect score text
-				cy.contains( 'Score: 2 of' )
-
 				// Expect winning screen
-				cy.contains( 'You won!' )
-
-				// Click retrieval link
-				cy.contains( 'button', 'Claim your' ).click()
-
-				// Wait for code retrieval
-				cy.url().should( 'include', 'app.poap.xyz' )
-
-				// Check if POAP link supplies one of the test codes
-				cy.url().should( 'include', oneCode )
+				cy.contains( 'You lost!' )
 
 			} )
-		
-
+	
 	} )
 
-	it( 'Event 1: Shows code marked as used (previous redirect marked as used)', function( ) {
+	it( 'Event 1: Shows code not marked as used after failing game', function( ) {
 
 		// Visit the public link
 		cy.visit( this.event_1_publiclink )
@@ -143,73 +120,10 @@ context( 'Claimer can view valid events with game', () => {
 		cy.get( '#event-view-accept-disclaimer' ).click()
 
 		// Shows one code as claimed
-		cy.contains( '1 of 1 codes' )
+		cy.contains( '0 of 1 codes' )
 
 	} )
 
-	it( 'Event 1: Previous challenge link no longer works', function( ) {
-
-		// Visit the public link
-		cy.visit( this.event_1_first_challenge_url )
-
-		// Interface should indicate that the link expired
-		cy.contains( 'This link was already used' )
-
-	} )
-
-	it( 'Event 1: Shows no codes after code is scanned', function( ) {
-
-		// Visit public event link
-		cy.visit( this.event_1_publiclink )
-
-		// Accept disclaimer
-		cy.get( '#event-view-accept-disclaimer' ).click()
-
-		cy.contains( '1 of 1 codes' )
-
-	} )
-
-	it( 'Event 1: Shows error if link was used after code ran out', function( ) {
-
-		// Visit the public link to the second code as read by simulating a scan
-		cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
-			.then( extract_challenge_from_url )
-			.then( event_1_second_challenge => {
-
-				// Visit the challenge link
-				cy.visit( `/claim/${ event_1_second_challenge }` )
-
-				// Human game welcome screen 
-				cy.contains( 'Play a game' )
-
-				// Click start game button
-				cy.contains( 'button', 'Start game' ).click()
-
-				// Expect score text
-				cy.contains( 'Score: 0 of' )
-
-				// Find buttons in page and click the one with h1 span value
-				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( { force: true } ) })
-
-				// Expect score text
-				cy.contains( 'Score: 1 of' )
-
-				// Find buttons in page and click the one with h1 span value
-				cy.get( 'h1 span' ).invoke( 'text' ).then( (text) => { cy.contains( 'button', text ).click( { force: true } ) })
-
-				// Expect score text
-				cy.contains( 'Score: 2 of' )
-
-				// Expect winning screen
-				cy.contains( 'You won!' )
-
-				cy.on('window:alert', response => {
-					expect( response ).to.contain( 'No more POAPs available for this event!' )
-				} )
-
-			} )
-
-	} )
 
 	// Delete event 1
 	it( 'Event 1: Deletes the event when clicked', function() {

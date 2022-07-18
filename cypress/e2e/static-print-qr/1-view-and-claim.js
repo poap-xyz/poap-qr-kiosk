@@ -25,7 +25,7 @@ context( "User can view and claim through static QR url", () => {
         cy.get( '#static-print-qr-email-field' ).type( random_email )
 
         // Claim POAP
-        cy.get( 'button#static-print-qr-claim-button' ).click()
+        cy.get( 'a#static-print-qr-claim-button' ).click()
         cy.contains( `Claiming your POAP` )
 
         // Claim succeeded

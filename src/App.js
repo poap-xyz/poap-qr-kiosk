@@ -12,6 +12,7 @@ import Welcome from './components/organisms/Welcome'
 import EventAdmin from './components/organisms/EventAdmin'
 import Claim from './components/organisms/Claim'
 import StaticClaim from './components/organisms/StaticClaim'
+import StaticClaimAdmin from './components/organisms/StaticClaimAdmin'
 
 // Components
 import Loading from './components/molecules/Loading'
@@ -49,6 +50,7 @@ export default function App( ) {
           <Route path='/static/'>
 
             <Route path='claim/:claim_code' element={ <StaticClaim /> } />
+            <Route path='admin/export' element={ <StaticClaimAdmin /> } />
 
           </Route>
 
