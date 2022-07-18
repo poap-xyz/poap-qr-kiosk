@@ -44,7 +44,7 @@ export function useCodeMetadata( claim_code ) {
         log( `Starting listener for static_drop_public/${ event.id }` )
 
         // Handle mock event listening for CI
-        if( event.id.includes( `mock` ) ) {
+        if( `${ event?.id }`.includes( `mock` ) ) {
             set_drop_meta( {} )
             return () => log( `Removed mock listener` )
         }
