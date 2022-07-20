@@ -2,6 +2,7 @@ const { db, dataFromSnap } = require("./firebase")
 const { log } = require("./helpers")
 const { call_poap_endpoint } = require("./poap_api")
 const Papa = require( 'papaparse' )
+const { validate: validate_uuid } = require( 'uuid' )
 
 exports.export_emails_of_static_drop = async ( data, context ) => {
 
@@ -39,6 +40,36 @@ exports.export_emails_of_static_drop = async ( data, context ) => {
 
         // Send csv
         return { csv_string }
+
+
+    } catch( e ) {
+        log( `Error exporting emails: `, e )
+        return { error: e.message }
+    }
+
+}
+
+exports.create_static_drop = async ( data, context ) => {
+
+    try {
+
+        /* ///////////////////////////////
+        // Validations */
+
+        // Destructure inputs
+        log( `Create called with `, data )
+        const { drop_id, auth_code } = data
+        const is_mock_claim = drop_id?.includes( `mock` )
+
+        // Validate config versus inputs
+        if( `${ drop_id }`.length != 6 ) throw new Error( `Drop ID length is invalid, it should be 6 characters long.` )
+        if( !validate_uuid( auth_code ) ) throw new Error( `Auth code is not a valid uuid` )
+
+        // Store drop config
+        await db.collection( `static_drop_private` ).doc( drop_id ).set( { auth_code, approved: false, updated: Date.now(), updated_human: new Date().toString() }, { merge: true } )
+
+        // Send output
+        return { success: true }
 
 
     } catch( e ) {
