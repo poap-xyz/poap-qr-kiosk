@@ -172,7 +172,8 @@ exports.registerEvent = async function( data, context ) {
 			template: await get_event_template_by_code( codes[0] ),
 			public_auth: generate_new_event_public_auth( public_auth_expiry_interval_minutes, is_test_event ),
 			created: Date.now(),
-			updated: Date.now()
+			updated: Date.now(),
+			updated_by: 'registerEvent'
 		} )
 
 		// Format codes to the helpers understand the format
@@ -236,7 +237,8 @@ exports.updatePublicEventData = async function( change, context ) {
 		game_config,
 		...( template && { template } ),
 		codesAvailable: codesAvailable || 0,
-		updated: Date.now()
+		updated: Date.now(),
+		updated_by: 'updatePublicEventData'
 	}
 	return db.collection( 'publicEventData' ).doc( eventId ).set( public_data_object, { merge: true } )
 

@@ -258,7 +258,7 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
 		}, 0 )
 
 		// Increment event database
-		await db.collection( 'events' ).doc( event_id ).set( { codesAvailable: increment( -codes_already_claimed ), updated: Date.now() }, { merge: true } )
+		await db.collection( 'events' ).doc( event_id ).set( { codesAvailable: increment( -codes_already_claimed ), updated: Date.now(), updated_by: 'refresh_unknown_and_unscanned_codes' }, { merge: true } )
 
 		// Mark this run as finished
 		await db.collection( 'meta' ).doc( `event_refresh_${ event_id }` ).set( { ended: Date.now(), ended_human: new Date().toString() }, { merge: true } )
@@ -368,11 +368,11 @@ exports.updateEventAvailableCodes = async function( change, context ) {
 	// unknown > false = +1
 
 	if( prevClaimed === false && [ 'unknown', true ].includes( claimed ) ) {
-		return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now() }, { merge: true } )
+		return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now(), updated_by: 'updateEventsAvailableCodes decrement' }, { merge: true } )
 	}
 	
 	if( [ true, 'unknown' ].includes( prevClaimed ) && claimed === false ) {
-		return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now() }, { merge: true } )
+		return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now(), updated_by: 'updateEventsAvailableCodes increment' }, { merge: true } )
 	}	
 
 
