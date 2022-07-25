@@ -54,7 +54,7 @@ export const get_code_by_challenge = httpsCallable( functions, 'get_code_by_chal
 export const health_check = httpsCallable( functions, 'health_check' )
 export const claim_code_by_email = httpsCallable( functions, 'claim_code_by_email' )
 export const export_emails_of_static_drop = httpsCallable( functions, 'export_emails_of_static_drop' )
-
+export const create_static_drop = httpsCallable( functions, 'create_static_drop' )
 
 // Offline functions emulator
 // Connect to functions emulator

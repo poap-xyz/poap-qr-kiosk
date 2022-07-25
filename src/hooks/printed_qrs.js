@@ -45,7 +45,10 @@ export function useCodeMetadata( claim_code ) {
 
         // Handle mock event listening for CI
         if( `${ event?.id }`.includes( `mock` ) ) {
-            set_drop_meta( {} )
+            set_drop_meta( {
+                welcome_text: 'Input your email below to claim your POAP! This text can be edited for each drop :)',
+				optin_text: "I accept the terms and conditions, and sign away my soul. This field accepts html for links to external pages.",
+            } )
             return () => log( `Removed mock listener` )
         }
 
