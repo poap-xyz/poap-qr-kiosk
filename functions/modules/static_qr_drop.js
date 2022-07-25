@@ -58,7 +58,7 @@ exports.create_static_drop = async ( data, context ) => {
 
         // Destructure inputs
         log( `Create called with `, data )
-        const { drop_id, auth_code } = data
+        const { drop_id, auth_code, optin_text, welcome_text } = data
         const is_mock_claim = drop_id?.includes( `mock` )
 
         // Validate config versus inputs
@@ -66,10 +66,17 @@ exports.create_static_drop = async ( data, context ) => {
         if( !validate_uuid( auth_code ) ) throw new Error( `Auth code is not a valid uuid` )
 
         // Store drop config
-        await db.collection( `static_drop_private` ).doc( drop_id ).set( { auth_code, approved: false, updated: Date.now(), updated_human: new Date().toString() }, { merge: true } )
+        const drop_config = {
+            auth_code,
+            ...( optin_text?.length && { optin_text } ),
+            ...( welcome_text?.length && { welcome_text } ),
+            approved: false,
+            updated: Date.now(), updated_human: new Date().toString()
+        }
+        await db.collection( `static_drop_private` ).doc( drop_id ).set( drop_config, { merge: true } )
 
         // Send output
-        return { success: true }
+        return { success: true, drop_config }
 
 
     } catch( e ) {

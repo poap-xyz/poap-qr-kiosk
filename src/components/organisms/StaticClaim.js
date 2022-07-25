@@ -88,10 +88,13 @@ export default function StaticClaim() {
 
         <Main align='flex-start' width='400px'>
             <H1>Claim your POAP</H1>
+
+            { code_meta?.drop_meta?.welcome_text && <Text>{ code_meta?.drop_meta?.welcome_text }</Text> }
+
             <Input id='static-print-qr-email-field' label='Your email' value={ email } onChange={ ( { target } ) => setEmail( target.value ) } />
                             
-            { code_meta?.drop_meta?.optin_text && <Text onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
-                <Input margin='0' width='50px' type='checkbox' onChange={ ( { target } ) => setTermsAccepted( target.checked ) } checked={ termsAccepted } />
+            { code_meta?.drop_meta?.optin_text && <Text align='flex-start' onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
+                <Input style={ { zoom: 1.3 } } margin='0 .5rem 0 0' width='50px' type='checkbox' onChange={ ( { target } ) => setTermsAccepted( target.checked ) } checked={ termsAccepted } />
                 
                 { /* This allows us to set terms & conditions texts through the firebase entry */ }
                 <span dangerouslySetInnerHTML={ { __html: code_meta?.drop_meta?.optin_text } } />
