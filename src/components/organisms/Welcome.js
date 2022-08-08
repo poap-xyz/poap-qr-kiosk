@@ -28,7 +28,8 @@ export default function ComponentName( ) {
 	const navigate = useNavigate()
 	const [ allowAccess, setAllowAccess ] = useState( true )
 
-	const { t } = useTranslation( [ 'welcome' , 'dispenser' ] )
+	// useTranslation loads the dispenser namespace which holds general translations
+	const { t } = useTranslation( [ 'dispenser' ] )
 
 	/* ///////////////////////////////
 	// Lifecycle management
@@ -48,7 +49,8 @@ export default function ComponentName( ) {
 				if( cancelled ) return log( `Health effect cancelled` )
 				if( !dev && !health.healthy ) {
 					setAllowAccess( false )
-					return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
+					// Sitewide translation
+					return alert( `${ t( 'health.maintenance' ) }` )
 				}
 
 			} catch( e ) {
@@ -72,9 +74,9 @@ export default function ComponentName( ) {
 
 			<Hero>
 
-				<H1>{ t( 'hero.title' ) } <Sup>beta</Sup></H1>
-				<H2>{ t( 'hero.subheading' ) }</H2>
-				<Text>{ t( 'hero.description' ) }</Text>
+				<H1>{ t( 'title' ) } <Sup>beta</Sup></H1>
+				<H2>{ t( 'subtitle' ) }</H2>
+				<Text>{ t( 'titledescription' ) }</Text>
 				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'createButton' ) }</Button> }
 
 			</Hero>
@@ -86,8 +88,8 @@ export default function ComponentName( ) {
 				</Column>
 
 				<Column>
-					<H2>{ t( 'checkin.title' ) }</H2>
-					<Text>{ t( 'checkin.description' ) }</Text>
+					<H2>{ t( 'welcome.checkin.title' ) }</H2>
+					<Text>{ t( 'welcome.checkin.description' ) }</Text>
 				</Column>				
 
 			</Section>
@@ -95,8 +97,8 @@ export default function ComponentName( ) {
 			<Section height='600px' justify='space-around' direction="row">
 
 				<Column>
-					<H2>{ t( 'stream.title' ) }</H2>
-					<Text>{ t( 'stream.description' ) }</Text>
+					<H2>{ t( 'welcome.stream.title' ) }</H2>
+					<Text>{ t( 'welcome.stream.description' ) }</Text>
 				</Column>		
 
 				<Column>

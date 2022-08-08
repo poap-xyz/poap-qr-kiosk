@@ -1,4 +1,7 @@
 import { useRef, useState } from "react"
+import { useTranslation } from 'react-i18next'
+
+// Components
 import Button from "../atoms/Button"
 import Container from "../atoms/Container"
 import Input from "../atoms/Input"
@@ -9,6 +12,11 @@ import { create_static_drop } from '../../modules/firebase'
 import { log, uuidv4 } from "../../modules/helpers"
 
 export default function StaticClaimCreate() {
+
+    // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
+	// Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
+	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
+	const { t } = useTranslation( [ 'static' , 'dispenser' ] )
 
     const [ drop_id, set_drop_id ] = useState( '' )
     const [ optin_text, set_optin_text] = useState( '' )
@@ -21,7 +29,7 @@ export default function StaticClaimCreate() {
 
         try {
 
-            set_loading( 'Creating drop' )
+            set_loading( `${ t( 'create.set_loading' ) }` )
             const { data } = await create_static_drop( { drop_id, auth_code, optin_text, welcome_text } )
             log( `Remote response: `, data )
             const { csv_string, error } = data
@@ -43,12 +51,12 @@ export default function StaticClaimCreate() {
 
             <Main align='flex-start' width='600px'>
 
-                <H1>Creation success</H1>
-                <Text>Next steps:</Text>
-                <Text>1. Save your authentication code: { auth_code }.</Text>
-                <Text>2. Ask for this drop to be approved.</Text>
-                <Text>3. Print your physical QRS with the format: https://qr.poap.xyz/#/static/claim/CLAIM_CODE.</Text>
-                <Text>4. Export emails after the event at https://qr.poap.xyz/#/static/admin/export</Text>
+                <H1>{ t( 'create.succes_screen.title') }</H1>
+                <Text>{ t( 'create.succes_screen.steps_title') }</Text>
+                <Text>{ t( 'create.succes_screen.first_line' , { code: auth_code } ) }</Text>
+                <Text>{ t( 'create.succes_screen.second_line') }</Text>
+                <Text>{ t( 'create.succes_screen.third_line') }</Text>
+                <Text>{ t( 'create.succes_screen.fourth_line') }</Text>
             </Main>
 
     </Container>
@@ -57,12 +65,12 @@ export default function StaticClaimCreate() {
 
         <Main align='flex-start' width='600px'>
 
-            <H1>Static QR Drop Creation</H1>
-            <Text>Note: this is an internal POAP tool, anything you do here will not work unless it received preapproval from the engineering team.</Text>
-            <Input type='text' value={ drop_id } onChange={ ( { target } ) => set_drop_id( target.value ) } label='Drop ID' info='The event ID of your drop, this can be found in the confirmation email' />
-            <Input type='text' value={ welcome_text } onChange={ ( { target } ) => set_welcome_text( target.value ) } label='Welcome text' info='The welcome text above the email field' />
-            <Input type='text' value={ optin_text } onChange={ ( { target } ) => set_optin_text( target.value ) } label='Opt-in text (html)' info='The opt in text displayed at POAP claim.' />
-            <Button onClick={ create_drop }>Create static drop</Button>
+            <H1>{ t( 'create.title' ) }</H1>
+            <Text>{ t( 'create.note' ) }</Text>
+            <Input type='text' value={ drop_id } onChange={ ( { target } ) => set_drop_id( target.value ) } label={ t( 'create.labels.drop_id.label' ) } info={ t( 'create.labels.drop_id.info' ) } />
+            <Input type='text' value={ welcome_text } onChange={ ( { target } ) => set_welcome_text( target.value ) } label={ t( 'create.labels.welcome_text.label' ) } info={ t( 'create.labels.welcome_text.info' ) } />
+            <Input type='text' value={ optin_text } onChange={ ( { target } ) => set_optin_text( target.value ) } label={ t( 'create.labels.optin_text.label' ) } info={ t( 'create.labels.optin_text.info' ) } />
+            <Button onClick={ create_drop }>{ t( 'create.buttons.create_drop' ) }</Button>
 
         </Main>
 

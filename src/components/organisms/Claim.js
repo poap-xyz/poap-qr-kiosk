@@ -16,13 +16,16 @@ import Captcha from '../molecules/Captcha'
 // ///////////////////////////////
 export default function ViewQR( ) {
 
-  const { t } = useTranslation( [ 'claim', 'dispenser' ] )
+	// useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
+	// Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
+	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
+	const { t } = useTranslation( [ 'dynamic' , 'dispenser' ] )
 
   // ///////////////////////////////
   // State handling
   // ///////////////////////////////
   const { challenge_code, error_code } = useParams( )
-  const [ loading, setLoading ] = useState( `${ t( 'setLoading' ) }` )
+  const [ loading, setLoading ] = useState( `${ t( 'claim.setLoading' ) }` )
   const [ userValid, setUserValid ] = useState( false )
   const [ gameDone, setGameDone ] = useState( false )
   const [ challenge, setChallenge ] = useState( {} )
@@ -49,12 +52,12 @@ export default function ViewQR( ) {
     trackEvent( 'claim_spammer_stall_triggered' )
     // Wait to keep the spammer busy
     await wait( step_delay )
-    setLoading( `${ t( 'stall.loadingPrimary' ) }` )
+    setLoading( `${ t( 'claim.stall.loadingPrimary' ) }` )
     await wait( step_delay )
-    setLoading( `${ t( 'stall.loadingSecondary' ) }` )
+    setLoading( `${ t( 'claim.stall.loadingSecondary' ) }` )
     await wait( step_delay )
-    setLoading( `${ t( 'stall.loadingNewScan' ) }` )
-    if( error ) throw new Error( `${ t( 'stall.loadingError', {  error_code: error_code, challenge_code: challenge_code, trail: trail } ) }` )
+    setLoading( `${ t( 'claim.stall.loadingNewScan' ) }` )
+    if( error ) throw new Error( `${ t( 'claim.stall.loadingError', {  error_code: error_code, challenge_code: challenge_code, trail: trail } ) }` )
     
     setLoading( false )
 
@@ -80,7 +83,7 @@ export default function ViewQR( ) {
 
     // Formulate redirect 
     const link = `https://poap.xyz/claim/${ claim_code }`
-    log( `${ t( 'formulateRedirect' ) }`, link )
+    log( `${ t( 'claim.formulateRedirect' ) }`, link )
 
     return link
   }
@@ -107,7 +110,7 @@ export default function ViewQR( ) {
         }
 
       } catch( e ) {
-        log( `${ t( 'health.errorStatus', { ns: 'dispenser' } ) }`, e )
+        log( `Error getting system health: `, e )
       }
 
     } )( )
@@ -147,7 +150,7 @@ export default function ViewQR( ) {
         // Always wait an extra second
         await wait( 2000 )
         if( cancelled ) return
-        setLoading( `${ t( 'preppingMessage' ) }` )
+        setLoading( `${ t( 'claim.preppingMessage' ) }` )
         await wait( 2000 )
         if( cancelled ) return
 
@@ -218,7 +221,7 @@ export default function ViewQR( ) {
         // Validate for expired challenge
         if( userValid && !challenge ) {
           trackEvent( `claim_challenge_expired` )
-          throw new Error( `${ t( 'validation.alreadyUsed' ) }` )
+          throw new Error( `${ t( 'claim.validation.alreadyUsed' ) }` )
         }
 
         log( `Challenge received: `, challenge )

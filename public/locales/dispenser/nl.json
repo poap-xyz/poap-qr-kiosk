@@ -1,93 +1,27 @@
 {
   "title": "Magische POAP Dispenser",
+  "subtitle": "Breng POAPs naar je vrienden IRL",
+  "titledescription": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen.",
   "createButton": "Creëer QR-dispenser",
   "startedtext": "Begin nu",
-
+  "clipboardCopy": "gekopieerd naar het klembord",
   "health": {
     "check": "Systeem status: ",
-    "maintenance": "NL The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details.",
-    "cancelled": "Health effect geannuleerd",
-    "errorStatus": "Fout bij ophalen systeem status: ",
-    "maintenanceApi": "De POAP API is in onderhoud, u kunt doorgaan maar dit kan onverwacht gedrag veroorzaken."
+    "maintenance": "NL The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details."
   },
-
-  "general": {
-
-    "file": {
-      "acceptedFormat": "Het bestandsformaat is geen csv/txt",
-      "noCodes": "Geen codes gevonden",
-      "codeFormat": " codes hadden een ongeldig formaat. Voorbeeld van een foutieve code: ",
-      "csvNoEntries": "Csv heeft 0 regels",
-      "mintCheck": "Je mint-links controleren",
-      "codesDetected": "{{ count }} codes gedetecteerd.",
-      "codesDetected_one": "{{ count }} code gedetecteerd.",
-      "codesDetected_two": "{{ count }} codes gedetecteerd."
+  "welcome": {
+    "hero": {
+      "title": "Magische POAP Dispenser ",
+      "subheading": "Breng POAPs naar je vrienden IRL",
+      "description": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen."
     },
-    "event": {
-      "eventExpired": "Dit evenement lijkt te zijn verlopen!",
-      "eventCancelled": "Evenement geannuleerd",
-      "eventCreate": "Maak dispenser met {{ count }} codes",
-      "eventCreate_one": "Maak dispenser met {{ count }} code",
-      "eventCreate_two": "Maak dispenser met {{ count }} codes",
-      "noName": "Geef een evenementnaam op",
-      "noEmail": "Geef een geldig e-mailadres op",
-      "wrongDate": "Geef de datum op in JJJJ-MM-DD, bijvoorbeeld 2021-11-25",
-      "creationMessage": "NL Please confirm that this is correct:\n\nDrop name: {{ name }}\n\nAdministrator email: {{ email }}\n\nQR dispenser expires at: ",
-      "dropName": {
-        "label": "Drop naam",
-        "placeholder": "beste lanceringsfeest ooit",
-        "info": "Voor uw eigen referentie, niet zichtbaar voor de wereld."
-      },
-      "dropDate": {
-        "label": "Vervaldatum QR-dispenser",
-        "info": "Na deze datum in uw lokale tijdzone werkt uw QR-kiosk niet meer\n\n⚠️ Je kunt maximaal 30 dagen van tevoren inplannen."
-      },
-      "dropEmail": {
-        "label": "E-mailadres",
-        "placeholder": "revered@organizer.com",
-        "info": "We will send the QR kiosk link and the admin link there."
-      },
-      "dropGame": {
-        "label": "Anti-farming inschakelen?",
-        "info": "Vooral online evenementen trekken vaak kwaadwillende POAP-farmers aan (mensen die gewoon komen opdagen om zoveel mogelijk POAP's te krijgen zonder nuttige deelnemers te zijn).\n\nAls u deze instelling inschakelt, worden uw deelnemers gedwongen een minuut lang een minigame te spelen voordat ze een POAP krijgen.",
-        "options": [
-          {
-            "label": "Nee (optional for physical events)",
-            "value": "no"
-          },
-          {
-            "label": "Ja (recommended for online)",
-            "value": "yes"
-          }
-        ]
-      },
-      "gameTime": {
-        "label": "Hoeveel seconden moet het anti-farming spel duren?",
-        "info": "Hoe langer je dit instelt, hoe moeilijker het voor mensen wordt om je POAP-drop te bewerken",
-        "options": [
-          {
-            "label": "30 sec",
-            "value": "30"
-          },
-          {
-            "label": "10 sec",
-            "value": "10"
-          },
-          {
-            "label": "20 sec",
-            "value": "20"
-          },
-          {
-            "label": "60 sec",
-            "value": "60"
-          }
-        ]
-      }
+    "checkin": {
+      "title": "Fysieke POAP-distributie makkelijk gemaakt",
+      "description": "Stel voor IRL-evenementen eenvoudig een apparaat of meerdere apparaten in om unieke POAP QR-codes weer te geven aan deelnemers."
     },
-    "input": {
-      "label": "Selecteer .txt-bestand dat uw POAP-mint-links bevat",
-      "info": "Dit is het .txt-bestand dat je via e-mail hebt ontvangen nadat je je POAP-drop hebt gemaakt op https://app.poap.xyz/admin"
+    "stream": {
+      "title": "Stream-vriendelijk QR-delen",
+      "description": "Stel tijdens een livestream een screenshare in die POAP QR-codes weergeeft."
     }
-  },
-  "creatingDispenser": "QR-dispenser maken"
+  } 
 }
