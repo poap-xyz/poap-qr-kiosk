@@ -22,7 +22,11 @@ import { useTranslation } from 'react-i18next'
 // ///////////////////////////////
 export default function EventAdmin( ) {
 
-	const { t } = useTranslation( [ 'eventAdmin' , 'dispenser' ] )
+	// useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
+	// Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
+	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
+	const { t } = useTranslation( [ 'dynamic' , 'dispenser' ] )
+
 
 	const { eventId, authToken } = useParams( )
 	const [ event, setEvent ] = useState( { loading: true } )
@@ -58,7 +62,7 @@ export default function EventAdmin( ) {
 	// ///////////////////////////////
 	// State management
 	// ///////////////////////////////
-	const [ loading, setLoading ] = useState( `${ t( 'loadingDispenser' ) }` )
+	const [ loading, setLoading ] = useState( `${ t( 'admin.loadingDispenser' ) }` )
 
 	/* ///////////////////////////////
 	// Lifecycle management
@@ -78,11 +82,11 @@ export default function EventAdmin( ) {
 
 				// Wait for 5 seconds in case the backend is refreshng public event mets
 				wait( 5000 )
-				if( !cancelled ) setLoading( `${ t( 'loadingValidity' ) }` )
+				if( !cancelled ) setLoading( `${ t( 'admin.loadingValidity' ) }` )
 
 				// If after 10 seconds it is still down, trigger failure
 				wait( 5000 )
-				if( !cancelled ) setLoading( `${ t( 'invalidValidity' ) }` )
+				if( !cancelled ) setLoading( `${ t( 'admin.invalidValidity' ) }` )
 
 			}
 		} )
@@ -99,7 +103,7 @@ export default function EventAdmin( ) {
 	const focus = e => e.target.select()
 	const clipboard = async text => {
 		await navigator.clipboard.writeText( text )
-		alert( 'Copied to clipboard!' )
+		alert( `${ t( 'clipboardCopy', { ns: 'dispenser' } ) }` ) 
 		trackEvent( 'admin_link_copied_clipboard' )
 	}
 	// Data management
@@ -107,9 +111,9 @@ export default function EventAdmin( ) {
 
 		try {
 
-			if( !confirm( `${ t( 'confirmDeleteDispenser' ) }` ) ) throw new Error( `${ t( 'deletionCancelled' ) }` )
+			if( !confirm( `${ t( 'admin.confirmDeleteDispenser' ) }` ) ) throw new Error( `${ t( 'admin.deletionCancelled' ) }` )
 
-			setLoading( `${ t( 'setLoadingDispenser' ) }` )
+			setLoading( `${ t( 'admin.setLoadingDispenser' ) }` )
 			const { data: { error } } = await deleteEvent( {
 				eventId,
 				authToken
@@ -117,12 +121,12 @@ export default function EventAdmin( ) {
 
 			if( error ) throw new Error( error )
 
-			alert( `${ t( 'succesDeleteDispenser' ) }` )
+			alert( `${ t( 'admin.succesDeleteDispenser' ) }` )
 			trackEvent( 'admin_event_deleted' )
 			return navigate( '/' )
 
 		} catch( e ) {
-			alert( `${ t( 'errorDeleteDispenser', { message: e.message } ) }` )
+			alert( `${ t( 'admin.errorDeleteDispenser', { message: e.message } ) }` )
 			log( e )
 			setLoading( false )
 		}
@@ -139,27 +143,27 @@ export default function EventAdmin( ) {
 
 			<Hero>
 
-				<H1>{ t( 'title' ) }</H1>
-				{ ( !event.loading && !event.codes ) ? <H2>{ t( 'hero.subheading.reviewed' ) }</H2>: <H2>{ t( 'hero.subheading.unique' ) }</H2> }
+				<H1>{ t( 'admin.title' ) }</H1>
+				{ ( !event.loading && !event.codes ) ? <H2>{ t( 'admin.hero.subheading.reviewed' ) }</H2>: <H2>{ t( 'admin.hero.subheading.unique' ) }</H2> }
 
 				{ /* Event meta loaded, codes available */ }
 				{ !event.loading && event.codes && <>
 					<Section margin="0">
 						<Text>
-						{ t( 'hero.description.pre' ) }<b>{ t( 'hero.description.bold' ) }</b>{ t( 'hero.description.post' ) }
+						{ t( 'admin.hero.description.pre' ) }<b>{ t( 'admin.hero.description.bold' ) }</b>{ t( 'admin.hero.description.post' ) }
 						</Text>
 						<Input
 							id='admin-eventlink-public' 
 							readOnly
 							onClick={ focus }
-							label={ t( 'hero.input.label' ) }
+							label={ t( 'admin.hero.input.label' ) }
 							value={ eventLink }
-							info={ t( 'hero.input.info' ) }
+							info={ t( 'admin.hero.input.info' ) }
 						/>
 					</Section>
 					<Section padding="0" margin="0" justify="flex-start" direction="row">
-						<Button margin=".5em .5rem .5rem 0" onClick={ f => window.open( eventLink, '_self' ) }>{ t( 'hero.distribute.button' ) }</Button>
-						{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>{ t( 'hero.distribute.clipboard' ) }</Button> }
+						<Button margin=".5em .5rem .5rem 0" onClick={ f => window.open( eventLink, '_self' ) }>{ t( 'admin.hero.distribute.button' ) }</Button>
+						{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>{ t( 'admin.hero.distribute.clipboard' ) }</Button> }
 					</Section>
 				</> }
 
@@ -167,34 +171,34 @@ export default function EventAdmin( ) {
 
 				{ !event.loading && !event.codes && <Section align='flex-start' margin="0">
 
-					<Text>{ t( 'hero.notavailable.title' ) }</Text>
-					<Text>{ t( 'hero.notavailable.description' ) }</Text>
+					<Text>{ t( 'admin.hero.notavailable.title' ) }</Text>
+					<Text>{ t( 'admin.hero.notavailable.description' ) }</Text>
 				</Section> }
 
 			</Hero>
 
 			<Section margin="0" align="flex-start">
-				<H1>{ t( 'deleteDispenser.title' ) }</H1>
+				<H1>{ t( 'admin.deleteDispenser.title' ) }</H1>
 
 				<Section align="flex-start">
-					<H2>{ t( 'deleteDispenser.subheading' ) }</H2>
-					<Text>{ t( 'deleteDispenser.description' ) }</Text>
-					<Button onClick={ safelyDeleteEvent }>{ t( 'deleteDispenser.deleteBtn' ) }</Button>
+					<H2>{ t( 'admin.deleteDispenser.subheading' ) }</H2>
+					<Text>{ t( 'admin.deleteDispenser.description' ) }</Text>
+					<Button onClick={ safelyDeleteEvent }>{ t( 'admin.deleteDispenser.deleteBtn' ) }</Button>
 				</Section>
 
 
 				<Section align="flex-start">
-					<H2>{ t( 'adminDispenser.title' ) }</H2>
-					<Text>{ t( 'adminDispenser.description' ) }</Text>
+					<H2>{ t( 'admin.adminDispenser.title' ) }</H2>
+					<Text>{ t( 'admin.adminDispenser.description' ) }</Text>
 					<Input
 						id='admin-eventlink-secret'
 						readOnly
 						onClick={ focus }
-						label={ t( 'adminDispenser.input.label' ) }
+						label={ t( 'admin.adminDispenser.input.label' ) }
 						value={ adminLink }
-						info={ t( 'adminDispenser.input.info' ) }
+						info={ t( 'admin.adminDispenser.input.info' ) }
 					/>
-					{ clipboardAPI && <Button onClick={ f => clipboard( adminLink ) }>{ t( 'adminDispenser.clipboard' ) }</Button> }
+					{ clipboardAPI && <Button onClick={ f => clipboard( adminLink ) }>{ t( 'admin.adminDispenser.clipboard' ) }</Button> }
 				</Section>
 
 				

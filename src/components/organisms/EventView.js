@@ -26,7 +26,10 @@ import Network from '../molecules/NetworkStatusBar'
 // ///////////////////////////////
 export default function ViewQR( ) {
 
-  const { t } = useTranslation( [ 'eventView' , 'dispenser' ] )
+  // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
+	// Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
+	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
+	const { t } = useTranslation( [ 'dynamic' , 'dispenser' ] )
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -119,10 +122,10 @@ export default function ViewQR( ) {
       if( eventId ) return log( `Event ID present in url, ignoring localstorage` )
       log( `No event ID in url, loading event ID from localstorage` )
       const cached_event_id = localStorage.getItem( 'cached_event_id' )
-      if( !cached_event_id ) throw new Error( `${ t( 'eventNoCache' ) }` )
+      if( !cached_event_id ) throw new Error( `${ t( 'view.eventNoCache' ) }` )
       trackEvent( `event_view_event_id_from_cache` )
       setInternalEventId( cached_event_id )
-      setLoading( `${ t( 'eventLoading' ) }` )
+      setLoading( `${ t( 'view.eventLoading' ) }` )
 
     } catch( e ) {
 
@@ -190,12 +193,12 @@ export default function ViewQR( ) {
   // Show welcome screen
   if( !acceptedTerms ) return <Container>
     
-    <H1 align="center">{ t( 'terms.title' ) }</H1>
+    <H1 align="center">{ t( 'view.terms.title' ) }</H1>
 
-    <H2>{ t( 'terms.subheading' ) }</H2>
-    <Text align="center">{ t( 'terms.description' ) }</Text>
+    <H2>{ t( 'view.terms.subheading' ) }</H2>
+    <Text align="center">{ t( 'view.terms.description' ) }</Text>
 
-    <Button id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>{ t( 'terms.acceptBtn' ) }</Button>
+    <Button id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>{ t( 'view.terms.acceptBtn' ) }</Button>
 
   </Container>
 
@@ -205,16 +208,16 @@ export default function ViewQR( ) {
   // Expired event error
   if( event?.expires && event.expires < Date.now() ) return <Container>
   
-    <h1>{ t( 'expired.title' ) }</h1>
-    <Sidenote>{ t( 'expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Sidenote>
+    <h1>{ t( 'view.expired.title' ) }</h1>
+    <Sidenote>{ t( 'view.expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Sidenote>
     
   </Container>
 
   // No code error
   if( !event?.public_auth?.expires ) return <Container>
   
-    <h1>{ t( 'codes.title' ) }</h1>
-    <Sidenote onClick={ f => navigate( '/admin' ) }>{ t( 'codes.description' ) }</Sidenote>
+    <h1>{ t( 'view.codes.title' ) }</h1>
+    <Sidenote onClick={ f => navigate( '/admin' ) }>{ t( 'view.codes.description' ) }</Sidenote>
     
   </Container>
 
@@ -223,13 +226,13 @@ export default function ViewQR( ) {
 
     {  /* Event metadata */ }
     { event && <H1 color={ template?.main_color } align="center">{ event.name }</H1> }
-    { <H2 color={ template?.header_link_color } align="center">{ t( 'view.subheading' ) }</H2> }
+    { <H2 color={ template?.header_link_color } align="center">{ t( 'view.display.subheading' ) }</H2> }
 
     {  /* QR showing code */ }
     <QR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
-    { event && <Sidenote>{ t( 'view.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
+    { event && <Sidenote>{ t( 'view.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
     
     <Network />
 

@@ -1,0 +1,188 @@
+{
+  "admin": {
+    "title": "Magic POAP Dispenser",
+    "loadingDispenser": "Loading QR dispenser",
+    "setLoadingDispenser": "Delete QR Dispenser",
+    "loadingValidity": "Double-checking admin link validity",
+    "invalidValidity": "Invalid event admin link",
+    "confirmDeleteDispenser": "Are you sure you want to delete your QR Dispenser?\n\nThis cannot be undone, but you can always create a new QR Dispenser following the same simple steps you used to make this one.",
+    "succesDeleteDispenser": "Deletion success!\n\nYour QR Dispenser has been deleted.\n\nClick OK to be redirected to the home page. ",
+    "deletionCancelled": "Deletion cancelled, your event still exists.",
+    "errorDeleteDispenser": "Error Delete QR Dispenser: {{ message }}",
+    
+    "hero": {
+      "subheading": {
+        "reviewed": "⚠️ Your event is being reviewed",
+        "unique": "Your unique QR dispenser link"
+      },
+      "description": {
+        "pre": "This link is intended to be displayed on a physical device, or through a screenshare during a stream. ",
+        "bold": "NEVER",
+        "post": " send it to anyone."
+      },
+      "input": {
+        "label": "Your public QR Dispenser link",
+        "info": "This link takes you to your QR Dispenser page. For example, you can display this page on an iPad at your check-in desk."
+      },
+      "distribute": {
+        "button": "Open link & start distributing POAPs",
+        "clipboard": "Copy to clipboard"
+      },
+      "notavailable": {
+        "title": "This QR dispenser will become available once the curation team approves your event.",
+        "description": "You will receive an email when your event is approved. This email will also send you the manual claim links in a links.txt file. You don&apos;t have to use them, but it is ok to use them in combination with this QR dispenser."
+      }
+    },
+    "deleteDispenser": {
+      "title": "Secret Admin Section",
+      "subheading": "Delete this QR dispenser",
+      "description": "Want to create a new QR dispenser for this drop? Delete this QR dispenser first, and then create a new dispenser when you are ready.",
+      "deleteBtn": "Delete QR dispenser"
+    },  
+    "adminDispenser": {
+      "title": "Admin link",
+      "description": "Your admin link is yours to make changes to this instance of the magic POAP dispenser. Don't share this with anyone!",
+      "input": {
+        "label": "Your secret admin link",
+        "info": "The link to this admin page, the page you are seeing now. This link allows you to delete your QR Dispenser. Keep it secret!"
+      },
+      "clipboard": "Copy secret admin link to clipboard"
+    }
+  },
+  "create": {
+    "creatingDispenser": "Creating QR Dispenser",
+    "file": {
+      "acceptedFormat": "File is not a csv/txt",
+      "noCodes": "No codes found",
+      "codesDetected": "{{ count }} codes detected.",
+      "codesDetected_one": "{{ count }} code detected.",
+      "codesDetected_two": "{{ count }} codes detected.",
+      "mintCheck": "Checking your mint links",
+      "codeFormat": " codes had an invalid format. Example of a malformed code: ",
+      "csvNoEntries": "Csv has 0 entries"
+    },
+    "event": {
+      "eventExpired": "This event appears to have expired!",
+      "eventCancelled": "Event creation cancelled.",
+      "eventCreate": "Create dispenser with {{ count }} codes",
+      "eventCreate_one": "Create dispenser with {{ count }} code",
+      "eventCreate_two": "Create dispenser with {{ count }} codes",
+      "noName": "Please specify an event name",
+      "noEmail": "Please specify a valid email address",
+      "wrongDate": "Please specify the date in YYYY-MM-DD, for example 2021-11-25",
+      "creationMessage": "Please confirm that this is correct:\n\nDrop name: {{ name }}\n\nAdministrator email: {{ email }}\n\nQR dispenser expires at: ",
+      "dropName": {
+        "label": "Drop name",
+        "placeholder": "Best launch party ever",
+        "info": "For your own reference, not visible to the world."
+      },
+      "dropDate": {
+        "label": "QR dispenser expiry date",
+        "info": "After this date in your local timezone, your QR kiosk will stop working\n\n⚠️ You can only schedule up to 30 days in advance."
+      },
+      "dropEmail": {
+        "label": "Your email",
+        "placeholder": "revered@organizer.com",
+        "info": "We will send the QR kiosk link and the admin link there."
+      },
+      "dropGame": {
+        "label": "Enable anti-farming game?",
+        "info": "Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.",
+        "options": [
+          {
+            "label": "No (optional for physical events)",
+            "value": "no"
+          },
+          {
+            "label": "Yes (recommended for online)",
+            "value": "yes"
+          }
+        ]
+      },
+      "gameTime": {
+        "label": "How many seconds should the anti-farming game last?",
+        "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",
+        "options": [
+          {
+            "label": "30 sec",
+            "value": "30"
+          },
+          {
+            "label": "10 sec",
+            "value": "10"
+          },
+          {
+            "label": "20 sec",
+            "value": "20"
+          },
+          {
+            "label": "60 sec",
+            "value": "60"
+          }
+        ]
+      }
+    },
+    "input": {
+      "label": "Select .txt file that contains your POAP mint links",
+      "info": "This is the .txt file you received via email after you created your POAP drop at https://app.poap.xyz/admin"
+    }
+  },
+  "view": {
+    "eventLoading": "Loading event data",
+    "eventNoCache": "Error: No event ID known.\n\nMake sure to open this page through the event link from the admin interface.\n\nThis is an anti-abuse measure.",
+    "setKiosk": "Setting up your Kiosk",
+    "expiredKiosk": "Setting up your Kiosk",
+    "terms": {
+      "title": "Before we begin",
+      "subheading": "Keep your internet on",
+      "description": "Without an internet connection new codes will stop loading. You will receive a notification if the dispenser notices you are offline.",
+      "acceptBtn": "I understand, let's go!"
+    },
+    "expired": {
+      "title": "QR Kiosk expired",
+      "description": "This kiosk was set to expire on {{ expireDate }} by the organiser."
+    },
+    "codes": {
+      "title": "No codes available",
+      "description": "If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface."
+    },
+    "display": {
+      "subheading": "Scan the QR with your camera to claim your POAP",
+      "claimed": "{{ available }} of {{ codes }} codes claimed or pending"
+    }
+  },
+  "claim": {
+    "setLoading": "Verifying your humanity, you'll be forwarded soon",
+    "formulateRedirect": "Claim link generated: ",
+    "preppingMessage": "Prepping your POAP",
+    "stall": {
+      "loadingPrimary": "👀 Have I seen you before?",
+      "loadingSecondary": "🧐 You look a bit suspicious my friend...",
+      "loadingNewScan": "Please scan a new QR code",
+      "loadingError": "Verification failed! Either you took too long, or a lot of people are scanning at the same time, please scan again :).\n\nDebug info: {{ error_code }}, bc {{ challenge_code }}, fe {{ trail }}"
+    },
+    "validation": {
+      "alreadyUsed": "This link was already used, please scan the QR again"
+    }
+  },
+  "stroop": {
+    "timer": "Timer: ",
+    "score": "Your score: ",
+    "you": "You ",
+    "won": "won",
+    "lost": "lost",
+    "claimPoap": "Claim your POAP",
+    "loadPoap": "Loading your POAP...",
+    "game": {
+      "title": "Play a game to prove you are human",
+      "subtitle": "Instructions: click the button with the right color",
+      "description": "Get the highest score you can in {{ duration }} seconds",
+      "btn": "Start game"
+    },
+    "playing": {
+      "preTitle": "Click the ",
+      "postTitle": " button",
+      "subtitle": "Score: {{ score }} of {{ target_score }}"
+    }
+  }
+}

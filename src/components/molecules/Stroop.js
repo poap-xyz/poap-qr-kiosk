@@ -1,14 +1,14 @@
+import { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import useInterval from 'use-interval'
 import styled from 'styled-components'
+
 import Container from '../atoms/Container'
 import { H1, H2, Text } from '../atoms/Text'
 import Button from '../atoms/Button'
 import Section from '../atoms/Section'
 
-import { useState, useEffect, useRef } from 'react'
 import { log } from '../../modules/helpers'
-import useInterval from 'use-interval'
-
-import { useTranslation } from 'react-i18next'
 
 // Stroop assets
 // const colors = [ 'red', 'green', 'blue', 'coral', 'darkblue', 'darkgreen', 'darkred', 'deeppink', 'lightgreen', 'lightblue', 'magenta', 'turquoise', 'purple', 'black', 'orange', 'grey' ]
@@ -31,7 +31,10 @@ const Timer = ( { duration, onComplete } ) => {
 
 export default ( { duration_input, target_score_input, onWin, onLose, poap_url, ...props } ) => {
 
-	const { t } = useTranslation( [ 'claim' , 'dispenser' ] )
+	// useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
+	// Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
+	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
+	const { t } = useTranslation( [ 'dynamic' , 'dispenser' ] )
 
 	const [ started, setStarted ] = useState( false )
 	const [ answer, setAnswer ] = useState( random_color() )

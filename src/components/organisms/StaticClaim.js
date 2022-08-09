@@ -1,19 +1,29 @@
 import { useState, useEffect } from 'react'
-import { log, dev, wait } from '../../modules/helpers'
 import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
+// Modules
+import { log, dev, wait } from '../../modules/helpers'
+import { claim_code_by_email } from '../../modules/firebase'
+
+// Hooks
+import { useCodeMetadata } from '../../hooks/printed_qrs'
+
+// Components
 import Loading from '../molecules/Loading'
 import Button from '../atoms/Button'
 import Container from '../atoms/Container'
 import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 import { H1, H2, Text } from '../atoms/Text'
-import Section from '../atoms/Section'
-import { useCodeMetadata } from '../../hooks/printed_qrs'
 
-import { claim_code_by_email } from '../../modules/firebase'
 
 export default function StaticClaim() {
+
+    // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
+	// Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
+	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
+	const { t } = useTranslation( [ 'static' , 'dispenser' ] )
 
     const [ email, setEmail ] = useState( '' )
     const [ termsAccepted, setTermsAccepted ] = useState( false )
@@ -28,12 +38,12 @@ export default function StaticClaim() {
         try {
 
             // Validate inputs
-            if( code_meta?.drop_meta?.optin_text && !termsAccepted ) throw new Error( `Please accept the terms in order to continue` )
-            if( !email?.includes( '@' ) ) throw new Error( `Please input a valid email address` )
-            if( !claim_code ) throw new Error( `Your QR is invalid, please scan it again` )
+            if( code_meta?.drop_meta?.optin_text && !termsAccepted ) throw new Error( `${ t( 'claim.validations.accept_terms') }` )
+            if( !email?.includes( '@' ) ) throw new Error( `${ t( 'claim.validations.valid_email') }` )
+            if( !claim_code ) throw new Error( `${ t( 'claim.validations.invalid_qr') }` )
 
             // Register claim with firebase
-            setLoading( `Claiming your POAP` )
+            setLoading( `${ t( 'claim.set_loading' ) }` )
             const { data: response } = await claim_code_by_email( { claim_code, email } )
             const { error, success } = response
             log( `Remote response `, response )
@@ -60,25 +70,25 @@ export default function StaticClaim() {
     if( loading ) return <Loading message={ loading } />
 
     // If no code meta is available yet, show spinner
-    if( code_meta?.event === 'loading' ) return <Loading message={ 'Verifying your QR' } />
+    if( code_meta?.event === 'loading' ) return <Loading message={ t( 'claim.validations.verifying_qr' ) } />
 
     // If code was already used, show error message
     if( code_meta?.claimed === true ) return <Container>
-        <Text>This QR was already used.</Text>
+        <Text>{ t( 'claim.validations.used_qr' ) }</Text>
     </Container>
 
     // If no drop meta available, the user is trying to cheat or has a malformed link
     if( !code_meta?.event ) return <Container>
-        <Text>You scanned an invalid link, please contact the event organiser.</Text>
+        <Text>{ t( 'claim.validations.invalid_link' ) }</Text>
     </Container>
 
     // If the user claimed the POAP, tell them to check their email
     if( user_claimed ) return <Container>
 
         <Main align='flex-start' width='400px'>
-            <H1>You successfully claimed your POAP!</H1>
-            <H2>Check your inbox at { email }</H2>
-            <Text>The email contains instructions on how to view your POAP, and claim it to a crypto wallet if you want to do so.</Text>
+            <H1>{ t( 'claim.user_claimed.title') }</H1>
+            <H2>{ t( 'claim.user_claimed.subtitle' , { email: email } ) }</H2>
+            <Text>{ t( 'claim.user_claimed.description') }</Text>
         </Main>
 
     </Container>
@@ -87,11 +97,11 @@ export default function StaticClaim() {
     return <Container>
 
         <Main align='flex-start' width='400px'>
-            <H1>Claim your POAP</H1>
+            <H1>{ t( 'claim.title' ) }</H1>
 
             { code_meta?.drop_meta?.welcome_text && <Text>{ code_meta?.drop_meta?.welcome_text }</Text> }
 
-            <Input id='static-print-qr-email-field' label='Your email' value={ email } onChange={ ( { target } ) => setEmail( target.value ) } />
+            <Input id='static-print-qr-email-field' label={ t( 'claim.labels.email.label' ) } value={ email } onChange={ ( { target } ) => setEmail( target.value ) } />
                             
             { code_meta?.drop_meta?.optin_text && <Text align='flex-start' onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
                 <Input style={ { zoom: 1.3 } } margin='0 .5rem 0 0' width='50px' type='checkbox' onChange={ ( { target } ) => setTermsAccepted( target.checked ) } checked={ termsAccepted } />
@@ -100,7 +110,7 @@ export default function StaticClaim() {
                 <span dangerouslySetInnerHTML={ { __html: code_meta?.drop_meta?.optin_text } } />
             </Text> }
             
-            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={ ( termsAccepted || !code_meta?.drop_meta?.optin_text ) ? 'primary' : 'text' }>Claim your POAP</Button>
+            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={ ( termsAccepted || !code_meta?.drop_meta?.optin_text ) ? 'primary' : 'text' }>{ t( 'claim.buttons.claim_poap' ) }</Button>
         </Main>
 
     </Container>
