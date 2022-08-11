@@ -87,10 +87,11 @@ exports.health_check = functions.https.onCall( health_check )
 // Static QR system
 // /////////////////////////////*/
 const { claim_code_by_email } = require( './modules/codes' )
-const { export_emails_of_static_drop, create_static_drop } = require( './modules/static_qr_drop' )
+const { export_emails_of_static_drop, create_static_drop, update_public_static_drop_data } = require( './modules/static_qr_drop' )
 exports.export_emails_of_static_drop = functions.https.onCall( export_emails_of_static_drop )
 exports.claim_code_by_email = functions.https.onCall( claim_code_by_email )
 exports.create_static_drop = functions.https.onCall( create_static_drop )
+exports.update_public_static_drop_data = functions.firestore.document( `static_drop_private/{drop_id}` ).onWrite( update_public_static_drop_data )
 
 // Public health check
 exports.public_health_check = functions.https.onRequest( public_health_check )

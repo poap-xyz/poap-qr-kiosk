@@ -97,7 +97,7 @@ export default function StaticClaim() {
     return <Container>
 
         <Main align='flex-start' width='400px'>
-            <H1>{ t( 'claim.title' ) }</H1>
+        <H1 id='static-print-qr-h1'>{ t( 'claim.title' ) }</H1>
 
             { code_meta?.drop_meta?.welcome_text && <Text>{ code_meta?.drop_meta?.welcome_text }</Text> }
 
@@ -112,6 +112,9 @@ export default function StaticClaim() {
             
             <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={ ( termsAccepted || !code_meta?.drop_meta?.optin_text ) ? 'primary' : 'text' }>{ t( 'claim.buttons.claim_poap' ) }</Button>
         </Main>
+
+        { /* If this drop has custom CSS associated with it, inject it raw */ }
+        { code_meta?.drop_meta?.custom_css && <style dangerouslySetInnerHTML={ { __html: code_meta?.drop_meta?.custom_css } } /> }
 
     </Container>
 }
