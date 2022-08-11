@@ -97,7 +97,7 @@ exports.update_public_static_drop_data = async function( change, context ) {
 
     // Destructure data, if unapproved, delete document
     const { welcome_text, optin_text, custom_css, approved } = after.data()
-    if( approved ) return db.collection( 'static_drop_public' ).doc( drop_id ).delete()
+    if( !approved ) return db.collection( 'static_drop_public' ).doc( drop_id ).delete()
 
 	// If this was an update, grab the public properties and set them
 	const public_data_object = {
