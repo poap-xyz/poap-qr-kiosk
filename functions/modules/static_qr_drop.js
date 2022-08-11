@@ -58,7 +58,7 @@ exports.create_static_drop = async ( data, context ) => {
 
         // Destructure inputs
         log( `Create called with `, data )
-        const { drop_id, auth_code, optin_text, welcome_text } = data
+        const { drop_id, auth_code, optin_text, welcome_text, custom_css } = data
         const is_mock_claim = drop_id?.includes( `mock` )
 
         // Validate config versus inputs
@@ -70,6 +70,7 @@ exports.create_static_drop = async ( data, context ) => {
             auth_code,
             ...( optin_text?.length && { optin_text } ),
             ...( welcome_text?.length && { welcome_text } ),
+            ...( custom_css?.length && { custom_css } ),
             approved: false,
             updated: Date.now(), updated_human: new Date().toString()
         }
@@ -83,5 +84,29 @@ exports.create_static_drop = async ( data, context ) => {
         log( `Error exporting emails: `, e )
         return { error: e.message }
     }
+
+}
+
+exports.update_public_static_drop_data = async function( change, context ) {
+
+	const { after, before } = change
+	const { drop_id } = context.params
+
+	// If this was a deletion, delete public data
+	if( !after.exists ) return db.collection( 'static_drop_public' ).doc( drop_id ).delete()
+
+    // Destructure data, if unapproved, delete document
+    const { welcome_text, optin_text, custom_css, approved } = after.data()
+    if( approved ) return db.collection( 'static_drop_public' ).doc( drop_id ).delete()
+
+	// If this was an update, grab the public properties and set them
+	const public_data_object = {
+        ...( welcome_text?.length && { welcome_text } ),
+        ...( optin_text?.length && { optin_text } ),
+        ...( custom_css?.length && { custom_css } ),
+		updated: Date.now(),
+		updated_by: 'static_drop_private'
+	}
+	return db.collection( 'static_drop_public' ).doc( drop_id ).set( public_data_object, { merge: true } )
 
 }
