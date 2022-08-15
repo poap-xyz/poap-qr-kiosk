@@ -94,7 +94,7 @@ export default function StaticClaim() {
     </Container>
 
     // Show claim interface
-    return <Container>
+    return <Container id='static-print-qr-top-container'>
 
         <Main align='flex-start' width='400px'>
             <H1 id='static-print-qr-h1'>{ t( 'claim.title' ) }</H1>
