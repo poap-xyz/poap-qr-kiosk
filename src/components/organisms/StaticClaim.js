@@ -97,9 +97,9 @@ export default function StaticClaim() {
     return <Container>
 
         <Main align='flex-start' width='400px'>
-        <H1 id='static-print-qr-h1'>{ t( 'claim.title' ) }</H1>
+            <H1 id='static-print-qr-h1'>{ t( 'claim.title' ) }</H1>
 
-            { code_meta?.drop_meta?.welcome_text && <Text>{ code_meta?.drop_meta?.welcome_text }</Text> }
+            { code_meta?.drop_meta?.welcome_text && <Text id='static-print-qr-welcome-text'>{ code_meta?.drop_meta?.welcome_text }</Text> }
 
             <Input id='static-print-qr-email-field' label={ t( 'claim.labels.email.label' ) } value={ email } onChange={ ( { target } ) => setEmail( target.value ) } />
                             
