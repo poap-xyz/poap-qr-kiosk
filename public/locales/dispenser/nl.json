@@ -7,7 +7,7 @@
   "clipboardCopy": "gekopieerd naar het klembord",
   "health": {
     "check": "Systeem status: ",
-    "maintenance": "NL The POAP system is undergoing some maintenance, the QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details."
+    "maintenance": "NL The POAP system is undergoing some maintenance, the POAP QR dispenser might not work as expected during this time.\n\nPlease check our official channels for details."
   },
   "welcome": {
     "hero": {
