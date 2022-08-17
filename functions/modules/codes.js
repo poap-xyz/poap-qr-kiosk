@@ -56,7 +56,7 @@ exports.check_code_status = function( code, context ) {
 async function claim_code_to_address( claim_code, drop_id, address, claim_secret ) {
 
 	// Handle mock claiming
-	const is_mock_claim = drop_id.includes( `mock` )
+	const is_mock_claim = `${ drop_id }`.includes( `mock` )
 
 	// Claim remotely, return empty mock response for mock claims
 	const claim_result = is_mock_claim ? ( {  } ) : await call_poap_endpoint( `/actions/claim-qr`, { address, qr_hash: claim_code, secret: claim_secret }, 'POST', 'json' )
@@ -496,7 +496,7 @@ exports.claim_code_by_email = async ( data, context ) => {
 		if( claimed ) throw new Error( `This QR was already used and is no longer valid.` )
 
 		// Save email to firestore
-		const drop_id = event.id
+		const drop_id = `${event.id}`
 
 		// Trigger claim with POAP backend
 		await claim_code_to_address( claim_code, drop_id, email, secret )
