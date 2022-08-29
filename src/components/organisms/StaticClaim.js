@@ -103,7 +103,7 @@ export default function StaticClaim() {
 
             <Input id='static-print-qr-email-field' label={ t( 'claim.labels.email.label' ) } value={ email } onChange={ ( { target } ) => setEmail( target.value ) } />
                             
-            { code_meta?.drop_meta?.optin_text && <Text align='flex-start' onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
+            { code_meta?.drop_meta?.optin_text && <Text id='static-print-qr-optin-field' align='flex-start' onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
                 <Input style={ { zoom: 1.3 } } margin='0 .5rem 0 0' width='50px' type='checkbox' onChange={ ( { target } ) => setTermsAccepted( target.checked ) } checked={ termsAccepted } />
                 
                 { /* This allows us to set terms & conditions texts through the firebase entry */ }
