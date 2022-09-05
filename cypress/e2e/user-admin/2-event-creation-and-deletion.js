@@ -26,7 +26,7 @@ context( 'Organiser successful event creation', () => {
 		// Relevant inputs appear
 		cy.contains( 'label', 'Drop name' )
 		cy.contains( 'label', 'Your email' )
-		cy.contains( 'label', 'QR dispenser expiry date' )
+		cy.contains( 'label', 'POAP QR dispenser expiry date' )
 
 		// Inputs are prefilled with expected values (generated based on backend testing defaults)
 		cy.get( 'input#event-create-name' ).should( input => {
@@ -73,10 +73,10 @@ context( 'Organiser successful event creation', () => {
 
 		cy.get( '#event-create-submit' ).click()
 
-		cy.contains( 'Creating QR Dispenser' )
+		cy.contains( 'Creating POAP QR Dispenser' )
 		cy.url().should( 'include', '/event/admin' )
 
-		cy.contains( 'Your public QR Dispenser link' )
+		cy.contains( 'Your public POAP QR Dispenser link' )
 		cy.contains( 'Your secret admin link' )
 
 	} )

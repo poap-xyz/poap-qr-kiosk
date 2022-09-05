@@ -16,11 +16,11 @@ export const Text = styled.p`
 
 export const H1 = styled.h1`
 	font-size: 2.5rem;
-	font-weight: 500;
 	line-height: 1.2;
-	font-family: 'Comfortaa', cursive, sans-serif;
+	font-family: 'Rubik', cursive, sans-serif;
+	font-weight: 600;
 	text-align: ${ ( { align } ) => align || 'left' };
-	color: ${ ( { theme, color } ) => color || theme.colors.primary };
+	color: ${ ( { theme, color } ) => color || theme.colors.title };
 	overflow-wrap: anywhere;
 `
 
@@ -28,9 +28,10 @@ export const H2 = styled.h2`
 	font-size: 1.5rem;
 	margin: 0 0 1rem;
 	line-height: 1.2;
+	font-family: 'Rubik', cursive, sans-serif;
 	font-weight: 400;
 	text-align: ${ ( { align } ) => align || 'left' };
-	color: ${ ( { theme, color } ) => color || theme.colors.accent };
+	color: ${ ( { theme, color } ) => color || theme.colors.subtitle };
 	overflow-wrap: anywhere;
 `
 

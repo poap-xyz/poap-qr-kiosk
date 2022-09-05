@@ -94,16 +94,16 @@ export default function StaticClaim() {
     </Container>
 
     // Show claim interface
-    return <Container>
+    return <Container id='static-print-qr-top-container'>
 
         <Main align='flex-start' width='400px'>
-        <H1 id='static-print-qr-h1'>{ t( 'claim.title' ) }</H1>
+            <H1 id='static-print-qr-h1'>{ t( 'claim.title' ) }</H1>
 
-            { code_meta?.drop_meta?.welcome_text && <Text>{ code_meta?.drop_meta?.welcome_text }</Text> }
+            { code_meta?.drop_meta?.welcome_text && <Text id='static-print-qr-welcome-text'>{ code_meta?.drop_meta?.welcome_text }</Text> }
 
             <Input id='static-print-qr-email-field' label={ t( 'claim.labels.email.label' ) } value={ email } onChange={ ( { target } ) => setEmail( target.value ) } />
                             
-            { code_meta?.drop_meta?.optin_text && <Text align='flex-start' onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
+            { code_meta?.drop_meta?.optin_text && <Text id='static-print-qr-optin-field' align='flex-start' onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
                 <Input style={ { zoom: 1.3 } } margin='0 .5rem 0 0' width='50px' type='checkbox' onChange={ ( { target } ) => setTermsAccepted( target.checked ) } checked={ termsAccepted } />
                 
                 { /* This allows us to set terms & conditions texts through the firebase entry */ }

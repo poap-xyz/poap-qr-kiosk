@@ -24,7 +24,7 @@ i18n
         interpolation: {
             escapeValue: false,
         },
-        debug: process.env.NODE_ENV === 'development'
+        debug: false
     })
 
 export default i18n

@@ -1,19 +1,19 @@
 {
   "admin": {
     "title": "Magic POAP Dispenser",
-    "loadingDispenser": "Loading QR dispenser",
+    "loadingDispenser": "Loading POAP QR dispenser",
     "setLoadingDispenser": "Delete QR Dispenser",
     "loadingValidity": "Double-checking admin link validity",
     "invalidValidity": "Invalid event admin link",
-    "confirmDeleteDispenser": "Are you sure you want to delete your QR Dispenser?\n\nThis cannot be undone, but you can always create a new QR Dispenser following the same simple steps you used to make this one.",
-    "succesDeleteDispenser": "Deletion success!\n\nYour QR Dispenser has been deleted.\n\nClick OK to be redirected to the home page. ",
+    "confirmDeleteDispenser": "Are you sure you want to delete your POAP QR Dispenser?\n\nThis cannot be undone, but you can always create a new QR Dispenser following the same simple steps you used to make this one.",
+    "succesDeleteDispenser": "Deletion success!\n\nYour POAP QR Dispenser has been deleted.\n\nClick OK to be redirected to the home page. ",
     "deletionCancelled": "Deletion cancelled, your event still exists.",
-    "errorDeleteDispenser": "Error Delete QR Dispenser: {{ message }}",
+    "errorDeleteDispenser": "Error Deleting POAP QR Dispenser: {{ message }}",
     
     "hero": {
       "subheading": {
         "reviewed": "⚠️ Your event is being reviewed",
-        "unique": "Your unique QR dispenser link"
+        "unique": "Your unique POAP QR dispenser link"
       },
       "description": {
         "pre": "This link is intended to be displayed on a physical device, or through a screenshare during a stream. ",
@@ -21,22 +21,22 @@
         "post": " send it to anyone."
       },
       "input": {
-        "label": "Your public QR Dispenser link",
-        "info": "This link takes you to your QR Dispenser page. For example, you can display this page on an iPad at your check-in desk."
+        "label": "Your public POAP QR Dispenser link",
+        "info": "This link takes you to your POAP QR Dispenser page. For example, you can display this page on an iPad at your check-in desk."
       },
       "distribute": {
         "button": "Open link & start distributing POAPs",
         "clipboard": "Copy to clipboard"
       },
       "notavailable": {
-        "title": "This QR dispenser will become available once the curation team approves your event.",
+        "title": "This POAP QR dispenser will become available once the curation team approves your event.",
         "description": "You will receive an email when your event is approved. This email will also send you the manual claim links in a links.txt file. You don&apos;t have to use them, but it is ok to use them in combination with this QR dispenser."
       }
     },
     "deleteDispenser": {
       "title": "Secret Admin Section",
-      "subheading": "Delete this QR dispenser",
-      "description": "Want to create a new QR dispenser for this drop? Delete this QR dispenser first, and then create a new dispenser when you are ready.",
+      "subheading": "Delete this POAP QR dispenser",
+      "description": "Want to create a new POAP QR dispenser for this drop? Delete this POAP QR dispenser first, and then create a new dispenser when you are ready.",
       "deleteBtn": "Delete QR dispenser"
     },  
     "adminDispenser": {
@@ -44,13 +44,13 @@
       "description": "Your admin link is yours to make changes to this instance of the magic POAP dispenser. Don't share this with anyone!",
       "input": {
         "label": "Your secret admin link",
-        "info": "The link to this admin page, the page you are seeing now. This link allows you to delete your QR Dispenser. Keep it secret!"
+        "info": "The link to this admin page, the page you are seeing now. This link allows you to delete your POAP QR Dispenser. Keep it secret!"
       },
       "clipboard": "Copy secret admin link to clipboard"
     }
   },
   "create": {
-    "creatingDispenser": "Creating QR Dispenser",
+    "creatingDispenser": "Creating POAP QR Dispenser",
     "file": {
       "acceptedFormat": "File is not a csv/txt",
       "noCodes": "No codes found",
@@ -70,20 +70,20 @@
       "noName": "Please specify an event name",
       "noEmail": "Please specify a valid email address",
       "wrongDate": "Please specify the date in YYYY-MM-DD, for example 2021-11-25",
-      "creationMessage": "Please confirm that this is correct:\n\nDrop name: {{ name }}\n\nAdministrator email: {{ email }}\n\nQR dispenser expires at: ",
+      "creationMessage": "Please confirm that this is correct:\n\nDrop name: {{ name }}\n\nAdministrator email: {{ email }}\n\nPOAP QR dispenser expires at: ",
       "dropName": {
         "label": "Drop name",
         "placeholder": "Best launch party ever",
         "info": "For your own reference, not visible to the world."
       },
       "dropDate": {
-        "label": "QR dispenser expiry date",
-        "info": "After this date in your local timezone, your QR kiosk will stop working\n\n⚠️ You can only schedule up to 30 days in advance."
+        "label": "POAP QR dispenser expiry date",
+        "info": "After this date in your local timezone, your POAP QR dispenser will stop working\n\n⚠️ You can only schedule up to 30 days in advance."
       },
       "dropEmail": {
         "label": "Your email",
         "placeholder": "revered@organizer.com",
-        "info": "We will send the QR kiosk link and the admin link there."
+        "info": "We will send the POAP QR dispenser link and the admin link there."
       },
       "dropGame": {
         "label": "Enable anti-farming game?",
@@ -130,8 +130,7 @@
   "view": {
     "eventLoading": "Loading event data",
     "eventNoCache": "Error: No event ID known.\n\nMake sure to open this page through the event link from the admin interface.\n\nThis is an anti-abuse measure.",
-    "setKiosk": "Setting up your Kiosk",
-    "expiredKiosk": "Setting up your Kiosk",
+    "setKiosk": "Setting up your POAP QR dispenser",
     "terms": {
       "title": "Before we begin",
       "subheading": "Keep your internet on",
@@ -139,8 +138,8 @@
       "acceptBtn": "I understand, let's go!"
     },
     "expired": {
-      "title": "QR Kiosk expired",
-      "description": "This kiosk was set to expire on {{ expireDate }} by the organiser."
+      "title": "POAP QR dispenser expired",
+      "description": "This POAP QR dispenser was set to expire on {{ expireDate }} by the organiser."
     },
     "codes": {
       "title": "No codes available",
