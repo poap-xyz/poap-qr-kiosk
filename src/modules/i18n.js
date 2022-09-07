@@ -16,7 +16,7 @@ i18n
         load: 'languageOnly',
         backend: {
             // translation file path
-            loadPath: '/locales/{{ns}}/{{lng}}.json',
+            loadPath: '/locales/{{lng}}/{{ns}}.json',
         },
         supportedLngs: [ 'en', 'nl' ],
         fallbackLng: 'en',
@@ -24,7 +24,7 @@ i18n
         interpolation: {
             escapeValue: false,
         },
-        debug: false
+        debug: process.env.NODE_ENV === 'development'
     })
 
 export default i18n
