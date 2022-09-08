@@ -69,7 +69,7 @@ async function validate_and_write_event_codes( event_id, expiration_date, codes,
 		// Check if code already exists and is claimed
 		const oldDocRef = await db.collection( 'codes' ).doc( code.qr_hash ).get()
 		const oldDocData = oldDocRef.data()
-		if( oldDocRef.exists && oldDocData.event != event_id ) throw new Error( `This QR Dispenser has already been created! If you were the creator, please check your email for a message with the subject "POAP - Your QR Kiosk".\nDebug data for POAP programmers: duplicate entry is ${ code }..` )
+		if( oldDocRef.exists && oldDocData.event != event_id ) throw new Error( `This POAP Kiosk has already been created! If you were the creator, please check your email for a message with the subject "POAP - Your QR Kiosk".\nDebug data for POAP programmers: duplicate entry is ${ code }..` )
 
 	} )
 

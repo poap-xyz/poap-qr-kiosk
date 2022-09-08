@@ -83,7 +83,7 @@
   "view": {
     "eventLoading": "Laden van evenement",
     "eventNoCache": "Fout: Geen event-ID bekend.\n\n\nZorg ervoor dat je deze pagina opent via de gebeurtenislink vanuit de beheerdersinterface.\n\n\nDit is een maatregel tegen misbruik.",
-    "setKiosk": "Uw POAP QR dispenser instellen",
+    "setKiosk": "Uw POAP Kiosk instellen",
     "terms": {
       "title": "Voordat we beginnen",
       "subheading": "Houd je internet aan",
@@ -91,8 +91,8 @@
       "acceptBtn": "Ik begrijp het, laten we gaan!"
     },
     "expired": {
-      "title": "POAP QR dispenser verlopen",
-      "description": "Deze POAP QR dispenser is door de organisator ingesteld om op {{ expireDate }} te verlopen."
+      "title": "POAP Kiosk verlopen",
+      "description": "Deze POAP Kiosk is door de organisator ingesteld om op {{ expireDate }} te verlopen."
     },
     "codes": {
       "title": "Geen codes beschikbaar",

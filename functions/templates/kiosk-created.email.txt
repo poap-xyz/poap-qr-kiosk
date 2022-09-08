@@ -2,7 +2,7 @@ POAP kiosk: %%eventname%%
 
 Your QR delivery kiosk is ready for use
 
-Open your public QR Dispenser link on the device from which you want to dispense QR codes. For example, this could be a tablet at the check-in of your IRL event.
+Open your public POAP Kiosk link on the device from which you want to dispense QR codes. For example, this could be a tablet at the check-in of your IRL event.
 
 Public event link: %%eventlink%%
 

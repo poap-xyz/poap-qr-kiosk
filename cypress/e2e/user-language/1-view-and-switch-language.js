@@ -3,7 +3,7 @@
 // /////////////////////////////*/
 
 
-context( 'Welcome page QR Dispenser', () => {
+context( 'Welcome page POAP Kiosk', () => {
 
 
 	it( 'Has a link to create a QR kiosk, and a base language of English', () => {
@@ -14,7 +14,7 @@ context( 'Welcome page QR Dispenser', () => {
 		cy.getCookie( 'i18next' ).should( 'have.property', 'value', 'en' )
 		
 		// expect the homescreen in EN
-		cy.contains( 'Create QR dispenser' )
+		cy.contains( 'Create POAP Kiosk' )
 
 	} )
 
