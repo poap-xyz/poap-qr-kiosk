@@ -1,36 +1,4 @@
 {
-  "setLoading": "Verifying your humanity, you'll be forwarded soon",
-  "formulateRedirect": "Claimlink gegenereerd:",
-  "preppingMessage": "Je POAP voorbereiden",
-  "stall": {
-    "loadingPrimary": "👀 Heb ik je eerder gezien?",
-    "loadingSecondary": "🧐 Je bent een beetje verdacht mijn vriend...",
-    "loadingNewScan": "Scan a.u.b. een nieuwe QR-code",
-    "loadingError": "Verificatie mislukt! \nOf het heeft te lang geduurd, of er zijn veel mensen tegelijk aan het scannen, scan alstublieft nog een keer :).\n\n\nFoutopsporingsinformatie: {{ error_code }}, bc {{ challenge_code }}, fe {{ trail }}"
-  },
-  "validation": {
-    "alreadyUsed": "Deze link is al gebruikt, scan de QR opnieuw"
-  },
-  "stroop": {
-    "timer": "Tijd: ",
-    "score": "Je score:",
-    "you": "Je hebt ",
-    "won": "gewonnen",
-    "lost": "verloren",
-    "claimPoap": "Claim je POAP",
-    "loadPoap": "POAP laden...",
-    "game": {
-      "title": "Speel een spel om te bewijzen dat je een mens bent",
-      "subtitle": "Instructies: klik op de knop met de juiste kleur",
-      "description": "Haal de hoogste score die je kunt in {{ duration }} seconden",
-      "btn": "Start het spel"
-    },
-    "playing": {
-      "preTitle": "Klik de ",
-      "postTitle": " knop",
-      "subtitle": "Score: {{ score }} van {{ target_score }}"
-    }
-  },
   "admin": {
     "title": "Magische POAP Dispenser",
     "loadingDispenser": "QR-dispenser laden",
@@ -80,6 +48,84 @@
       "clipboard": "Kopieer beheerderslink naar klembord"
     }
   },
+  "create": {
+    "creatingDispenser": "Creating POAP Kiosk",
+    "file": {
+      "acceptedFormat": "File is not a csv/txt",
+      "noCodes": "No codes found",
+      "codesDetected": "{{ count }} codes detected.",
+      "codesDetected_one": "{{ count }} code detected.",
+      "codesDetected_two": "{{ count }} codes detected.",
+      "mintCheck": "Checking your mint links",
+      "codeFormat": " codes had an invalid format. Example of a malformed code: ",
+      "csvNoEntries": "Csv has 0 entries"
+    },
+    "event": {
+      "eventExpired": "This event appears to have expired!",
+      "eventCancelled": "Event creation cancelled.",
+      "eventCreate": "Create dispenser with {{ count }} codes",
+      "eventCreate_one": "Create dispenser with {{ count }} code",
+      "eventCreate_two": "Create dispenser with {{ count }} codes",
+      "noName": "Please specify an event name",
+      "noEmail": "Please specify a valid email address",
+      "wrongDate": "Please specify the date in YYYY-MM-DD, for example 2021-11-25",
+      "creationMessage": "Please confirm that this is correct:\n\nDrop name: {{ name }}\n\nAdministrator email: {{ email }}\n\nPOAP Kiosk expires at: ",
+      "dropName": {
+        "label": "Drop name",
+        "placeholder": "Best launch party ever",
+        "info": "For your own reference, not visible to the world."
+      },
+      "dropDate": {
+        "label": "POAP Kiosk expiry date",
+        "info": "After this date in your local timezone, your POAP Kiosk will stop working\n\n⚠️ You can only schedule up to 30 days in advance."
+      },
+      "dropEmail": {
+        "label": "Your email",
+        "placeholder": "revered@organizer.com",
+        "info": "We will send the POAP Kiosk link and the admin link there."
+      },
+      "dropGame": {
+        "label": "Enable anti-farming game?",
+        "info": "Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.",
+        "options": [
+          {
+            "label": "No (optional for physical events)",
+            "value": "no"
+          },
+          {
+            "label": "Yes (recommended for online)",
+            "value": "yes"
+          }
+        ]
+      },
+      "gameTime": {
+        "label": "How many seconds should the anti-farming game last?",
+        "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",
+        "options": [
+          {
+            "label": "30 sec",
+            "value": "30"
+          },
+          {
+            "label": "10 sec",
+            "value": "10"
+          },
+          {
+            "label": "20 sec",
+            "value": "20"
+          },
+          {
+            "label": "60 sec",
+            "value": "60"
+          }
+        ]
+      }
+    },
+    "input": {
+      "label": "Select .txt file that contains your POAP mint links",
+      "info": "This is the .txt file you received via email after you created your POAP drop at https://app.poap.xyz/admin"
+    }
+  },
   "view": {
     "eventLoading": "Laden van evenement",
     "eventNoCache": "Fout: Geen event-ID bekend.\n\n\nZorg ervoor dat je deze pagina opent via de gebeurtenislink vanuit de beheerdersinterface.\n\n\nDit is een maatregel tegen misbruik.",
@@ -101,6 +147,40 @@
     "display": {
       "subheading": "Scan de QR met je camera om je POAP te claimen",
       "claimed": "{{ available }} van {{ codes }} codes geclaimd of in behandeling"
+    }
+  },
+  "claim": {
+    "setLoading": "Verifying your humanity, you'll be forwarded soon",
+    "formulateRedirect": "Claimlink gegenereerd:",
+    "preppingMessage": "Je POAP voorbereiden",
+    "stall": {
+      "loadingPrimary": "👀 Heb ik je eerder gezien?",
+      "loadingSecondary": "🧐 Je bent een beetje verdacht mijn vriend...",
+      "loadingNewScan": "Scan a.u.b. een nieuwe QR-code",
+      "loadingError": "Verificatie mislukt! \nOf het heeft te lang geduurd, of er zijn veel mensen tegelijk aan het scannen, scan alstublieft nog een keer :).\n\n\nFoutopsporingsinformatie: {{ error_code }}, bc {{ challenge_code }}, fe {{ trail }}"
+    },
+    "validation": {
+      "alreadyUsed": "Deze link is al gebruikt, scan de QR opnieuw"
+    }
+  },
+  "stroop": {
+    "timer": "Tijd: ",
+    "score": "Je score:",
+    "you": "Je hebt ",
+    "won": "gewonnen",
+    "lost": "verloren",
+    "claimPoap": "Claim je POAP",
+    "loadPoap": "POAP laden...",
+    "game": {
+      "title": "Speel een spel om te bewijzen dat je een mens bent",
+      "subtitle": "Instructies: klik op de knop met de juiste kleur",
+      "description": "Haal de hoogste score die je kunt in {{ duration }} seconden",
+      "btn": "Start het spel"
+    },
+    "playing": {
+      "preTitle": "Klik de ",
+      "postTitle": " knop",
+      "subtitle": "Score: {{ score }} van {{ target_score }}"
     }
   }
 }
