@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import useInterval from 'use-interval'
-import styled from 'styled-components'
+// import styled from 'styled-components'
 
 import Container from '../atoms/Container'
 import { H1, H2, Text } from '../atoms/Text'
@@ -19,7 +19,7 @@ const random_color = except => pick_random_array_entry( colors.filter( color => 
 const Timer = ( { duration, onComplete } ) => {
 
 	const [ timePassed, setTimePassed ] = useState( 0 )
-	const { t } = useTranslation( [ 'claim' ] )
+	const { t } = useTranslation( [ 'dynamic' ] )
 
 	useInterval( f => {
 		if( timePassed >= duration ) return onComplete()

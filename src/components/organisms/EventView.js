@@ -46,7 +46,7 @@ export default function ViewQR( ) {
   // State handling
   // ///////////////////////////////
   const defaultScanInerval = 2 * 60 * 1000
-  const [ loading, setLoading ] = useState( `${ t( 'setKiosk' ) }` )
+  const [ loading, setLoading ] = useState( `${ t( 'view.setKiosk' ) }` )
   const [ event, setEvent ] = useState(  )
   const [ template, setTemplate ] = useState( {} )
 	const [ internalEventId, setInternalEventId ] = useState( eventId || stateEventId )
