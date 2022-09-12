@@ -1,9 +1,9 @@
 {
-  "title": "Magic POAP Dispenser ",
-  "createButton": "Create QR dispenser",
+  "title": "POAP Kiosk ",
+  "createButton": "Create POAP Kiosk",
   "startedtext": "Get started now",
   "admin": {
-    "title": "Static QR Drop Export",
+    "title": "Static POAP Kiosk drop export",
     "set_loading": "Verifying credentials",
     "auth_succes": "Authentication success",
     "labels": {
@@ -26,7 +26,7 @@
     }
   },
   "create": {
-    "title": "Static QR Drop Creation",
+    "title": "Static POAP Kiosk drop creation",
     "set_loading": "Creating drop",
     "note": "Note: this is an internal POAP tool, anything you do here will not work unless it received preapproval from the engineering team.",
     "labels": {

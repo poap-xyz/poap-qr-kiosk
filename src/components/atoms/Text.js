@@ -49,4 +49,5 @@ export const Br = styled.span`
 `
 export const Sup = styled.sup`
 	overflow-wrap: anywhere;
+	font-weight: normal;
 `

@@ -26,7 +26,7 @@ context( 'Organiser successful event creation', () => {
 		// Relevant inputs appear
 		cy.contains( 'label', 'Drop name' )
 		cy.contains( 'label', 'Your email' )
-		cy.contains( 'label', 'POAP QR dispenser expiry date' )
+		cy.contains( 'label', 'POAP Kiosk expiry date' )
 
 		// Inputs are prefilled with expected values (generated based on backend testing defaults)
 		cy.get( 'input#event-create-name' ).should( input => {
@@ -73,10 +73,10 @@ context( 'Organiser successful event creation', () => {
 
 		cy.get( '#event-create-submit' ).click()
 
-		cy.contains( 'Creating POAP QR Dispenser' )
+		cy.contains( 'Creating POAP Kiosk' )
 		cy.url().should( 'include', '/event/admin' )
 
-		cy.contains( 'Your public POAP QR Dispenser link' )
+		cy.contains( 'Your public POAP Kiosk link' )
 		cy.contains( 'Your secret admin link' )
 
 	} )
@@ -90,8 +90,8 @@ context( 'Organiser successful event creation', () => {
 			expect( response ).to.contain( 'Are you sure' )
 		} )
 
-		cy.contains( 'Delete QR dispenser' ).click()
-		cy.contains( 'Delete QR Dispenser' )
+		cy.contains( 'Delete POAP Kiosk' ).click()
+		cy.contains( 'Delete POAP Kiosk' )
 
 		cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
 

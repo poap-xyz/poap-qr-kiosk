@@ -223,7 +223,7 @@ context( 'Claimer can view valid events with game', () => {
 			expect( response ).to.contain( 'Are you sure' )
 		} )
 
-		cy.contains( 'Delete QR dispenser' ).click()
+		cy.contains( 'Delete POAP Kiosk' ).click()
 
 		cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
 	} )

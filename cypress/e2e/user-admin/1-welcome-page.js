@@ -13,7 +13,7 @@ context( 'Welcome page UX', () => {
 	// 	cy.contains( 'label', 'Beta password' )
 	// 	cy.get( '#welcome-beta-password' ).type( 'erc721' )
 		
-	// 	cy.contains( 'Create QR dispenser' )
+	// 	cy.contains( 'Create POAP Kiosk' )
 
 	// } )
 
@@ -24,7 +24,7 @@ context( 'Welcome page UX', () => {
 		// cy.contains( 'label', 'Beta password' )
 		// cy.get( '#welcome-beta-password' ).type( 'erc721' )
 
-		cy.contains( 'Create QR dispenser' ).click()
+		cy.contains( 'Create POAP Kiosk' ).click()
 		cy.url().should( 'include', '/create' )
 		
 	} )

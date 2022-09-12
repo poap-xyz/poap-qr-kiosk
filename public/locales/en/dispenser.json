@@ -1,0 +1,27 @@
+{
+  "title": "Magic POAP Kiosk ",
+  "subtitle": "Get POAPs to your friends IRL",
+  "titledescription": "Just input your .txt file of mint links and watch your phone turn into a POAP Kiosk at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one.",
+  "createButton": "Create POAP Kiosk",
+  "startedtext": "Get started now",
+  "clipboardCopy": "Copied to clipboard!",
+  "health": {
+    "check": "Systems health: ",
+    "maintenance": "The POAP system is undergoing some maintenance, the POAP Kiosk might not work as expected during this time.\n\nPlease check our official channels for details."
+  },
+  "welcome": {
+    "hero": {
+      "title": "Magic POAP Kiosk ",
+      "subheading": "Get POAPs to your friends IRL",
+      "description": "Just input your .txt file of mint links and watch your phone turn into a POAP Kiosk at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one."
+    },
+    "checkin": {
+      "title": "Physical POAP distribution made easy",
+      "description": "For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees."
+    },
+    "stream": {
+      "title": "Stream-friendly QR sharing",
+      "description": "During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner."
+    }
+  }
+}

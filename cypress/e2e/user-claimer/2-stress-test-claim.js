@@ -156,8 +156,8 @@ context( 'Claimer can view valid events', () => {
 			expect( response ).to.contain( 'Are you sure' )
 		} )
 
-		cy.contains( 'Delete QR dispenser' ).click()
-		cy.contains( 'Delete QR Dispenser' )
+		cy.contains( 'Delete POAP Kiosk' ).click()
+		cy.contains( 'Delete POAP Kiosk' )
 
 		cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
 	} )

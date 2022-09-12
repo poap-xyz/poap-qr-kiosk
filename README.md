@@ -1,4 +1,4 @@
-# POAP QR dispenser
+# POAP Kiosk
 
 This is a kiosk app that displays QR codes based on a list of event codes uploaded by the event manager.
 

@@ -9,7 +9,7 @@ context( "Admin interface", () => {
 		cy.visit( `/static/admin/export` )
 
 		// Page renders
-				cy.contains( `Static QR Drop Export` )
+				cy.contains( `Static POAP Kiosk drop export` )
 				cy.contains( `Drop ID` )
 				cy.contains( `Secret Edit Code` )
 				cy.contains( `Authentication code` )
@@ -23,7 +23,7 @@ context( "Admin interface", () => {
 		cy.visit( `/static/admin/create` )
 
 		// Page renders
-				cy.contains( `Static QR Drop Creation` )
+				cy.contains( `Static POAP Kiosk drop creation` )
 				cy.contains( `Drop ID` )
 				cy.contains( `Opt-in` )
 				cy.contains( `Create static drop` )
