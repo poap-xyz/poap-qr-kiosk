@@ -1,8 +1,8 @@
 {
-  "title": "Magische POAP Dispenser",
+  "title": "POAP Kiosk ",
   "subtitle": "Breng POAPs naar je vrienden IRL",
-  "titledescription": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen.",
-  "createButton": "Creëer QR-dispenser",
+  "titledescription": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP Kiosk. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen.",
+  "createButton": "Creëer QR dispenser",
   "startedtext": "Begin nu",
   "clipboardCopy": "gekopieerd naar het klembord",
   "health": {
@@ -11,13 +11,13 @@
   },
   "welcome": {
     "hero": {
-      "title": "Magische POAP Dispenser ",
+      "title": "POAP Kiosk ",
       "subheading": "Breng POAPs naar je vrienden IRL",
-      "description": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP QR-dispenser. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen."
+      "description": "Voer je .txt-bestand in met je mint-links en verander al je apparaten in een POAP Kiosk. Je kunt de QR-codes weergeven die bezoekers één voor één kunnen scannen."
     },
     "checkin": {
       "title": "Fysieke POAP-distributie makkelijk gemaakt",
-      "description": "Stel voor IRL-evenementen eenvoudig een apparaat of meerdere apparaten in om unieke POAP QR-codes weer te geven aan deelnemers."
+      "description": "Stel voor IRL-evenementen eenvoudig een apparaat of meerdere apparaten in om unieke QR-codes weer te geven aan deelnemers."
     },
     "stream": {
       "title": "Stream-vriendelijk QR-delen",
