@@ -26,7 +26,7 @@ context( 'Welcome page POAP Kiosk', () => {
 
 		cy.get( 'select' ).select( '🇳🇱' )
 
-		cy.contains( 'Magische POAP Dispenser' )
+		cy.contains( 'POAP Kiosk' )
 		
 	} )
 
