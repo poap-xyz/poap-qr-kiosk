@@ -69,6 +69,11 @@ jobs:
           name: cypress-videos
           path: cypress/videos # or path/to/artifact
 
+
+      # Deployment
+      - name: Remove debug token from build
+        run: sed -i 's/^REACT_APP_APPCHECK_DEBUG_TOKEN=.*$//g' .env
+
       # Deployment
       - name: Build website files
         env:
