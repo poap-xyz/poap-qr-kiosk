@@ -149,7 +149,7 @@ exports.registerEvent = async function( data, context ) {
 		throw_on_failed_app_check( context )
 
 		// Validations
-		const { name='', email='', date='', codes=[], challenges=[], game_config={ duration: 30, target_score: 5 } } = data
+		const { name='', email='', date='', codes=[], challenges=[], game_config={ duration: 30, target_score: 5 }, css } = data
 		if( !codes.length ) throw new Error( 'Csv has 0 entries' )
 		if( !name.length ) throw new Error( 'Please specify an event name' )
 		if( !email.includes( '@' ) ) throw new Error( 'Please specify a valid email address' )
@@ -169,6 +169,7 @@ exports.registerEvent = async function( data, context ) {
 			authToken,
 			challenges,
 			game_config,
+			...( css && { css } ),
 			template: await get_event_template_by_code( codes[0] ),
 			public_auth: generate_new_event_public_auth( public_auth_expiry_interval_minutes, is_test_event ),
 			created: Date.now(),
@@ -227,7 +228,7 @@ exports.updatePublicEventData = async function( change, context ) {
 	if( !after.exists ) return db.collection( 'publicEventData' ).doc( eventId ).delete()
 
 	// If this was an update, grab the public properties and set them
-	const { name, codes, codesAvailable, expires, public_auth, challenges, game_config, template } = after.data()
+	const { name, codes, codesAvailable, expires, public_auth, challenges, game_config, template, css } = after.data()
 	const public_data_object = {
 		name,
 		public_auth,
@@ -236,6 +237,7 @@ exports.updatePublicEventData = async function( change, context ) {
 		challenges,
 		game_config,
 		...( template && { template } ),
+		...( css && { css } ),
 		codesAvailable: codesAvailable || 0,
 		updated: Date.now(),
 		updated_by: 'updatePublicEventData'

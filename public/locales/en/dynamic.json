@@ -98,6 +98,11 @@
           }
         ]
       },
+      "dropCss": {
+        "placeholder": "body, p {}",
+        "label": "Custom CSS overrides",
+        "info": "This field will be injected as CSS overrides during the claiming process."
+      },
       "gameTime": {
         "label": "How many seconds should the anti-farming game last?",
         "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",

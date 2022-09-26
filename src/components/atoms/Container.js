@@ -1,7 +1,11 @@
+import { useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 // Image that behaves like a background image
 import logo from '../../assets/logo.svg'
+import { useEvent, useLocalstoredEvent } from '../../hooks/events'
+import { log } from '../../modules/helpers'
+import Style from './Style'
 const BackgroundImage = styled.img.attrs( props => ( {
 	src: props.src || logo
 } ) )`
@@ -32,7 +36,25 @@ const Wrapper = styled.div`
 `
 
 // Container that always has the background image
-export default ( { children, background, ...props } ) => <Wrapper { ...props }>
-	<BackgroundImage src={ background } key='background' />
-	{ children }
-</Wrapper>
+export default ( { children, background, ...props } ) => {
+
+	// Get event ID from different sources
+	const location = useLocation()
+
+	// Event ID form url
+	const { eventId: routeEventId } = useParams()
+
+	// Event ID from pushed state
+	const { eventId: stateEventId } = location
+
+	// Load event details in case there is custom css
+	const eventId = useLocalstoredEvent()
+	const event = useEvent( eventId || stateEventId || routeEventId )
+
+	log( `Rendering container with event: `, event )
+	return <Wrapper { ...props }>
+		<BackgroundImage src={ background } key='background' />
+		{ children }
+		<Style styles={ event?.css } />
+	</Wrapper>
+}

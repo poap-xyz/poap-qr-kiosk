@@ -33,12 +33,15 @@ export default function Admin( ) {
   const [ date, setDate ] = useState( '' )
   const [ name, setName ] = useState( '' )
   const [ csv, setCsv ] = useState(  )
+  const [ css, setCss ] = useState(  )
   const [ codes, setCodes ] = useState(  )
   const [ gameEnabled, setGameEnabled ] = useState( false )
   const [ gameDuration, setGameDuration ] = useState( 30 )
   const [ loading, setLoading ] = useState( false )
   const [ filename, setFilename ] = useState( 'codes.txt' )
   const [ isHealthy, setIsHealthy ] = useState( true )
+  const [ backgroundTaps, setBackgroundTaps ] = useState( 0 )
+  const developer_mode = backgroundTaps >= 20
 
   // ///////////////////////////////
   // Lifecycle handling
@@ -201,7 +204,8 @@ export default function Admin( ) {
         date,
         codes,
         challenges: gameEnabled ? [ 'game' ] : [],
-        game_config: { duration: gameDuration, target_score: Math.ceil( gameDuration / 5 ) }
+        game_config: { duration: gameDuration, target_score: Math.ceil( gameDuration / 5 ) },
+        ...( css && { css } )
       } )
 
       log( 'Event created: ', newEvent, { name, email, date, codes } )
@@ -229,7 +233,7 @@ export default function Admin( ) {
   // ///////////////////////////////
   if( loading ) return <Loading message={ loading } />
   
-  return <Container>
+  return <Container onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 
     <Main width='400px'>
 
@@ -250,6 +254,7 @@ export default function Admin( ) {
         <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'create.event.dropEmail.placeholder' ) } label={ t( 'create.event.dropEmail.label' ) } info={ t( 'create.event.dropEmail.info' ) } value={ email } />
         <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label={ t( 'create.event.dropGame.label' ) } info={ `${ t( 'create.event.dropGame.info' ) }` } type='dropdown' options={ t( 'create.event.dropGame.options', { returnObjects: true } ) } />
         { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'create.event.gameTime.label' ) } info={ t( 'create.event.gameTime.info' ) } options={ t( 'create.event.gameTime.options', { returnObjects: true } ) } /> }
+        { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'create.event.dropCss.placeholder' ) } label={ t( 'create.event.dropCss.label' ) } info={ t( 'create.event.dropCss.info' ) } value={ css || '' } /> }
       </> }
       
       { codes && <Button id="event-create-submit" onClick={ createEvent }>{ t( 'create.event.eventCreate', { count: codes.length } ) }</Button> }
