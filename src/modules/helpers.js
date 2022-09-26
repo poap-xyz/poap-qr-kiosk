@@ -33,3 +33,8 @@ export const monthNameToNumber = monthName => {
 // ///////////////////////////////
 
 export const wait = ( time, error=false ) => new Promise( ( res, rej ) => setTimeout( error ? rej : res, time ) )
+
+/* ///////////////////////////////
+// Security helpers
+// /////////////////////////////*/
+export const remove_script_tags = ( string='' ) => string.replace( /<.*script.*>/ig, '' )

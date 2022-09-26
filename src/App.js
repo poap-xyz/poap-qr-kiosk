@@ -24,8 +24,10 @@ import Loading from './components/molecules/Loading'
 export default function App( ) {
 
   return <Theme>
-    <Suspense fallback={ <Loading /> }>
+    
       <Router>
+
+      <Suspense fallback={ <Loading /> }>
 
         <Routes>
 
@@ -58,8 +60,9 @@ export default function App( ) {
 
         </Routes>
 
+      </Suspense>
+
       </Router>
-    </Suspense>
   </Theme>
   
 }

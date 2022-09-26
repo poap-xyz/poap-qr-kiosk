@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 // Modules
-import { log, dev, wait } from '../../modules/helpers'
+import { log, dev, wait, remove_script_tags } from '../../modules/helpers'
 import { claim_code_by_email } from '../../modules/firebase'
 
 // Hooks
@@ -16,6 +16,7 @@ import Container from '../atoms/Container'
 import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 import { H1, H2, Text } from '../atoms/Text'
+import Style from '../atoms/Style'
 
 
 export default function StaticClaim() {
@@ -107,14 +108,14 @@ export default function StaticClaim() {
                 <Input style={ { zoom: 1.3 } } margin='0 .5rem 0 0' width='50px' type='checkbox' onChange={ ( { target } ) => setTermsAccepted( target.checked ) } checked={ termsAccepted } />
                 
                 { /* This allows us to set terms & conditions texts through the firebase entry */ }
-                <span dangerouslySetInnerHTML={ { __html: code_meta?.drop_meta?.optin_text } } />
+                <span dangerouslySetInnerHTML={ { __html: remove_script_tags( code_meta?.drop_meta?.optin_text ) } } />
             </Text> }
             
             <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={ ( termsAccepted || !code_meta?.drop_meta?.optin_text ) ? 'primary' : 'text' }>{ t( 'claim.buttons.claim_poap' ) }</Button>
         </Main>
 
-        { /* If this drop has custom CSS associated with it, inject it raw */ }
-        { code_meta?.drop_meta?.custom_css && <style dangerouslySetInnerHTML={ { __html: code_meta?.drop_meta?.custom_css } } /> }
+        { /* If this drop has custom CSS associated with it, inject it */ }
+        <Style styles={ code_meta?.drop_meta?.custom_css } />
 
     </Container>
 }

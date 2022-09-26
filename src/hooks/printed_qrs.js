@@ -39,7 +39,7 @@ export function useCodeMetadata( claim_code ) {
     useEffect( f => {
 
         // Log whether we can listen
-        if( !event?.id )return log( `No drop ID available for ${ claim_code }, setting to empty. Known meta: `, event )
+        if( !event?.id ) return log( `No drop ID available for ${ claim_code }, setting to empty. Known meta: `, event )
 
         log( `Starting listener for static_drop_public/${ event.id }` )
 
