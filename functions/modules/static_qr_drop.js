@@ -58,7 +58,7 @@ exports.create_static_drop = async ( data, context ) => {
 
         // Destructure inputs
         log( `Create called with `, data )
-        const { drop_id, auth_code, optin_text, welcome_text, custom_css } = data
+        const { drop_id, auth_code, optin_text, welcome_text, custom_css, custom_email } = data
         const is_mock_claim = drop_id?.includes( `mock` )
 
         // Validate config versus inputs
@@ -71,6 +71,7 @@ exports.create_static_drop = async ( data, context ) => {
             ...( optin_text?.length && { optin_text } ),
             ...( welcome_text?.length && { welcome_text } ),
             ...( custom_css?.length && { custom_css } ),
+            ...( custom_email?.length && { custom_email } ),
             approved: false,
             updated: Date.now(), updated_human: new Date().toString()
         }

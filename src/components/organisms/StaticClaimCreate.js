@@ -22,6 +22,7 @@ export default function StaticClaimCreate() {
     const [ optin_text, set_optin_text] = useState( '' )
     const [ welcome_text, set_welcome_text] = useState( '' )
     const [ custom_css, set_custom_css ] = useState( '' )
+    const [ custom_email, set_custom_email ] = useState(  )
     const [ success, set_success] = useState( false )
     const [ loading, set_loading] = useState( false )
     const auth_code = useRef( uuidv4() ).current
@@ -31,7 +32,7 @@ export default function StaticClaimCreate() {
         try {
 
             set_loading( `${ t( 'create.set_loading' ) }` )
-            const { data } = await create_static_drop( { drop_id, auth_code, optin_text, welcome_text, custom_css } )
+            const { data } = await create_static_drop( { drop_id, auth_code, optin_text, welcome_text, custom_css, custom_email } )
             log( `Remote response: `, data )
             const { csv_string, error } = data
             if( error ) throw new Error( error || `Malformed response` )
@@ -72,6 +73,7 @@ export default function StaticClaimCreate() {
             <Input type='text' value={ welcome_text } onChange={ ( { target } ) => set_welcome_text( target.value ) } label={ t( 'create.labels.welcome_text.label' ) } info={ t( 'create.labels.welcome_text.info' ) } />
             <Input type='text' value={ optin_text } onChange={ ( { target } ) => set_optin_text( target.value ) } label={ t( 'create.labels.optin_text.label' ) } info={ t( 'create.labels.optin_text.info' ) } />
             <Input type='text' value={ custom_css } onChange={ ( { target } ) => set_custom_css( target.value ) } label='Custom CSS' info='Custom style code that will be injected. This can be used for fonts, logos, adn colors.' />
+            <Input type='text' value={ custom_email } onChange={ ( { target } ) => set_custom_email( target.value ) } label='Custom Email HTML' info='Custom email HTML that will be sent instead of the default POAP email.' />
             <Button onClick={ create_drop }>{ t( 'create.buttons.create_drop' ) }</Button>
 
         </Main>
