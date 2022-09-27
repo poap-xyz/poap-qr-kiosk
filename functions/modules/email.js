@@ -7,6 +7,7 @@ const juice = require('juice')
 const pug = require('pug')
 const { promises: fs } = require( 'fs' )
 const csso = require('csso')
+const { log } = require('./helpers')
 
 async function compilePugToEmail( pugFile, event ) {
 
@@ -43,6 +44,44 @@ exports.sendEventAdminEmail = async ( { email, event } ) => {
 			html: await compilePugToEmail( `${ __dirname }/../templates/kiosk-created.email.pug`, event ),
 		}
 
+		await mail.send( msg )
+
+	} catch( e ) {
+
+		console.error( e )
+
+	}
+
+}
+
+exports.sendCustomClaimEmail = async ( { email, event, claim_code, html } ) => {
+
+	try {
+
+		// API auth
+		mail.setApiKey( sendgrid.apikey )
+
+		// Substitute event properties in the HTML
+		const event_keys = Object.keys( event )
+		let substituted_html = event_keys.reduce( ( html_progress, event_key ) => {
+
+			const key_search = new RegExp( `%%${ event_key }%%`, 'ig' )
+			return html_progress.replace( key_search, event[ event_key ] )
+
+		}, html )
+
+		// Substitute claim code in html
+		substituted_html = substituted_html.replace( /%%claim_code%%/ig, claim_code )
+
+		// Build email
+		const msg = {
+			to: email,
+			from: sendgrid.fromemail,
+			subject: `Claim your POAP for ${ event.name }`,
+			html: substituted_html
+		}
+
+		log( `Sending custom email: `, substituted_html )
 		await mail.send( msg )
 
 	} catch( e ) {

@@ -45,7 +45,7 @@ export default function StaticClaim() {
 
             // Register claim with firebase
             setLoading( `${ t( 'claim.set_loading' ) }` )
-            const { data: response } = await claim_code_by_email( { claim_code, email } )
+            const { data: response } = await claim_code_by_email( { claim_code, email, is_static_drop: true } )
             const { error, success } = response
             log( `Remote response `, response )
 

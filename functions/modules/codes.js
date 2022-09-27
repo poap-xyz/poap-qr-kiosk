@@ -7,6 +7,7 @@ const { call_poap_endpoint } = require( './poap_api' )
 
 // Libraries
 const Throttle = require( 'promise-parallel-throttle' )
+const { sendCustomClaimEmail } = require('./email')
 
 // ///////////////////////////////
 // Code helpers
@@ -53,13 +54,15 @@ exports.check_code_status = function( code, context ) {
 }
 
 // Code claiming function
-async function claim_code_to_address( claim_code, drop_id, address, claim_secret ) {
+async function claim_code_to_address( claim_code, drop_id, address, claim_secret, send_default_email=true ) {
+
+	log( `Claiming ${ claim_code } to ${ address } with ${ send_default_email ? 'default' : 'custom' } email` )
 
 	// Handle mock claiming
 	const is_mock_claim = `${ drop_id }`.includes( `mock` )
 
 	// Claim remotely, return empty mock response for mock claims
-	const claim_result = is_mock_claim ? ( {  } ) : await call_poap_endpoint( `/actions/claim-qr`, { address, qr_hash: claim_code, secret: claim_secret }, 'POST', 'json' )
+	const claim_result = is_mock_claim ? ( {  } ) : await call_poap_endpoint( `/actions/claim-qr`, { address, qr_hash: claim_code, secret: claim_secret, sendEmail: send_default_email }, 'POST', 'json' )
 
 	// API error handling
 	const { error, message, Message, statusCode } = claim_result
@@ -484,7 +487,7 @@ exports.claim_code_by_email = async ( data, context ) => {
 	try {
 
 		// Validate input
-		let { claim_code, email } = data
+		let { claim_code, email, is_static_drop } = data
 		if(	!isEmail( email ) ) throw new Error( `Invalid email format` )
 		if( !claim_code ) throw new Error( `Missing event data` )
 
@@ -495,11 +498,23 @@ exports.claim_code_by_email = async ( data, context ) => {
 		const { secret, claimed, event } = await checkCodeStatus( claim_code )
 		if( claimed ) throw new Error( `This QR was already used and is no longer valid.` )
 
-		// Save email to firestore
+		// Determine whether custom email needs to be sent
 		const drop_id = `${event.id}`
+		let custom_email = false
+		if( is_static_drop ) {
+			const { custom_email: stored_custom_email } = await db.collection( 'static_drop_private' ).doc( drop_id ).get().then( dataFromSnap )
+			custom_email = stored_custom_email
+		}
 
 		// Trigger claim with POAP backend
-		await claim_code_to_address( claim_code, drop_id, email, secret )
+		await claim_code_to_address( claim_code, drop_id, email, secret, !custom_email )
+
+		// If custom email was requested, formulate and send it
+		if( custom_email ) {
+			log( `Sending custom email to ${ email }` )
+			await sendCustomClaimEmail( { email, event, claim_code, html: custom_email } )
+		}
+
 		return { success: true }
 
 	} catch( e ) {
