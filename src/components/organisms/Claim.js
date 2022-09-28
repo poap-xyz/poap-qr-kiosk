@@ -10,6 +10,8 @@ import { useTranslation } from 'react-i18next'
 import Loading from '../molecules/Loading'
 import Stroop from '../molecules/Stroop'
 import Captcha from '../molecules/Captcha'
+import { useEventOfChallenge } from '../../hooks/events'
+const { REACT_APP_publicUrl } = process.env
 
 // ///////////////////////////////
 // Render component
@@ -31,6 +33,7 @@ export default function ViewQR( ) {
   const [ challenge, setChallenge ] = useState( {} )
   const [ poaplink, setPoaplink ] = useState(  )
   const [ captchaResponse, setCaptchaResponse ] = useState(  )
+  const event = useEventOfChallenge( challenge_code )
 
 
   /* ///////////////////////////////
@@ -81,8 +84,8 @@ export default function ViewQR( ) {
     log( `Received code: `, claim_code )
     trackEvent( `claim_code_received` )
 
-    // Formulate redirect 
-    const link = `https://poap.xyz/claim/${ claim_code }`
+    // Formulate redirect depending on claim type
+    const link =  `${ event?.collect_emails ? `${ REACT_APP_publicUrl }/#/static/claim/` : 'https://poap.xyz/claim/' }${ claim_code }`
     log( `${ t( 'claim.formulateRedirect' ) }`, link )
 
     return link

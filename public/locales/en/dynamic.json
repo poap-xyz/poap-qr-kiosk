@@ -103,6 +103,20 @@
         "label": "Custom CSS overrides",
         "info": "This field will be injected as CSS overrides during the claiming process."
       },
+      "dropCollectEmails": {
+        "label": "Collect emails?",
+        "info": "This assumed you set up the email collection system. This requires manual approval, if you don't know what this is you should not touch it.",
+        "options": [
+          {
+            "label": "No (default setting)",
+            "value": "no"
+          },
+          {
+            "label": "Yes (requires manual approval)",
+            "value": "yes"
+          }
+        ]
+      },
       "gameTime": {
         "label": "How many seconds should the anti-farming game last?",
         "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",

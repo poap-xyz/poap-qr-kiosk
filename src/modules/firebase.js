@@ -87,6 +87,11 @@ export async function importCodesFromArray( password='', codes=[] ) {
 // /////////////////////////////*/
 export function listenToEventMeta( eventId, cb ) {
 
+	if( !eventId ) {
+		log( `No event id specified to listener` )
+		return
+	}
+
 	const d = doc( db, 'publicEventData', eventId )
 
 	return onSnapshot( d, snap => {
@@ -101,6 +106,10 @@ export function listenToEventMeta( eventId, cb ) {
 
 export function listen_to_claim_challenge( challenge_id, cb ) {
 
+	if( !challenge_id ) {
+		log( `No challenge id specified to listener` )
+		return
+	}
 	const d = doc( db, 'claim_challenges', challenge_id )
 
 	return onSnapshot( d, snap => {
