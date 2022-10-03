@@ -23,6 +23,7 @@ export default function StaticClaimCreate() {
     const [ welcome_text, set_welcome_text] = useState( '' )
     const [ custom_css, set_custom_css ] = useState( '' )
     const [ custom_email, set_custom_email ] = useState(  )
+    const [ allow_wallet_claim, set_allow_wallet_claim ] = useState( false )
     const [ success, set_success] = useState( false )
     const [ loading, set_loading] = useState( false )
     const auth_code = useRef( uuidv4() ).current
@@ -32,7 +33,7 @@ export default function StaticClaimCreate() {
         try {
 
             set_loading( `${ t( 'create.set_loading' ) }` )
-            const { data } = await create_static_drop( { drop_id, auth_code, optin_text, welcome_text, custom_css, custom_email } )
+            const { data } = await create_static_drop( { drop_id, auth_code, optin_text, welcome_text, custom_css, custom_email, allow_wallet_claim } )
             log( `Remote response: `, data )
             const { csv_string, error } = data
             if( error ) throw new Error( error || `Malformed response` )
@@ -74,6 +75,12 @@ export default function StaticClaimCreate() {
             <Input type='text' value={ optin_text } onChange={ ( { target } ) => set_optin_text( target.value ) } label={ t( 'create.labels.optin_text.label' ) } info={ t( 'create.labels.optin_text.info' ) } />
             <Input type='text' value={ custom_css } onChange={ ( { target } ) => set_custom_css( target.value ) } label='Custom CSS' info='Custom style code that will be injected. This can be used for fonts, logos, adn colors.' />
             <Input type='text' value={ custom_email } onChange={ ( { target } ) => set_custom_email( target.value ) } label='Custom Email HTML' info='Custom email HTML that will be sent instead of the default POAP email.' />
+            <Text id='static-print-qr-optin-field' align='flex-start' onClick={ f => set_allow_wallet_claim( !allow_wallet_claim ) } direction='row'>
+                <Input style={ { zoom: 1.3 } } margin='0 .5rem 0 0' width='50px' type='checkbox' onChange={ ( { target } ) => set_allow_wallet_claim( target.checked ) } checked={ allow_wallet_claim } />
+                
+                { /* This allows us to set terms & conditions texts through the firebase entry */ }
+                Allow claims by wallet address. This bypasses the collection of emails, allowing you to use the static claim page as a whitelabel claim experience.
+            </Text>
             <Button onClick={ create_drop }>{ t( 'create.buttons.create_drop' ) }</Button>
 
         </Main>

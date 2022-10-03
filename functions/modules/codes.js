@@ -1,7 +1,7 @@
 // Firebase interactors
 const functions = require( 'firebase-functions' )
 const { db, dataFromSnap, increment } = require( './firebase' )
-const { log, dev, isEmail } = require( './helpers' )
+const { log, dev, isEmail, isWalletOrENS, isWallet } = require( './helpers' )
 const { throw_on_failed_app_check } = require( './security' )
 const { call_poap_endpoint } = require( './poap_api' )
 
@@ -487,12 +487,12 @@ exports.claim_code_by_email = async ( data, context ) => {
 	try {
 
 		// Validate input
-		let { claim_code, email, is_static_drop } = data
-		if(	!isEmail( email ) ) throw new Error( `Invalid email format` )
+		let { claim_code, email_or_0x_address, is_static_drop } = data
+		if(	!isEmail( email_or_0x_address ) && !isWalletOrENS( email_or_0x_address ) ) throw new Error( `Invalid email/wallet format` )
 		if( !claim_code ) throw new Error( `Missing event data` )
 
 		// Remove all +hack elements of emails
-		email = email.replace( /(\+.*)(?=@)/ig, '' )
+		if( !isWallet( email_or_0x_address ) ) email_or_0x_address = email_or_0x_address.replace( /(\+.*)(?=@)/ig, '' )
 
 		// Grab private drop meta needed for claim
 		const { secret, claimed, event } = await checkCodeStatus( claim_code )
@@ -507,12 +507,12 @@ exports.claim_code_by_email = async ( data, context ) => {
 		}
 
 		// Trigger claim with POAP backend
-		await claim_code_to_address( claim_code, drop_id, email, secret, !custom_email )
+		await claim_code_to_address( claim_code, drop_id, email_or_0x_address, secret, !custom_email )
 
 		// If custom email was requested, formulate and send it
-		if( custom_email ) {
-			log( `Sending custom email to ${ email }` )
-			await sendCustomClaimEmail( { email, event, claim_code, html: custom_email } )
+		if( custom_email && isEmail( email_or_0x_address ) ) {
+			log( `Sending custom email to ${ email_or_0x_address }` )
+			await sendCustomClaimEmail( { email_or_0x_address, event, claim_code, html: custom_email } )
 		}
 
 		return { success: true }

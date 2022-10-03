@@ -69,7 +69,8 @@
     },
     "labels": {
       "email": {
-        "label": "Your email"
+        "label": "Your email",
+        "label_with_wallet": "Your email or wallet address"
       }
     },
     "buttons": {
