@@ -41,6 +41,7 @@ export default function Admin( ) {
   const [ filename, setFilename ] = useState( 'codes.txt' )
   const [ isHealthy, setIsHealthy ] = useState( true )
   const [ backgroundTaps, setBackgroundTaps ] = useState( 0 )
+  const [ collectEmails, setCollectEmails ] = useState( false )
   const developer_mode = backgroundTaps >= 20
 
   // ///////////////////////////////
@@ -204,6 +205,7 @@ export default function Admin( ) {
         date,
         codes,
         challenges: gameEnabled ? [ 'game' ] : [],
+        collect_emails: !!collectEmails,
         game_config: { duration: gameDuration, target_score: Math.ceil( gameDuration / 5 ) },
         ...( css && { css } )
       } )
@@ -255,6 +257,8 @@ export default function Admin( ) {
         <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label={ t( 'create.event.dropGame.label' ) } info={ `${ t( 'create.event.dropGame.info' ) }` } type='dropdown' options={ t( 'create.event.dropGame.options', { returnObjects: true } ) } />
         { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'create.event.gameTime.label' ) } info={ t( 'create.event.gameTime.info' ) } options={ t( 'create.event.gameTime.options', { returnObjects: true } ) } /> }
         { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'create.event.dropCss.placeholder' ) } label={ t( 'create.event.dropCss.label' ) } info={ t( 'create.event.dropCss.info' ) } value={ css || '' } /> }
+        { developer_mode && <Input type='dropdown' options={ t( 'create.event.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'create.event.dropCollectEmails.label' ) } info={ t( 'create.event.dropCollectEmails.info' ) } value={ collectEmails } /> }
+        
       </> }
       
       { codes && <Button id="event-create-submit" onClick={ createEvent }>{ t( 'create.event.eventCreate', { count: codes.length } ) }</Button> }

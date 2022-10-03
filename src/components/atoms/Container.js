@@ -45,11 +45,17 @@ export default ( { children, background, ...props } ) => {
 	const { eventId: routeEventId } = useParams()
 
 	// Event ID from pushed state
-	const { eventId: stateEventId } = location
+	const { eventId: stateEventId, pathname } = location
+	const custom_css_paths = [
+		'/event/',
+		'/claim/',
+		'/static/claim'
+	]
+	const should_grab_css = !!custom_css_paths.find( path => pathname?.includes( path ) )
 
 	// Load event details in case there is custom css
-	const eventId = useLocalstoredEvent()
-	const event = useEvent( eventId || stateEventId || routeEventId )
+	const eventId = useLocalstoredEvent( !should_grab_css )
+	const event = useEvent( eventId || stateEventId || routeEventId, !should_grab_css )
 
 	log( `Rendering container with event: `, event )
 	return <Wrapper { ...props }>
