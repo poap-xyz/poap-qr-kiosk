@@ -26,7 +26,7 @@ export default function StaticClaim() {
 	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
 	const { t } = useTranslation( [ 'static' , 'dispenser' ] )
 
-    const [ email_or_0x_address, set_email_or_0x_address ] = useState(  )
+    const [ email_or_0x_address, set_email_or_0x_address ] = useState( '' )
     const [ termsAccepted, setTermsAccepted ] = useState( false )
     const [ user_claimed, set_user_claimed ] = useState( false )
     const { claim_code } = useParams()
@@ -88,14 +88,14 @@ export default function StaticClaim() {
 
         <Main align='flex-start' width='400px'>
             <H1>{ t( 'claim.user_claimed.title') }</H1>
-            <H2>{ t( 'claim.user_claimed.subtitle' , { email: email } ) }</H2>
+            <H2>{ t( 'claim.user_claimed.subtitle' , { email: email_or_0x_address } ) }</H2>
             <Text>{ t( 'claim.user_claimed.description') }</Text>
         </Main>
 
     </Container>
 
     // Show claim interface
-    const drop_meta = code_meta || {}
+    const { drop_meta } = code_meta || {}
     return <Container id='static-print-qr-top-container'>
 
         <Main align='flex-start' width='400px'>
