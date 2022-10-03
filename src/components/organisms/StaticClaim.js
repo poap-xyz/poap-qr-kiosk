@@ -26,7 +26,7 @@ export default function StaticClaim() {
 	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
 	const { t } = useTranslation( [ 'static' , 'dispenser' ] )
 
-    const [ email, setEmail ] = useState( '' )
+    const [ email_or_0x_address, set_email_or_0x_address ] = useState(  )
     const [ termsAccepted, setTermsAccepted ] = useState( false )
     const [ user_claimed, set_user_claimed ] = useState( false )
     const { claim_code } = useParams()
@@ -35,17 +35,17 @@ export default function StaticClaim() {
 
     async function claim_poap() {
 
-        log( `Starting claim for claimcode ${ claim_code } for ${ email }` )
+        log( `Starting claim for claimcode ${ claim_code } for ${ email_or_0x_address }` )
         try {
 
             // Validate inputs
             if( code_meta?.drop_meta?.optin_text && !termsAccepted ) throw new Error( `${ t( 'claim.validations.accept_terms') }` )
-            if( !email?.includes( '@' ) ) throw new Error( `${ t( 'claim.validations.valid_email') }` )
+            if( !email_or_0x_address?.includes( '@' ) && !email_or_0x_address.match( /0x[0-9-a-z]{40}/ig ) ) throw new Error( `${ t( 'claim.validations.valid_email') }` )
             if( !claim_code ) throw new Error( `${ t( 'claim.validations.invalid_qr') }` )
 
             // Register claim with firebase
             setLoading( `${ t( 'claim.set_loading' ) }` )
-            const { data: response } = await claim_code_by_email( { claim_code, email, is_static_drop: true } )
+            const { data: response } = await claim_code_by_email( { claim_code, email_or_0x_address, is_static_drop: true } )
             const { error, success } = response
             log( `Remote response `, response )
 
@@ -95,27 +95,28 @@ export default function StaticClaim() {
     </Container>
 
     // Show claim interface
+    const drop_meta = code_meta || {}
     return <Container id='static-print-qr-top-container'>
 
         <Main align='flex-start' width='400px'>
             <H1 id='static-print-qr-h1'>{ t( 'claim.title' ) }</H1>
 
-            { code_meta?.drop_meta?.welcome_text && <Text id='static-print-qr-welcome-text'>{ code_meta?.drop_meta?.welcome_text }</Text> }
+            { drop_meta?.welcome_text && <Text id='static-print-qr-welcome-text'>{ code_meta?.drop_meta?.welcome_text }</Text> }
 
-            <Input id='static-print-qr-email-field' label={ t( 'claim.labels.email.label' ) } value={ email } onChange={ ( { target } ) => setEmail( target.value ) } />
+            <Input id='static-print-qr-email-field' label={ t( `claim.labels.email.${ drop_meta?.allow_wallet_claim ? 'label_with_wallet' : 'label' }` ) } value={ email_or_0x_address } onChange={ ( { target } ) => set_email_or_0x_address( target.value ) } />
                             
-            { code_meta?.drop_meta?.optin_text && <Text id='static-print-qr-optin-field' align='flex-start' onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
+            { drop_meta?.optin_text && <Text id='static-print-qr-optin-field' align='flex-start' onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
                 <Input style={ { zoom: 1.3 } } margin='0 .5rem 0 0' width='50px' type='checkbox' onChange={ ( { target } ) => setTermsAccepted( target.checked ) } checked={ termsAccepted } />
                 
                 { /* This allows us to set terms & conditions texts through the firebase entry */ }
-                <span dangerouslySetInnerHTML={ { __html: remove_script_tags( code_meta?.drop_meta?.optin_text ) } } />
+                <span dangerouslySetInnerHTML={ { __html: remove_script_tags( drop_meta?.optin_text ) } } />
             </Text> }
             
-            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={ ( termsAccepted || !code_meta?.drop_meta?.optin_text ) ? 'primary' : 'text' }>{ t( 'claim.buttons.claim_poap' ) }</Button>
+            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={ ( termsAccepted || !drop_meta?.optin_text ) ? 'primary' : 'text' }>{ t( 'claim.buttons.claim_poap' ) }</Button>
         </Main>
 
         { /* If this drop has custom CSS associated with it, inject it */ }
-        <Style styles={ code_meta?.drop_meta?.custom_css } />
+        <Style styles={ drop_meta?.custom_css } />
 
     </Container>
 }
