@@ -34,3 +34,5 @@ cypress/screenshots
 cypress/videos
 .env*
 !.env.project
+.flaskenv*
+!.env.vault
