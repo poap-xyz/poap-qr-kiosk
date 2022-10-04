@@ -36,27 +36,57 @@ export function useCodeMetadata( claim_code ) {
     
     }, [ claim_code ] )
 
-    useEffect( f => {
+    useEffect( (  ) => {
 
-        // Log whether we can listen
-        if( !event?.id ) return log( `No drop ID available for ${ claim_code }, setting to empty. Known meta: `, event )
+        let cancelled = false;
+        let unsubscribe = undefined;
+    
+        ( async () => {
+    
+            try {
+    
+                // Log whether we can listen
+                if( !event?.id ) {
+                    await wait( 1000 )
+                    if( cancelled ) return
+                    log( `No drop ID available for ${ claim_code }, setting to empty. ` )
+                    return set_drop_meta( undefined )
+                }
 
-        log( `Starting listener for static_drop_public/${ event.id }` )
+                log( `Starting listener for static_drop_public/${ event.id }` )
 
-        // Handle mock event listening for CI
-        if( `${ event?.id }`.includes( `mock` ) ) {
-            wait( 1000 ).then( f => {
-                set_drop_meta( {
-                    welcome_text: 'Input your email below to claim your POAP! This text can be edited for each drop :)',
-                    optin_text: "I accept the terms and conditions, and sign away my soul. This field accepts html for links to external pages.",
+                // Handle mock event listening for CI
+                if( `${ event?.id }`.includes( `mock` ) ) {
+
+                    await wait( 2000 )
+                    set_drop_meta( {
+                        welcome_text: 'Input your email below to claim your POAP! This text can be edited for each drop :)',
+                        optin_text: "I accept the terms and conditions, and sign away my soul. This field accepts html for links to external pages.",
+                    } )
+
+                    return () => log( `Removed mock listener` )
+                }
+
+                // Return unlistener
+                unsubscribe = listen_to_document( `static_drop_public`, `${ event.id }`, meta => {
+                    log( `Drop meta: `, meta )
+                    set_drop_meta( meta )
                 } )
-            } )
-            return () => log( `Removed mock listener` )
+    
+            } catch( e ) {
+                log( `Issue getting event metadata` )
+            } 
+    
+        } )( )
+    
+        return () => {
+            if( unsubscribe ) {
+                log( `🛑 removed listener` )
+                unsubscribe()
+            }
+            cancelled = true
         }
-
-        // Return unlistener
-        return listen_to_document( `static_drop_public`, `${ event.id }`, set_drop_meta )
-
+    
     }, [ event?.id ] )
 
     const collated_metadata = {
