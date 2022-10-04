@@ -512,7 +512,7 @@ exports.claim_code_by_email = async ( data, context ) => {
 		// If custom email was requested, formulate and send it
 		if( custom_email && isEmail( email_or_0x_address ) ) {
 			log( `Sending custom email to ${ email_or_0x_address }` )
-			await sendCustomClaimEmail( { email_or_0x_address, event, claim_code, html: custom_email } )
+			await sendCustomClaimEmail( { email: email_or_0x_address, event, claim_code, html: custom_email } )
 		}
 
 		return { success: true }
