@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { listen_to_document, check_code_status } from "../modules/firebase"
-import { log } from "../modules/helpers"
+import { log, wait } from "../modules/helpers"
 
 export function useCodeMetadata( claim_code ) {
 
@@ -45,9 +45,11 @@ export function useCodeMetadata( claim_code ) {
 
         // Handle mock event listening for CI
         if( `${ event?.id }`.includes( `mock` ) ) {
-            set_drop_meta( {
-                welcome_text: 'Input your email below to claim your POAP! This text can be edited for each drop :)',
-				optin_text: "I accept the terms and conditions, and sign away my soul. This field accepts html for links to external pages.",
+            wait( 1000 ).then( f => {
+                set_drop_meta( {
+                    welcome_text: 'Input your email below to claim your POAP! This text can be edited for each drop :)',
+                    optin_text: "I accept the terms and conditions, and sign away my soul. This field accepts html for links to external pages.",
+                } )
             } )
             return () => log( `Removed mock listener` )
         }

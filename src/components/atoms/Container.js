@@ -6,8 +6,9 @@ import logo from '../../assets/logo.svg'
 import { useEvent, useLocalstoredEvent } from '../../hooks/events'
 import { log } from '../../modules/helpers'
 import Style from './Style'
-const BackgroundImage = styled.img.attrs( props => ( {
-	src: props.src || logo
+
+const BackgroundImage = styled.img.attrs( ( { src, generic_styles } ) => ( {
+	src: generic_styles ? undefined : src || logo
 } ) )`
 	position: absolute;
 	z-index: -1;
@@ -36,7 +37,7 @@ const Wrapper = styled.div`
 `
 
 // Container that always has the background image
-export default ( { children, background, ...props } ) => {
+export default ( { children, background, generic_styles, ...props } ) => {
 
 	// Get event ID from different sources
 	const location = useLocation()
@@ -59,7 +60,7 @@ export default ( { children, background, ...props } ) => {
 
 	log( `Rendering container with event: `, event )
 	return <Wrapper { ...props }>
-		<BackgroundImage src={ background } key='background' />
+		<BackgroundImage generic_styles={ generic_styles } src={ background } key='background' />
 		{ children }
 		<Style styles={ event?.css } />
 	</Wrapper>
