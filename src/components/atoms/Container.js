@@ -58,7 +58,6 @@ export default ( { children, background, generic_styles, ...props } ) => {
 	const eventId = useLocalstoredEvent( !should_grab_css )
 	const event = useEvent( eventId || stateEventId || routeEventId, !should_grab_css )
 
-	log( `Rendering container with event: `, event )
 	return <Wrapper { ...props }>
 		<BackgroundImage generic_styles={ generic_styles } src={ background } key='background' />
 		{ children }
