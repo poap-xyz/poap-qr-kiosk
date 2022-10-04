@@ -25,16 +25,16 @@ const Spinner = styled.div`
 		height: 64px;
 		margin: 8px;
 		border-radius: 50%;
-		border: 6px solid ${ ( { theme } ) => theme.colors.primary };
-		border-color: ${ ( { theme } ) => theme.colors.primary } transparent ${ ( { theme } ) => theme.colors.primary } transparent;
+		border: 6px solid ${ ( { theme, generic_styles } ) => generic_styles ? 'black' : theme.colors.primary };
+		border-color: ${ ( { theme, generic_styles } ) => generic_styles ? 'black' : theme.colors.primary } transparent ${ ( { theme, generic_styles } ) => generic_styles ? 'black' : theme.colors.primary } transparent;
 		animation: ${ rotate } 1.2s linear infinite;
 	}
 
 `
 
-export default ( { message, ...props } ) => <Container { ...props }>
+export default ( { message, generic_styles, ...props } ) => <Container generic_styles={ generic_styles } { ...props }>
 	
-	<Spinner />
+	<Spinner generic_styles={ generic_styles } />
 	{ message && <Text id='loading_text' align="center">{ message }</Text> }
 
 </Container>

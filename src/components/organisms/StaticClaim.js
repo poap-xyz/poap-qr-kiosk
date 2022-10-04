@@ -66,9 +66,10 @@ export default function StaticClaim() {
     /* ///////////////////////////////
     // Component rendering
     // /////////////////////////////*/
+    const { drop_meta } = code_meta || {}
 
     // If loading, show spinner
-    if( loading ) return <Loading message={ loading } />
+    if( drop_meta == 'loading' || loading ) return <Loading generic_styles={ true } message={ loading } />
 
     // If no code meta is available yet, show spinner
     if( code_meta?.event === 'loading' ) return <Loading message={ t( 'claim.validations.verifying_qr' ) } />
@@ -95,7 +96,6 @@ export default function StaticClaim() {
     </Container>
 
     // Show claim interface
-    const { drop_meta } = code_meta || {}
     return <Container id='static-print-qr-top-container'>
 
         <Main align='flex-start' width='400px'>
