@@ -8,9 +8,7 @@ import { useTranslation } from 'react-i18next'
 
 // Debugging data
 let { REACT_APP_publicUrl, REACT_APP_useEmulator } = process.env
-const emulatorUrl = 'http://localhost:5001/'
-if( REACT_APP_useEmulator ) REACT_APP_publicUrl = emulatorUrl
-log( 'Frontend using live url', REACT_APP_publicUrl )
+log( `Frontend using live url ${ REACT_APP_publicUrl } with ${ REACT_APP_useEmulator ? 'emulator' : 'live backend' }` )
 
 // Components
 import QR from '../atoms/QR'

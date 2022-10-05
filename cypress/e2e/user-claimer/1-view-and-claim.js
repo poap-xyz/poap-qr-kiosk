@@ -14,6 +14,7 @@ const request_options = {
 
 async function extract_challenge_from_url ( response ) {
 
+	cy.log( `Url from which to extract challenge: `, response )
 	const { redirects } = response
 	const [ challenge_url ] = redirects
 	cy.log( `Redirect: `, challenge_url )
