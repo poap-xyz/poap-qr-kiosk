@@ -37,7 +37,7 @@ const Wrapper = styled.div`
 `
 
 // Container that always has the background image
-export default ( { children, background, generic_styles, ...props } ) => {
+export default ( { children, background, generic_styles, className, ...props } ) => {
 
 	// Get event ID from different sources
 	const location = useLocation()
@@ -58,8 +58,8 @@ export default ( { children, background, generic_styles, ...props } ) => {
 	const eventId = useLocalstoredEvent( !should_grab_css )
 	const event = useEvent( eventId || stateEventId || routeEventId, !should_grab_css )
 
-	return <Wrapper { ...props }>
-		<BackgroundImage generic_styles={ generic_styles } src={ background } key='background' />
+	return <Wrapper className={ `${ className } global_container` } { ...props }>
+		<BackgroundImage id="global_background_image" generic_styles={ generic_styles } src={ background } key='background' />
 		{ children }
 		<Style styles={ event?.css } />
 	</Wrapper>
