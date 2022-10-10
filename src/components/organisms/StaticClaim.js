@@ -75,17 +75,17 @@ export default function StaticClaim() {
     if( code_meta?.event === 'loading' ) return <Loading message={ t( 'claim.validations.verifying_qr' ) } />
 
     // If code was already used, show error message
-    if( code_meta?.claimed === true ) return <Container>
+    if( code_meta?.claimed === true ) return <Container id='static-print-qr-top-container-invalid'>
         <Text>{ t( 'claim.validations.used_qr' ) }</Text>
     </Container>
 
     // If no drop meta available, the user is trying to cheat or has a malformed link
-    if( !code_meta?.event ) return <Container>
+    if( !code_meta?.event ) return <Container id='static-print-qr-top-container-invalid'>
         <Text>{ t( 'claim.validations.invalid_link' ) }</Text>
     </Container>
 
     // If the user claimed the POAP, tell them to check their email
-    if( user_claimed ) return <Container>
+    if( user_claimed ) return <Container id='static-print-qr-top-container-success'>
 
         <Main align='flex-start' width='400px'>
             <H1>{ t( 'claim.user_claimed.title') }</H1>

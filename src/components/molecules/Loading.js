@@ -32,9 +32,9 @@ const Spinner = styled.div`
 
 `
 
-export default ( { message, generic_styles, ...props } ) => <Container generic_styles={ generic_styles } { ...props }>
+export default ( { message, generic_styles, className, ...props } ) => <Container className={ `${ className } loading_container` } generic_styles={ generic_styles } { ...props }>
 	
-	<Spinner generic_styles={ generic_styles } />
+	<Spinner id='loading_spinner' generic_styles={ generic_styles } />
 	{ message && <Text id='loading_text' align="center">{ message }</Text> }
 
 </Container>
