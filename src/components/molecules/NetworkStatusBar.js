@@ -5,7 +5,7 @@ import BottomBar from '../atoms/BottomBar'
 import { Text } from '../atoms/Text'
 
 // Functionality
-import { log, catcher } from '../../modules/helpers'
+import { useIsOnline } from '../../hooks/network'
 
 
 // ///////////////////////////////
@@ -13,52 +13,14 @@ import { log, catcher } from '../../modules/helpers'
 // ///////////////////////////////
 export default function ComponentName( ) {
 
-	// ///////////////////////////////
-	// State handling
-	// ///////////////////////////////
-	const [ online, setOnline ] = useState( true )
-
-	// Only show the bar after the interface has been offline at least once, otherwise the bar shows on load
-	const [ wasoffline, setWasoffline ] = useState(  )
-
-	// ///////////////////////////////
-	// Lifecycle handling
-	// ///////////////////////////////
-
-	// Handle network changes
-	useEffect( () => {
-
-		log( `Setting network listeners` )
-
-		const handleOnline = () => {
-			log( 'Browser went online' )
-			setOnline( true )
-		}
-
-		const handleOffline = () => {
-			log( 'Browser went offline' )
-			setOnline( false )
-			setWasoffline( true )
-		}
-
-		window.addEventListener( 'online', handleOnline )
-
-		window.addEventListener( 'offline', handleOffline )
-
-		return () => {
-			log( 'Removing network listeners' )
-			window.removeEventListener( 'online', handleOnline )
-			window.removeEventListener( 'offline', handleOffline )
-		}
-
-	}, [] )
+	const { online, was_offline, bad_connection } = useIsOnline(  )
 
 	// ///////////////////////////////
 	// Render component
 	// ///////////////////////////////
-	return <BottomBar animate={ wasoffline } success={ online }>
+	return <BottomBar animate={ was_offline || bad_connection } success={ online && !bad_connection }>
 		<Text align="center">
-			Network { online ? 'On' : 'Off' }line!
+			Network { online ? 'on' : 'off' }line { online && `(${ bad_connection ? 'unstable' : 'stable' } connection)` }
 		</Text>
 	</BottomBar>
 

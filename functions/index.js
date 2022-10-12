@@ -82,6 +82,7 @@ exports.get_code_by_challenge = functions.https.onCall( get_code_by_challenge )
 // /////////////////////////////*/
 const { health_check, public_health_check } = require( './modules/health' )
 exports.health_check = functions.https.onCall( health_check )
+exports.ping = functions.https.onCall( ping => 'pong' )
 
 /* ///////////////////////////////
 // Static QR system
