@@ -52,6 +52,7 @@ export const getEventDataFromCode = httpsCallable( functions, 'getEventDataFromC
 export const check_code_status = httpsCallable( functions, 'check_code_status' )
 export const get_code_by_challenge = httpsCallable( functions, 'get_code_by_challenge' )
 export const health_check = httpsCallable( functions, 'health_check' )
+export const remote_ping = httpsCallable( functions, 'ping' )
 export const claim_code_by_email = httpsCallable( functions, 'claim_code_by_email' )
 export const export_emails_of_static_drop = httpsCallable( functions, 'export_emails_of_static_drop' )
 export const create_static_drop = httpsCallable( functions, 'create_static_drop' )

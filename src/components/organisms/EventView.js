@@ -11,13 +11,12 @@ let { REACT_APP_publicUrl, REACT_APP_useEmulator } = process.env
 log( `Frontend using live url ${ REACT_APP_publicUrl } with ${ REACT_APP_useEmulator ? 'emulator' : 'live backend' }` )
 
 // Components
-import QR from '../atoms/QR'
+import AnnotatedQR from '../molecules/AnnotatedQR'
 import Button from '../atoms/Button'
 import Loading from '../molecules/Loading'
 import { H1, H2, Text, Sidenote } from '../atoms/Text'
 import Container from '../atoms/Container'
 import Network from '../molecules/NetworkStatusBar'
-
 
 // ///////////////////////////////
 // Render component
@@ -227,7 +226,7 @@ export default function ViewQR( ) {
     { <H2 color={ template?.header_link_color } align="center">{ t( 'view.display.subheading' ) }</H2> }
 
     {  /* QR showing code */ }
-    <QR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+    <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
     { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
     { event && <Sidenote>{ t( 'view.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }

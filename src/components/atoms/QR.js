@@ -13,7 +13,6 @@ const glow = color => keyframes`
 	}
 `
 
-
 export default styled( QRCode )`
 	margin: ${ ( { margin='2rem 0' } ) => margin };
 	opacity: 1;
