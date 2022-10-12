@@ -11,7 +11,7 @@ export function useIsOnline() {
 	const [ online, set_online ] = useState( true )
 	const [ was_offline, set_was_offline ] = useState(  )
     const [ ping, set_ping ] = useState( 0 )
-    const max_ping_ms = 1000 * 1
+    const max_ping_ms = 1000 * 5
     const ping_interval_ms = 1000 * 10
 
 	// ///////////////////////////////
