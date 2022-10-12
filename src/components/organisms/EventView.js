@@ -185,7 +185,7 @@ export default function ViewQR( ) {
   // ///////////////////////////////
 
   // If iframe mode, render only QR
-  if( iframeMode ) return <QR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+  if( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
 
   // Show welcome screen
   if( !acceptedTerms ) return <Container>
