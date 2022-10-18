@@ -1,10 +1,8 @@
-import { useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 // Image that behaves like a background image
 import logo from '../../assets/logo.svg'
-import { useEvent, useLocalstoredEvent } from '../../hooks/events'
-import { log } from '../../modules/helpers'
+import { useCustomCSS } from '../../hooks/custom_css'
 import Style from './Style'
 
 const BackgroundImage = styled.img.attrs( ( { src, generic_styles } ) => ( {
@@ -39,28 +37,10 @@ const Wrapper = styled.div`
 // Container that always has the background image
 export default ( { children, background, generic_styles, className, ...props } ) => {
 
-	// Get event ID from different sources
-	const location = useLocation()
-
-	// Event ID form url
-	const { eventId: routeEventId } = useParams()
-
-	// Event ID from pushed state
-	const { eventId: stateEventId, pathname } = location
-	const custom_css_paths = [
-		'/event/',
-		'/claim/',
-		'/static/claim'
-	]
-	const should_grab_css = !!custom_css_paths.find( path => pathname?.includes( path ) )
-
-	// Load event details in case there is custom css
-	const eventId = useLocalstoredEvent( !should_grab_css )
-	const event = useEvent( eventId || stateEventId || routeEventId, !should_grab_css )
-
+	const css = useCustomCSS()
 	return <Wrapper className={ `${ className } global_container` } { ...props }>
 		<BackgroundImage id="global_background_image" generic_styles={ generic_styles } src={ background } key='background' />
 		{ children }
-		<Style styles={ event?.css } />
+		<Style styles={ css } />
 	</Wrapper>
 }

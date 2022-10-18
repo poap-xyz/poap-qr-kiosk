@@ -17,7 +17,6 @@ export default ( { styles } ) => {
     
     if( !sane_styles ) return
 
-    log( `Custom styles detected: `, sane_styles )
     return <style dangerouslySetInnerHTML={ { __html: sane_styles } } />
 
 }

@@ -18,6 +18,7 @@ export function useCodeMetadata( claim_code ) {
             try {
     
                 // Get remote event data
+                if( !claim_code ) return
                 const { data } = await check_code_status( claim_code )
                 log( `Received event meta for ${ claim_code }: `, data.event )
                 if( cancelled ) return
