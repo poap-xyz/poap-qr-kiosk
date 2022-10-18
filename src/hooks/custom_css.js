@@ -28,7 +28,7 @@ export const useCustomCSS = (  ) => {
 
 	// Load event details by id in case there is custom css
 	const local_store_event_id = useLocalstoredEvent( !should_grab_css )
-	const event_id = local_store_event_id || stateEventId || routeEventId || remote_event_by_code.id
+	const event_id = local_store_event_id || stateEventId || routeEventId || remote_event_by_code?.id
 	const event = useEvent( event_id, !should_grab_css )
 
 	useEffect( () => {
