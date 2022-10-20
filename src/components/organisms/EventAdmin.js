@@ -162,7 +162,7 @@ export default function EventAdmin( ) {
 						/>
 					</Section>
 					<Section padding="0" margin="0" justify="flex-start" direction="row">
-						<Button margin=".5em .5rem .5rem 0" onClick={ f => window.open( eventLink, '_self' ) }>{ t( 'admin.hero.distribute.button' ) }</Button>
+						<Button margin=".5em .5rem .5rem 0" onClick={ f => window.open( eventLink, '_blank', 'noopener, noreferrer' ) }>{ t( 'admin.hero.distribute.button' ) }</Button>
 						{ clipboardAPI && <Button onClick={ f => clipboard( eventLink ) }>{ t( 'admin.hero.distribute.clipboard' ) }</Button> }
 					</Section>
 				</> }

@@ -246,7 +246,9 @@ export default function Admin( ) {
         info={ t( 'create.input.info' )}
         accept=".csv,.txt"
         title={ csv && codes && `[ ${filename} ] - ${ t( 'create.file.codesDetected' , { count: codes.length } ) }` }
-        onClick={ !filename ? undefined : () => setCsv( undefined ) }
+        // Temp fix for click on ?/label removes file.
+        // Suggesting new input file component has a (X) clear button
+        // onClick={ !filename ? undefined : () => setCsv( undefined ) }
         onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
       />
 

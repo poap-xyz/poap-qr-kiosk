@@ -73,7 +73,7 @@
       "dropName": {
         "label": "Drop name",
         "placeholder": "Best launch party ever",
-        "info": "For your own reference, not visible to the world."
+        "info": "This is the drop name title that will appear on your kiosk page."
       },
       "dropDate": {
         "label": "POAP Kiosk expiry date",
