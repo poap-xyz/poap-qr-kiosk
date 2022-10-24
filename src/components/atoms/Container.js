@@ -35,11 +35,11 @@ const Wrapper = styled.div`
 `
 
 // Container that always has the background image
-export default ( { children, background, generic_styles, className, ...props } ) => {
+export default ( { children, background, generic_loading_styles, className, ...props } ) => {
 
 	const css = useCustomCSS()
 	return <Wrapper className={ `${ className } global_container` } { ...props }>
-		<BackgroundImage id="global_background_image" generic_styles={ generic_styles } src={ background } key='background' />
+		<BackgroundImage id="global_background_image" generic_styles={ generic_loading_styles } src={ background } key='background' />
 		{ children }
 		<Style styles={ css } />
 	</Wrapper>
