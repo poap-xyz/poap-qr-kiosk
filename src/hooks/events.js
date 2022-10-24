@@ -8,7 +8,7 @@ export const useEvent = ( eventId, do_nothing=false ) => {
 
     useEffect( () => {
         if( eventId && !do_nothing ) return listenToEventMeta( eventId, set_event )
-    }, [ eventId ] )
+    }, [ eventId, do_nothing ] )
 
     return event
 }

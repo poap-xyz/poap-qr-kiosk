@@ -99,7 +99,8 @@ export function listenToEventMeta( eventId, cb ) {
 
 		const data = snap.data()
 		log( `Retreived event metadata: `, data )
-		cb( data )
+		if( cb ) cb( data )
+		else console.error( `Missing callback` )
 
 	} )
 
@@ -117,7 +118,8 @@ export function listen_to_claim_challenge( challenge_id, cb ) {
 
 		const data = snap.data()
 		log( `Retreived claim challenge: `, data )
-		cb( data )
+		if( cb ) cb( data )
+		else console.error( `Missing callback` )
 
 	} )
 
@@ -130,7 +132,7 @@ export function listen_to_claim_challenge( challenge_id, cb ) {
 * @param {Function} callback - The callback that receives the changed value of the document
 * @returns {Function} Unsubscribe listener 
 */
-export function listen_to_document( collection, document, callback ) {
+export function listen_to_document( collection, document, cb ) {
 
 	const d = doc( db, collection, document )
 
@@ -138,7 +140,8 @@ export function listen_to_document( collection, document, callback ) {
 
 		const data = snap.data()
 		log( `Retreived document ${collection}/${document}: `, data )
-		callback( data )
+		if( cb ) cb( data )
+		else console.error( `Missing callback` )
 
 	} )
 
