@@ -92,8 +92,9 @@ export function listenToEventMeta( eventId, cb ) {
 		log( `No event id specified to listener` )
 		return
 	}
-
-	const d = doc( db, 'publicEventData', eventId )
+	
+	log( `Creating event metadata listener for :`, eventId )
+	const d = doc( db, 'publicEventData', `${ eventId }` )
 
 	return onSnapshot( d, snap => {
 
