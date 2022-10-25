@@ -63,7 +63,7 @@
       "accept_terms": "Please accept the terms in order to continue",
       "valid_email": "Please input a valid email address",
       "invalid_qr": "Your QR is invalid, please scan it again",
-      "verifying_qr": "Verifying your QR",
+      "verifying_qr": "Verifying your POAP",
       "used_qr": "This QR was already used.",
       "invalid_link": "You scanned an invalid link, please contact the event organiser."
     },
