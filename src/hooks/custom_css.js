@@ -6,7 +6,7 @@ import { useCodeMetadata } from "./printed_qrs"
 
 export const useCustomCSS = (  ) => {
 
-    const [ css, set_css ] = useState( '' )
+    const [ css, set_css ] = useState( 'loading' )
 
     // Get event ID from different sources
 	const location = useLocation()
@@ -34,12 +34,19 @@ export const useCustomCSS = (  ) => {
 
 	useEffect( () => {
 
+		// If css found, and it is different from the state, set it to state
         if( event?.css && event?.css != css ) {
             log( `Received new event with custom CSS: `, event )
             set_css( event.css )
         }
 
-    }, [ event ] )
+		// If the event was loaded, but the css is empty, set the state to no css
+		if( event !== 'loading' && !event?.css ) {
+			log( `Event loaded, no CSS` )
+			set_css( 'none' )
+		}
+
+    }, [ event, event_id ] )
 
     return css
 

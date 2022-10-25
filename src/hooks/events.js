@@ -4,7 +4,7 @@ import { log } from "../modules/helpers"
 
 export const useEvent = ( eventId, do_nothing=false ) => {
 
-    const [ event, set_event ] = useState( undefined )
+    const [ event, set_event ] = useState( 'loading' )
 
     useEffect( () => {
         if( eventId && !do_nothing ) return listenToEventMeta( eventId, set_event )
