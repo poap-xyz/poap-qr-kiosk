@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { listen_to_document, check_code_status } from "../modules/firebase"
 import { log, wait } from "../modules/helpers"
 
-export function useCodeMetadata( claim_code ) {
+export function useCodeMetadata( claim_code, do_nothing=false ) {
 
     const [ event, set_event ] = useState( 'loading' )
     const [ claimed, set_claimed ] = useState( 'loading' )
@@ -18,7 +18,7 @@ export function useCodeMetadata( claim_code ) {
             try {
     
                 // Get remote event data
-                if( !claim_code ) return
+                if( !claim_code || do_nothing ) return
                 const { data } = await check_code_status( claim_code )
                 log( `Received event meta for ${ claim_code }: `, data.event )
                 if( cancelled ) return
