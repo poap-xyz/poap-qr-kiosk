@@ -453,11 +453,11 @@ exports.get_code_by_challenge = async ( data, context ) => {
 				claimed: oldestCode.uid.includes( 'testing' ) ? true : 'unknown'
 			}, { merge: true } )
 
-			// Check whether the code is actuallt valid
-			const is_available = await checkCodeStatus( oldestCode.uid )
+			// Check whether the code is actually valid
+			const code_meta = await checkCodeStatus( oldestCode.uid )
 
 			// If this code is confirmed available, send it to the user
-			if( is_available ) valid_code = oldestCode
+			if( code_meta && !code_meta?.claimed ) valid_code = oldestCode
 
 		}
 
