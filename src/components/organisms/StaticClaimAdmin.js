@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useTranslation } from 'react-i18next'
 
 // Modules
-import { export_emails_of_static_drop } from '../../modules/firebase'
+import { export_emails_of_static_drop, delete_emails_of_static_drop } from '../../modules/firebase'
 import { log } from "../../modules/helpers"
 
 // Components
@@ -48,6 +48,29 @@ export default function StaticClaimAdmin() {
 
     }
 
+    async function delete_drop_emails() {
+
+        try {
+
+            const very_sure = confirm( `This action deletes all collected emails and CANNOT BE UNDONE.\n\nThis is a compliance action that purges user data related to this drop from POAPs systems.` )
+            if( !very_sure ) return alert( `Action aborted. Nothing was deleted.` )
+
+            set_loading( `${ t( 'admin.set_loading' ) }` )
+            const { data } = await delete_emails_of_static_drop( { drop_id, secret_code, auth_code } )
+            log( `Remote response: `, data )
+            const { error } = data
+            if( error ) throw new Error( error || `Malformed response` )
+            alert( `All user data was successfully deleted` )
+
+        } catch( e ) {
+            log( `CSV error: `, e )
+            alert( e.message )
+        } finally {
+            set_loading( false )
+        }
+
+    }
+
     if( loading ) return <Loading message={ loading } />
 
     if( csv_emails ) return <Container>
@@ -70,6 +93,7 @@ export default function StaticClaimAdmin() {
             <Input type='text' value={ secret_code } onChange={ ( { target } ) => set_secret_code( target.value ) } label={ t( 'admin.labels.secret_code.label' ) } info={ t( 'admin.labels.secret_code.info' ) } />
             <Input type='text' value={ auth_code } onChange={ ( { target } ) => set_auth_code( target.value ) } label={ t( 'admin.labels.auth_code.label' ) } info={ t( 'admin.labels.auth_code.info' ) } />
             <Button onClick={ export_drop }>{ t( 'admin.buttons.export_drop' ) }</Button>
+            <Button onClick={ delete_drop_emails }>{ t( 'admin.buttons.delete_drop_emails' ) }</Button>
 
         </Main>
 

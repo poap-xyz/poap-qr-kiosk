@@ -1,7 +1,6 @@
 const { live_access_token, call_poap_endpoint } = require( './poap_api' ) 
 const { log, wait, throttle_and_retry } = require( './helpers' )
 const { db, dataFromSnap } = require( './firebase' )
-const Throttle = require( 'promise-parallel-throttle' )
 
 const health_check = async () => {
 

@@ -22,7 +22,8 @@
     },
     "buttons": {
       "download_csv": "Download emails CSV file",
-      "export_drop": "Authenticate and Export CSV"
+      "export_drop": "Authenticate and Export CSV",
+      "delete_drop_emails": "Delete drop data"
     }
   },
   "create": {
