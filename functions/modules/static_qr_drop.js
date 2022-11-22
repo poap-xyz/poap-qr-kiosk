@@ -1,5 +1,5 @@
 const { db, dataFromSnap } = require("./firebase")
-const { log } = require("./helpers")
+const { log, throttle_and_retry } = require("./helpers")
 const { call_poap_endpoint } = require("./poap_api")
 const Papa = require( 'papaparse' )
 const { validate: validate_uuid } = require( 'uuid' )
@@ -44,6 +44,46 @@ exports.export_emails_of_static_drop = async ( data, context ) => {
 
     } catch( e ) {
         log( `Error exporting emails: `, e )
+        return { error: e.message }
+    }
+
+}
+
+exports.delete_emails_of_static_drop = async ( data, context ) => {
+
+    try {
+
+        /* ///////////////////////////////
+        // Validations */
+
+        // Destructure inputs
+        log( `Export called with `, data )
+        const { drop_id, secret_code, auth_code } = data
+
+        // Grab internal drop config
+        const drop_config = await db.collection( `static_drop_private` ).doc( drop_id ).get().then( dataFromSnap )
+        log( `Received drop config: `, drop_config )
+
+        // Validate config versus inputs
+        if( !drop_config?.approved ) throw new Error( `This drop was not aproved` )
+        if( drop_config?.auth_code !== auth_code ) throw new Error( `Invalid authentication token` )
+
+        // Validate inputs with POAP api
+        const { valid } = await call_poap_endpoint( `/event/validate`, { event_id: drop_id, secret_code }, 'POST', 'json' )
+        log( `POAP secret_code valid: `, valid )
+        if( !valid ) throw new Error( `Invalid secret code` )
+
+        /* ///////////////////////////////
+        // Email deletion */
+
+        // Delete all email entries related to this drop
+        const { docs: emails_to_delete } = await db.collection( `static_drop_claims` ).where( 'drop_id', '==', `${ drop_id }` ).get()
+        log( `Found ${ emails_to_delete?.length || 0 } emails to delete` )
+        const email_deletion_queue = emails_to_delete.map( doc => () => doc.ref.delete() )
+        return throttle_and_retry( email_deletion_queue, 500, `email_deletion`, 2, 5 )
+
+    } catch( e ) {
+        log( `Error deleting emails: `, e )
         return { error: e.message }
     }
 
