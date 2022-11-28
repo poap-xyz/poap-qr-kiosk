@@ -62,7 +62,7 @@
     "set_loading": "Claiming your POAP",
     "validations": {
       "accept_terms": "Please accept the terms in order to continue",
-      "valid_email": "Please input a valid email address",
+      "valid_email": "Please input a valid email or wallet address address",
       "invalid_qr": "Your QR is invalid, please scan it again",
       "verifying_qr": "Verifying your POAP",
       "used_qr": "This QR was already used.",
