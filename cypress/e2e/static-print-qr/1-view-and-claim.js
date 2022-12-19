@@ -12,7 +12,7 @@ context( "User can view and claim through static QR url", () => {
 		cy.visit( `/static/claim/${ random_code }` )
 
 		// Page renders
-        cy.contains( `Claim your POAP` )
+        cy.contains( `Collect your POAP` )
 
 	} )
 
@@ -29,10 +29,10 @@ context( "User can view and claim through static QR url", () => {
 
         // Claim POAP
         cy.get( 'a#static-print-qr-claim-button' ).click()
-        cy.contains( `Claiming your POAP` )
+        cy.contains( `Collecting your POAP` )
 
         // Claim succeeded
-        cy.contains( `successfully claimed` )
+        cy.contains( `successfully collected` )
 
 	} )
 

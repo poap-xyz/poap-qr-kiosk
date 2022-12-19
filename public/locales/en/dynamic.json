@@ -164,8 +164,8 @@
       "description": "If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface."
     },
     "display": {
-      "subheading": "Scan the QR with your camera to claim your POAP",
-      "claimed": "{{ available }} of {{ codes }} codes claimed or pending"
+      "subheading": "Scan the QR with your camera to collect your POAP",
+      "claimed": "{{ available }} of {{ codes }} codes collected or pending"
     }
   },
   "claim": {
@@ -188,7 +188,7 @@
     "you": "You ",
     "won": "won",
     "lost": "lost",
-    "claimPoap": "Claim your POAP",
+    "claimPoap": "Collect your POAP",
     "loadPoap": "Loading your POAP...",
     "game": {
       "title": "Play a game to prove you are human",
