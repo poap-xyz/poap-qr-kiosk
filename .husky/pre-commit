@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "🤖 [ precommit hook ] linting before committing..."
+echo -e "\n🤖 [ precommit hook ] linting before committing..."
 npm run lint && \
-echo "🤖 ✅ [ precommit hook ] lint encountered no blocking issues" || \
-echo "🤖 🚨 [ precommit hook ] lint encountered blocking issues"
+echo -e "🤖 ✅ [ precommit hook ] lint encountered no blocking issues\n" || \
+echo -e "🤖 🚨 [ precommit hook ] lint encountered blocking issues\n"
