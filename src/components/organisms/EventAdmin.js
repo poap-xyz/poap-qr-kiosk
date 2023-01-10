@@ -46,10 +46,10 @@ export default function EventAdmin( ) {
 
 				const { data: health } = await health_check()
 				log( `Systems health: `, health )
-				if( cancelled ) return log( `Health effect cancelled` )
-				if( !health.healthy ) return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
+				if ( cancelled ) return log( `Health effect cancelled` )
+				if ( !health.healthy ) return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
 
-			} catch( e ) {
+			} catch ( e ) {
 				log( `Error getting system health: `, e )
 			}
 
@@ -74,19 +74,19 @@ export default function EventAdmin( ) {
 		let cancelled = false
 
 		log( `New event ID ${ eventId } detected, listening to event meta` )
-		if( eventId ) return listenToEventMeta( eventId, event => {
+		if ( eventId ) return listenToEventMeta( eventId, event => {
 			setEvent( event )
 			log( `Event data detected: `, event )
 			setLoading( false )
-			if( !event ) {
+			if ( !event ) {
 
 				// Wait for 5 seconds in case the backend is refreshng public event mets
 				wait( 5000 )
-				if( !cancelled ) setLoading( `${ t( 'admin.loadingValidity' ) }` )
+				if ( !cancelled ) setLoading( `${ t( 'admin.loadingValidity' ) }` )
 
 				// If after 10 seconds it is still down, trigger failure
 				wait( 5000 )
-				if( !cancelled ) setLoading( `${ t( 'admin.invalidValidity' ) }` )
+				if ( !cancelled ) setLoading( `${ t( 'admin.invalidValidity' ) }` )
 
 			}
 		} )
@@ -111,7 +111,7 @@ export default function EventAdmin( ) {
 
 		try {
 
-			if( !confirm( `${ t( 'admin.confirmDeleteDispenser' ) }` ) ) throw new Error( `${ t( 'admin.deletionCancelled' ) }` )
+			if ( !confirm( `${ t( 'admin.confirmDeleteDispenser' ) }` ) ) throw new Error( `${ t( 'admin.deletionCancelled' ) }` )
 
 			setLoading( `${ t( 'admin.setLoadingDispenser' ) }` )
 			const { data: { error } } = await deleteEvent( {
@@ -119,13 +119,13 @@ export default function EventAdmin( ) {
 				authToken
 			} )
 
-			if( error ) throw new Error( error )
+			if ( error ) throw new Error( error )
 
 			alert( `${ t( 'admin.succesDeleteDispenser' ) }` )
 			trackEvent( 'admin_event_deleted' )
 			return navigate( '/' )
 
-		} catch( e ) {
+		} catch ( e ) {
 			alert( `${ t( 'admin.errorDeleteDispenser', { message: e.message } ) }` )
 			log( e )
 			setLoading( false )
@@ -136,7 +136,7 @@ export default function EventAdmin( ) {
 	// ///////////////////////////////
 	// Render component
 	// ///////////////////////////////
-	if( loading ) return <Loading message={ loading } />
+	if ( loading ) return <Loading message={ loading } />
 	return <Container>
 
 		<Main align="flex-start" justify="space-between" direction="row">

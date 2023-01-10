@@ -5,27 +5,28 @@ module.exports = {
     // Recommended features
     "extends": [ "eslint:recommended", "plugin:react/recommended" ],
 
-    //Parser features
+    // React settings
+    "settings": {
+        "react": { "version": "detect" }
+    },
+
+    // Parser features
     parser: "@babel/eslint-parser",
     parserOptions: {
         requireConfigFile: false,
-        ecmaVersion: 12,
-        sourceType: "module",
         ecmaFeatures: {
-            experimentalObjectRestSpread: true,
             jsx: true
         }
     },
 
-    // Specific rules, 2: err, 1: warn, 0: off
+    // Rules
     rules: {
 
         // Import styleguide
         ...styleguide ,
         
-        "react/react-in-jsx-scope": 0, // CRA globally imports it
-
-        // React specific
+        // React config
+        "react/react-in-jsx-scope": 0, // CRA globally imports "react" so we don't need to do it
         "react/prop-types": 0,
         "react/display-name": 0
     },

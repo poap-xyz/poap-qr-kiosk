@@ -48,21 +48,21 @@ export const useCustomCSS = (  ) => {
 		${ event_custom_css || 'no_css_found {}' }
 
 	`
-	if( should_grab_css ) log( `Custom CSS for ${ event_id }: `, css_to_use )
+	if ( should_grab_css ) log( `Custom CSS for ${ event_id }: `, css_to_use )
 
 	useEffect( () => {
 
 		// If this is not a CSS path, exit
-		if( !should_grab_css ) return
+		if ( !should_grab_css ) return
 
 		// If css found, and it is different from the state, set it to state
-        if( found_css && css_to_use != css ) {
+        if ( found_css && css_to_use != css ) {
             log( `Received new event with custom CSS` )
             set_css( css_to_use )
         }
 
 		// If the event was loaded, but the css is empty, set the state to no css
-		if( event !== 'loading' && !event_custom_css && !drop_id_custom_css ) {
+		if ( event !== 'loading' && !event_custom_css && !drop_id_custom_css ) {
 			log( `Event loaded, no CSS` )
 			set_css( 'none' )
 		}

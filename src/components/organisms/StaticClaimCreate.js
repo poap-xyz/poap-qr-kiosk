@@ -19,13 +19,13 @@ export default function StaticClaimCreate() {
 	const { t } = useTranslation( [ 'static' , 'dispenser' ] )
 
     const [ drop_id, set_drop_id ] = useState( '' )
-    const [ optin_text, set_optin_text] = useState( '' )
-    const [ welcome_text, set_welcome_text] = useState( '' )
+    const [ optin_text, set_optin_text ] = useState( '' )
+    const [ welcome_text, set_welcome_text ] = useState( '' )
     const [ custom_css, set_custom_css ] = useState( '' )
     const [ custom_email, set_custom_email ] = useState(  )
     const [ allow_wallet_claim, set_allow_wallet_claim ] = useState( false )
-    const [ success, set_success] = useState( false )
-    const [ loading, set_loading] = useState( false )
+    const [ success, set_success ] = useState( false )
+    const [ loading, set_loading ] = useState( false )
     const auth_code = useRef( uuidv4() ).current
 
     async function create_drop() {
@@ -35,11 +35,11 @@ export default function StaticClaimCreate() {
             set_loading( `${ t( 'create.set_loading' ) }` )
             const { data } = await create_static_drop( { drop_id, auth_code, optin_text, welcome_text, custom_css, custom_email, allow_wallet_claim } )
             log( `Remote response: `, data )
-            const { csv_string, error } = data
-            if( error ) throw new Error( error || `Malformed response` )
+            const { error } = data
+            if ( error ) throw new Error( error || `Malformed response` )
             set_success( true )
 
-        } catch( e ) {
+        } catch ( e ) {
             log( `CSV error: `, e )
             alert( e.message )
         } finally {
@@ -48,18 +48,18 @@ export default function StaticClaimCreate() {
 
     }
 
-    if( loading ) return <Loading message={ loading } />
+    if ( loading ) return <Loading message={ loading } />
 
-    if( success ) return <Container>
+    if ( success ) return <Container>
 
             <Main align='flex-start' width='600px'>
 
-                <H1>{ t( 'create.succes_screen.title') }</H1>
-                <Text>{ t( 'create.succes_screen.steps_title') }</Text>
+                <H1>{ t( 'create.succes_screen.title' ) }</H1>
+                <Text>{ t( 'create.succes_screen.steps_title' ) }</Text>
                 <Text>{ t( 'create.succes_screen.first_line' , { code: auth_code } ) }</Text>
-                <Text>{ t( 'create.succes_screen.second_line') }</Text>
-                <Text>{ t( 'create.succes_screen.third_line') }</Text>
-                <Text>{ t( 'create.succes_screen.fourth_line') }</Text>
+                <Text>{ t( 'create.succes_screen.second_line' ) }</Text>
+                <Text>{ t( 'create.succes_screen.third_line' ) }</Text>
+                <Text>{ t( 'create.succes_screen.fourth_line' ) }</Text>
             </Main>
 
     </Container>

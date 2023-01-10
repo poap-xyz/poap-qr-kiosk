@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
 // Visual
 import BottomBar from '../atoms/BottomBar'

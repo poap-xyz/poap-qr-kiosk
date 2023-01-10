@@ -42,12 +42,11 @@ export default function ViewQR( ) {
   // ///////////////////////////////
   // State handling
   // ///////////////////////////////
-  const defaultScanInerval = 2 * 60 * 1000
+  const scanInterval = 2 * 60 * 1000
   const [ loading, setLoading ] = useState( `${ t( 'view.setKiosk' ) }` )
   const [ event, setEvent ] = useState(  )
   const [ template, setTemplate ] = useState( {} )
 	const [ internalEventId, setInternalEventId ] = useState( eventId || stateEventId )
-  const [ scanInterval, setScanInterval ] = useState( defaultScanInerval )
   const [ acceptedTerms, setAcceptedTerms ] = useState( viewMode == 'silent' )
   const [ iframeMode, setIframeMode ] = useState( false )
 
@@ -58,9 +57,9 @@ export default function ViewQR( ) {
   // Mode handling
   useEffect( f => {
 
-    if( !viewMode ) return
-    if( viewMode == 'silent' ) setAcceptedTerms( true )
-    if( viewMode == 'iframe' ) setIframeMode( true )
+    if ( !viewMode ) return
+    if ( viewMode == 'silent' ) setAcceptedTerms( true )
+    if ( viewMode == 'iframe' ) setIframeMode( true )
 
   }, [ viewMode  ] )
 
@@ -75,13 +74,13 @@ export default function ViewQR( ) {
 
         const { data: health } = await health_check()
         log( `Systems health: `, health )
-        if( cancelled ) return log( `Health effect cancelled` )
-        if( !dev && !health.healthy ) {
+        if ( cancelled ) return log( `Health effect cancelled` )
+        if ( !dev && !health.healthy ) {
           trackEvent( `event_view_event_system_down` )
           return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
         }
 
-      } catch( e ) {
+      } catch ( e ) {
         log( `Error getting system health: `, e )
       }
 
@@ -96,7 +95,7 @@ export default function ViewQR( ) {
   useEffect( (  ) => {
 
     // if no event id in URL, exit
-    if( !eventId ) return log( 'No event ID in url, leaving localStorage as is' )
+    if ( !eventId ) return log( 'No event ID in url, leaving localStorage as is' )
 
     // Set event ID to localstorage and internal state
     log( `Event ID changed to `, eventId )
@@ -116,15 +115,15 @@ export default function ViewQR( ) {
 
     try {
 
-      if( eventId ) return log( `Event ID present in url, ignoring localstorage` )
+      if ( eventId ) return log( `Event ID present in url, ignoring localstorage` )
       log( `No event ID in url, loading event ID from localstorage` )
       const cached_event_id = localStorage.getItem( 'cached_event_id' )
-      if( !cached_event_id ) throw new Error( `${ t( 'view.eventNoCache' ) }` )
+      if ( !cached_event_id ) throw new Error( `${ t( 'view.eventNoCache' ) }` )
       trackEvent( `event_view_event_id_from_cache` )
       setInternalEventId( cached_event_id )
       setLoading( `${ t( 'view.eventLoading' ) }` )
 
-    } catch( e ) {
+    } catch ( e ) {
 
       log( `Error ocurred: `, e )
       alert( e.message )
@@ -141,9 +140,9 @@ export default function ViewQR( ) {
   useEffect( () => {
 
 		log( `New event ID ${ internalEventId } detected, listening to event meta` )
-		if( internalEventId ) return listenToEventMeta( internalEventId, event => {
+		if ( internalEventId ) return listenToEventMeta( internalEventId, event => {
       setEvent( event )
-      if( event?.template?.id ) setTemplate( event.template )
+      if ( event?.template?.id ) setTemplate( event.template )
       setLoading( false )
     } )
 
@@ -152,7 +151,7 @@ export default function ViewQR( ) {
   // On mount, do single force-refresh
   useEffect( () => {
 
-    if( !internalEventId ) return log( `No internal event ID, cancelling manual code refresh` )
+    if ( !internalEventId ) return log( `No internal event ID, cancelling manual code refresh` )
 
     log( `Triggering remote refresh of unknown and unscanned codes` )
     requestManualCodeRefresh( internalEventId )
@@ -164,7 +163,7 @@ export default function ViewQR( ) {
   // Update the state of scanned codes periodically
   useInterval( () => {
 
-    if( !internalEventId ) return log( `No internal event ID, cancelling scanned code refresh` )
+    if ( !internalEventId ) return log( `No internal event ID, cancelling scanned code refresh` )
 
     refreshScannedCodesStatuses( internalEventId )
     .then( ( { data } ) => log( `Remote code update response : `, data ) )
@@ -185,10 +184,10 @@ export default function ViewQR( ) {
   // ///////////////////////////////
 
   // If iframe mode, render only QR
-  if( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+  if ( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
 
   // Show welcome screen
-  if( !acceptedTerms ) return <Container>
+  if ( !acceptedTerms ) return <Container>
     
     <H1 align="center">{ t( 'view.terms.title' ) }</H1>
 
@@ -200,10 +199,10 @@ export default function ViewQR( ) {
   </Container>
 
   // loading screen
-  if( loading ) return <Loading message={ loading } />
+  if ( loading ) return <Loading message={ loading } />
 
   // Expired event error
-  if( event?.expires && event.expires < Date.now() ) return <Container>
+  if ( event?.expires && event.expires < Date.now() ) return <Container>
   
     <h1>{ t( 'view.expired.title' ) }</h1>
     <Sidenote>{ t( 'view.expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Sidenote>
@@ -211,7 +210,7 @@ export default function ViewQR( ) {
   </Container>
 
   // No code error
-  if( !event?.public_auth?.expires ) return <Container>
+  if ( !event?.public_auth?.expires ) return <Container>
   
     <h1>{ t( 'view.codes.title' ) }</h1>
     <Sidenote onClick={ f => navigate( '/admin' ) }>{ t( 'view.codes.description' ) }</Sidenote>

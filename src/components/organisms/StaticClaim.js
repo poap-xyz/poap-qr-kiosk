@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 // Modules
-import { log, dev, wait, remove_script_tags } from '../../modules/helpers'
+import { log, remove_script_tags } from '../../modules/helpers'
 import { claim_code_by_email } from '../../modules/firebase'
 
 // Hooks
@@ -39,20 +39,20 @@ export default function StaticClaim() {
         try {
 
             // Validate inputs
-            if( code_meta?.drop_meta?.optin_text && !termsAccepted ) throw new Error( `${ t( 'claim.validations.accept_terms') }` )
-            if( !email_or_0x_address?.includes( '@' ) && !email_or_0x_address.match( /0x[0-9-a-z]{40}/ig ) ) throw new Error( `${ t( 'claim.validations.valid_email') }` )
-            if( !claim_code ) throw new Error( `${ t( 'claim.validations.invalid_qr') }` )
+            if ( code_meta?.drop_meta?.optin_text && !termsAccepted ) throw new Error( `${ t( 'claim.validations.accept_terms' ) }` )
+            if ( !email_or_0x_address?.includes( '@' ) && !email_or_0x_address.match( /0x[0-9-a-z]{40}/ig ) ) throw new Error( `${ t( 'claim.validations.valid_email' ) }` )
+            if ( !claim_code ) throw new Error( `${ t( 'claim.validations.invalid_qr' ) }` )
 
             // Register claim with firebase
             setLoading( `${ t( 'claim.set_loading' ) }` )
             const { data: response } = await claim_code_by_email( { claim_code, email_or_0x_address, is_static_drop: true } )
-            const { error, success } = response
+            const { error } = response
             log( `Remote response `, response )
 
-            if( error ) throw new Error( `${ error } (remote)` )
+            if ( error ) throw new Error( `${ error } (remote)` )
             set_user_claimed( true )
 
-        } catch( e ) {
+        } catch ( e ) {
 
             log( `POAP claim error:`, e )
             alert( `Claim error: ${ e.message }` )
@@ -69,28 +69,28 @@ export default function StaticClaim() {
     const { drop_meta } = code_meta || {}
 
     // If loading, show spinner
-    if( drop_meta == 'loading' || loading ) return <Loading generic_loading_styles={ true } message={ loading } />
+    if ( drop_meta == 'loading' || loading ) return <Loading generic_loading_styles={ true } message={ loading } />
 
     // If no code meta is available yet, show spinner
-    if( code_meta?.event === 'loading' ) return <Loading generic_loading_styles={ true } message={ t( 'claim.validations.verifying_qr' ) } />
+    if ( code_meta?.event === 'loading' ) return <Loading generic_loading_styles={ true } message={ t( 'claim.validations.verifying_qr' ) } />
 
     // If code was already used, show error message
-    if( code_meta?.claimed === true ) return <Container generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
+    if ( code_meta?.claimed === true ) return <Container generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
         <Text>{ t( 'claim.validations.used_qr' ) }</Text>
     </Container>
 
     // If no drop meta available, the user is trying to cheat or has a malformed link
-    if( !code_meta?.event ) return <Container generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
+    if ( !code_meta?.event ) return <Container generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
         <Text>{ t( 'claim.validations.invalid_link' ) }</Text>
     </Container>
 
     // If the user claimed the POAP, tell them to check their email
-    if( user_claimed ) return <Container generic_loading_styles={ true } id='static-print-qr-top-container-success'>
+    if ( user_claimed ) return <Container generic_loading_styles={ true } id='static-print-qr-top-container-success'>
 
         <Main align='flex-start' width='400px'>
-            <H1>{ t( 'claim.user_claimed.title') }</H1>
+            <H1>{ t( 'claim.user_claimed.title' ) }</H1>
             <H2>{ t( 'claim.user_claimed.subtitle' , { email: email_or_0x_address } ) }</H2>
-            <Text>{ t( 'claim.user_claimed.description') }</Text>
+            <Text>{ t( 'claim.user_claimed.description' ) }</Text>
         </Main>
 
     </Container>

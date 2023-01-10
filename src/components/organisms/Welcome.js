@@ -46,14 +46,14 @@ export default function ComponentName( ) {
 
 				const { data: health } = await health_check()
 				log( `Systems health: `, health )
-				if( cancelled ) return log( `Health effect cancelled` )
-				if( !dev && !health.healthy ) {
+				if ( cancelled ) return log( `Health effect cancelled` )
+				if ( !dev && !health.healthy ) {
 					setAllowAccess( false )
 					// Sitewide translation
 					return alert( `${ t( 'health.maintenance' ) }` )
 				}
 
-			} catch( e ) {
+			} catch ( e ) {
 				log( `Error getting system health: `, e )
 			}
 

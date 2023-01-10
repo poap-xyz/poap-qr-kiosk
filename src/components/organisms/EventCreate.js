@@ -59,13 +59,14 @@ export default function Admin( ) {
 
           const { data: health } = await health_check()
           log( `Systems health: `, health )
-          if( cancelled ) return log( `Health effect cancelled` )
-          if( !dev && !health.healthy ) {
+          if ( cancelled ) return log( `Health effect cancelled` )
+          if ( !dev && !health.healthy ) {
+            setIsHealthy( false )
             trackEvent( `event_view_event_system_down` )
             return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
           }
 
-        } catch( e ) {
+        } catch ( e ) {
             log( `Error getting system health: `, e )
         }
 
@@ -80,7 +81,7 @@ export default function Admin( ) {
 
     let cancelled = false
 
-    if( !csv ) return
+    if ( !csv ) return
 
     ( async f => {
 
@@ -91,7 +92,7 @@ export default function Admin( ) {
 
         // Validations
         const { name } = csv
-        if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( `${ t( 'create.file.acceptedFormat' )}` )
+        if ( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( `${ t( 'create.file.acceptedFormat' )}` )
 
         // Set filename to state
         setFilename( name )
@@ -110,7 +111,7 @@ export default function Admin( ) {
         const erroredCodes = data.filter( code => !code.match( /\w{1,42}/ )  )
 
         // Let user know about faulty codes
-        if( erroredCodes.length ) {
+        if ( erroredCodes.length ) {
 
           log( 'Errored codes: ', erroredCodes )
           throw new Error( `${ erroredCodes.length } ${ t( 'create.file.codeFormat' )} ${ erroredCodes[0] }` )
@@ -119,18 +120,18 @@ export default function Admin( ) {
 
         // Validated and sanetised codes
         log( 'Sanetised codes: ', data )
-        if( !data.length ) throw new Error( `${ t( 'create.file.noCodes' )}` )
-        if( !cancelled ) setCodes( data )
+        if ( !data.length ) throw new Error( `${ t( 'create.file.noCodes' )}` )
+        if ( !cancelled ) setCodes( data )
 
         // Load event data based on codes
         const { data: { event, error } } = await getEventDataFromCode( data[0] )
         log( 'Code data received ', event, error )
-        if( error ) throw new Error( error )
-        if( !event ) throw new Error( `${ t( 'create.event.eventExpired' ) }` )
+        if ( error ) throw new Error( error )
+        if ( !event ) throw new Error( `${ t( 'create.event.eventExpired' ) }` )
 
         // Set event details to state
-        if( event.name ) setName( event.name )
-        if( event.expiry_date ) {
+        if ( event.name ) setName( event.name )
+        if ( event.expiry_date ) {
 
           const [ day, monthName, year ] = event.expiry_date.split( '-' )
           const endDate = `${year}-${monthNameToNumber( monthName )}-${ day.length == 1 ? `0${ day }` : day }`
@@ -139,14 +140,14 @@ export default function Admin( ) {
           
         }
 
-        if( !cancelled ) setLoading( false )
+        if ( !cancelled ) setLoading( false )
 
-      } catch( e ) {
+      } catch ( e ) {
 
         log( 'Validation error ', e, ' for ', csv )
-        if( !cancelled ) setCodes( undefined )
-        if( !cancelled ) setLoading( false )
-        if( !cancelled ) setCsv( undefined )
+        if ( !cancelled ) setCodes( undefined )
+        if ( !cancelled ) setLoading( false )
+        if ( !cancelled ) setCsv( undefined )
         return alert( e.message )
 
       }
@@ -179,21 +180,21 @@ export default function Admin( ) {
     try {
 
       // Health noti
-      if( !isHealthy ) {
+      if ( !isHealthy ) {
         const ignore_unhealthy = confirm( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
-        if( !ignore_unhealthy ) throw new Error( `${ t( 'create.event.eventCancelled' ) }` )
+        if ( !ignore_unhealthy ) throw new Error( `${ t( 'create.event.eventCancelled' ) }` )
       }
 
       // Validations
-      if( !codes.length ) throw new Error( `${ t( 'create.file.csvNoEntries' ) }` )
-      if( !name.length ) throw new Error( `${ t( 'create.event.noName' ) }` )
-      if( !email.includes( '@' ) ) throw new Error( `${ t( 'create.event.noEmail' ) }` )
-      if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'create.event.wrongDate' ) }` )
+      if ( !codes.length ) throw new Error( `${ t( 'create.file.csvNoEntries' ) }` )
+      if ( !name.length ) throw new Error( `${ t( 'create.event.noName' ) }` )
+      if ( !email.includes( '@' ) ) throw new Error( `${ t( 'create.event.noEmail' ) }` )
+      if ( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'create.event.wrongDate' ) }` )
 
       // Confirm date
       const confirmed = confirm( `${ t( 'create.event.creationMessage' , { name: name, email: email } ) } ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
       log( 'Confirmation status: ', confirmed )
-      if( !confirmed ) throw new Error( `${ t( 'create.event.eventCancelled' ) }` )
+      if ( !confirmed ) throw new Error( `${ t( 'create.event.eventCancelled' ) }` )
 
       // Call the cloud importer
       setLoading( `${ t( 'create.creatingDispenser' ) }` )
@@ -214,12 +215,12 @@ export default function Admin( ) {
       trackEvent( 'admin_event_create' )
 
       // Error handling
-      if( newEvent.error ) throw new Error( newEvent.error )
+      if ( newEvent.error ) throw new Error( newEvent.error )
 
       // Send to admin interface
       return navigate( `/event/admin/${ newEvent.id }/${ newEvent.authToken }` )
 
-    } catch( e ) {
+    } catch ( e ) {
 
       alert( e.message )
       log( 'Upload error: ', e )
@@ -233,7 +234,7 @@ export default function Admin( ) {
   // ///////////////////////////////
   // Render component
   // ///////////////////////////////
-  if( loading ) return <Loading message={ loading } />
+  if ( loading ) return <Loading message={ loading } />
   
   return <Container onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 

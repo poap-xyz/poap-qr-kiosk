@@ -46,7 +46,7 @@ export default ( { children, background, generic_loading_styles, className, ...p
 	log( `Query paran lazy_css requested a blank page until custom CSS is checked: ${ blank_until_custom_css }`, css )
 
 	// Force a blank page until the (potential) custom CSS is loaded?
-	if( blank_until_custom_css && css == 'loading' ) return
+	if ( blank_until_custom_css && css == 'loading' ) return
 
 	return <Wrapper className={ `${ className } global_container` } { ...props }>
 		<BackgroundImage id="global_background_image" generic_styles={ generic_loading_styles } src={ background } key='background' />

@@ -1,11 +1,11 @@
 // Firebase functionality
 import { initializeApp } from "firebase/app"
-import { getFirestore, collection, setDoc, doc, onSnapshot, query, where, limit, orderBy } from "firebase/firestore"
+import { getFirestore, doc, onSnapshot } from "firebase/firestore"
 import { getAnalytics, logEvent } from "firebase/analytics"
 import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 
-import { log, dev } from './helpers'
+import { log } from './helpers'
 
 // ///////////////////////////////
 // Initialisation
@@ -32,9 +32,9 @@ const db = getFirestore( app )
 const functions = getFunctions( app )
 
 // App check config
-if( process.env.NODE_ENV === 'development' || REACT_APP_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = REACT_APP_APPCHECK_DEBUG_TOKEN || true
+if ( process.env.NODE_ENV === 'development' || REACT_APP_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = REACT_APP_APPCHECK_DEBUG_TOKEN || true
 log( 'Initialising app check with ', REACT_APP_APPCHECK_DEBUG_TOKEN )
-const appcheck = initializeAppCheck( app, {
+initializeAppCheck( app, {
 	provider: new ReCaptchaV3Provider( REACT_APP_recaptcha_site_key ),
 	isTokenAutoRefreshEnabled: true
 } )
@@ -60,7 +60,7 @@ export const create_static_drop = httpsCallable( functions, 'create_static_drop'
 
 // Offline functions emulator
 // Connect to functions emulator
-if( process.env.REACT_APP_useEmulator ) {
+if ( process.env.REACT_APP_useEmulator ) {
 	connectFunctionsEmulator( functions, 'localhost', 5001 )
 	log( `Using firebase functions emulator` )
 }
@@ -72,14 +72,14 @@ if( process.env.REACT_APP_useEmulator ) {
 
 export async function importCodesFromArray( password='', codes=[] ) {
 
-	const { data: { error, success  }} = await importCodes( ( {
+	const { data: { error, success  } } = await importCodes( ( {
 		password: password,
 		codes: codes
 	} ) )
 
-	if( success ) return log( 'Import success with ', success )
+	if ( success ) return log( 'Import success with ', success )
 
-	if( error ) throw new Error( error )
+	if ( error ) throw new Error( error )
 
 
 }
@@ -89,7 +89,7 @@ export async function importCodesFromArray( password='', codes=[] ) {
 // /////////////////////////////*/
 export function listenToEventMeta( eventId, cb ) {
 
-	if( !eventId ) {
+	if ( !eventId ) {
 		log( `No event id specified to listener` )
 		return
 	}
@@ -101,7 +101,7 @@ export function listenToEventMeta( eventId, cb ) {
 
 		const data = snap.data()
 		log( `Retreived event metadata: `, data )
-		if( cb ) cb( data )
+		if ( cb ) cb( data )
 		else console.error( `Missing callback` )
 
 	} )
@@ -110,7 +110,7 @@ export function listenToEventMeta( eventId, cb ) {
 
 export function listen_to_claim_challenge( challenge_id, cb ) {
 
-	if( !challenge_id ) {
+	if ( !challenge_id ) {
 		log( `No challenge id specified to listener` )
 		return
 	}
@@ -120,7 +120,7 @@ export function listen_to_claim_challenge( challenge_id, cb ) {
 
 		const data = snap.data()
 		log( `Retreived claim challenge: `, data )
-		if( cb ) cb( data )
+		if ( cb ) cb( data )
 		else console.error( `Missing callback` )
 
 	} )
@@ -142,7 +142,7 @@ export function listen_to_document( collection, document, cb ) {
 
 		const data = snap.data()
 		log( `Retreived document ${collection}/${document}: `, data )
-		if( cb ) cb( data )
+		if ( cb ) cb( data )
 		else console.error( `Missing callback` )
 
 	} )
@@ -153,7 +153,7 @@ export function listen_to_document( collection, document, cb ) {
 // Analytics actions
 // ///////////////////////////////
 export function trackEvent( name ) {
-	if( !name ) return
-	if( process.env.NODE_ENV == 'development' ) return log( 'Dummy analytics event: ', name )
+	if ( !name ) return
+	if ( process.env.NODE_ENV == 'development' ) return log( 'Dummy analytics event: ', name )
 	logEvent( analytics, name )
 }
