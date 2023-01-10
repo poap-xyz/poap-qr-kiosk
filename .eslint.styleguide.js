@@ -29,9 +29,26 @@ module.exports = {
 
     // Comments need a space between // and the content. //Not like this.
     "spaced-comment": [ "error", "always" ],
+
+    // Warn of template literal variables in the wrong place
+    "no-template-curly-in-string": "warn",
     
+    // Define things before using them
+    "no-use-before-define": [ "error", { functions: false } ],
+
+    // No invalid 'this' usage
+    "no-invalid-this": "error",
+
+    // Only throw Error objects and not literals (like strings)
+    "no-throw-literal": "error",
+
+    // Prefer the use of destructuring
+    "prefer-destructuring": "warn",
 
     // Warn of unused variables, function argumebnts may have documentation value so are ignored
     "no-unused-vars": [ "warn", { vars: 'all', args: 'none' } ],
+
+    // No use of "var"
+    "no-var": "error"
 
 }
