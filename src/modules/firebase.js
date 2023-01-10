@@ -72,10 +72,10 @@ if ( process.env.REACT_APP_useEmulator ) {
 
 export async function importCodesFromArray( password='', codes=[] ) {
 
-	const { data: { error, success  } } = await importCodes( ( {
+	const { data: { error, success  } } = await importCodes(  {
 		password: password,
 		codes: codes
-	} ) )
+	}  )
 
 	if ( success ) return log( 'Import success with ', success )
 

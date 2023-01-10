@@ -27,9 +27,9 @@ export default ( { ...props } ) => {
 	]
 
 	return <Switch type='dropdown' value={ i18n.language } onChange={ ( { target } ) => i18n.changeLanguage( target.value ) }>
-		{options.map( ( option ) => (
+		{options.map( ( option ) => 
 			<option key={option.value} value={option.value}>{option.label}</option>
-		) )}
+		 )}
 
 	</Switch>
 

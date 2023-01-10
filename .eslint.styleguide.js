@@ -49,6 +49,9 @@ module.exports = {
     "no-unused-vars": [ "warn", { vars: 'all', args: 'none' } ],
 
     // No use of "var"
-    "no-var": "error"
+    "no-var": "error",
+
+    // No unneeded ()
+    "no-extra-parens": "error"
 
 }

@@ -112,7 +112,7 @@ export default function StaticClaim() {
                 <span dangerouslySetInnerHTML={ { __html: remove_script_tags( drop_meta?.optin_text ) } } />
             </Text> }
             
-            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={ ( termsAccepted || !drop_meta?.optin_text ) ? 'primary' : 'text' }>{ t( 'claim.buttons.claim_poap' ) }</Button>
+            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={  termsAccepted || !drop_meta?.optin_text  ? 'primary' : 'text' }>{ t( 'claim.buttons.claim_poap' ) }</Button>
         </Main>
 
         { /* If this drop has custom CSS associated with it, inject it */ }

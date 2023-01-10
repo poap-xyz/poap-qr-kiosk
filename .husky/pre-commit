@@ -2,7 +2,7 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 echo "\n🤖 [ precommit hook ] linting before committing..."
-lint_outcome=$( npm run lint )
+lint_outcome=$( npm run lint || true )
 
 # If warnings, suggest they fix them
 if echo $lint_outcome | grep -q "warnings"; then

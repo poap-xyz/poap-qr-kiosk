@@ -144,7 +144,7 @@ export default function EventAdmin( ) {
 			<Hero>
 
 				<H1>{ t( 'admin.title' ) }</H1>
-				{ ( !event.loading && !event.codes ) ? <H2>{ t( 'admin.hero.subheading.reviewed' ) }</H2>: <H2>{ t( 'admin.hero.subheading.unique' ) }</H2> }
+				{  !event.loading && !event.codes  ? <H2>{ t( 'admin.hero.subheading.reviewed' ) }</H2>: <H2>{ t( 'admin.hero.subheading.unique' ) }</H2> }
 
 				{ /* Event meta loaded, codes available */ }
 				{ !event.loading && event.codes && <>

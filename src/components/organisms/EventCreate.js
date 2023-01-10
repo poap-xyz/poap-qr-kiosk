@@ -208,7 +208,7 @@ export default function Admin( ) {
         challenges: gameEnabled ? [ 'game' ] : [],
         collect_emails: !!collectEmails,
         game_config: { duration: gameDuration, target_score: Math.ceil( gameDuration / 5 ) },
-        ...( css && { css } )
+        ... css && { css } 
       } )
 
       log( 'Event created: ', newEvent, { name, email, date, codes } )
