@@ -1,7 +1,22 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo -e "\n🤖 [ precommit hook ] linting before committing..."
-npm run lint && \
-echo -e "🤖 ✅ [ precommit hook ] lint encountered no blocking issues\n" || \
-echo -e "🤖 🚨 [ precommit hook ] lint encountered blocking issues\n"
+echo "\n🤖 [ precommit hook ] linting before committing..."
+lint_outcome=$( npm run lint )
+
+# If warnings, suggest they fix them
+if echo $lint_outcome | grep -q "warnings"; then
+    echo "🤖 ⚠️ [ precommit hook ] lint encountered warnings, consider fixing them before pushing\n"
+fi
+
+# If errors, make it clear they cannot commit
+if echo $lint_outcome | grep -q "errors"; then
+    echo "🤖 🚨 [ precommit hook ] lint encountered blocking issues, fix them before committing\n"
+fi
+
+# Output any issues they encounter
+if echo $lint_outcome | grep -q "problem"; then
+    echo "$lint_outcome"
+else
+    echo "🤖 ✅ [ precommit hook ] lint encountered no blocking issues\n"
+fi
