@@ -4,19 +4,18 @@
 echo "\n🤖 [ precommit hook ] linting before committing..."
 lint_outcome=$( npm run lint || true )
 
-# If warnings, suggest they fix them
-if echo $lint_outcome | grep -q "warnings"; then
-    echo "⚠️ [ precommit hook ] lint encountered warnings, consider fixing them before pushing\n"
-    echo "$lint_outcome"
-    exit 0
-fi
-
 # If errors, make it clear they cannot commit
-if echo $lint_outcome | grep -q "errors"; then
+if echo $lint_outcome | grep -q "error"; then
     echo "🚨 [ precommit hook ] lint encountered blocking issues, fix them before committing\n"
     echo "$lint_outcome"
     exit 1
 fi
 
+# If warnings, suggest they fix them
+if echo $lint_outcome | grep -q "warning"; then
+    echo "⚠️ [ precommit hook ] lint encountered warnings, consider fixing them before pushing\n"
+    echo "$lint_outcome"
+    exit 0
+fi
 
 echo "✅ [ precommit hook ] lint encountered no blocking issues\n"

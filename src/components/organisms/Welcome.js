@@ -25,97 +25,97 @@ import LanguageSwitcher from '../atoms/LanguageSwitcher'
 // ///////////////////////////////
 export default function ComponentName( ) {
 
-	const navigate = useNavigate()
-	const [ allowAccess, setAllowAccess ] = useState( true )
+    const navigate = useNavigate()
+    const [ allowAccess, setAllowAccess ] = useState( true )
 
-	// useTranslation loads the dispenser namespace which holds general translations
-	const { t } = useTranslation( [ 'dispenser' ] )
+    // useTranslation loads the dispenser namespace which holds general translations
+    const { t } = useTranslation( [ 'dispenser' ] )
 
-	/* ///////////////////////////////
+    /* ///////////////////////////////
 	// Lifecycle management
 	// /////////////////////////////*/
 
-	// Health check
-	useEffect( (  ) => {
+    // Health check
+    useEffect( (  ) => {
 
-		let cancelled = false;
+        let cancelled = false;
 
-		( async () => {
+        ( async () => {
 
-			try {
+            try {
 
-				const { data: health } = await health_check()
-				log( `Systems health: `, health )
-				if ( cancelled ) return log( `Health effect cancelled` )
-				if ( !dev && !health.healthy ) {
-					setAllowAccess( false )
-					// Sitewide translation
-					return alert( `${ t( 'health.maintenance' ) }` )
-				}
+                const { data: health } = await health_check()
+                log( `Systems health: `, health )
+                if ( cancelled ) return log( `Health effect cancelled` )
+                if ( !dev && !health.healthy ) {
+                    setAllowAccess( false )
+                    // Sitewide translation
+                    return alert( `${ t( 'health.maintenance' ) }` )
+                }
 
-			} catch ( e ) {
-				log( `Error getting system health: `, e )
-			}
+            } catch ( e ) {
+                log( `Error getting system health: `, e )
+            }
 
-		} )( )
+        } )( )
 
-		return () => cancelled = true
+        return () => cancelled = true
 
-	}, [] )
+    }, [] )
 
-	// ///////////////////////////////
-	// Render component
-	// ///////////////////////////////
-	return <Container>
+    // ///////////////////////////////
+    // Render component
+    // ///////////////////////////////
+    return <Container>
 
-		<Main justify='flex-start'>
+        <Main justify='flex-start'>
 
-			<LanguageSwitcher />
+            <LanguageSwitcher />
 
-			<Hero>
+            <Hero>
 
-				<H1>{ t( 'title' ) } <Sup>beta</Sup></H1>
-				<H2>{ t( 'subtitle' ) }</H2>
-				<Text>{ t( 'titledescription' ) }</Text>
-				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'createButton' ) }</Button> }
+                <H1>{ t( 'title' ) } <Sup>beta</Sup></H1>
+                <H2>{ t( 'subtitle' ) }</H2>
+                <Text>{ t( 'titledescription' ) }</Text>
+                { allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'createButton' ) }</Button> }
 
-			</Hero>
+            </Hero>
 
-			<Section height='600px' justify='space-around' direction="row">
+            <Section height='600px' justify='space-around' direction="row">
 
-				<Column>
-					<Image src={ checkin } />
-				</Column>
+                <Column>
+                    <Image src={ checkin } />
+                </Column>
 
-				<Column>
-					<H2>{ t( 'welcome.checkin.title' ) }</H2>
-					<Text>{ t( 'welcome.checkin.description' ) }</Text>
-				</Column>				
+                <Column>
+                    <H2>{ t( 'welcome.checkin.title' ) }</H2>
+                    <Text>{ t( 'welcome.checkin.description' ) }</Text>
+                </Column>				
 
-			</Section>
+            </Section>
 
-			<Section height='600px' justify='space-around' direction="row">
+            <Section height='600px' justify='space-around' direction="row">
 
-				<Column>
-					<H2>{ t( 'welcome.stream.title' ) }</H2>
-					<Text>{ t( 'welcome.stream.description' ) }</Text>
-				</Column>		
+                <Column>
+                    <H2>{ t( 'welcome.stream.title' ) }</H2>
+                    <Text>{ t( 'welcome.stream.description' ) }</Text>
+                </Column>		
 
-				<Column>
-					<Image src={ stream } />
-				</Column>		
+                <Column>
+                    <Image src={ stream } />
+                </Column>		
 
-			</Section>
+            </Section>
 
-			<Section height='500px'>
+            <Section height='500px'>
 
-				<H2>{ t( 'startedtext' ) }</H2>
-				{ allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'createButton' ) }</Button> }
+                <H2>{ t( 'startedtext' ) }</H2>
+                { allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'createButton' ) }</Button> }
 
-			</Section>
+            </Section>
 
-		</Main>
+        </Main>
 
-	</Container>
+    </Container>
 
 }

@@ -5,8 +5,15 @@
 
 module.exports = {
 
+    /* ///////////////////////////////
+    // Built-in rules
+    // /////////////////////////////*/
+
     // No semi colons, note that "never" does not pose ASI hazard
     "semi": [ "error", "never", ],
+
+    // Indentation setting
+    "indent": [ "warn", 4 ],
 
     // Allow unnamed exports
     "import/no-anonymous-default-export": 0,
@@ -26,6 +33,7 @@ module.exports = {
     "keyword-spacing": "error",
     "arrow-spacing": "error",
     "space-in-parens": [ "error", "always" ],
+    "template-curly-spacing": [ "error", "always" ],
 
     // Comments need a space between // and the content. //Not like this.
     "spaced-comment": [ "error", "always" ],
@@ -52,6 +60,17 @@ module.exports = {
     "no-var": "error",
 
     // No unneeded ()
-    "no-extra-parens": "error"
+    "no-extra-parens": "error",
+
+    /* ///////////////////////////////
+    // React plugin rules
+    // /////////////////////////////*/
+    "react/jsx-closing-bracket-location": [ "warn", "line-aligned" ],
+    "react/jsx-curly-brace-presence": [ "error", { props: "never", children: "never" } ],
+    "react/jsx-curly-newline": [ "error", "consistent" ],
+    "react/jsx-curly-spacing": [ "error", { when: "always", "children": true } ],
+    "react/jsx-indent": "warn",
+    "react/jsx-indent-props": "warn",
+    "react/jsx-no-useless-fragment": "error"
 
 }

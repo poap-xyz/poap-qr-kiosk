@@ -23,47 +23,47 @@ import Loading from './components/molecules/Loading'
 // ///////////////////////////////
 export default function App( ) {
 
-  return <Theme>
+    return <Theme>
     
-      <Router>
+        <Router>
 
-      <Suspense fallback={ <Loading /> }>
+            <Suspense fallback={ <Loading /> }>
 
-        <Routes>
+                <Routes>
 
-          <Route exact path='/' element={ <Welcome /> } />
-          <Route exact path='/create' element={ <CreateEvent /> } />
-          <Route path='/event/admin/:eventId/:authToken' element={ <EventAdmin /> } />
-          
-          <Route path='/event'>
+                    <Route exact path='/' element={ <Welcome /> } />
+                    <Route exact path='/create' element={ <CreateEvent /> } />
+                    <Route path='/event/admin/:eventId/:authToken' element={ <EventAdmin /> } />
 
-            <Route path=':eventId/:viewMode' element={ <ViewQR /> } />
-            <Route path=':eventId' element={ <ViewQR /> } />
-            <Route path='' element={ <ViewQR /> } />
-            
-          </Route>
-          
-          <Route path='/claim/' >
+                    <Route path='/event'>
 
-            <Route path=':challenge_code/:error_code' element={ <Claim /> } />
-            <Route path=':challenge_code' element={ <Claim /> } />
+                        <Route path=':eventId/:viewMode' element={ <ViewQR /> } />
+                        <Route path=':eventId' element={ <ViewQR /> } />
+                        <Route path='' element={ <ViewQR /> } />
 
-          </Route>
+                    </Route>
 
-          <Route path='/static/'>
+                    <Route path='/claim/' >
 
-            <Route path='claim/:claim_code' element={ <StaticClaim /> } />
-            <Route path='admin/export' element={ <StaticClaimAdmin /> } />
-            <Route path='admin/create' element={ <StaticClaimCreate /> } />
+                        <Route path=':challenge_code/:error_code' element={ <Claim /> } />
+                        <Route path=':challenge_code' element={ <Claim /> } />
 
-          </Route>
+                    </Route>
 
-        </Routes>
+                    <Route path='/static/'>
 
-      </Suspense>
+                        <Route path='claim/:claim_code' element={ <StaticClaim /> } />
+                        <Route path='admin/export' element={ <StaticClaimAdmin /> } />
+                        <Route path='admin/create' element={ <StaticClaimCreate /> } />
 
-      </Router>
-  </Theme>
-  
+                    </Route>
+
+                </Routes>
+
+            </Suspense>
+
+        </Router>
+    </Theme>
+
 }
 

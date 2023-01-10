@@ -22,9 +22,9 @@ import Style from '../atoms/Style'
 export default function StaticClaim() {
 
     // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
-	// Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
-	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
-	const { t } = useTranslation( [ 'static' , 'dispenser' ] )
+    // Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
+    // Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
+    const { t } = useTranslation( [ 'static' , 'dispenser' ] )
 
     const [ email_or_0x_address, set_email_or_0x_address ] = useState( '' )
     const [ termsAccepted, setTermsAccepted ] = useState( false )
