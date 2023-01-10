@@ -123,8 +123,8 @@ export default function Admin( ) {
         if( !cancelled ) setCodes( data )
 
         // Load event data based on codes
-        const code = data[0]?.trim()
-        const { data: { event, error } } = await getEventDataFromCode(code)
+        const formatedCode = data[0]?.trim()
+        const { data: { event, error } } = await getEventDataFromCode(formatedCode)
         log( 'Code data received ', event, error )
         if( error ) throw new Error( error )
         if( !event ) throw new Error( `${ t( 'create.event.eventExpired' ) }` )
