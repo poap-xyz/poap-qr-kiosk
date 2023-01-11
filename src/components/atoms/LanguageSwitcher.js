@@ -13,24 +13,24 @@ const Switch = styled.select`
 
 export default ( { ...props } ) => {
 
-	const { i18n } = useTranslation()
+    const { i18n } = useTranslation()
 
-	const options = [
-		{
-		  label: '🇺🇸',
-		  value: 'en',
-		},
-		{
-		  label: '🇳🇱',
-		  value: 'nl',
-		},
-	  ]
+    const options = [
+        {
+            label: '🇺🇸',
+            value: 'en',
+        },
+        {
+            label: '🇳🇱',
+            value: 'nl',
+        },
+    ]
 
-	return <Switch type='dropdown' value={ i18n.language } onChange={ ( { target } ) => i18n.changeLanguage( target.value ) }>
-		{options.map((option) => (
-			<option key={option.value} value={option.value}>{option.label}</option>
-		))}
+    return <Switch type='dropdown' value={ i18n.language } onChange={ ( { target } ) => i18n.changeLanguage( target.value ) }>
+        { options.map( ( option ) => 
+            <option key={ option.value } value={ option.value }>{ option.label }</option>
+        ) }
 
-	</Switch>
+    </Switch>
 
 }

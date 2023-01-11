@@ -6,45 +6,45 @@ import { log, wait } from "../modules/helpers"
 export function useIsOnline() {
 
     // ///////////////////////////////
-	// State handling
-	// ///////////////////////////////
-	const [ online, set_online ] = useState( true )
-	const [ was_offline, set_was_offline ] = useState(  )
+    // State handling
+    // ///////////////////////////////
+    const [ online, set_online ] = useState( true )
+    const [ was_offline, set_was_offline ] = useState(  )
     const [ ping, set_ping ] = useState( 0 )
     const max_ping_ms = 1000 * 5
     const ping_interval_ms = 1000 * 10
 
-	// ///////////////////////////////
-	// Lifecycle handling
-	// ///////////////////////////////
+    // ///////////////////////////////
+    // Lifecycle handling
+    // ///////////////////////////////
 
-	// Handle network changes
-	useEffect( () => {
+    // Handle network changes
+    useEffect( () => {
 
-		log( `Setting network listeners` )
+        log( `Setting network listeners` )
 
-		const handleOnline = () => {
-			log( 'Browser went online' )
-			set_online( true )
-		}
+        const handleOnline = () => {
+            log( 'Browser went online' )
+            set_online( true )
+        }
 
-		const handleOffline = () => {
-			log( 'Browser went offline' )
-			set_online( false )
-			set_was_offline( true )
-		}
+        const handleOffline = () => {
+            log( 'Browser went offline' )
+            set_online( false )
+            set_was_offline( true )
+        }
 
-		window.addEventListener( 'online', handleOnline )
+        window.addEventListener( 'online', handleOnline )
 
-		window.addEventListener( 'offline', handleOffline )
+        window.addEventListener( 'offline', handleOffline )
 
-		return () => {
-			log( 'Removing network listeners' )
-			window.removeEventListener( 'online', handleOnline )
-			window.removeEventListener( 'offline', handleOffline )
-		}
+        return () => {
+            log( 'Removing network listeners' )
+            window.removeEventListener( 'online', handleOnline )
+            window.removeEventListener( 'offline', handleOffline )
+        }
 
-	}, [] )
+    }, [] )
 
     // Periodic ping check
     useInterval( (  ) => {
@@ -62,9 +62,9 @@ export function useIsOnline() {
                 ] )
                 const end = Date.now()
                 log( `🔔 Ping concluded at ${ end }, total: ${ end - start } ` )
-                if( !cancelled ) set_ping( end - start )
+                if ( !cancelled ) set_ping( end - start )
     
-            } catch( e ) {
+            } catch ( e ) {
                 log( `🔔 Unable to ping: `, e )
                 set_ping( Infinity )
             }

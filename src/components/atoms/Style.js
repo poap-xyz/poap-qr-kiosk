@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { log } from "../../modules/helpers"
 
 export default ( { styles } ) => {
 
@@ -8,14 +7,14 @@ export default ( { styles } ) => {
     // Sanetise style input to protect against potential XSS
     useEffect( () => {
 
-        if( !styles ) return set_sane_styles( undefined )
+        if ( !styles ) return set_sane_styles( undefined )
         const styles_without_tags = styles.replace( /<.*>/ig, '' )
         set_sane_styles( styles_without_tags )
 
     }, [ styles ] )
 
     
-    if( !sane_styles ) return
+    if ( !sane_styles ) return
 
     return <style dangerouslySetInnerHTML={ { __html: sane_styles } } />
 

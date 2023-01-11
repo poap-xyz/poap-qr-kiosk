@@ -49,19 +49,19 @@ const Input = styled.span`
 
 export default ( { onChange, type, label, info, highlight, id, title, onClick, options, ...props } ) => {
 
-	const { current: internalId } = useRef( id || `input-${ Math.random() }` )
+    const { current: internalId } = useRef( id || `input-${ Math.random() }` )
 
-	return <Input onClick={ onClick } highlight={ highlight } { ...props }>
+    return <Input onClick={ onClick } highlight={ highlight } { ...props }>
 
-		{ label && <label htmlFor={ internalId }>{ label } { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
+        { label && <label htmlFor={ internalId }>{ label } { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
 
-		{ !title && type != 'dropdown' && <input data-testid={ internalId } { ...props } id={ internalId } onChange={ onChange } type={ type || 'text' } /> }
-		{ !title && type == 'dropdown' && <select id={ internalId } onChange={ onChange }>
-			{ options.map( ( option, index ) => <option key={ index } value={ option.value }>{ option.label }</option> ) }
-		</select> }
+        { !title && type != 'dropdown' && <input data-testid={ internalId } { ...props } id={ internalId } onChange={ onChange } type={ type || 'text' } /> }
+        { !title && type == 'dropdown' && <select id={ internalId } onChange={ onChange }>
+            { options.map( ( option, index ) => <option key={ index } value={ option.value }>{ option.label }</option> ) }
+        </select> }
 
-		{ title && <p>{ title }</p> }
+        { title && <p>{ title }</p> }
 		
-	</Input>
+    </Input>
 
 }

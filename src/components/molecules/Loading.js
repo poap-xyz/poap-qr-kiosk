@@ -34,7 +34,7 @@ const Spinner = styled.div`
 
 export default ( { message, generic_loading_styles, className, ...props } ) => <Container className={ `${ className } loading_container` } generic_loading_styles={ generic_loading_styles } { ...props }>
 	
-	<Spinner id='loading_spinner' generic_loading_styles={ generic_loading_styles } />
-	{ message && <Text id='loading_text' align="center">{ message }</Text> }
+    <Spinner id='loading_spinner' generic_loading_styles={ generic_loading_styles } />
+    { message && <Text id='loading_text' align="center">{ message }</Text> }
 
 </Container>

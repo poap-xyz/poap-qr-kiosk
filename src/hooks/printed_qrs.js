@@ -18,16 +18,16 @@ export function useCodeMetadata( claim_code, do_nothing=false ) {
             try {
     
                 // Get remote event data
-                if( !claim_code || do_nothing ) return
+                if ( !claim_code || do_nothing ) return
                 const { data } = await check_code_status( claim_code )
                 log( `Received event meta for ${ claim_code }: `, data.event )
-                if( cancelled ) return
+                if ( cancelled ) return
 
                 // Set changed data to state
                 set_event( data.event )
                 set_claimed( data.claimed )
     
-            } catch( e ) {
+            } catch ( e ) {
                 log( `Error getting event meta for `, claim_code, e )
             }
     
@@ -39,7 +39,7 @@ export function useCodeMetadata( claim_code, do_nothing=false ) {
 
     useEffect( (  ) => {
 
-        let cancelled = false;
+        let cancelled = false
         let unsubscribe = undefined;
     
         ( async () => {
@@ -47,9 +47,9 @@ export function useCodeMetadata( claim_code, do_nothing=false ) {
             try {
     
                 // Log whether we can listen
-                if( !event?.id ) {
+                if ( !event?.id ) {
                     await wait( 1000 )
-                    if( cancelled ) return
+                    if ( cancelled ) return
                     log( `No drop ID available for ${ claim_code }, setting to empty. ` )
                     return set_drop_meta( undefined )
                 }
@@ -57,7 +57,7 @@ export function useCodeMetadata( claim_code, do_nothing=false ) {
                 log( `Starting listener for static_drop_public/${ event.id }` )
 
                 // Handle mock event listening for CI
-                if( `${ event?.id }`.includes( `mock` ) ) {
+                if ( `${ event?.id }`.includes( `mock` ) ) {
 
                     await wait( 2000 )
                     set_drop_meta( {
@@ -74,14 +74,14 @@ export function useCodeMetadata( claim_code, do_nothing=false ) {
                     set_drop_meta( meta )
                 } )
     
-            } catch( e ) {
+            } catch ( e ) {
                 log( `Issue getting event metadata` )
             } 
     
         } )( )
     
         return () => {
-            if( unsubscribe ) {
+            if ( unsubscribe ) {
                 log( `🛑 removed listener` )
                 unsubscribe()
             }
