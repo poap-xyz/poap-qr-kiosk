@@ -12,10 +12,10 @@ Product owner: @actualymentor
 
 ## Requirements
 
-- Have [nvm](https://github.com/nvm-sh/nvm) installed
+- Have [nvm](https://github.com/nvm-sh/nvm) installed as a Node.js version manager
 - Have the `.env.development` file, it is in 1Password as a secure note called `[ .env.development ] POAP Kiosk - poap-xyz/poap-qr-kiosk`
 - (optional) Make sure you have access to the Firebase project `qr-kiosk-development` if you will run the functions backend offline. Note: you **never** need production credentials, the continuous integration has access to it
-
+- (optional) Use [VSCode](https://code.visualstudio.com/) or [VSCodium](https://vscodium.com/) for automatic style formatting
 
 ## Frontend usage
 
