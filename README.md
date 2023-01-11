@@ -4,48 +4,36 @@ This is a kiosk app that displays QR codes based on a list of event codes upload
 
 Product owner: @actualymentor
 
-[Live url: qr.poap.xyz]( https://qr.poap.xyz/ )
+[Live url: qr.poap.xyz]( https://kiosk.poap.xyz/ )
 
 [Dev url: https://qr-kiosk-dev.web.app/]( https://qr-kiosk-dev.web.app/ )
 
-[Internal documentation](https://www.notion.so/poap/Magic-POAP-Dispenser-aka-QR-Kiosk-3956e66a0b0742d49dab58e7b2fd0644)
+[Internal documentation](https://www.notion.so/poap/POAP-Kiosk-formerly-QR-Dispenser-3956e66a0b0742d49dab58e7b2fd0644)
 
-## Firebase initial setup
+## Requirements
 
-To configure Firebase services:
-
-1. Enable firestore, functions, hosting, analytics
-2. Enable [app check]( https://console.firebase.google.com/u/0/project/poap-qr-kiosk/settings/appcheck ) ([docs](https://firebase.google.com/docs/app-check/web/recaptcha-provider))
-3. Fill out all variables in `.env`
-
-To Configure backend:
-
-1. Set keys using `firebase functions:config:set key=value`:
-    - `auth0.audience`
-    - `auth0.client_id`
-    - `auth0.client_secret`
-    - `auth0.endpoint`
-    - `sendgrid.fromemail`
-    - `sendgrid.apikey`
-    - `poap.apikey`
-    - `recaptcha.secret`
-    - `kiosk.publicUrl`
-1. `firebase functions:config:get > .runtimeconfig.json`
-
+- Have [nvm](https://github.com/nvm-sh/nvm) installed as a Node.js version manager
+- Have the `.env.development` file, it is in 1Password as a secure note called `[ .env.development ] POAP Kiosk - poap-xyz/poap-qr-kiosk`
+- (optional) Make sure you have access to the Firebase project `qr-kiosk-development` if you will run the functions backend offline. Note: you **never** need production credentials, the continuous integration has access to it
+- (optional) Use [VSCode](https://code.visualstudio.com/) or [VSCodium](https://vscodium.com/) for automatic style formatting
 
 ## Frontend usage
 
+1. Clone this repo
 1. `nvm use`
-2. `npm i`
-3. Populate `.env` based on `.env.example`
-4. `npm start`
+1. `npm i`
+1. Populate `.env.development`
+1. CHOICE MOMENT. Either:
+    1. Run the firebase functions backend locally, see next section
+    1. Comment out the `REACT_APP_useEmulator` line in `.env.development` (this will make the frontend use the live backend)
+1. `npm start`
 
 ## Backend usage
 
 1. `cd functions`
 2. `nvm use`
 3. `npm i`
-5. `npm start`
+5. `npm run serve`
 
 ## Tech stack
 
@@ -71,3 +59,25 @@ To prevent the psycho from pursuing you:
 1. Write for clarity and comprehension.
 2. Leave a "what this does" comment for **every** function.
 3. Be as descriptive as possible in commits and PRs.
+
+## Setting up new Firebase projects
+
+To configure Firebase services:
+
+1. Enable firestore, functions, hosting, analytics
+2. Enable [app check]( https://console.firebase.google.com/u/0/project/poap-qr-kiosk/settings/appcheck ) ([docs](https://firebase.google.com/docs/app-check/web/recaptcha-provider))
+3. Fill out all variables in `.env`
+
+To Configure backend:
+
+1. Set keys using `firebase functions:config:set key=value`:
+    - `auth0.audience`
+    - `auth0.client_id`
+    - `auth0.client_secret`
+    - `auth0.endpoint`
+    - `sendgrid.fromemail`
+    - `sendgrid.apikey`
+    - `poap.apikey`
+    - `recaptcha.secret`
+    - `kiosk.publicUrl`
+1. `firebase functions:config:get > .runtimeconfig.json`
