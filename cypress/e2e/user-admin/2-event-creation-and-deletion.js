@@ -47,21 +47,27 @@ context( 'Organiser successful event creation', () => {
 
     } )
 
-    it( 'Fails with missing data and succeeds when all data is provided', () => {
+    it( 'Fails with missing data and succeeds when all data is provided', function() {
 
         let alerts = 0
         cy.on( 'window:alert', response => {
             alerts++
-            if ( alerts == 1 ) expect( response ).to.contain( 'specify an event name' )
-            if ( alerts == 2 ) expect( response ).to.contain( 'specify a valid email address' )
-            if ( alerts == 3 ) expect( response ).to.contain( 'specify the date' )
+            if( alerts == 1 ) expect( response ).to.contain( 'specify an event name' )
+            if( alerts == 2 ) expect( response ).to.contain( 'specify a valid email address' )
+            if( alerts == 3 ) expect( response ).to.contain( 'specify the date' )
         } )
+
+        cy.visit( '/create?debug=true' )
+
+        // Select codes file
+        cy.get( 'input[type=file]' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
 
         // Clear inputs
         cy.get( '#event-create-name' ).clear()
         cy.get( '#event-create-date' ).clear()
         cy.get( '#event-create-email' ).clear()
 
+        // Run through failures
         cy.get( '#event-create-submit' ).click()
         cy.get( '#event-create-name' ).type( admin.events[0].name )
 
@@ -71,6 +77,7 @@ context( 'Organiser successful event creation', () => {
         cy.get( '#event-create-submit' ).click()
         cy.get( '#event-create-date' ).type( admin.events[0].end )
 
+        // Successfully create
         cy.get( '#event-create-submit' ).click()
 
         cy.contains( 'Creating POAP Kiosk' )
@@ -79,9 +86,14 @@ context( 'Organiser successful event creation', () => {
         cy.contains( 'Your public POAP Kiosk link' )
         cy.contains( 'Your secret admin link' )
 
+        // Save the event and admin links for further use
+        cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+
     } )
 
-    it( 'Deletes the event when clicked', () => {
+    it( 'Deletes the event when clicked', function() {
+
+        cy.visit( this.event_1_secretlink )
 
         cy.on( 'window:alert', response => {
             expect( response ).to.contain( 'Deletion success' )

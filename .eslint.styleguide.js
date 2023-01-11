@@ -50,9 +50,6 @@ module.exports = {
     // Define things before using them
     "no-use-before-define": [ "error", { functions: false } ],
 
-    // No invalid 'this' usage
-    "no-invalid-this": "error",
-
     // Only throw Error objects and not literals (like strings)
     "no-throw-literal": "error",
 

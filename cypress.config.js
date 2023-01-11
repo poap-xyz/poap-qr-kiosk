@@ -1,43 +1,47 @@
-const { defineConfig } = require('cypress')
+const { defineConfig } = require( 'cypress' )
 module.exports = defineConfig( {
 
-	defaultCommandTimeout: 60000,
-	requestTimeout: 60000,
-	video: true,
-	videoCompression: false,
-	screenscreenshotOnRunFailureshots: true,
-	chromeWebSecurity: false,
-	watchForFileChanges: false,
+    defaultCommandTimeout: 60000,
+    requestTimeout: 60000,
+    video: true,
+    videoCompression: false,
+    screenscreenshotOnRunFailureshots: true,
+    chromeWebSecurity: false,
+    watchForFileChanges: false,
 
-	e2e: {
-		setupNodeEvents(on, config) {
-			
-			// Load environment variables
-			let envFile = '.env.production'
+    e2e: {
 
-			// If in offline dev, use development env
-			if( process.env.NODE_ENV == 'development' ) envFile = '.env.development'
+        // Experimental flag that restores the old "run all" button, may have bugs
+        experimentalRunAllSpecs: true,
 
-			// If in CI use .env since the workflows write to that file on run
-			if( process.env.CI ) envFile = '.env'
+        setupNodeEvents( on, config ) {
 
-			const dotenvConfig = {
-				path: `${ __dirname }/${ envFile }`
-			}
-			console.log( `Runing cypress with ${ process.env.NODE_ENV } and ${ envFile }` )
+            // Load environment variables
+            let envFile = '.env.production'
 
-			require('dotenv').config( dotenvConfig )
+            // If in offline dev, use development env
+            if( process.env.NODE_ENV == 'development' ) envFile = '.env.development'
 
-			console.log( `Environment: `, process.env )
+            // If in CI use .env since the workflows write to that file on run
+            if( process.env.CI ) envFile = '.env'
 
-			config.env.REACT_APP_publicUrl = process.env.REACT_APP_publicUrl
-			return config
-		
+            const dotenvConfig = {
+                path: `${ __dirname }/${ envFile }`
+            }
+            console.log( `Runing cypress with ${ process.env.NODE_ENV } and ${ envFile }` )
 
-		},
-		specPattern: "cypress/e2e/**/*.{js,jsx,ts,tsx}",
-		baseUrl: "http://localhost:3000/#",
+            require( 'dotenv' ).config( dotenvConfig )
 
-	}
+            console.log( `Environment: `, process.env )
+
+            config.env.REACT_APP_publicUrl = process.env.REACT_APP_publicUrl
+            return config
+
+
+        },
+        specPattern: "cypress/e2e/**/*.{js,jsx,ts,tsx}",
+        baseUrl: "http://localhost:3000/#",
+
+    }
 
 } )
