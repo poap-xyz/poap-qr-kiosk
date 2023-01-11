@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
 // Visual
 import BottomBar from '../atoms/BottomBar'
@@ -13,15 +13,15 @@ import { useIsOnline } from '../../hooks/network'
 // ///////////////////////////////
 export default function ComponentName( ) {
 
-	const { online, was_offline, bad_connection } = useIsOnline(  )
+    const { online, was_offline, bad_connection } = useIsOnline(  )
 
-	// ///////////////////////////////
-	// Render component
-	// ///////////////////////////////
-	return <BottomBar animate={ was_offline || bad_connection } success={ online && !bad_connection }>
-		<Text align="center">
-			Network { online ? 'on' : 'off' }line { online && `(${ bad_connection ? 'unstable' : 'stable' } connection)` }
-		</Text>
-	</BottomBar>
+    // ///////////////////////////////
+    // Render component
+    // ///////////////////////////////
+    return <BottomBar animate={ was_offline || bad_connection } success={ online && !bad_connection }>
+        <Text align="center">
+            Network { online ? 'on' : 'off' }line { online && `(${ bad_connection ? 'unstable' : 'stable' } connection)` }
+        </Text>
+    </BottomBar>
 
 }
