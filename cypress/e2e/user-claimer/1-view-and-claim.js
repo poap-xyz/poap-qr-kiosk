@@ -151,6 +151,7 @@ context( 'Claimer can view valid events', () => {
 
         // Visit public event link
         cy.visit( this.event_1_publiclink )
+        cy.reload()
 
         // Accept disclaimer
         cy.get( '#event-view-accept-disclaimer' ).click()
