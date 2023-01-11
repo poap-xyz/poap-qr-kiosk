@@ -37,7 +37,7 @@
       "subheading": "Delete this POAP Kiosk",
       "description": "Want to create a new POAP Kiosk for this drop? Delete this POAP Kiosk first, and then create a new dispenser when you are ready.",
       "deleteBtn": "Delete POAP Kiosk"
-    },  
+    },
     "adminDispenser": {
       "title": "Admin link",
       "description": "Your admin link is yours to make changes to this instance of the magic POAP dispenser. Don't share this with anyone!",
@@ -89,11 +89,11 @@
         "info": "Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.",
         "options": [
           {
-            "label": "No (optional for physical events)",
+            "label": "No (recommended for physical events)",
             "value": "no"
           },
           {
-            "label": "Yes (recommended for online)",
+            "label": "Yes (recommended for online drops)",
             "value": "yes"
           }
         ]
@@ -102,6 +102,11 @@
         "placeholder": "body, p {}",
         "label": "Custom CSS overrides",
         "info": "This field will be injected as CSS overrides during the claiming process."
+      },
+      "dropBaseurl": {
+        "placeholder": "https://kiosk.poap.xyz/#/static/claim/",
+        "label": "POAP Claim Baseurl Override",
+        "info": "Instead of redirecting to the POAP interface to claim a POAP, redirect it to any URL of your choosing."
       },
       "dropCollectEmails": {
         "label": "Collect emails?",
@@ -164,8 +169,8 @@
       "description": "If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface."
     },
     "display": {
-      "subheading": "Scan the QR with your camera to claim your POAP",
-      "claimed": "{{ available }} of {{ codes }} codes claimed or pending"
+      "subheading": "Scan the QR with your camera to collect your POAP",
+      "claimed": "{{ available }} of {{ codes }} codes collected or pending"
     }
   },
   "claim": {
@@ -188,7 +193,7 @@
     "you": "You ",
     "won": "won",
     "lost": "lost",
-    "claimPoap": "Claim your POAP",
+    "claimPoap": "Collect your POAP",
     "loadPoap": "Loading your POAP...",
     "game": {
       "title": "Play a game to prove you are human",

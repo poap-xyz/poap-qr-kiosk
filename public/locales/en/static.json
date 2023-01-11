@@ -58,11 +58,11 @@
 
   },
   "claim": {
-    "title": "Claim your POAP",
-    "set_loading": "Claiming your POAP",
+    "title": "Collect your POAP",
+    "set_loading": "Collecting your POAP",
     "validations": {
       "accept_terms": "Please accept the terms in order to continue",
-      "valid_email": "Please input a valid email address",
+      "valid_email": "Please input a valid email or wallet address address",
       "invalid_qr": "Your QR is invalid, please scan it again",
       "verifying_qr": "Verifying your POAP",
       "used_qr": "This QR was already used.",
@@ -75,10 +75,10 @@
       }
     },
     "buttons": {
-      "claim_poap": "Claim your POAP"
+      "claim_poap": "Collect your POAP"
     },
     "user_claimed": {
-      "title": "You successfully claimed your POAP!",
+      "title": "You successfully collected your POAP!",
       "subtitle": "Check your inbox at {{ email }}",
       "description": "The email contains instructions on how to view your POAP, and claim it to a crypto wallet if you want to do so."
     }

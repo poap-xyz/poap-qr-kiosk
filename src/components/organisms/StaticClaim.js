@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 // Modules
-import { log, dev, wait, remove_script_tags } from '../../modules/helpers'
+import { log, remove_script_tags } from '../../modules/helpers'
 import { claim_code_by_email } from '../../modules/firebase'
 
 // Hooks
@@ -22,9 +22,9 @@ import Style from '../atoms/Style'
 export default function StaticClaim() {
 
     // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
-	// Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
-	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
-	const { t } = useTranslation( [ 'static' , 'dispenser' ] )
+    // Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
+    // Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
+    const { t } = useTranslation( [ 'static' , 'dispenser' ] )
 
     const [ email_or_0x_address, set_email_or_0x_address ] = useState( '' )
     const [ termsAccepted, setTermsAccepted ] = useState( false )
@@ -39,20 +39,20 @@ export default function StaticClaim() {
         try {
 
             // Validate inputs
-            if( code_meta?.drop_meta?.optin_text && !termsAccepted ) throw new Error( `${ t( 'claim.validations.accept_terms') }` )
-            if( !email_or_0x_address?.includes( '@' ) && !email_or_0x_address.match( /0x[0-9-a-z]{40}/ig ) ) throw new Error( `${ t( 'claim.validations.valid_email') }` )
-            if( !claim_code ) throw new Error( `${ t( 'claim.validations.invalid_qr') }` )
+            if( code_meta?.drop_meta?.optin_text && !termsAccepted ) throw new Error( `${ t( 'claim.validations.accept_terms' ) }` )
+            if( !email_or_0x_address?.includes( '@' ) && !email_or_0x_address.match( /0x[0-9-a-z]{40}/ig ) ) throw new Error( `${ t( 'claim.validations.valid_email' ) }` )
+            if( !claim_code ) throw new Error( `${ t( 'claim.validations.invalid_qr' ) }` )
 
             // Register claim with firebase
             setLoading( `${ t( 'claim.set_loading' ) }` )
             const { data: response } = await claim_code_by_email( { claim_code, email_or_0x_address, is_static_drop: true } )
-            const { error, success } = response
+            const { error } = response
             log( `Remote response `, response )
 
             if( error ) throw new Error( `${ error } (remote)` )
             set_user_claimed( true )
 
-        } catch( e ) {
+        } catch ( e ) {
 
             log( `POAP claim error:`, e )
             alert( `Claim error: ${ e.message }` )
@@ -88,9 +88,9 @@ export default function StaticClaim() {
     if( user_claimed ) return <Container generic_loading_styles={ true } id='static-print-qr-top-container-success'>
 
         <Main align='flex-start' width='400px'>
-            <H1>{ t( 'claim.user_claimed.title') }</H1>
+            <H1>{ t( 'claim.user_claimed.title' ) }</H1>
             <H2>{ t( 'claim.user_claimed.subtitle' , { email: email_or_0x_address } ) }</H2>
-            <Text>{ t( 'claim.user_claimed.description') }</Text>
+            <Text>{ t( 'claim.user_claimed.description' ) }</Text>
         </Main>
 
     </Container>
@@ -112,7 +112,7 @@ export default function StaticClaim() {
                 <span dangerouslySetInnerHTML={ { __html: remove_script_tags( drop_meta?.optin_text ) } } />
             </Text> }
             
-            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={ ( termsAccepted || !drop_meta?.optin_text ) ? 'primary' : 'text' }>{ t( 'claim.buttons.claim_poap' ) }</Button>
+            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={  termsAccepted || !drop_meta?.optin_text  ? 'primary' : 'text' }>{ t( 'claim.buttons.claim_poap' ) }</Button>
         </Main>
 
         { /* If this drop has custom CSS associated with it, inject it */ }

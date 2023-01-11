@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { listenToEventMeta, listen_to_claim_challenge } from "../modules/firebase"
-import { log } from "../modules/helpers"
 
 export const useEvent = ( eventId, do_nothing=false ) => {
 

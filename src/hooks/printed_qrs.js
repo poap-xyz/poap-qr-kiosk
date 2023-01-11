@@ -27,7 +27,7 @@ export function useCodeMetadata( claim_code, do_nothing=false ) {
                 set_event( data.event )
                 set_claimed( data.claimed )
     
-            } catch( e ) {
+            } catch ( e ) {
                 log( `Error getting event meta for `, claim_code, e )
             }
     
@@ -39,7 +39,7 @@ export function useCodeMetadata( claim_code, do_nothing=false ) {
 
     useEffect( (  ) => {
 
-        let cancelled = false;
+        let cancelled = false
         let unsubscribe = undefined;
     
         ( async () => {
@@ -74,7 +74,7 @@ export function useCodeMetadata( claim_code, do_nothing=false ) {
                     set_drop_meta( meta )
                 } )
     
-            } catch( e ) {
+            } catch ( e ) {
                 log( `Issue getting event metadata` )
             } 
     

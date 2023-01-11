@@ -17,16 +17,16 @@ import { H1 } from "../atoms/Text"
 
 export default function StaticClaimAdmin() {
 
-	// useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
-	// Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
-	// Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
-	const { t } = useTranslation( [ 'static' , 'dispenser' ] )
+    // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
+    // Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
+    // Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
+    const { t } = useTranslation( [ 'static' , 'dispenser' ] )
 
     const [ drop_id, set_drop_id ] = useState( '' )
-    const [ secret_code, set_secret_code] = useState( '' )
-    const [ auth_code, set_auth_code] = useState( '' )
-    const [ loading, set_loading] = useState( false )
-    const [ csv_emails, set_csv_emails] = useState(  )
+    const [ secret_code, set_secret_code ] = useState( '' )
+    const [ auth_code, set_auth_code ] = useState( '' )
+    const [ loading, set_loading ] = useState( false )
+    const [ csv_emails, set_csv_emails ] = useState(  )
 
     async function export_drop() {
 
@@ -39,7 +39,7 @@ export default function StaticClaimAdmin() {
             if( error ) throw new Error( error || `Malformed response` )
             set_csv_emails( csv_string )
 
-        } catch( e ) {
+        } catch ( e ) {
             log( `CSV error: `, e )
             alert( e.message )
         } finally {
@@ -62,7 +62,7 @@ export default function StaticClaimAdmin() {
             if( error ) throw new Error( error || `Malformed response` )
             alert( `All user data was successfully deleted` )
 
-        } catch( e ) {
+        } catch ( e ) {
             log( `CSV error: `, e )
             alert( e.message )
         } finally {
@@ -75,14 +75,14 @@ export default function StaticClaimAdmin() {
 
     if( csv_emails ) return <Container>
 
-    <Main width='600px'>
+        <Main width='600px'>
 
-        <H1>{ t( 'admin.auth_succes' ) }</H1>
-        <Button download={ `poap_drop_${ drop_id }_email_claims-${ new Date().toDateString() }.csv` } href={ `data:text/csv;charset=utf-8,${csv_emails}` }>{ t( 'admin.buttons.download_csv' ) }</Button>
+            <H1>{ t( 'admin.auth_succes' ) }</H1>
+            <Button download={ `poap_drop_${ drop_id }_email_claims-${ new Date().toDateString() }.csv` } href={ `data:text/csv;charset=utf-8,${ csv_emails }` }>{ t( 'admin.buttons.download_csv' ) }</Button>
 
-    </Main>
+        </Main>
 
-</Container>
+    </Container>
 
     return <Container>
 

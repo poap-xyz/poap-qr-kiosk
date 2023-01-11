@@ -1,7 +1,7 @@
-const functions = require("firebase-functions")
+const functions = require( "firebase-functions" )
 const generousRuntime = {
-	timeoutSeconds: 540,
-	memory: '4GB'
+    timeoutSeconds: 540,
+    memory: '4GB'
 }
 const { log, dev } = require( './modules/helpers' )
 log( `⚠️ Verbose mode on, ${ dev ? '⚙️ dev mode on' : '🚀 production mode on' }` )

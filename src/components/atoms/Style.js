@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { log } from "../../modules/helpers"
 
 export default ( { styles } ) => {
 

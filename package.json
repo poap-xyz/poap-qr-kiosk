@@ -4,17 +4,17 @@
   "private": true,
   "dependencies": {
     "cypress": "^10.10.0",
-    "firebase": "^9.12.1",
-    "i18next": "^22.0.2",
-    "i18next-browser-languagedetector": "^6.1.8",
-    "i18next-http-backend": "^1.4.4",
+    "firebase": "^9.15.0",
+    "i18next": "^22.4.9",
+    "i18next-browser-languagedetector": "^7.0.1",
+    "i18next-http-backend": "^2.1.1",
     "papaparse": "^5.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-recaptcha": "^2.1.0",
-    "react-i18next": "^12.0.0",
-    "react-qr-code": "^2.0.8",
-    "react-router-dom": "^6.4.2",
+    "react-i18next": "^12.1.4",
+    "react-qr-code": "^2.0.11",
+    "react-router-dom": "^6.6.2",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.6",
     "use-interval": "^1.4.0",
@@ -22,12 +22,14 @@
   },
   "scripts": {
     "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
+    "start:silent": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "cypress": "NODE_ENV=development $(npm bin)/cypress open --e2e --browser chrome",
-    "test": "CYPRESS_LOCAL=true NODE_ENV=development start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --browser chrome\"",
-    "test:production": "npm run build && NODE_ENV=production start-server-and-test 'serve build' 3000 \"$(npm bin)/cypress open --browser chrome\"",
-    "test:ci": "NODE_ENV=production CI=true start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --browser chrome --config 60000\"",
-    "eject": "react-scripts eject"
+    "test": "CYPRESS_LOCAL=true NODE_ENV=development start-server-and-test --expect 200 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --browser chrome\"",
+    "test:production": "npm run build && NODE_ENV=production start-server-and-test --expect 200 'serve build' 3000 \"$(npm bin)/cypress open --browser chrome\"",
+    "test:ci": "NODE_ENV=production CI=true start-server-and-test --expect 200 start:silent 3000 \"$(npm bin)/cypress run --browser chrome --config 60000\"",
+    "lint": "eslint --fix src ",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -48,12 +50,13 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.19.6",
+    "@babel/core": "^7.20.12",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-react": "^7.18.6",
     "cypress-file-upload": "^5.0.8",
     "dotenv": "^16.0.3",
-    "serve": "^14.0.1",
-    "start-server-and-test": "^1.14.0"
+    "husky": "^8.0.3",
+    "serve": "^14.1.2",
+    "start-server-and-test": "^1.15.2"
   }
 }
