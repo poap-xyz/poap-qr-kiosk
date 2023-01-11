@@ -62,7 +62,7 @@ export function useIsOnline() {
                 ] )
                 const end = Date.now()
                 log( `🔔 Ping concluded at ${ end }, total: ${ end - start } ` )
-                if ( !cancelled ) set_ping( end - start )
+                if( !cancelled ) set_ping( end - start )
     
             } catch ( e ) {
                 log( `🔔 Unable to ping: `, e )

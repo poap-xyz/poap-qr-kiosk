@@ -4,26 +4,26 @@ const dev = !!process.env.development
 
 // Dev Logger
 const log = ( ...comments ) => {
-	if( dev || environment?.verbose ) console.log( ...comments )
+    if( dev || environment?.verbose ) console.log( ...comments )
 }
 
 // Object properties checker
 const require_properties = ( obj={}, required_properties=[] ) => {
 
-	const keys = Object.keys( obj )
-	const contains_all_required = required_properties.every( key => keys.includes( key ) )
-	log( `Checking keys `, keys, `against required: `, contains_all_required, ' for object ', obj )
-	if( !contains_all_required ) throw new Error( `Missing required properties in request` )
+    const keys = Object.keys( obj )
+    const contains_all_required = required_properties.every( key => keys.includes( key ) )
+    log( `Checking keys `, keys, `against required: `, contains_all_required, ' for object ', obj )
+    if( !contains_all_required ) throw new Error( `Missing required properties in request` )
 
 }
 
 // Object unexpected input checker
 const allow_only_these_properties = ( obj, allowed_properties ) => {
 
-	const keys = Object.keys( obj )
-	const unknownProperties = keys.filter( key => !allowed_properties.includes( key ) )
-	log( `Checking keys `, keys, `for non-allowed, found: `, unknownProperties )
-	if( unknownProperties.length ) throw new Error( `Unknown properties given: ${ unknownProperties.join( ', ' ) }` )
+    const keys = Object.keys( obj )
+    const unknownProperties = keys.filter( key => !allowed_properties.includes( key ) )
+    log( `Checking keys `, keys, `for non-allowed, found: `, unknownProperties )
+    if( unknownProperties.length ) throw new Error( `Unknown properties given: ${ unknownProperties.join( ', ' ) }` )
 
 }
 
@@ -57,32 +57,32 @@ const Retrier = require( 'promise-retry' )
 */
 function make_retryable( async_function, logging_label='unlabeled retry', retry_times=5, cooldown_in_s=10, cooldown_entropy=true ) {
 
-	// Formulate retry logic
-	const retryable_function = () => Retrier( ( do_retry, retry_counter ) => {
+    // Formulate retry logic
+    const retryable_function = () => Retrier( ( do_retry, retry_counter ) => {
 
-		// Failure handling
-		return async_function().catch( async e => {
+        // Failure handling
+        return async_function().catch( async e => {
 
-			// If retry attempts exhausted, throw out
-			if( retry_counter >= retry_times ) {
-				log( `♻️🚨 ${ logging_label } retry failed after ${ retry_counter } attempts` )
-				throw e
-			}
+            // If retry attempts exhausted, throw out
+            if( retry_counter >= retry_times ) {
+                log( `♻️🚨 ${ logging_label } retry failed after ${ retry_counter } attempts` )
+                throw e
+            }
 
-			// If retries left, retry with a progressive delay
-			const entropy = !cooldown_entropy ? 0 : ( .1 + Math.random() )
-			const cooldown_in_ms = ( cooldown_in_s + entropy ) * 1000
-			const cooldown = cooldown_in_ms + ( cooldown_in_ms * ( retry_counter - 1 ) )
-			log( `♻️ ${ logging_label } retry failed ${ retry_counter }x, waiting for ${ cooldown / 1000 }s` )
-			await wait( cooldown )
-			log( `♻️ ${ logging_label } cooldown complete, continuing...` )
-			return do_retry()
+            // If retries left, retry with a progressive delay
+            const entropy = !cooldown_entropy ? 0 :  .1 + Math.random() 
+            const cooldown_in_ms = ( cooldown_in_s + entropy ) * 1000
+            const cooldown = cooldown_in_ms +  cooldown_in_ms * ( retry_counter - 1 ) 
+            log( `♻️ ${ logging_label } retry failed ${ retry_counter }x, waiting for ${ cooldown / 1000 }s` )
+            await wait( cooldown )
+            log( `♻️ ${ logging_label } cooldown complete, continuing...` )
+            return do_retry()
 
-		} )
+        } )
 
-	} )
+    } )
 
-	return retryable_function
+    return retryable_function
 
 }
 
@@ -97,30 +97,30 @@ function make_retryable( async_function, logging_label='unlabeled retry', retry_
 */
 async function throttle_and_retry( async_function_array=[], max_parallell=2, logging_label, retry_times, cooldown_in_s ) {
 
-	// Create array of retryable functions
-	const retryable_async_functions = async_function_array.map( async_function => {
-		const retryable_function = make_retryable( async_function, logging_label, retry_times, cooldown_in_s )
-		return retryable_function
-	} )
+    // Create array of retryable functions
+    const retryable_async_functions = async_function_array.map( async_function => {
+        const retryable_function = make_retryable( async_function, logging_label, retry_times, cooldown_in_s )
+        return retryable_function
+    } )
 
-	// Throttle configuration
-	const throttle_config = {
-		maxInProgress: max_parallell	
-	}
+    // Throttle configuration
+    const throttle_config = {
+        maxInProgress: max_parallell	
+    }
 
-	// Return throttler
-	return Throttle.all( retryable_async_functions, throttle_config )
+    // Return throttler
+    return Throttle.all( retryable_async_functions, throttle_config )
 
 }
 
 module.exports = {
-	dev,
-	log,
-	require_properties,
-	allow_only_these_properties,
-	wait,
-	throttle_and_retry,
-	isEmail,
-	isWalletOrENS,
-	isWallet
+    dev,
+    log,
+    require_properties,
+    allow_only_these_properties,
+    wait,
+    throttle_and_retry,
+    isEmail,
+    isWalletOrENS,
+    isWallet
 }

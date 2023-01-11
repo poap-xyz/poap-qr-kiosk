@@ -34,6 +34,7 @@ export default function Admin( ) {
     const [ name, setName ] = useState( '' )
     const [ csv, setCsv ] = useState(  )
     const [ css, setCss ] = useState(  )
+    const [ customBaseurl, setCustomBaseurl ] = useState(  )
     const [ codes, setCodes ] = useState(  )
     const [ gameEnabled, setGameEnabled ] = useState( false )
     const [ gameDuration, setGameDuration ] = useState( 30 )
@@ -59,8 +60,8 @@ export default function Admin( ) {
 
                 const { data: health } = await health_check()
                 log( `Systems health: `, health )
-                if ( cancelled ) return log( `Health effect cancelled` )
-                if ( !dev && !health.healthy ) {
+                if( cancelled ) return log( `Health effect cancelled` )
+                if( !dev && !health.healthy ) {
                     setIsHealthy( false )
                     trackEvent( `event_view_event_system_down` )
                     return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
@@ -81,7 +82,7 @@ export default function Admin( ) {
 
         let cancelled = false
 
-        if ( !csv ) return
+        if( !csv ) return
 
         ( async f => {
 
@@ -92,7 +93,7 @@ export default function Admin( ) {
 
                 // Validations
                 const { name } = csv
-                if ( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( `${ t( 'create.file.acceptedFormat' ) }` )
+                if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( `${ t( 'create.file.acceptedFormat' ) }` )
 
                 // Set filename to state
                 setFilename( name )
@@ -111,7 +112,7 @@ export default function Admin( ) {
                 const erroredCodes = data.filter( code => !code.match( /\w{1,42}/ )  )
 
                 // Let user know about faulty codes
-                if ( erroredCodes.length ) {
+                if( erroredCodes.length ) {
 
                     log( 'Errored codes: ', erroredCodes )
                     throw new Error( `${ erroredCodes.length } ${ t( 'create.file.codeFormat' ) } ${ erroredCodes[0] }` )
@@ -120,35 +121,35 @@ export default function Admin( ) {
 
                 // Validated and sanetised codes
                 log( 'Sanetised codes: ', data )
-                if ( !data.length ) throw new Error( `${ t( 'create.file.noCodes' ) }` )
-                if ( !cancelled ) setCodes( data )
+                if( !data.length ) throw new Error( `${ t( 'create.file.noCodes' ) }` )
+                if( !cancelled ) setCodes( data )
 
                 // Load event data based on codes
                 const formatedCode = data[0]?.trim()
                 const { data: { event, error } } = await getEventDataFromCode( formatedCode )
                 log( 'Code data received ', event, error )
-                if ( error ) throw new Error( error )
-                if ( !event ) throw new Error( `${ t( 'create.event.eventExpired' ) }` )
+                if( error ) throw new Error( error )
+                if( !event ) throw new Error( `${ t( 'create.event.eventExpired' ) }` )
 
                 // Set event details to state
-                if ( event.name ) setName( event.name )
-                if ( event.expiry_date ) {
+                if( event.name ) setName( event.name )
+                if( event.expiry_date ) {
 
                     const [ day, monthName, year ] = event.expiry_date.split( '-' )
                     const endDate = `${ year }-${ monthNameToNumber( monthName ) }-${ day.length == 1 ? `0${ day }` : day }`
                     log( `Computed end date from ${ event.expiry_date }: `, endDate )
                     setDate( endDate )
-          
+
                 }
 
-                if ( !cancelled ) setLoading( false )
+                if( !cancelled ) setLoading( false )
 
             } catch ( e ) {
 
                 log( 'Validation error ', e, ' for ', csv )
-                if ( !cancelled ) setCodes( undefined )
-                if ( !cancelled ) setLoading( false )
-                if ( !cancelled ) setCsv( undefined )
+                if( !cancelled ) setCodes( undefined )
+                if( !cancelled ) setLoading( false )
+                if( !cancelled ) setCsv( undefined )
                 return alert( e.message )
 
             }
@@ -181,21 +182,21 @@ export default function Admin( ) {
         try {
 
             // Health noti
-            if ( !isHealthy ) {
+            if( !isHealthy ) {
                 const ignore_unhealthy = confirm( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
-                if ( !ignore_unhealthy ) throw new Error( `${ t( 'create.event.eventCancelled' ) }` )
+                if( !ignore_unhealthy ) throw new Error( `${ t( 'create.event.eventCancelled' ) }` )
             }
 
             // Validations
-            if ( !codes.length ) throw new Error( `${ t( 'create.file.csvNoEntries' ) }` )
-            if ( !name.length ) throw new Error( `${ t( 'create.event.noName' ) }` )
-            if ( !email.includes( '@' ) ) throw new Error( `${ t( 'create.event.noEmail' ) }` )
-            if ( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'create.event.wrongDate' ) }` )
+            if( !codes.length ) throw new Error( `${ t( 'create.file.csvNoEntries' ) }` )
+            if( !name.length ) throw new Error( `${ t( 'create.event.noName' ) }` )
+            if( !email.includes( '@' ) ) throw new Error( `${ t( 'create.event.noEmail' ) }` )
+            if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'create.event.wrongDate' ) }` )
 
             // Confirm date
             const confirmed = confirm( `${ t( 'create.event.creationMessage' , { name: name, email: email } ) } ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
             log( 'Confirmation status: ', confirmed )
-            if ( !confirmed ) throw new Error( `${ t( 'create.event.eventCancelled' ) }` )
+            if( !confirmed ) throw new Error( `${ t( 'create.event.eventCancelled' ) }` )
 
             // Call the cloud importer
             setLoading( `${ t( 'create.creatingDispenser' ) }` )
@@ -208,6 +209,8 @@ export default function Admin( ) {
                 codes,
                 challenges: gameEnabled ? [ 'game' ] : [],
                 collect_emails: !!collectEmails,
+                // Custom base URLs may only be used is collectEmails is off, this is because collectEmails works by setting the base url in Claim.js
+                ... !collectEmails && customBaseurl && { claim_base_url: customBaseurl } ,
                 game_config: { duration: gameDuration, target_score: Math.ceil( gameDuration / 5 ) },
                 ... css && { css } 
             } )
@@ -216,7 +219,7 @@ export default function Admin( ) {
             trackEvent( 'admin_event_create' )
 
             // Error handling
-            if ( newEvent.error ) throw new Error( newEvent.error )
+            if( newEvent.error ) throw new Error( newEvent.error )
 
             // Send to admin interface
             return navigate( `/event/admin/${ newEvent.id }/${ newEvent.authToken }` )
@@ -235,7 +238,7 @@ export default function Admin( ) {
     // ///////////////////////////////
     // Render component
     // ///////////////////////////////
-    if ( loading ) return <Loading message={ loading } />
+    if( loading ) return <Loading message={ loading } />
   
     return <Container onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 
@@ -260,9 +263,10 @@ export default function Admin( ) {
                 { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'create.event.gameTime.label' ) } info={ t( 'create.event.gameTime.info' ) } options={ t( 'create.event.gameTime.options', { returnObjects: true } ) } /> }
                 { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'create.event.dropCss.placeholder' ) } label={ t( 'create.event.dropCss.label' ) } info={ t( 'create.event.dropCss.info' ) } value={ css || '' } /> }
                 { developer_mode && <Input type='dropdown' options={ t( 'create.event.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'create.event.dropCollectEmails.label' ) } info={ t( 'create.event.dropCollectEmails.info' ) } value={ collectEmails } /> }
-        
+                { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'create.event.dropBaseurl.placeholder' ) } label={ t( 'create.event.dropBaseurl.label' ) } info={ t( 'create.event.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
+
             </> }
-      
+
             { codes && <Button id="event-create-submit" onClick={ createEvent }>{ t( 'create.event.eventCreate', { count: codes.length } ) }</Button> }
             { /* codes && <Button id="event-create-reset" color='hint' onClick={ f => setCodes( null ) }>Upload different codes</Button> */ }
         </Main>

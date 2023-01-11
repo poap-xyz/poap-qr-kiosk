@@ -36,7 +36,7 @@ export default function StaticClaimCreate() {
             const { data } = await create_static_drop( { drop_id, auth_code, optin_text, welcome_text, custom_css, custom_email, allow_wallet_claim } )
             log( `Remote response: `, data )
             const { error } = data
-            if ( error ) throw new Error( error || `Malformed response` )
+            if( error ) throw new Error( error || `Malformed response` )
             set_success( true )
 
         } catch ( e ) {
@@ -48,9 +48,9 @@ export default function StaticClaimCreate() {
 
     }
 
-    if ( loading ) return <Loading message={ loading } />
+    if( loading ) return <Loading message={ loading } />
 
-    if ( success ) return <Container>
+    if( success ) return <Container>
 
         <Main align='flex-start' width='600px'>
 

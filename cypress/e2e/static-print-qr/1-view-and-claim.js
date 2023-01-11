@@ -8,20 +8,20 @@ context( "User can view and claim through static QR url", () => {
 
     it( 'Can view test code', () => {
 
-		// Visit code claim page
-		cy.visit( `/static/claim/${ random_code }` )
+        // Visit code claim page
+        cy.visit( `/static/claim/${ random_code }` )
 
-		// Page renders
+        // Page renders
         cy.contains( `Collect your POAP` )
 
-	} )
+    } )
 
     it( 'Can claim test code', () => {
 
-		// Visit code claim page
-		cy.visit( `/static/claim/${ random_code }` )
+        // Visit code claim page
+        cy.visit( `/static/claim/${ random_code }` )
 
-		// Fill in email
+        // Fill in email
         cy.get( '#static-print-qr-email-field' ).type( random_email )
 
         // Click checkbox
@@ -34,7 +34,7 @@ context( "User can view and claim through static QR url", () => {
         // Claim succeeded
         cy.contains( `successfully collected` )
 
-	} )
+    } )
 
 
 } )
@@ -46,7 +46,7 @@ context( "User can view and claim through static QR url", () => {
     it( 'Fails when trying to claim the same code twice', () => {
 
         // Visit code claim page
-		cy.visit( `/static/claim/${ random_code }` )
+        cy.visit( `/static/claim/${ random_code }` )
 
         // Should say the code expired
         cy.contains( `already used` )
@@ -56,7 +56,7 @@ context( "User can view and claim through static QR url", () => {
     it( 'Fails when visiting malformed link', () => {
 
         // Visit code claim page
-		cy.visit( `/static/claim/${ invalid_code }` )
+        cy.visit( `/static/claim/${ invalid_code }` )
 
         // Should say the code expired
         cy.contains( `invalid link` )

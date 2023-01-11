@@ -9,8 +9,8 @@ export default function AnnotatedQR( props ) {
 
     useEffect( () => {
 
-        if ( !online ) return set_color( 'red' )
-        if ( ping != Infinity && bad_connection ) return set_color( 'orange' )
+        if( !online ) return set_color( 'red' )
+        if( ping != Infinity && bad_connection ) return set_color( 'orange' )
         set_color( 'black' )
 
     }, [ online, bad_connection ] )

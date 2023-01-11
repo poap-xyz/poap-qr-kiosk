@@ -22,7 +22,7 @@ const Timer = ( { duration, onComplete } ) => {
     const { t } = useTranslation( [ 'dynamic' ] )
 
     useInterval( f => {
-        if ( timePassed >= duration ) return onComplete()
+        if( timePassed >= duration ) return onComplete()
         setTimePassed( timePassed + 1 )
     }, 1000 )
 
@@ -54,12 +54,12 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
         log( `Input target_score input/state ${ target_score_input }/${ target_score }` )
 
         // If the state was empty, set it to the new value
-        if ( !duration && duration_input ) set_duration( duration_input )
-        if ( !target_score && target_score_input ) set_target_score( target_score_input )
+        if( !duration && duration_input ) set_duration( duration_input )
+        if( !target_score && target_score_input ) set_target_score( target_score_input )
 
         // If the state was full, and this is a change, set the change
-        if ( target_score_input && target_score != target_score_input ) set_target_score( target_score_input )
-        if ( duration_input && duration != duration_input ) set_duration( duration_input )
+        if( target_score_input && target_score != target_score_input ) set_target_score( target_score_input )
+        if( duration_input && duration != duration_input ) set_duration( duration_input )
 
     }, [ target_score_input, duration_input ] )
 
@@ -97,7 +97,7 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
     function submit_answer( option ) {
 
         // increase score for right answers
-        if ( option == answer ) setScore( score + 1 )
+        if( option == answer ) setScore( score + 1 )
         else setScore( score - 1 )
 
         // Increment and update interface
@@ -108,13 +108,13 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
 
     function score_emoji() {
 
-        if ( score > target_score * 10 ) return '🦄'
-        if ( score > target_score * 5 ) return '🧙'
-        if ( score > target_score * 3 ) return '🤯'
-        if ( score > target_score * 2 ) return '😱'
-        if ( score > target_score * 1.5 ) return '🤩'
-        if ( score >= target_score ) return '😁'
-        if ( score > target_score / 2 ) return '🤨'
+        if( score > target_score * 10 ) return '🦄'
+        if( score > target_score * 5 ) return '🧙'
+        if( score > target_score * 3 ) return '🤯'
+        if( score > target_score * 2 ) return '😱'
+        if( score > target_score * 1.5 ) return '🤩'
+        if( score >= target_score ) return '😁'
+        if( score > target_score / 2 ) return '🤨'
         return '😞'
 
     }
@@ -123,16 +123,16 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
 
         log( 'Game complete! Score:', score, ' target: ', target_score )
         setDone( true )
-        if ( score >= target_score && onWin ) return onWin( score, Date.now() )
-        if ( onLose ) return onLose( score, Date.now() )
+        if( score >= target_score && onWin ) return onWin( score, Date.now() )
+        if( onLose ) return onLose( score, Date.now() )
 
     }
 
     function claim_poap() {
-        if ( poap_url ) window.location.replace( poap_url )
+        if( poap_url ) window.location.replace( poap_url )
     }
 
-    if ( done ) return <Container>
+    if( done ) return <Container>
 		
         <H1 align='center'>{ t( 'stroop.you' ) } { score >= target_score ? t( 'stroop.won' ) : t( 'stroop.lost' ) }!</H1>
         <H2>{ t( 'stroop.score' ) } { score } { score_emoji() }</H2>
@@ -140,7 +140,7 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
 
     </Container>
 
-    if ( !started ) return <Container>
+    if( !started ) return <Container>
 		
         <H1 align='center'>{ t( 'stroop.game.title' ) }</H1>
         <H2 align='center'>{ t( 'stroop.game.subtitle' ) }</H2>

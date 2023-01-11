@@ -1,6 +1,6 @@
-const { db, dataFromSnap } = require("./firebase")
-const { log, throttle_and_retry } = require("./helpers")
-const { call_poap_endpoint } = require("./poap_api")
+const { db, dataFromSnap } = require( "./firebase" )
+const { log, throttle_and_retry } = require( "./helpers" )
+const { call_poap_endpoint } = require( "./poap_api" )
 const Papa = require( 'papaparse' )
 const { validate: validate_uuid } = require( 'uuid' )
 
@@ -42,7 +42,7 @@ exports.export_emails_of_static_drop = async ( data, context ) => {
         return { csv_string }
 
 
-    } catch( e ) {
+    } catch ( e ) {
         log( `Error exporting emails: `, e )
         return { error: e.message }
     }
@@ -82,7 +82,7 @@ exports.delete_emails_of_static_drop = async ( data, context ) => {
         const email_deletion_queue = emails_to_delete.map( doc => () => doc.ref.delete() )
         return throttle_and_retry( email_deletion_queue, 500, `email_deletion`, 2, 5 )
 
-    } catch( e ) {
+    } catch ( e ) {
         log( `Error deleting emails: `, e )
         return { error: e.message }
     }
@@ -108,11 +108,11 @@ exports.create_static_drop = async ( data, context ) => {
         // Store drop config
         const drop_config = {
             auth_code,
-            ...( optin_text?.length && { optin_text } ),
-            ...( welcome_text?.length && { welcome_text } ),
-            ...( custom_css?.length && { custom_css } ),
-            ...( custom_email?.length && { custom_email } ),
-            ...( allow_wallet_claim && { allow_wallet_claim } ),
+            ... optin_text?.length && { optin_text } ,
+            ... welcome_text?.length && { welcome_text } ,
+            ... custom_css?.length && { custom_css } ,
+            ... custom_email?.length && { custom_email } ,
+            ... allow_wallet_claim && { allow_wallet_claim } ,
             approved: false,
             updated: Date.now(), updated_human: new Date().toString()
         }
@@ -122,7 +122,7 @@ exports.create_static_drop = async ( data, context ) => {
         return { success: true, drop_config }
 
 
-    } catch( e ) {
+    } catch ( e ) {
         log( `Error exporting emails: `, e )
         return { error: e.message }
     }
@@ -131,25 +131,25 @@ exports.create_static_drop = async ( data, context ) => {
 
 exports.update_public_static_drop_data = async function( change, context ) {
 
-	const { after, before } = change
-	const { drop_id } = context.params
+    const { after, before } = change
+    const { drop_id } = context.params
 
-	// If this was a deletion, delete public data
-	if( !after.exists ) return db.collection( 'static_drop_public' ).doc( drop_id ).delete()
+    // If this was a deletion, delete public data
+    if( !after.exists ) return db.collection( 'static_drop_public' ).doc( drop_id ).delete()
 
     // Destructure data, if unapproved, delete document
     const { welcome_text, optin_text, custom_css, approved, allow_wallet_claim } = after.data()
     if( !approved ) return db.collection( 'static_drop_public' ).doc( drop_id ).delete()
 
-	// If this was an update, grab the public properties and set them
-	const public_data_object = {
-        ...( welcome_text?.length && { welcome_text } ),
-        ...( optin_text?.length && { optin_text } ),
-        ...( custom_css?.length && { custom_css } ),
-        ...( allow_wallet_claim && { allow_wallet_claim } ),
-		updated: Date.now(),
-		updated_by: 'static_drop_private'
-	}
-	return db.collection( 'static_drop_public' ).doc( drop_id ).set( public_data_object, { merge: true } )
+    // If this was an update, grab the public properties and set them
+    const public_data_object = {
+        ... welcome_text?.length && { welcome_text } ,
+        ... optin_text?.length && { optin_text } ,
+        ... custom_css?.length && { custom_css } ,
+        ... allow_wallet_claim && { allow_wallet_claim } ,
+        updated: Date.now(),
+        updated_by: 'static_drop_private'
+    }
+    return db.collection( 'static_drop_public' ).doc( drop_id ).set( public_data_object, { merge: true } )
 
 }

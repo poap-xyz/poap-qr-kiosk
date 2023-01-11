@@ -36,7 +36,7 @@ export default function StaticClaimAdmin() {
             const { data } = await export_emails_of_static_drop( { drop_id, secret_code, auth_code } )
             log( `Remote response: `, data )
             const { csv_string, error } = data
-            if ( error ) throw new Error( error || `Malformed response` )
+            if( error ) throw new Error( error || `Malformed response` )
             set_csv_emails( csv_string )
 
         } catch ( e ) {
@@ -53,13 +53,13 @@ export default function StaticClaimAdmin() {
         try {
 
             const very_sure = confirm( `This action deletes all collected emails and CANNOT BE UNDONE.\n\nThis is a compliance action that purges user data related to this drop from POAPs systems.` )
-            if ( !very_sure ) return alert( `Action aborted. Nothing was deleted.` )
+            if( !very_sure ) return alert( `Action aborted. Nothing was deleted.` )
 
             set_loading( `${ t( 'admin.set_loading' ) }` )
             const { data } = await delete_emails_of_static_drop( { drop_id, secret_code, auth_code } )
             log( `Remote response: `, data )
             const { error } = data
-            if ( error ) throw new Error( error || `Malformed response` )
+            if( error ) throw new Error( error || `Malformed response` )
             alert( `All user data was successfully deleted` )
 
         } catch ( e ) {
@@ -71,9 +71,9 @@ export default function StaticClaimAdmin() {
 
     }
 
-    if ( loading ) return <Loading message={ loading } />
+    if( loading ) return <Loading message={ loading } />
 
-    if ( csv_emails ) return <Container>
+    if( csv_emails ) return <Container>
 
         <Main width='600px'>
 

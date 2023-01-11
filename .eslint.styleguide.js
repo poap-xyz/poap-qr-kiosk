@@ -30,7 +30,13 @@ module.exports = {
     "block-spacing": [ "error", "always" ],
     "space-before-blocks": [ "error", "always" ],
     "brace-style": [ "error", "1tbs" ],
-    "keyword-spacing": "error",
+    "keyword-spacing": [ "error", {
+        overrides: {
+            if: { after: false },
+            for: { after: false },
+            while: { after: false }
+        }
+    } ],
     "arrow-spacing": "error",
     "space-in-parens": [ "error", "always" ],
     "template-curly-spacing": [ "error", "always" ],
@@ -40,7 +46,7 @@ module.exports = {
 
     // Warn of template literal variables in the wrong place
     "no-template-curly-in-string": "warn",
-    
+
     // Define things before using them
     "no-use-before-define": [ "error", { functions: false } ],
 
