@@ -60,7 +60,7 @@ export default function ViewQR( ) {
         setLoading( `${ t( 'claim.stall.loadingSecondary' ) }` )
         await wait( step_delay )
         setLoading( `${ t( 'claim.stall.loadingNewScan' ) }` )
-        if( error ) throw new Error( `${ t( 'claim.stall.loadingError', {  error_code: error_code, challenge_code: challenge_code, trail: trail } ) }` )
+        if ( error ) throw new Error( `${ t( 'claim.stall.loadingError', {  error_code: error_code, challenge_code: challenge_code, trail: trail } ) }` )
     
         setLoading( false )
 
@@ -72,7 +72,7 @@ export default function ViewQR( ) {
         let { data: claim_code } = await get_code_by_challenge( { challenge_code, captcha_response: captchaResponse } )
 
         // On first fail, refresh codes and try again
-        if( claim_code.error ) {
+        if ( claim_code.error ) {
             const { data } = await requestManualCodeRefresh().catch( e => ( { data: e } ) )
             log( `Remote code update response : `, data )
             const { data: retried_claim_code } = await get_code_by_challenge( { challenge_code, captcha_response: captchaResponse } )
@@ -80,14 +80,14 @@ export default function ViewQR( ) {
         }
 
         // Handle code errors
-        if( claim_code.error ) throw new Error( claim_code.error )
+        if ( claim_code.error ) throw new Error( claim_code.error )
         log( `Received code: `, claim_code )
         trackEvent( `claim_code_received` )
 
         // Formulate redirect depending on claim type
         let link = `https://poap.xyz/claim/${ claim_code }`
-        if( event?.collect_emails ) link = `${ REACT_APP_publicUrl }/#/static/claim/`
-        if( event?.claim_base_url ) link = `${ event?.claim_base_url }${ claim_code }`
+        if ( event?.collect_emails ) link = `${ REACT_APP_publicUrl }/#/static/claim/${ claim_code }`
+        if ( event?.claim_base_url ) link = `${ event?.claim_base_url }${ claim_code }`
         log( `${ t( 'claim.formulateRedirect' ) }`, link )
 
         return link
@@ -108,8 +108,8 @@ export default function ViewQR( ) {
 
                 const { data: health } = await health_check()
                 log( `Systems health: `, health )
-                if( cancelled ) return log( `Health effect cancelled` )
-                if( !dev && !health.healthy ) {
+                if ( cancelled ) return log( `Health effect cancelled` )
+                if ( !dev && !health.healthy ) {
                     trackEvent( `claim_system_down` )
                     return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
                 }
@@ -139,48 +139,48 @@ export default function ViewQR( ) {
 
                 /* ///////////////////////////////
         // Failure mode 1: Backend marked this device as invalid */
-                if( challenge_code == 'robot' ) await stall( 'ch_c robot', 2000, false )
-                if( cancelled ) return
+                if ( challenge_code == 'robot' ) await stall( 'ch_c robot', 2000, false )
+                if ( cancelled ) return
 
                 // Validate device using appcheck
                 let { data: isValid } = await validateCallerDevice()
-                if( cancelled ) return
+                if ( cancelled ) return
 
                 // Allow for a manual triggering of invalid device
-                if( error_code == 'force_failed_appcheck' ) {
+                if ( error_code == 'force_failed_appcheck' ) {
                     log( `Simulating failed appcheck through force_failed_appcheck parameter` )
                     isValid = false
                 }
 
                 // Always wait an extra second
                 await wait( 2000 )
-                if( cancelled ) return
+                if ( cancelled ) return
                 setLoading( `${ t( 'claim.preppingMessage' ) }` )
                 await wait( 2000 )
-                if( cancelled ) return
+                if ( cancelled ) return
 
 
                 /* ///////////////////////////////
         // Failure mode 2: challenge link is invalid */
         
                 // if the challenge is invalid, stall and error
-                if( challenge?.expires < Date.now() ) return stall( `${ isValid ? 'v' : 'iv' }_expired` )
+                if ( challenge?.expires < Date.now() ) return stall( `${ isValid ? 'v' : 'iv' }_expired` )
 
                 /* ///////////////////////////////
         // Failure mode 3: Invalid captcha 3, no captcha 2 data yet */
 
-                if( !isValid && !captchaResponse ) return stall( `Stall before captcha`, 3000, false )
+                if ( !isValid && !captchaResponse ) return stall( `Stall before captcha`, 3000, false )
 
                 /* ///////////////////////////////
         // Failure mode 4: fallback captcha is not valid */
 
                 // Check local captcha response with backend
-                if( !isValid && captchaResponse ) {
+                if ( !isValid && captchaResponse ) {
 
                     const { data: captchaIsValid } = await validateCallerCaptcha( captchaResponse )
 
                     // If captcha is invalid, trigger fail
-                    if( !captchaIsValid ) {
+                    if ( !captchaIsValid ) {
                         trackEvent( 'claim_device_captcha_fail' )
                         await stall( `cfail` )
                     } else {
@@ -201,7 +201,7 @@ export default function ViewQR( ) {
                 log( e )
                 trackEvent( 'claim_device_validation_failed' )
                 alert( e.message )
-                if( !cancelled ) setLoading( e.message )
+                if ( !cancelled ) setLoading( e.message )
 
             }
 
@@ -221,10 +221,10 @@ export default function ViewQR( ) {
             try {
 
                 // Check for presence of challenge data
-                if( !userValid ) return log( 'User not (yet) validated' )
+                if ( !userValid ) return log( 'User not (yet) validated' )
 
                 // Validate for expired challenge
-                if( userValid && !challenge ) {
+                if ( userValid && !challenge ) {
                     trackEvent( `claim_challenge_expired` )
                     throw new Error( `${ t( 'claim.validation.alreadyUsed' ) }` )
                 }
@@ -232,13 +232,13 @@ export default function ViewQR( ) {
                 log( `Challenge received: `, challenge )
 
                 // If this is a game challenge, end here
-                if( challenge?.challenges?.includes( 'game' ) ) return log( 'Game challenge requested' )
+                if ( challenge?.challenges?.includes( 'game' ) ) return log( 'Game challenge requested' )
 
                 // If no game challenge, get a code
                 const link = await get_poap_link()
-                if( cancelled ) return
+                if ( cancelled ) return
 
-                if( !dev ) window.location.replace( link )
+                if ( !dev ) window.location.replace( link )
                 else setLoading( `POAP link: ${ link }` )
         
 
@@ -261,7 +261,7 @@ export default function ViewQR( ) {
     // POAP getting for the game
     useEffect( (  ) => {
 
-        if( !gameDone ) return log( 'Game not done, not loading code' )
+        if ( !gameDone ) return log( 'Game not done, not loading code' )
         let cancelled = false;
 
         ( async () => {
@@ -270,7 +270,7 @@ export default function ViewQR( ) {
 
                 // Game won? Get a code
                 const link = await get_poap_link()
-                if( cancelled ) return
+                if ( cancelled ) return
                 trackEvent( 'claim_device_game_won' )
                 log( `Setting state link to `, link )
                 setPoaplink( link )
@@ -280,7 +280,7 @@ export default function ViewQR( ) {
                 log( 'Error getting POAP: ', e )
                 trackEvent( 'claim_poap_fetch_failed' )
                 alert( e.message )
-                if( !cancelled ) setLoading( e.message )
+                if ( !cancelled ) setLoading( e.message )
 
             }
 
@@ -298,10 +298,10 @@ export default function ViewQR( ) {
     // ///////////////////////////////
 
     // If user is not valid, and no captcha response is known, show captcha
-    if( !userValid && !captchaResponse && !loading ) return <Captcha onChange={ response => setCaptchaResponse( response ) } />
+    if ( !userValid && !captchaResponse && !loading ) return <Captcha onChange={ response => setCaptchaResponse( response ) } />
 
     // If game challenge requested, show
-    if( userValid && ( gameDone || challenge?.challenges?.includes( 'game' ) ) ) return <Stroop duration_input={ challenge?.game_config?.duration } target_score_input={ challenge?.game_config?.target_score } onLose={ handleLose } onWin={ handleWin } poap_url={ poaplink } />
+    if ( userValid && ( gameDone || challenge?.challenges?.includes( 'game' ) ) ) return <Stroop duration_input={ challenge?.game_config?.duration } target_score_input={ challenge?.game_config?.target_score } onLose={ handleLose } onWin={ handleWin } poap_url={ poaplink } />
 
     // loading screen is default
     return <Loading message={ loading } />
