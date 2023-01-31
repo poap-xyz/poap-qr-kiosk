@@ -1,4 +1,4 @@
-const { eslint_config } = require( '@teamskunk/lint' )
+const { eslint_config } = require( '@poap/skunk-linter' )
 
 // Export the default eslint config
 module.exports = {
