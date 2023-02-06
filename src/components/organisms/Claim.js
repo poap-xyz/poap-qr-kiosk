@@ -86,7 +86,7 @@ export default function ViewQR( ) {
 
         // Formulate redirect depending on claim type
         let link = `https://poap.xyz/claim/${ claim_code }`
-        if( event?.collect_emails ) link = `${ REACT_APP_publicUrl }/#/static/claim/`
+        if( event?.collect_emails ) link = `${ REACT_APP_publicUrl }/#/static/claim/${ claim_code }`
         if( event?.claim_base_url ) link = `${ event?.claim_base_url }${ claim_code }`
         log( `${ t( 'claim.formulateRedirect' ) }`, link )
 

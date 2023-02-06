@@ -15,5 +15,6 @@
 	"editor.renderWhitespace": "all",
 	"editor.formatOnSave": true,
 	"eslint.format.enable": true,
-	"eslint.run": "onType"
+	"eslint.run": "onType",
+	"i18next.i18nPaths": "/Users/ruben/Dev/POAP/poap-qr-kiosk/public/locales"
 }
