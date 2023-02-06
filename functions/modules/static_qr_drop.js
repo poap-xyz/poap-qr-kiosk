@@ -102,7 +102,7 @@ exports.create_static_drop = async ( data, context ) => {
         const is_mock_claim = drop_id?.includes( `mock` )
 
         // Validate config versus inputs
-        if( `${ drop_id }`.length != 5 ) throw new Error( `Drop ID length is invalid, it should be 6 characters long.` )
+        if( !drop_id?.match( /\d*/ ) ) throw new Error( `Drop ID is invalid, it should be only digits` )
         if( !validate_uuid( auth_code ) ) throw new Error( `Auth code is not a valid uuid` )
 
         // Store drop config
