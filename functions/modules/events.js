@@ -3,7 +3,7 @@ const { db, dataFromSnap, arrayUnion, increment } = require( './firebase' )
 const { v4: uuidv4 } = require( 'uuid' )
 const { sendEventAdminEmail } = require( './email' )
 const Throttle = require( 'promise-parallel-throttle' )
-const { throttle_and_retry, log } = require( './helpers' )
+const { throttle_and_retry, log, email_pseudo_anonymous } = require( './helpers' )
 const { throw_on_failed_app_check } = require( './security' )
 
 // Configs
@@ -69,7 +69,9 @@ async function validate_and_write_event_codes( event_id, expiration_date, codes,
         // Check if code already exists and is claimed
         const oldDocRef = await db.collection( 'codes' ).doc( code.qr_hash ).get()
         const oldDocData = oldDocRef.data()
-        if( oldDocRef.exists && oldDocData.event != event_id ) throw new Error( `This POAP Kiosk has already been created! If you were the creator, please check your email for a message with the subject "POAP - Your QR Kiosk".\nDebug data for POAP programmers: duplicate entry is ${ code }..` )
+        if( !oldDocRef.exists ) return
+        const { email } = await db.collection( 'events' ).doc( event_id ).get().then( dataFromSnap )
+        if( oldDocData.event != event_id ) throw new Error( `Error: This POAP Kiosk has already been created by ${ email_pseudo_anonymous( email ) }!\n\nThis means you (or someone on your team) already uploaded these mint link and received an email with the subject "POAP - Your QR Kiosk".\n\nPlease find that email to view or delete your Kiosk.\n\n\n--------\nYou can safely ignore this: \nDebug data for POAP programmers: duplicate entry is ${ JSON.stringify( code ) }` )
 
     } )
 
