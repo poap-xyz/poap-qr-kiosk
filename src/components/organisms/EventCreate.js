@@ -102,8 +102,8 @@ export default function Admin( ) {
                 let data = await parseCsv( csv )
                 log( 'Raw codes loaded: ', data )
 
-                // Remove website prefix
-                data = data.map( code => code.replace( /(https?:\/\/.*\/)/ig, '' ) )
+                // Remove website prefix and trim
+                data = data.map( code => `${ code }`.replace( /(https?:\/\/.*\/)/ig, '' ).trim() )
 
                 // Take out empty lines
                 data = data.filter( code => code.length != 0 )
