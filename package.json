@@ -53,6 +53,8 @@
     "@babel/core": "^7.20.12",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-react": "^7.18.6",
+    "@poap/skunk-linter": "^0.0.2",
+    "@teamskunk/lint": "^0.0.7",
     "cypress-file-upload": "^5.0.8",
     "dotenv": "^16.0.3",
     "husky": "^8.0.3",
