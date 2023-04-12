@@ -63,6 +63,20 @@ export function useCodeMetadata( claim_code, do_nothing=false ) {
                     set_drop_meta( {
                         welcome_text: 'Input your email below to claim your POAP! This text can be edited for each drop :)',
                         optin_text: "I accept the terms and conditions, and sign away my soul. This field accepts html for links to external pages.",
+                        custom_css: `
+                            body { background: url("https://images.unsplash.com/photo-1543722530-d2c3201371e7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2374&q=80" )}
+                            body { background-size: cover }
+                            #static-print-qr-h1 { color: brown }
+                            #static-print-qr-welcome-text, #static-print-qr-optin-field {
+                                background: black;
+                                color: white;
+                                padding: 0.5rem;
+                                font-family: monospace;
+                            }
+                            #static-print-qr-claim-button, input {
+                                background: white!important;
+                            }
+                        `
                     } )
 
                     return () => log( `Removed mock listener` )
