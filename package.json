@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@poap/poap-components": "^0.0.26",
     "cypress": "^10.10.0",
     "firebase": "^9.15.0",
     "i18next": "^22.4.9",
