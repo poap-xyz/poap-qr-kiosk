@@ -12,11 +12,12 @@ log( `Frontend using live url ${ REACT_APP_publicUrl } with ${ REACT_APP_useEmul
 
 // Components
 import AnnotatedQR from '../molecules/AnnotatedQR'
-import Button from '../atoms/Button'
 import Loading from '../molecules/Loading'
-import { H1, H2, Text, Sidenote } from '../atoms/Text'
 import Container from '../atoms/Container'
 import Network from '../molecules/NetworkStatusBar'
+
+import { H1, H2, Text, Sidenote, Button, CardContainer } from '@poap/poap-components'
+
 
 // ///////////////////////////////
 // Render component
@@ -53,6 +54,8 @@ export default function ViewQR( ) {
     // ///////////////////////////////
     // Lifecycle handling
     // ///////////////////////////////
+
+    const abc = true
 
     // Mode handling
     useEffect( f => {
@@ -187,48 +190,59 @@ export default function ViewQR( ) {
     if( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
 
     // Show welcome screen
-    if( !acceptedTerms ) return <Container>
+    if( !acceptedTerms ) return <Container show_bookmark>
+
+        <CardContainer>
+
+            <H1 align="center">{ t( 'view.terms.title' ) }</H1>
+
+            <H2>{ t( 'view.terms.subheading' ) }</H2>
+            <Text align="center">{ t( 'view.terms.description' ) }</Text>
+
+            <Button variation="white" id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>{ t( 'view.terms.acceptBtn' ) }</Button>
+        
+        </CardContainer>
     
-        <H1 align="center">{ t( 'view.terms.title' ) }</H1>
-
-        <H2>{ t( 'view.terms.subheading' ) }</H2>
-        <Text align="center">{ t( 'view.terms.description' ) }</Text>
-
-        <Button id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>{ t( 'view.terms.acceptBtn' ) }</Button>
-
     </Container>
 
     // loading screen
     if( loading ) return <Loading message={ loading } />
 
     // Expired event error
-    if( event?.expires && event.expires < Date.now() ) return <Container>
-  
-        <h1>{ t( 'view.expired.title' ) }</h1>
-        <Sidenote>{ t( 'view.expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Sidenote>
+    if( event?.expires && event.expires < Date.now() ) return <Container show_bookmark>
+
+        <CardContainer>
+
+            <h1>{ t( 'view.expired.title' ) }</h1>
+            <Sidenote>{ t( 'view.expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Sidenote>
     
+        </CardContainer>
+
     </Container>
 
     // No code error
-    if( !event?.public_auth?.expires ) return <Container>
-  
-        <h1>{ t( 'view.codes.title' ) }</h1>
-        <Sidenote onClick={ f => navigate( '/admin' ) }>{ t( 'view.codes.description' ) }</Sidenote>
-    
+    // if( !event?.public_auth?.expires ) return <Container>
+    if( !event?.public_auth?.expires ) return <Container show_bookmark>
+
+        <CardContainer>
+            <h1>{ t( 'view.codes.title' ) }</h1>
+            <Sidenote onClick={ f => navigate( '/admin' ) }>{ t( 'view.codes.description' ) }</Sidenote>
+        </CardContainer>
+
     </Container>
 
     // Display QR
-    return <Container background={ template?.footer_icon }>
+    return <Container background={ template?.footer_icon } show_bookmark>
 
         {  /* Event metadata */ }
         { event && <H1 color={ template?.main_color } align="center">{ event.name }</H1> }
-        <H2 color={ template?.header_link_color } align="center">{ t( 'view.display.subheading' ) }</H2>
+        <H2 color={ template?.header_link_color || 'var(--primary-600)' } align="center">{ t( 'view.display.subheading' ) }</H2>
 
         {  /* QR showing code */ }
         <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
         { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
-        { event && <Sidenote>{ t( 'view.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
+        { event && <Sidenote margin='0'>{ t( 'view.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
     
         <Network />
 
