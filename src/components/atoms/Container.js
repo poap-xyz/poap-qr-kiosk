@@ -2,22 +2,21 @@ import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 // Image that behaves like a background image
-import logo from '../../assets/logo.svg'
+import logo from '../../assets/illustrations/Illustration_Cities_Amsterdam.svg'
 import { useCustomCSS } from '../../hooks/custom_css'
 import { log } from '../../modules/helpers'
 import Style from './Style'
+import { Container, POAPBookmark, mixin } from '@poap/poap-components'
+
 
 const BackgroundImage = styled.img.attrs( ( { src, generic_styles } ) => ( {
     src: generic_styles ? undefined : src || logo
 } ) )`
 	position: absolute;
+	bottom: 0;
 	z-index: -1;
-	right: 50%;
-	transform: translateY( -50% );
-	/*top: 50%;*/
-	transform: translateX( 50% );
-	width: 90%;
-	opacity: .05;
+	width: 100%;
+	opacity: 0.75;
 `
 
 const Wrapper = styled.div`
@@ -36,9 +35,22 @@ const Wrapper = styled.div`
 	}
 `
 
-// Container that always has the background image
-export default ( { children, background, generic_loading_styles, className, ...props } ) => {
+const StyledBookmark = styled( POAPBookmark )`
+	position: absolute;
+	top: 0;
+	right: var(--spacing-4);
 
+	${ mixin.sm_up`
+       right: var(--spacing-6);
+    ` }
+
+	${ mixin.md_up`
+       right: var(--spacing-8);
+    ` }
+`
+
+// Container that always has the background image
+export default ( { children, background, generic_loading_styles, show_bookmark, className, ...props } ) => {
 
     const css = useCustomCSS()
     const { search } = useLocation()
@@ -49,6 +61,7 @@ export default ( { children, background, generic_loading_styles, className, ...p
     if( blank_until_custom_css && css == 'loading' ) return
 
     return <Wrapper className={ `${ className } global_container` } { ...props }>
+        { show_bookmark && <StyledBookmark /> }
         <BackgroundImage id="global_background_image" generic_styles={ generic_loading_styles } src={ background } key='background' />
         { children }
         <Style styles={ css } />
