@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 
 // Components
+import { CardContainer, H3 } from '@poap/poap-components'
 import Loading from '../molecules/Loading'
 import Button from '../atoms/Button'
 import Container from '../atoms/Container'
@@ -242,8 +243,8 @@ export default function Admin( ) {
   
     return <Container onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 
-        <Main width='400px'>
-
+        <CardContainer>
+            <H3>Upload your mint links to your POAP kiosk</H3>
             <Input
                 highlight={ !codes } 
                 id="event-create-file"
@@ -254,6 +255,9 @@ export default function Admin( ) {
                 onClick={ !filename ? undefined : () => setCsv( undefined ) }
                 onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
             />
+        </CardContainer>
+
+        <Main width='400px'>
 
             { codes && <>
                 <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'create.event.dropName.placeholder' ) } label={ t( 'create.event.dropName.label' ) } info={ t( 'create.event.dropName.info' ) } value={ name } />
