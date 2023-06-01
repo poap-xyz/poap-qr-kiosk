@@ -1,11 +1,3 @@
-import Button from '../atoms/Button'
-import Container from '../atoms/Container'
-import Main from '../atoms/Main'
-import Hero from '../molecules/Hero'
-import Section from '../atoms/Section'
-import Column from '../atoms/Column'
-import Image from '../atoms/Image'
-import { Text, H1, H2, Sup } from '../atoms/Text'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -18,7 +10,13 @@ import { health_check } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 
 // Components
+import { H1, H2, Text, Sup, Button, Container } from '@poap/poap-components'
 import LanguageSwitcher from '../atoms/LanguageSwitcher'
+import Main from '../atoms/Main'
+import Hero from '../molecules/Hero'
+import Section from '../atoms/Section'
+import Column from '../atoms/Column'
+import Image from '../atoms/Image'
 
 // ///////////////////////////////
 // Render component
