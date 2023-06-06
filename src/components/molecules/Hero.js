@@ -1,18 +1,28 @@
 import styled from 'styled-components'
-import Section from '../atoms/Section'
+import { mixin } from '@poap/poap-components'
 
-export default styled( Section )`
-	width: 100%;
-	min-height: 80vh;
-	align-items: flex-start;
-	& h1 {
-		margin-bottom: .5rem;
-		text-align: left;
-	}
-	& * {
-		max-width: 800px;
-	}
-	& > p {
-		margin: 0 0 4rem;
-	}
+import { ReactComponent as HeroBG } from '../../assets/decorations/hero-lined-bg.svg'
+import { ReactComponent as FooterBG } from '../../assets/decorations/footer-lined-bg.svg'
+import { ReactComponent as GirlQR } from '../../assets/illustrations/Girl_holding_phoneQR.svg'
+
+export const HeroImage = styled( HeroBG )`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-height: 100%;
+    z-index: 0;
+`
+
+export const GirlQRImage = styled( GirlQR )`
+    position: relative;
+    margin-left: -5rem;
+`
+
+export const FooterImage = styled( FooterBG )`
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: 100%;
 `

@@ -1,5 +1,5 @@
 import Button from '../atoms/Button'
-import Container from '../atoms/Container'
+import ViewWrapper from '../atoms/ViewWrapper'
 import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 import Section from '../atoms/Section'
@@ -137,11 +137,11 @@ export default function EventAdmin( ) {
     // Render component
     // ///////////////////////////////
     if( loading ) return <Loading message={ loading } />
-    return <Container>
+    return <ViewWrapper>
 
         <Main align="flex-start" justify="space-between" direction="row">
 
-            <Hero>
+            <Section>
 
                 <H1>{ t( 'admin.title' ) }</H1>
                 {  !event.loading && !event.codes  ? <H2>{ t( 'admin.hero.subheading.reviewed' ) }</H2>: <H2>{ t( 'admin.hero.subheading.unique' ) }</H2> }
@@ -175,7 +175,7 @@ export default function EventAdmin( ) {
                     <Text>{ t( 'admin.hero.notavailable.description' ) }</Text>
                 </Section> }
 
-            </Hero>
+            </Section>
 
             <Section margin="0" align="flex-start">
                 <H1>{ t( 'admin.deleteDispenser.title' ) }</H1>
@@ -208,6 +208,6 @@ export default function EventAdmin( ) {
 
         </Main>
 		
-    </Container>
+    </ViewWrapper>
 
 }

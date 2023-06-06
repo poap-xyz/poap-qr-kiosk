@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components'
-import Container from '../atoms/Container'
+import Container from '../atoms/ViewWrapper'
 import { Text } from '../atoms/Text'
 
 const rotate = keyframes`

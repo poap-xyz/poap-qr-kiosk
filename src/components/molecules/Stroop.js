@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import useInterval from 'use-interval'
 // import styled from 'styled-components'
 
-import Container from '../atoms/Container'
+import ViewWrapper from '../atoms/ViewWrapper'
 import { H1, H2, Text } from '../atoms/Text'
 import Button from '../atoms/Button'
 import Section from '../atoms/Section'
@@ -132,24 +132,24 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
         if( poap_url ) window.location.replace( poap_url )
     }
 
-    if( done ) return <Container>
+    if( done ) return <ViewWrapper>
 		
         <H1 align='center'>{ t( 'stroop.you' ) } { score >= target_score ? t( 'stroop.won' ) : t( 'stroop.lost' ) }!</H1>
         <H2>{ t( 'stroop.score' ) } { score } { score_emoji() }</H2>
         { score >= target_score && <Button onClick={ claim_poap }>{ poap_url ? t( 'stroop.claimPoap' ) : t( 'stroop.loadPoap' ) }</Button> }
 
-    </Container>
+    </ViewWrapper>
 
-    if( !started ) return <Container>
+    if( !started ) return <ViewWrapper>
 		
         <H1 align='center'>{ t( 'stroop.game.title' ) }</H1>
         <H2 align='center'>{ t( 'stroop.game.subtitle' ) }</H2>
         <Text align='center'>{ t( 'stroop.game.description', { duration: duration } ) }</Text>
         <Button onClick={ f => setStarted( true ) }>{ t( 'stroop.game.btn' ) }</Button>
 
-    </Container>
+    </ViewWrapper>
 
-    return	<Container>
+    return	<ViewWrapper>
 
         <H1 align='center'>{ t( 'stroop.playing.preTitle' ) } <span style={ { color: random_color( answer ) } }>{ answer }</span> { t( 'stroop.playing.postTitle' ) }</H1>
         <H2>{ t( 'stroop.playing.subtitle', { score: score, target_score: target_score } ) } { score_emoji() }</H2>
@@ -161,5 +161,5 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
 
         </Section>
 
-    </Container>
+    </ViewWrapper>
 }

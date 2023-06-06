@@ -12,7 +12,7 @@ import { useCodeMetadata } from '../../hooks/printed_qrs'
 // Components
 import Loading from '../molecules/Loading'
 import Button from '../atoms/Button'
-import Container from '../atoms/Container'
+import ViewWrapper from '../atoms/ViewWrapper'
 import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 import { H1, H2, Text } from '../atoms/Text'
@@ -75,17 +75,17 @@ export default function StaticClaim() {
     if( code_meta?.event === 'loading' ) return <Loading generic_loading_styles={ true } message={ t( 'claim.validations.verifying_qr' ) } />
 
     // If code was already used, show error message
-    if( code_meta?.claimed === true ) return <Container generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
+    if( code_meta?.claimed === true ) return <ViewWrapper generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
         <Text>{ t( 'claim.validations.used_qr' ) }</Text>
-    </Container>
+    </ViewWrapper>
 
     // If no drop meta available, the user is trying to cheat or has a malformed link
-    if( !code_meta?.event ) return <Container generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
+    if( !code_meta?.event ) return <ViewWrapper generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
         <Text>{ t( 'claim.validations.invalid_link' ) }</Text>
-    </Container>
+    </ViewWrapper>
 
     // If the user claimed the POAP, tell them to check their email
-    if( user_claimed ) return <Container generic_loading_styles={ true } id='static-print-qr-top-container-success'>
+    if( user_claimed ) return <ViewWrapper generic_loading_styles={ true } id='static-print-qr-top-container-success'>
 
         <Main align='flex-start' width='400px'>
             <H1>{ t( 'claim.user_claimed.title' ) }</H1>
@@ -93,10 +93,10 @@ export default function StaticClaim() {
             <Text>{ t( 'claim.user_claimed.description' ) }</Text>
         </Main>
 
-    </Container>
+    </ViewWrapper>
 
     // Show claim interface
-    return <Container generic_loading_styles={ true } id='static-print-qr-top-container'>
+    return <ViewWrapper generic_loading_styles={ true } id='static-print-qr-top-container'>
 
         <Main align='flex-start' width='400px'>
             <H1 id='static-print-qr-h1'>{ t( 'claim.title' ) }</H1>
@@ -118,5 +118,5 @@ export default function StaticClaim() {
         { /* If this drop has custom CSS associated with it, inject it */ }
         <Style styles={ drop_meta?.custom_css } />
 
-    </Container>
+    </ViewWrapper>
 }

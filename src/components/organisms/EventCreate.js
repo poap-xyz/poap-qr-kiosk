@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { CardContainer, H3 } from '@poap/poap-components'
 import Loading from '../molecules/Loading'
 import Button from '../atoms/Button'
-import Container from '../atoms/Container'
+import ViewWrapper from '../atoms/ViewWrapper'
 import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 
@@ -241,7 +241,7 @@ export default function Admin( ) {
     // ///////////////////////////////
     if( loading ) return <Loading message={ loading } />
   
-    return <Container onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
+    return <ViewWrapper onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 
         <CardContainer>
             <H3>Upload your mint links to your POAP kiosk</H3>
@@ -275,6 +275,6 @@ export default function Admin( ) {
             { /* codes && <Button id="event-create-reset" color='hint' onClick={ f => setCodes( null ) }>Upload different codes</Button> */ }
         </Main>
 
-    </Container>
+    </ViewWrapper>
 
 }

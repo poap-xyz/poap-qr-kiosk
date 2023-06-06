@@ -162,7 +162,7 @@
     },
     "expired": {
       "title": "POAP Kiosk expired",
-      "description": "This POAP Kiosk was set to expire on {{ expireDate }} by the organiser."
+      "description": "This POAP Kiosk was set to expire on {{ expireDate }}."
     },
     "codes": {
       "title": "No codes available",

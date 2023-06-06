@@ -7,7 +7,7 @@ import { log } from "../../modules/helpers"
 
 // Components
 import Button from "../atoms/Button"
-import Container from "../atoms/Container"
+import ViewWrapper from "../atoms/ViewWrapper"
 import Input from "../atoms/Input"
 import Main from "../atoms/Main"
 import Loading from "../molecules/Loading"
@@ -73,7 +73,7 @@ export default function StaticClaimAdmin() {
 
     if( loading ) return <Loading message={ loading } />
 
-    if( csv_emails ) return <Container>
+    if( csv_emails ) return <ViewWrapper>
 
         <Main width='600px'>
 
@@ -82,9 +82,9 @@ export default function StaticClaimAdmin() {
 
         </Main>
 
-    </Container>
+    </ViewWrapper>
 
-    return <Container>
+    return <ViewWrapper>
 
         <Main align='flex-start' width='600px'>
 
@@ -97,5 +97,5 @@ export default function StaticClaimAdmin() {
 
         </Main>
 
-    </Container>
+    </ViewWrapper>
 }

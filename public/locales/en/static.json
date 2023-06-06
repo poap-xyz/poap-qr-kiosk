@@ -1,6 +1,6 @@
 {
   "title": "POAP Kiosk ",
-  "createButton": "Create POAP Kiosk",
+  "createButton": "Create Kiosk",
   "startedtext": "Get started now",
   "admin": {
     "title": "Static POAP Kiosk drop export",
@@ -55,7 +55,6 @@
       "third_line": "3. Print your physical QRS with the format: https://qr.poap.xyz/#/static/claim/CLAIM_CODE.",
       "fourth_line": "4. Export emails after the event at https://qr.poap.xyz/#/static/admin/export."
     }
-
   },
   "claim": {
     "title": "Collect your POAP",

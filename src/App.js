@@ -6,9 +6,9 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import './modules/i18n'
 
 // Pages
+import Homepage from './components/pages/Homepage'
 import ViewQR from './components/organisms/EventView'
 import CreateEvent from './components/organisms/EventCreate'
-import Welcome from './components/organisms/Welcome'
 import EventAdmin from './components/organisms/EventAdmin'
 import Claim from './components/organisms/Claim'
 import StaticClaim from './components/organisms/StaticClaim'
@@ -31,7 +31,7 @@ export default function App( ) {
 
                 <Routes>
 
-                    <Route exact path='/' element={ <Welcome /> } />
+                    <Route exact path='/' element={ <Homepage /> } />
                     <Route exact path='/create' element={ <CreateEvent /> } />
                     <Route path='/event/admin/:eventId/:authToken' element={ <EventAdmin /> } />
 

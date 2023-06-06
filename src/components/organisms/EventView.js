@@ -13,10 +13,17 @@ log( `Frontend using live url ${ REACT_APP_publicUrl } with ${ REACT_APP_useEmul
 // Components
 import AnnotatedQR from '../molecules/AnnotatedQR'
 import Loading from '../molecules/Loading'
-import Container from '../atoms/Container'
 import Network from '../molecules/NetworkStatusBar'
 
-import { H1, H2, Text, Sidenote, Button, CardContainer } from '@poap/poap-components'
+import { H1, H2, H3, Text, Sidenote, Button, Container, CardContainer, Divider } from '@poap/poap-components'
+import ViewWrapper from '../atoms/ViewWrapper'
+import Section from '../atoms/Section'
+
+
+// Assets
+import { ReactComponent as UserConnected } from '../../assets/illustrations/user_connected.svg'
+import { ReactComponent as ManMoon } from '../../assets/illustrations/man_to_the_moon.svg'
+import { ReactComponent as NoCodes } from '../../assets/illustrations/no_more_codes.svg'
 
 
 // ///////////////////////////////
@@ -190,46 +197,75 @@ export default function ViewQR( ) {
     if( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
 
     // Show welcome screen
-    if( !acceptedTerms ) return <Container show_bookmark>
+    if( !acceptedTerms ) return <ViewWrapper center show_bookmark>
 
-        <CardContainer>
+        <Section>
+            <Container>
+                <CardContainer width='400px'>
 
-            <H1 align="center">{ t( 'view.terms.title' ) }</H1>
+                    <UserConnected />
+                    <br />
+                    <H3>{ t( 'view.terms.subheading' ) }</H3>
+                    <Divider />
+                    <br />
+                    <Text align="center">{ t( 'view.terms.description' ) }</Text>
 
-            <H2>{ t( 'view.terms.subheading' ) }</H2>
-            <Text align="center">{ t( 'view.terms.description' ) }</Text>
+                    <Button id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>{ t( 'view.terms.acceptBtn' ) }</Button>
 
-            <Button variation="white" id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>{ t( 'view.terms.acceptBtn' ) }</Button>
-        
-        </CardContainer>
+                </CardContainer>
+            </Container>
+
+
+
+        </Section>
+
+
     
-    </Container>
+    </ViewWrapper>
 
     // loading screen
     if( loading ) return <Loading message={ loading } />
 
     // Expired event error
-    if( event?.expires && event.expires < Date.now() ) return <Container show_bookmark>
+    if( event?.expires && event.expires < Date.now() ) return <ViewWrapper center show_bookmark>
 
-        <CardContainer>
+        <Section>
+            <Container>
+                <CardContainer width='400px'>
 
-            <h1>{ t( 'view.expired.title' ) }</h1>
-            <Sidenote>{ t( 'view.expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Sidenote>
-    
-        </CardContainer>
+                    <ManMoon />
+                    <br />
+                    <h3>{ t( 'view.expired.title' ) }</h3>
+                    <Divider />
+                    <br />
+                    <Text align='center'>{ t( 'view.expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Text>
 
-    </Container>
+                </CardContainer>
+            </Container>
+        </Section>
+
+    </ViewWrapper>
 
     // No code error
     // if( !event?.public_auth?.expires ) return <Container>
-    if( !event?.public_auth?.expires ) return <Container show_bookmark>
+    if( !event?.public_auth?.expires ) return <ViewWrapper center show_bookmark>
 
-        <CardContainer>
-            <h1>{ t( 'view.codes.title' ) }</h1>
-            <Sidenote onClick={ f => navigate( '/admin' ) }>{ t( 'view.codes.description' ) }</Sidenote>
-        </CardContainer>
+        <Section>
+            <Container>
+                <CardContainer width='400px'>
 
-    </Container>
+                    <NoCodes />
+                    <br />
+                    <h3>{ t( 'view.codes.title' ) }</h3>
+                    <Divider />
+                    <br />
+                    <Text onClick={ f => navigate( '/admin' ) } align='center'>{ t( 'view.codes.description' ) }</Text>
+
+                </CardContainer>
+            </Container>
+        </Section>
+
+    </ViewWrapper>
 
     // Display QR
     return <Container background={ template?.footer_icon } show_bookmark>
