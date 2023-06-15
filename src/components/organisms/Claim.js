@@ -125,6 +125,9 @@ export default function ViewQR( ) {
     }, [] )
 
     // Validate client as non bot
+    // Note: in the past we deliberately slowed the users down in this process to prevent farmers of the "multiple tabs open at the same time" kind.
+    // As a business decision this was decided against, so I made it a toggle
+    const slow_users_down = false
     useEffect( f => {
 
         let cancelled = false;
@@ -135,10 +138,10 @@ export default function ViewQR( ) {
             try {
 
                 log( `Starting client validation` )
-                await wait( 1000 )
+                if( slow_users_down ) await wait( 1000 )
 
                 /* ///////////////////////////////
-        // Failure mode 1: Backend marked this device as invalid */
+                // Failure mode 1: Backend marked this device as invalid */
                 if( challenge_code == 'robot' ) await stall( 'ch_c robot', 2000, false )
                 if( cancelled ) return
 
@@ -153,26 +156,26 @@ export default function ViewQR( ) {
                 }
 
                 // Always wait an extra second
-                await wait( 2000 )
+                await wait( slow_users_down ? 2000: 1000 )
                 if( cancelled ) return
                 setLoading( `${ t( 'claim.preppingMessage' ) }` )
-                await wait( 2000 )
+                if( slow_users_down ) await wait( 2000 )
                 if( cancelled ) return
 
 
                 /* ///////////////////////////////
-        // Failure mode 2: challenge link is invalid */
+                 // Failure mode 2: challenge link is invalid */
         
                 // if the challenge is invalid, stall and error
                 if( challenge?.expires < Date.now() ) return stall( `${ isValid ? 'v' : 'iv' }_expired` )
 
                 /* ///////////////////////////////
-        // Failure mode 3: Invalid captcha 3, no captcha 2 data yet */
+                // Failure mode 3: Invalid captcha 3, no captcha 2 data yet */
 
                 if( !isValid && !captchaResponse ) return stall( `Stall before captcha`, 3000, false )
 
                 /* ///////////////////////////////
-        // Failure mode 4: fallback captcha is not valid */
+                // Failure mode 4: fallback captcha is not valid */
 
                 // Check local captcha response with backend
                 if( !isValid && captchaResponse ) {
@@ -190,7 +193,7 @@ export default function ViewQR( ) {
                 }
 
                 /* ///////////////////////////////
-        // Success mode: nothing failed */
+                // Success mode: nothing failed */
 
                 // If the challenge is valid, continue
                 trackEvent( 'claim_device_validation_success' )
