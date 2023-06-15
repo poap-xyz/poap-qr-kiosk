@@ -48,7 +48,7 @@ export default function ViewQR( ) {
         trackEvent( `claim_game_lost_with_${ score }` )
     }
 
-    async function stall( trail, step_delay=5000, error=true ) {
+    async function stall( trail, step_delay=500, error=true ) {
 
         log( `Stalling for ${ trail } with ${ step_delay }, end in ${ error ? 'error' : 'continue' }` )
 
@@ -135,11 +135,12 @@ export default function ViewQR( ) {
             try {
 
                 log( `Starting client validation` )
-                await wait( 1000 )
+                // TODO remove await
+                // await wait( 1000 )
 
                 /* ///////////////////////////////
         // Failure mode 1: Backend marked this device as invalid */
-                if( challenge_code == 'robot' ) await stall( 'ch_c robot', 2000, false )
+                if( challenge_code == 'robot' ) await stall( 'ch_c robot', 500, false )
                 if( cancelled ) return
 
                 // Validate device using appcheck
@@ -152,11 +153,12 @@ export default function ViewQR( ) {
                     isValid = false
                 }
 
-                // Always wait an extra second
-                await wait( 2000 )
+                // TODO remove await
+                // await wait( 2000 )
                 if( cancelled ) return
                 setLoading( `${ t( 'claim.preppingMessage' ) }` )
-                await wait( 2000 )
+                // TODO remove await
+                // await wait( 2000 )
                 if( cancelled ) return
 
 
