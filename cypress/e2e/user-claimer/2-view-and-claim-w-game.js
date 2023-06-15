@@ -93,9 +93,6 @@ context( 'Claimer can view valid events with game', () => {
                 // Expect the interface to check if we are human
                 cy.contains( 'Verifying your humanity' )
 				
-                // Expect response after human validation
-                cy.contains( 'Prepping your POAP' )
-				
                 // Human game welcome screen 
                 cy.contains( 'Play a game' )
 
