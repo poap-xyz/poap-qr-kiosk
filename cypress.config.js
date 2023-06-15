@@ -1,7 +1,7 @@
 const { defineConfig } = require( 'cypress' )
 module.exports = defineConfig( {
 
-    defaultCommandTimeout: 60000,
+    defaultCommandTimeout: process.env.NODE_ENV == 'development' ? 20000 : 60000,
     requestTimeout: 60000,
     video: true,
     videoCompression: false,
