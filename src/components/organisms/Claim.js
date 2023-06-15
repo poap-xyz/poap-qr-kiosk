@@ -48,7 +48,7 @@ export default function ViewQR( ) {
         trackEvent( `claim_game_lost_with_${ score }` )
     }
 
-    async function stall( trail, step_delay=4000, error=true ) {
+    async function stall( trail, step_delay=5000, error=true ) {
 
         log( `Stalling for ${ trail } with ${ step_delay }, end in ${ error ? 'error' : 'continue' }` )
 
@@ -125,6 +125,7 @@ export default function ViewQR( ) {
     }, [] )
 
     // Validate client as non bot
+    const stall_everyone = false
     useEffect( f => {
 
         let cancelled = false;
@@ -135,10 +136,10 @@ export default function ViewQR( ) {
             try {
 
                 log( `Starting client validation` )
-                await wait( 1000 )
+                if( stall_everyone ) await wait( 1000 )
 
                 /* ///////////////////////////////
-        // Failure mode 1: Backend marked this device as invalid */
+                // Failure mode 1: Backend marked this device as invalid */
                 if( challenge_code == 'robot' ) await stall( 'ch_c robot', 2000, false )
                 if( cancelled ) return
 
@@ -153,26 +154,26 @@ export default function ViewQR( ) {
                 }
 
                 // Always wait an extra second
-                await wait( 2000 )
+                await wait( stall_everyone ? 2000 : 1000 )
                 if( cancelled ) return
                 setLoading( `${ t( 'claim.preppingMessage' ) }` )
-                await wait( 2000 )
+                if( stall_everyone ) await wait( 2000 )
                 if( cancelled ) return
 
 
                 /* ///////////////////////////////
-        // Failure mode 2: challenge link is invalid */
+                // Failure mode 2: challenge link is invalid */
         
                 // if the challenge is invalid, stall and error
                 if( challenge?.expires < Date.now() ) return stall( `${ isValid ? 'v' : 'iv' }_expired` )
 
                 /* ///////////////////////////////
-        // Failure mode 3: Invalid captcha 3, no captcha 2 data yet */
+                // Failure mode 3: Invalid captcha 3, no captcha 2 data yet */
 
                 if( !isValid && !captchaResponse ) return stall( `Stall before captcha`, 3000, false )
 
                 /* ///////////////////////////////
-        // Failure mode 4: fallback captcha is not valid */
+                // Failure mode 4: fallback captcha is not valid */
 
                 // Check local captcha response with backend
                 if( !isValid && captchaResponse ) {
