@@ -48,7 +48,7 @@ export default function ViewQR( ) {
         trackEvent( `claim_game_lost_with_${ score }` )
     }
 
-    async function stall( trail, step_delay=5000, error=true ) {
+    async function stall( trail, step_delay=4000, error=true ) {
 
         log( `Stalling for ${ trail } with ${ step_delay }, end in ${ error ? 'error' : 'continue' }` )
 
