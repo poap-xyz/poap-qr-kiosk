@@ -24,8 +24,8 @@ export default function Admin( ) {
     const { t } = useTranslation( [ 'dynamic' , 'dispenser' ] )
     
     // Options store
-    const options = t('create.event.dropGame.options');
-    const firstOptionLabel = options && options.length > 0 ? options[0].label : undefined;
+    const options = t( 'create.event.dropGame.options' )
+    const firstOptionLabel = options && options.length > 0 ? options[0].label : undefined
 
     // Navigation
     const navigate = useNavigate(  )
