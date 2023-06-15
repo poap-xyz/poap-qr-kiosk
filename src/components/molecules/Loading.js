@@ -1,40 +1,39 @@
-import styled, { keyframes } from 'styled-components'
-import Container from '../atoms/ViewWrapper'
-import { Text } from '../atoms/Text'
+import styled from 'styled-components'
+import { useRive, Layout as RiveLayout, Fit, Alignment } from '@rive-app/react-canvas'
 
-const rotate = keyframes`
-	0% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(360deg);
-	}
+import { Text, Container } from '@poap/poap-components'
+import ViewWrapper from '../atoms/ViewWrapper'
+import Section from '../atoms/Section'
+
+const RiveWrapper = styled.div`
+    margin: 0 auto;
+    width: 200px;
+    height: 200px;
 `
 
-const Spinner = styled.div`
-	
-	display: inline-block;
-	width: 80px;
-	height: 80px;
-	margin: 2rem;
+export default function LoadingScreen( { children, message, generic_loading_styles, className, ...props } ) {
 
-	&:after {
-		content: " ";
-		display: block;
-		width: 64px;
-		height: 64px;
-		margin: 8px;
-		border-radius: 50%;
-		border: 6px solid ${ ( { theme, generic_loading_styles } ) => generic_loading_styles ? 'black' : theme.colors.primary };
-		border-color: ${ ( { theme, generic_loading_styles } ) => generic_loading_styles ? 'black' : theme.colors.primary } transparent ${ ( { theme, generic_loading_styles } ) => generic_loading_styles ? 'black' : theme.colors.primary } transparent;
-		animation: ${ rotate } 1.2s linear infinite;
-	}
+    const { RiveComponent: POAPSpinner } = useRive( {
+        src: '/assets/rive/poap_logo_loader.riv',
+        autoplay: true,
+        stateMachines: 'statemachine_staticloader',
+        layout: new RiveLayout( {
+            fit: Fit.Cover,
+            alignment: Alignment.Center
+        } )
+    } )
 
-`
+    return <ViewWrapper center className={ `${ className } loading_container` } generic_loading_styles={ generic_loading_styles }  { ...props }>
 
-export default ( { message, generic_loading_styles, className, ...props } ) => <Container className={ `${ className } loading_container` } generic_loading_styles={ generic_loading_styles } { ...props }>
-	
-    <Spinner id='loading_spinner' generic_loading_styles={ generic_loading_styles } />
-    { message && <Text id='loading_text' align="center">{ message }</Text> }
+        <Section>
+            <Container { ...props }>
+                <RiveWrapper>
+                    { POAPSpinner && <POAPSpinner /> }
+                </RiveWrapper>
+                { message && <Text margin="2rem 0" id='loading_text' align="center">{ message }</Text> }
+                { children }
+            </Container>
+        </Section>
 
-</Container>
+    </ViewWrapper> 
+}

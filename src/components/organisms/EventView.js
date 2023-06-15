@@ -62,8 +62,6 @@ export default function ViewQR( ) {
     // Lifecycle handling
     // ///////////////////////////////
 
-    const abc = true
-
     // Mode handling
     useEffect( f => {
 
@@ -214,13 +212,8 @@ export default function ViewQR( ) {
 
                 </CardContainer>
             </Container>
-
-
-
         </Section>
 
-
-    
     </ViewWrapper>
 
     // loading screen

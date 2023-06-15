@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react'
 
 // Components
-import { CardContainer, H3 } from '@poap/poap-components'
+import { Button, CardContainer, Container, H3, Input, Dropdown } from '@poap/poap-components'
 import Loading from '../molecules/Loading'
-import Button from '../atoms/Button'
 import ViewWrapper from '../atoms/ViewWrapper'
-import Input from '../atoms/Input'
-import Main from '../atoms/Main'
 
 // Functionality
 import { registerEvent, trackEvent, getEventDataFromCode, health_check } from '../../modules/firebase'
@@ -14,6 +11,7 @@ import { log, dateOnXDaysFromNow, monthNameToNumber, dev } from '../../modules/h
 import Papa from 'papaparse'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import Section from '../atoms/Section'
 
 // ///////////////////////////////
 // Render component
@@ -24,7 +22,12 @@ export default function Admin( ) {
     // Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
     // Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
     const { t } = useTranslation( [ 'dynamic' , 'dispenser' ] )
+    
+    // Options store
+    const options = t('create.event.dropGame.options');
+    const firstOptionLabel = options && options.length > 0 ? options[0].label : undefined;
 
+    // Navigation
     const navigate = useNavigate(  )
 
     // ///////////////////////////////
@@ -240,40 +243,56 @@ export default function Admin( ) {
     // Render component
     // ///////////////////////////////
     if( loading ) return <Loading message={ loading } />
+
+    if( !codes ) return <ViewWrapper>
+        <Section>
+            <Container>
+            </Container>
+        </Section>
+    </ViewWrapper>
   
-    return <ViewWrapper onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
+    return <ViewWrapper hide_background={ codes } center onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 
-        <CardContainer>
-            <H3>Upload your mint links to your POAP kiosk</H3>
-            <Input
-                highlight={ !codes } 
-                id="event-create-file"
-                label={ t( 'create.input.label' ) }
-                info={ t( 'create.input.info' ) }
-                accept=".csv,.txt"
-                title={ csv && codes && `[ ${ filename } ] - ${ t( 'create.file.codesDetected' , { count: codes.length } ) }` }
-                onClick={ !filename ? undefined : () => setCsv( undefined ) }
-                onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
-            />
-        </CardContainer>
+        <Section>
+            <Container>
 
-        <Main width='400px'>
+                <CardContainer>
+                    <H3>Upload your mint links to your POAP kiosk</H3>
+                    <Input
+                        highlight={ !codes } 
+                        id="event-create-file"
+                        label={ t( 'create.input.label' ) }
+                        info={ t( 'create.input.info' ) }
+                        accept=".csv,.txt"
+                        title={ csv && codes && `[ ${ filename } ] - ${ t( 'create.file.codesDetected' , { count: codes.length } ) }` }
+                        onClick={ !filename ? undefined : () => setCsv( undefined ) }
+                        onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
+                    />
+                    { codes && <>
+                        <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'create.event.dropName.placeholder' ) } label={ t( 'create.event.dropName.label' ) } toolTip={ t( 'create.event.dropName.info' ) } value={ name } optional />
+                        <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'create.event.dropDate.label' ) } toolTip={ `${ t( 'create.event.dropDate.info' ) }` } value={ date } />
+                        <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'create.event.dropEmail.placeholder' ) } label={ t( 'create.event.dropEmail.label' ) } toolTip={ t( 'create.event.dropEmail.info' ) } value={ email } />
+                        <Dropdown id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label={ t( 'create.event.dropGame.label' ) } toolTip={ `${ t( 'create.event.dropGame.info' ) }` } options={ t( 'create.event.dropGame.options', { returnObjects: true } ) } defaultValue={ firstOptionLabel }/>
+                        { gameEnabled && <Dropdown id="event-create-game-duration" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'create.event.gameTime.label' ) } toolTip={ t( 'create.event.gameTime.info' ) } options={ t( 'create.event.gameTime.options', { returnObjects: true } ) } /> }
+                        { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'create.event.dropCss.placeholder' ) } label={ t( 'create.event.dropCss.label' ) } toolTip={ t( 'create.event.dropCss.info' ) } value={ css || '' } /> }
+                        { developer_mode && <Dropdown options={ t( 'create.event.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'create.event.dropCollectEmails.label' ) } toolTip={ t( 'create.event.dropCollectEmails.info' ) } value={ collectEmails } /> }
+                        { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'create.event.dropBaseurl.placeholder' ) } label={ t( 'create.event.dropBaseurl.label' ) } toolTip={ t( 'create.event.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
 
-            { codes && <>
-                <Input highlight={ !name } id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'create.event.dropName.placeholder' ) } label={ t( 'create.event.dropName.label' ) } info={ t( 'create.event.dropName.info' ) } value={ name } />
-                <Input highlight={ !date } id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } required pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'create.event.dropDate.label' ) } info={ `${ t( 'create.event.dropDate.info' ) }` } value={ date } />
-                <Input highlight={ !email } id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'create.event.dropEmail.placeholder' ) } label={ t( 'create.event.dropEmail.label' ) } info={ t( 'create.event.dropEmail.info' ) } value={ email } />
-                <Input id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label={ t( 'create.event.dropGame.label' ) } info={ `${ t( 'create.event.dropGame.info' ) }` } type='dropdown' options={ t( 'create.event.dropGame.options', { returnObjects: true } ) } />
-                { gameEnabled && <Input id="event-create-game-duration" type="dropdown" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'create.event.gameTime.label' ) } info={ t( 'create.event.gameTime.info' ) } options={ t( 'create.event.gameTime.options', { returnObjects: true } ) } /> }
-                { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'create.event.dropCss.placeholder' ) } label={ t( 'create.event.dropCss.label' ) } info={ t( 'create.event.dropCss.info' ) } value={ css || '' } /> }
-                { developer_mode && <Input type='dropdown' options={ t( 'create.event.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'create.event.dropCollectEmails.label' ) } info={ t( 'create.event.dropCollectEmails.info' ) } value={ collectEmails } /> }
-                { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'create.event.dropBaseurl.placeholder' ) } label={ t( 'create.event.dropBaseurl.label' ) } info={ t( 'create.event.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
+                    </> }
 
-            </> }
+                    { codes && <Button id="event-create-submit" onClick={ createEvent }>{ t( 'create.event.eventCreate', { count: codes.length } ) }</Button> }
+                    { /* codes && <Button id="event-create-reset" color='hint' onClick={ f => setCodes( null ) }>Upload different codes</Button> */ }
 
-            { codes && <Button id="event-create-submit" onClick={ createEvent }>{ t( 'create.event.eventCreate', { count: codes.length } ) }</Button> }
-            { /* codes && <Button id="event-create-reset" color='hint' onClick={ f => setCodes( null ) }>Upload different codes</Button> */ }
-        </Main>
+                </CardContainer>
+
+
+
+
+
+            </Container>
+
+        </Section>
+
 
     </ViewWrapper>
 

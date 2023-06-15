@@ -13,6 +13,7 @@ i18n
     .use( initReactI18next )
 
     .init( {
+        returnObjects: true,
         load: 'languageOnly',
         backend: {
             // translation file path

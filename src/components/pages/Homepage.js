@@ -31,7 +31,7 @@ export default function ComponentName( ) {
     const [ allowAccess, setAllowAccess ] = useState( true )
 
     // useTranslation loads the dispenser namespace which holds general translations
-    const { t } = useTranslation( [ 'dispenser' ] )
+    const { t } = useTranslation( )
 
     /* ///////////////////////////////
 	// Lifecycle management
@@ -48,15 +48,15 @@ export default function ComponentName( ) {
 
                 const { data: health } = await health_check()
                 log( `Systems health: `, health )
-                if( cancelled ) return log( `Health effect cancelled` )
+                if( cancelled ) return log( `${ t( 'messaging.health.maintenance' ) }` )
                 if( !dev && !health.healthy ) {
                     setAllowAccess( false )
                     // Sitewide translation
-                    return alert( `${ t( 'health.maintenance' ) }` )
+                    return alert( `${ t( 'messaging.health.maintenance' ) }` )
                 }
 
             } catch ( e ) {
-                log( `Error getting system health: `, e )
+                log( `${ t( 'messaging.health.error' ) }`, e )
             }
 
         } )( )

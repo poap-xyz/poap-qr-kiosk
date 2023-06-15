@@ -51,7 +51,7 @@ const StyledBookmark = styled( POAPBookmark )`
 `
 
 // Container that always has the background image
-export default ( { children, background, generic_loading_styles, show_bookmark, className, ...props } ) => {
+export default ( { children, background, hide_background, generic_loading_styles, show_bookmark, className, ...props } ) => {
 
     const css = useCustomCSS()
     const { search } = useLocation()
@@ -63,7 +63,7 @@ export default ( { children, background, generic_loading_styles, show_bookmark, 
 
     return <Main hideHeader className={ `${ className } global_container` } { ...props }>
         { show_bookmark && <StyledBookmark /> }
-        <BackgroundImage id="global_background_image" generic_styles={ generic_loading_styles } src={ background } key='background' />
+        {hide_background ? '' : <BackgroundImage id="global_background_image" generic_styles={ generic_loading_styles } src={ background } key='background' /> }
         { children }
         <Style styles={ css } />
     </Main>
