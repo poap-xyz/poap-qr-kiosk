@@ -3,9 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+<<<<<<< HEAD
     "@poap/poap-components": "^0.0.54",
     "@rive-app/react-canvas": "^3.0.53",
     "cypress": "^11.2.0",
+=======
+    "@poap/poap-components": "^0.0.33",
+    "cypress": "^10.10.0",
+>>>>>>> 8fec915f3396a7a45d4e279002aed10e8fe032b4
     "firebase": "^9.15.0",
     "formik": "^2.4.2",
     "i18next": "^22.5.1",

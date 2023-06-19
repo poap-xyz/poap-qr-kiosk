@@ -62,6 +62,8 @@ export default function ViewQR( ) {
     // Lifecycle handling
     // ///////////////////////////////
 
+    const abc = true
+
     // Mode handling
     useEffect( f => {
 
