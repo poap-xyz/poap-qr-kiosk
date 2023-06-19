@@ -1,5 +1,5 @@
 import Button from '../atoms/Button'
-import ViewWrapper from '../atoms/ViewWrapper'
+import ViewWrapper from '../molecules/ViewWrapper'
 import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 import Section from '../atoms/Section'

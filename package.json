@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@poap/poap-components": "^0.0.43",
-    "cypress": "^10.10.0",
+    "@poap/poap-components": "^0.0.54",
+    "@rive-app/react-canvas": "^3.0.53",
+    "cypress": "^11.2.0",
     "firebase": "^9.15.0",
+    "formik": "^2.4.2",
     "i18next": "^22.5.1",
     "i18next-browser-languagedetector": "^7.0.2",
     "i18next-http-backend": "^2.2.1",
@@ -20,7 +22,8 @@
     "sass": "^1.62.1",
     "styled-components": "^5.3.6",
     "use-interval": "^1.4.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "yup": "^1.2.0"
   },
   "scripts": {
     "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",

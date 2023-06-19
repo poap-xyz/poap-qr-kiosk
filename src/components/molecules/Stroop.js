@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import useInterval from 'use-interval'
 // import styled from 'styled-components'
 
-import ViewWrapper from '../atoms/ViewWrapper'
+import ViewWrapper from '../molecules/ViewWrapper'
 import { H1, H2, Text } from '../atoms/Text'
 import Button from '../atoms/Button'
 import Section from '../atoms/Section'

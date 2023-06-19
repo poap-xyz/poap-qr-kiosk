@@ -12,7 +12,7 @@ import { useCodeMetadata } from '../../hooks/printed_qrs'
 // Components
 import Loading from '../molecules/Loading'
 import Button from '../atoms/Button'
-import ViewWrapper from '../atoms/ViewWrapper'
+import ViewWrapper from '../molecules/ViewWrapper'
 import Input from '../atoms/Input'
 import Main from '../atoms/Main'
 import { H1, H2, Text } from '../atoms/Text'

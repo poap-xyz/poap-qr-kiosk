@@ -1,7 +1,8 @@
 import { Header, POAPProductTitle, POAPProfileMenu, Footer } from '@poap/poap-components'
 import Main from '../atoms/Main'
+import BackgroundImage from '../atoms/DutchBackground'
 
-export const Layout = ( { hide_header, hide_footer, header_show_help = true, showBackground, connected_user, children, ...props } ) => {
+export const Layout = ( { hide_header, hide_footer, header_show_help = true, hide_background, connected_user, generic_loading_styles, background_src, children, ...props } ) => {
 
     return <>
 
@@ -13,8 +14,9 @@ export const Layout = ( { hide_header, hide_footer, header_show_help = true, sho
         /> }
 
         { /* Main body */ }
-        <Main showBackground={ showBackground } { ...props }>
+        <Main { ...props }>
             { children }
+            { hide_background ? '' : <BackgroundImage id="global_background_image" generic_styles={ generic_loading_styles } src={ background_src } key='background' /> }
         </Main>
         { hide_footer ? '' : <Footer /> }
     </>

@@ -7,11 +7,11 @@ import { log } from "../../modules/helpers"
 
 // Components
 import Button from "../atoms/Button"
-import ViewWrapper from "../atoms/ViewWrapper"
 import Input from "../atoms/Input"
 import Main from "../atoms/Main"
 import Loading from "../molecules/Loading"
 import { H1 } from "../atoms/Text"
+import ViewWrapper from "../molecules/ViewWrapper"
 
 
 

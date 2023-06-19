@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useRive, Layout as RiveLayout, Fit, Alignment } from '@rive-app/react-canvas'
 
 import { Text, Container } from '@poap/poap-components'
-import ViewWrapper from '../atoms/ViewWrapper'
+import ViewWrapper from './ViewWrapper'
 import Section from '../atoms/Section'
 
 const RiveWrapper = styled.div`

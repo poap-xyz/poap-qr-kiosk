@@ -30,8 +30,8 @@ export default function ComponentName( ) {
     const navigate = useNavigate()
     const [ allowAccess, setAllowAccess ] = useState( true )
 
-    // useTranslation loads the dispenser namespace which holds general translations
-    const { t } = useTranslation( )
+    // i18next hook
+    const { t } = useTranslation()
 
     /* ///////////////////////////////
 	// Lifecycle management

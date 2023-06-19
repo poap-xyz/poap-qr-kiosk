@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import logo from '../../assets/illustrations/Illustration_Cities_Amsterdam.svg'
 import { useCustomCSS } from '../../hooks/custom_css'
 import { log } from '../../modules/helpers'
-import Style from './Style'
-import Main from './Main'
+import Style from '../atoms/Style'
+import Main from '../atoms/Main'
 import { Container, POAPBookmark, mixin } from '@poap/poap-components'
 
 
@@ -61,7 +61,7 @@ export default ( { children, background, hide_background, generic_loading_styles
     // Force a blank page until the (potential) custom CSS is loaded?
     if( blank_until_custom_css && css == 'loading' ) return
 
-    return <Main hideHeader className={ `${ className } global_container` } { ...props }>
+    return <Main className={ `${ className } global_container` } { ...props }>
         { show_bookmark && <StyledBookmark /> }
         { hide_background ? '' : <BackgroundImage id="global_background_image" generic_styles={ generic_loading_styles } src={ background } key='background' /> }
         { children }

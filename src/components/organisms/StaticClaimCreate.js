@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 // Components
 import Button from "../atoms/Button"
-import ViewWrapper from "../atoms/ViewWrapper"
+import ViewWrapper from "../molecules/ViewWrapper"
 import Input from "../atoms/Input"
 import Main from "../atoms/Main"
 import Loading from "../molecules/Loading"

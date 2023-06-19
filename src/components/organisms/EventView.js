@@ -16,7 +16,7 @@ import Loading from '../molecules/Loading'
 import Network from '../molecules/NetworkStatusBar'
 
 import { H1, H2, H3, Text, Sidenote, Button, Container, CardContainer, Divider } from '@poap/poap-components'
-import ViewWrapper from '../atoms/ViewWrapper'
+import ViewWrapper from '../molecules/ViewWrapper'
 import Section from '../atoms/Section'
 
 
@@ -240,7 +240,6 @@ export default function ViewQR( ) {
     </ViewWrapper>
 
     // No code error
-    // if( !event?.public_auth?.expires ) return <Container>
     if( !event?.public_auth?.expires ) return <ViewWrapper center show_bookmark>
 
         <Section>
@@ -252,7 +251,9 @@ export default function ViewQR( ) {
                     <h3>{ t( 'view.codes.title' ) }</h3>
                     <Divider />
                     <br />
-                    <Text onClick={ f => navigate( '/admin' ) } align='center'>{ t( 'view.codes.description' ) }</Text>
+                    { /* TODO discuss link */ }
+                    <Text align='center'>{ t( 'view.codes.description' ) }</Text>
+                    { /* <Text onClick={ f => navigate( '/event/admin' ) } align='center'>{ t( 'view.codes.description' ) }</Text> */ }
 
                 </CardContainer>
             </Container>
