@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next'
 import Papa from 'papaparse'
 
 // Components
-import { Button, CardContainer, Container, H2, H3, Input, Dropdown } from '@poap/poap-components'
+import { Button, CardContainer, Container, H2, H3, Input } from '@poap/poap-components'
+import { Dropdown } from '../atoms/Dropdown'
 import Loading from '../molecules/Loading'
 import ViewWrapper from '../molecules/ViewWrapper'
 import Layout from '../molecules/Layout'
@@ -51,6 +52,17 @@ export default function Admin( ) {
     const [ backgroundTaps, setBackgroundTaps ] = useState( 0 )
     const [ collectEmails, setCollectEmails ] = useState( false )
     const developer_mode = backgroundTaps >= 20
+
+    const optionss = [
+        {
+            label: 'No (recommended for physical events)',
+            value: 'no'
+        },
+        {
+            label: 'Yes (recommended for online drops)',
+            value: 'yes'
+        }
+    ]
     
 
     // ///////////////////////////////
@@ -244,10 +256,11 @@ export default function Admin( ) {
             setLoading( false )
 
         }
-
-
     }
-
+    
+    const handleOptionSelect = ( option ) => {
+        setGameEnabled( option.value.toLowerCase().includes( 'yes' ) )
+    }
     // ///////////////////////////////
     // Render component
     // ///////////////////////////////
@@ -307,8 +320,8 @@ export default function Admin( ) {
                     <Input id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'EventCreate.form.dropName.placeholder' ) } label={ t( 'EventCreate.form.dropName.label' ) } toolTip={ t( 'EventCreate.form.dropName.info' ) } value={ name } optional />
                     <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'EventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'EventCreate.form.dropDate.info' ) }` } value={ date } />
                     <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'EventCreate.form.dropEmail.placeholder' ) } label={ t( 'EventCreate.form.dropEmail.label' ) } toolTip={ t( 'EventCreate.form.dropEmail.info' ) } value={ email } />
-                    <Dropdown id="event-create-game-enabled" onChange={ ( { target } ) => setGameEnabled( target.value.toLowerCase().includes( 'yes' ) ) } label={ t( 'EventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'EventCreate.form.dropGame.info' ) }` } options={ t( 'EventCreate.form.dropGame.options', { returnObjects: true } ) }/>
-                    { gameEnabled && <Dropdown id="event-create-game-duration" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'EventCreate.form.gameTime.label' ) } toolTip={ t( 'EventCreate.form.gameTime.info' ) } options={ t( 'EventCreate.form.gameTime.options', { returnObjects: true } ) } /> }
+                    <Dropdown id="event-create-game-enabled" label={ t( 'EventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'EventCreate.form.dropGame.info' ) }` } options={ optionss } handleOptionSelect={ handleOptionSelect }/>
+                    { gameEnabled && <Dropdown id="event-create-game-duration" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'EventCreate.gameTime.label' ) } toolTip={ t( 'EventCreate.gameTime.info' ) } options={ t( 'EventCreate.gameTime.options', { returnObjects: true } ) } /> }
                     { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'EventCreate.form.dropCss.placeholder' ) } label={ t( 'EventCreate.form.dropCss.label' ) } toolTip={ t( 'EventCreate.form.dropCss.info' ) } value={ css || '' } /> }
                     { developer_mode && <Dropdown options={ t( 'EventCreate.form.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'EventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'EventCreate.form.dropCollectEmails.info' ) } value={ collectEmails } /> }
                     { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'EventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'EventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'EventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }

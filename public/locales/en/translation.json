@@ -9,7 +9,44 @@
             "maintenance": "NL The POAP system is undergoing some maintenance, the POAP Kiosk might not work as expected during this time.\n\nPlease check our official channels for details."
         }
     },
-    "homepage": {},
+    "homepage": {
+        "createBtn": "Create Kiosk",
+        "hero": {
+            "title": "POAP Kiosk ",
+            "subheading": "Get POAPs to your friends IRL",
+            "description": "Just input your .txt file of mint links and watch your phone turn into a POAP Kiosk at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one."
+        },
+        "whatis": {
+            "layeredTitle": {
+                "part1": "What is ",
+                "part2": "POAP Kiosk"
+            },
+            "checkin": {
+                "title": "Physical POAP distribution made easy",
+                "description": "For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees."
+            },
+            "stream": {
+                "title": "Stream-friendly QR sharing",
+                "description": "During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner."
+            }
+        },
+        "howdo": {
+            "title": "How do I set up a POAP kiosk?",
+            "one": {
+                "title": "Upload",
+                "description": "Upload the links.txt file containing your mint links."
+            },
+            "two": {
+                "title": "Kiosk",
+                "description": "Kiosk details and add your email address to create your POAP kiosk. "
+            },
+            "three": {
+                "title": "Share",
+                "description": "Display your POAP kiosk QR code via a device  or a screen share, and share!"
+            },
+            "getStarted": "Get started now!"
+        }
+    },
     "EventCreate": {
         "title": "Set up POAP Kiosk",
         "creatingDispenser": "Creating POAP Kiosk",
@@ -73,6 +110,28 @@
                     }
                 ]
             }
+        },
+        "gameTime": {
+            "label": "How many seconds should the anti-farming game last?",
+            "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",
+            "options": [
+                {
+                    "label": "30 sec",
+                    "value": "30"
+                },
+                {
+                    "label": "10 sec",
+                    "value": "10"
+                },
+                {
+                    "label": "20 sec",
+                    "value": "20"
+                },
+                {
+                    "label": "60 sec",
+                    "value": "60"
+                }
+            ]
         },
         "file": {
             "acceptedFormat": "File is not a csv/txt",

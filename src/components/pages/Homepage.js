@@ -7,20 +7,13 @@ import { health_check } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 
 // Components
-import { H1, H2, Text, Sup, Button, Container, LayeredText, DynamicTag } from '@poap/poap-components'
-import LanguageSwitcher from '../atoms/LanguageSwitcher'
-import Main from '../atoms/Main'
-import { HeroImage, GirlQRImage, FooterImage } from '../molecules/Hero'
+import { H1, H2, H3, Text, Button, Container, LayeredText, DynamicTag, Divider, useViewport } from '@poap/poap-components'
+import { HeroImage, GirlQRImage, FooterImage, FullLine, StyledDutchBackgroundFullWidth, GroupPhoneImage, FooterDecorationLeft, FooterDecorationRight } from '../molecules/HomeDecorations'
 import Section from '../atoms/Section'
 
 import { Grid, Row, Col } from '../atoms/Grid'
-import Column from '../atoms/Column'
-import Image from '../atoms/Image'
 import Layout from '../molecules/Layout'
-
-// Assets
-import checkin from '../../assets/undraw_designer_life_re_6ywf_modified.svg'
-import stream from '../../assets/undraw_conference_call_b0w6_modified.svg'
+import { NumberedUps } from '../atoms/NumberedUps'
 
 // ///////////////////////////////
 // Render component
@@ -33,6 +26,10 @@ export default function ComponentName( ) {
     // i18next hook
     const { t } = useTranslation()
 
+    // Responsive helpers
+    const { width } = useViewport()
+    const isMobile = width < 768
+    const isTablet = width < 1024
     /* ///////////////////////////////
 	// Lifecycle management
 	// /////////////////////////////*/
@@ -68,97 +65,95 @@ export default function ComponentName( ) {
     // ///////////////////////////////
     // Render component
     // ///////////////////////////////
-    return <Layout>
+    return <Layout hide_background>
 
-        <Section>
+        <Section after='1'>
             <HeroImage /> 
 
             <Container>
-                <br/><br/>
-                <DynamicTag tag='h2'>
-                    <LayeredText color='white' label={ t( 'title' ) }/>
-                </DynamicTag>
-                <br/>
-                <br/><br/><br/><br/><br/><br/>
+                <Row margin='var(--spacing-8) 0 0 0'>
+                    <DynamicTag tag='h2' upper>
+                        <LayeredText color='white' label={ t( 'title' ) }/>
+                    </DynamicTag>
+                </Row>
+
+
                 <Row>
                     <Col size={ 1 }><GirlQRImage /></Col>
-                    <Col size={ 2 } justify='center' align='flex-start'>
-                        <H2>{ t( 'subtitle' ) }</H2>
-                        <Text>{ t( 'titledescription' ) }</Text>
-                        { allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'createButton' ) }</Button> }</Col>
+                    <Col size={ 2 } justify='center' align={ isMobile ? 'center' : 'flex-start' }>
+                        <H2 size='var(--fs-2xl)' color='var(--primary-600)'>{ t( 'homepage.hero.subheading' ) }</H2>
+                        <Text>{ t( 'homepage.hero.description' ) }</Text>
+                        { allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'homepage.createBtn' ) }</Button> }</Col>
                 </Row>
             </Container>
+            { isTablet ? null : <FullLine /> }
         </Section>
 
-        <Section>
-
+        <Section before={ 1 } height={ isMobile ? null : '700px' }>
             <Container>
-                <Row justify='center' align='center' >
-                    <DynamicTag tag='h2'>
-                        <LayeredText label='WHAT IS '/>{ ' ' }
-                        <LayeredText color='purple' label='POAP KIOSK'/>
+                <Row justify='center' align='center' margin='var(--spacing-4) 0 var(--spacing-6) 0'>
+                    <DynamicTag tag='h2' align='center' upper>
+                        <LayeredText label={ t( 'homepage.whatis.layeredTitle.part1' ) }/>{ ' ' }
+                        <LayeredText color='purple' label={ t( 'homepage.whatis.layeredTitle.part2' ) }/>
                         <LayeredText label='?'/>
                     </DynamicTag>
                 </Row>
 
-                <Row>
-                    
-                    <Col>
-                        <H2>{ t( 'welcome.checkin.title' ) }</H2>
-                        <Text>{ t( 'welcome.checkin.description' ) }</Text>
+                <Row justify='center' align={ isMobile ? 'center' : 'flex-start' } gap='56px'>
+                    <Col align='center' width='380px' padding='var(--spacing-4)'>
+                        <H3 align='center'>{ t( 'homepage.whatis.checkin.title' ) }</H3>
+                        <Divider margin='0 0 var(--spacing-4) 0'/>
+                        <Text align='center'>{ t( 'homepage.whatis.checkin.description' ) }</Text>
                     </Col>
-                    <Col>
-                        <H2>{ t( 'welcome.stream.title' ) }</H2>
-                        <Text>{ t( 'welcome.stream.description' ) }</Text>
+                    <Col align='center' width='380px' padding='var(--spacing-4)'>
+                        <H3 align='center'>{ t( 'homepage.whatis.stream.title' ) }</H3>
+                        <Divider margin='0 0 var(--spacing-4) 0'/>
+                        <Text align='center'>{ t( 'homepage.whatis.stream.description' ) }</Text>
                     </Col>
                 </Row>
             </Container>
+            { isMobile ? null : <StyledDutchBackgroundFullWidth/> }
         </Section>
 
 
-        <Section height='600px' justify='space-around' direction="row">
-
-            <Column>
-                <Image src={ checkin } />
-            </Column>
-
-            <Column>
-                <H2>{ t( 'welcome.checkin.title' ) }</H2>
-                <Text>{ t( 'welcome.checkin.description' ) }</Text>
-            </Column>				
-
-        </Section>
-
-        <Section height='600px' justify='space-around' direction="row">
-
-            <Column>
-                <H2>{ t( 'welcome.stream.title' ) }</H2>
-                <Text>{ t( 'welcome.stream.description' ) }</Text>
-            </Column>		
-
-            <Column>
-                <Image src={ stream } />
-            </Column>		
-
-        </Section>
-
-        <Section height='250px'>
+        <Section before={ 3 } height='700px' justify='space-around' direction='row'>
             <Container>
-                <Row>
-                    <Col justify='center' align='center'>
-                        <H2>{ t( 'startedtext' ) }</H2>
-                        { allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'createButton' ) }</Button> }
-                    </Col>
 
-
+                <Row justify='center' align='' margin='1rem 0'>
+                    <H2 size={ isTablet ? '32px' : '48px' } align='center'>{ t( 'homepage.howdo.title' ) }</H2>
                 </Row>
 
+                <Row gap='25px'>
+                    <Col>
+                        <NumberedUps number='1' title={ t( 'homepage.howdo.one.title' ) } description={ t( 'homepage.howdo.one.description' ) }/>
+                    </Col>
+                    <Col>
+                        <NumberedUps number='2' title={ t( 'homepage.howdo.two.title' ) } description={ t( 'homepage.howdo.two.description' ) }/>
+                    </Col>
+                    <Col>
+                        <NumberedUps number='3' title={ t( 'homepage.howdo.three.title' ) } description={ t( 'homepage.howdo.three.description' ) }/>
+                    </Col>
+                </Row>
 
+                <GroupPhoneImage/>
+            </Container>
+        </Section>
+
+        <Section height={ isTablet ? null : '300px' }>
+            <Container>
+                { isTablet ? null : <FooterDecorationLeft /> }
+                <Row>
+                    <Col justify='center' align='center'>
+                        <H2 color='var(--primary-600)'>{ t( 'homepage.howdo.getStarted' ) }</H2>
+                        { allowAccess && <Button onClick={ f => navigate( '/create' ) }>{ t( 'homepage.createBtn' ) }</Button> }
+                    </Col>
+                </Row>
+                { isTablet ? null : <FooterDecorationRight /> } 
+                
             </Container>
 
             <FooterImage />
         </Section>
-
 
     </Layout>
     

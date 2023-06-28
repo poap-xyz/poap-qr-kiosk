@@ -5,7 +5,7 @@ import Main from '../atoms/Main'
 import Section from '../atoms/Section'
 import Loading from '../molecules/Loading'
 import { Text, H1, H2 } from '../atoms/Text'
-import Hero from '../molecules/Hero'
+import Hero from '../molecules/HomeDecorations'
 
 // Functionality
 import { useState, useEffect } from 'react'
