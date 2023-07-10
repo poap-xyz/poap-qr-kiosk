@@ -7,6 +7,11 @@
             "error": "Error getting system health: ",
             "cancelled": "Health effect cancelled",
             "maintenance": "NL The POAP system is undergoing some maintenance, the POAP Kiosk might not work as expected during this time.\n\nPlease check our official channels for details."
+        },
+        "upload": {
+            "formatInvalid": "Invalid file format.",
+            "dragndrop": "Drop your file(s) here",
+            "standard": "Upload .txt file"
         }
     },
     "homepage": {
@@ -62,6 +67,11 @@
                 "label": "Kiosk title",
                 "placeholder": "Best launch party ever",
                 "info": "For your own reference, not visible to the world."
+            },
+            "fileName": {
+                "label": "Uploaded mint links",
+                "placeholder": "",
+                "info": ""
             },
             "dropDate": {
                 "label": "Kiosk expiry date",

@@ -24,6 +24,7 @@ import Section from '../atoms/Section'
 import { ReactComponent as UserConnected } from '../../assets/illustrations/user_connected.svg'
 import { ReactComponent as ManMoon } from '../../assets/illustrations/man_to_the_moon.svg'
 import { ReactComponent as NoCodes } from '../../assets/illustrations/no_more_codes.svg'
+import Layout from '../molecules/Layout'
 
 
 // ///////////////////////////////
@@ -61,8 +62,6 @@ export default function ViewQR( ) {
     // ///////////////////////////////
     // Lifecycle handling
     // ///////////////////////////////
-
-    const abc = true
 
     // Mode handling
     useEffect( f => {
@@ -264,7 +263,7 @@ export default function ViewQR( ) {
     </ViewWrapper>
 
     // Display QR
-    return <Container background={ template?.footer_icon } show_bookmark>
+    return <ViewWrapper hide_header hide_footer center background={ template?.footer_icon } show_bookmark>
 
         {  /* Event metadata */ }
         { event && <H1 color={ template?.main_color } align="center">{ event.name }</H1> }
@@ -278,6 +277,23 @@ export default function ViewQR( ) {
     
         <Network />
 
-    </Container>
+    </ViewWrapper>
+
+    // // Display QR
+    // return <Container background={ template?.footer_icon } show_bookmark>
+
+    //     {  /* Event metadata */ }
+    //     { event && <H1 color={ template?.main_color } align="center">{ event.name }</H1> }
+    //     <H2 color={ template?.header_link_color || 'var(--primary-600)' } align="center">{ t( 'view.display.subheading' ) }</H2>
+
+    //     {  /* QR showing code */ }
+    //     <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+    //     { /* <Button onClick={ nextCode }>Next code</Button> */ }
+
+    //     { event && <Sidenote margin='0'>{ t( 'view.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
+    
+    //     <Network />
+
+    // </Container>
 
 }

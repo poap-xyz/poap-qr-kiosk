@@ -7,7 +7,7 @@ import { health_check } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 
 // Components
-import { H1, H2, H3, Text, Button, Container, LayeredText, DynamicTag, Divider, useViewport } from '@poap/poap-components'
+import { HeroIcon, H1, H2, H3, Text, Button, Container, LayeredText, DynamicTag, Divider, useViewport } from '@poap/poap-components'
 import { HeroImage, GirlQRImage, FooterImage, FullLine, StyledDutchBackgroundFullWidth, GroupPhoneImage, FooterDecorationLeft, FooterDecorationRight } from '../molecules/HomeDecorations'
 import Section from '../atoms/Section'
 
@@ -27,9 +27,8 @@ export default function ComponentName( ) {
     const { t } = useTranslation()
 
     // Responsive helpers
-    const { width } = useViewport()
-    const isMobile = width < 768
-    const isTablet = width < 1024
+    const { isMobile, isTablet } = useViewport()
+
     /* ///////////////////////////////
 	// Lifecycle management
 	// /////////////////////////////*/
@@ -71,13 +70,11 @@ export default function ComponentName( ) {
             <HeroImage /> 
 
             <Container>
-                <Row margin='var(--spacing-8) 0 0 0'>
+                <Row margin={ isMobile ? 'var(--spacing-2) 0 0 0' : 'var(--spacing-8) 0 0 0' }>
                     <DynamicTag tag='h2' upper>
                         <LayeredText color='white' label={ t( 'title' ) }/>
                     </DynamicTag>
                 </Row>
-
-
                 <Row>
                     <Col size={ 1 }><GirlQRImage /></Col>
                     <Col size={ 2 } justify='center' align={ isMobile ? 'center' : 'flex-start' }>
@@ -100,12 +97,12 @@ export default function ComponentName( ) {
                 </Row>
 
                 <Row justify='center' align={ isMobile ? 'center' : 'flex-start' } gap='56px'>
-                    <Col align='center' width='380px' padding='var(--spacing-4)'>
+                    <Col align='center' width='360px' padding='var(--spacing-4)'>
                         <H3 align='center'>{ t( 'homepage.whatis.checkin.title' ) }</H3>
                         <Divider margin='0 0 var(--spacing-4) 0'/>
                         <Text align='center'>{ t( 'homepage.whatis.checkin.description' ) }</Text>
                     </Col>
-                    <Col align='center' width='380px' padding='var(--spacing-4)'>
+                    <Col align='center' width='360px' padding='var(--spacing-4)'>
                         <H3 align='center'>{ t( 'homepage.whatis.stream.title' ) }</H3>
                         <Divider margin='0 0 var(--spacing-4) 0'/>
                         <Text align='center'>{ t( 'homepage.whatis.stream.description' ) }</Text>

@@ -4,8 +4,7 @@ import { useTranslation } from 'react-i18next'
 import Papa from 'papaparse'
 
 // Components
-import { Button, CardContainer, Container, H2, H3, Input } from '@poap/poap-components'
-import { Dropdown } from '../atoms/Dropdown'
+import { Button, CardContainer, Container, H2, H3, Input, Dropdown } from '@poap/poap-components'
 import Loading from '../molecules/Loading'
 import ViewWrapper from '../molecules/ViewWrapper'
 import Layout from '../molecules/Layout'
@@ -18,6 +17,7 @@ import { log, dateOnXDaysFromNow, monthNameToNumber, dev } from '../../modules/h
 import Section from '../atoms/Section'
 import FormFooter from '../molecules/FormFooter'
 import { Col, Grid, Row } from '../atoms/Grid'
+import { UploadButton } from '../molecules/UploadButton'
 
 // ///////////////////////////////
 // Render component
@@ -257,10 +257,18 @@ export default function Admin( ) {
 
         }
     }
-    
+
+    //
+    const clearEvent = () => {
+        setCodes( undefined )
+        setCsv( undefined )
+    }
+
+    // OptionSelect function
     const handleOptionSelect = ( option ) => {
         setGameEnabled( option.value.toLowerCase().includes( 'yes' ) )
     }
+
     // ///////////////////////////////
     // Render component
     // ///////////////////////////////
@@ -274,15 +282,12 @@ export default function Admin( ) {
             <Container>
                 <CardContainer>
                     <H3 align='center'>{ t( 'EventCreate.preCodes.title' ) }</H3>
-                    <Input
-                        highlight={ !codes } 
-                        id="event-create-file"
-                        label={ t( 'EventCreate.input.label' ) }
-                        info={ t( 'EventCreate.input.info' ) }
-                        accept=".csv,.txt"
-                        title={ csv && codes && `[ ${ filename } ] - ${ t( 'EventCreate.file.codesDetected' , { count: codes.length } ) }` }
-                        onClick={ !filename ? undefined : () => setCsv( undefined ) }
-                        onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
+                    <UploadButton 
+                        id="event-create-file" 
+                        label={ t( 'EventCreate.input.label' ) } 
+                        toolTip={ t( 'EventCreate.input.info' ) } 
+                        accept="text/csv, text/plain" 
+                        onFileChange={ ( file ) => setCsv( file ) }
                         required
                     />
                 </CardContainer>
@@ -293,24 +298,16 @@ export default function Admin( ) {
     // Main render
     return <Layout hide_background={ codes } hide_footer onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 
-        <Section>
+        <Section padding='var(--spacing-4) 0 var(--spacing-4) 0'>
             <Container width='750px'>
                 <br/>
-                <H3 align='center'>{ t( 'EventCreate.title' ) }</H3>
+                <H3 align='center' size=''>{ t( 'EventCreate.title' ) }</H3>
 
                 <Grid>
                     <Row>
-                        <Input
-                            highlight={ !codes } 
-                            id="event-create-file"
-                            label={ t( 'EventCreate.input.label' ) }
-                            info={ t( 'EventCreate.input.info' ) }
-                            accept=".csv,.txt"
-                            title={ csv && codes && `[ ${ filename } ] - ${ t( 'EventCreate.file.codesDetected' , { count: codes.length } ) }` }
-                            onClick={ !filename ? undefined : () => setCsv( undefined ) }
-                            onChange={ ( { target } ) => setCsv( target.files[0] ) } type='file'
-                            disabled
-                        />
+                        <Col size={ 1 }>
+                            <Input disabled label={ t( 'EventCreate.form.fileName.label' ) } value={ filename } />
+                        </Col>
                     </Row>
                     <Row>
                         <Col size={ 1 }>
@@ -326,12 +323,10 @@ export default function Admin( ) {
                     { developer_mode && <Dropdown options={ t( 'EventCreate.form.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'EventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'EventCreate.form.dropCollectEmails.info' ) } value={ collectEmails } /> }
                     { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'EventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'EventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'EventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
                 </Grid>
-
                 <FormFooter>
-                    <Button variation='white'>Cancel</Button>
-                    { codes && <Button id="event-create-submit"  onClick={ createEvent } tabIndex='0'>{ t( 'EventCreate.form.submitBtn', { count: codes.length } ) }</Button> }
+                    <Button onClick={ clearEvent } variation='white' tabIndex='0'>Cancel</Button>
+                    { codes && <Button id="event-create-submit" onClick={ createEvent } tabIndex='0'>{ t( 'EventCreate.form.submitBtn', { count: codes.length } ) }</Button> }
                 </FormFooter>
-                <br/><br/><br/><br/>
             </Container>
         </Section>
     </Layout>

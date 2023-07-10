@@ -25,7 +25,9 @@ export const GirlQRImage = styled( GirlQR )`
     z-index: 0;
     ${ mixin.sm_down`
         max-width: 100%;
-        max-height: 500px;
+        max-height: 300px;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
     ` }
     ${ mixin.sm_up`
         margin-left: -5rem;
@@ -49,7 +51,7 @@ export const FullLine = styled( LineImg )`
 export const FooterImage = styled( FooterBG )`
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: -1px;
     z-index: 0;
     ${ mixin.sm_down`
         width: 100%;
