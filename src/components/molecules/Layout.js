@@ -10,8 +10,9 @@ export const Layout = ( { hide_header, hide_footer, header_show_help = true, hid
         { !hide_header && <Header 
             hide_help={ header_show_help } 
             leftColumn={ <POAPProductTitle productName='Kiosk' beta /> } 
-            // rightColumn={ <POAPProfileMenu items={ items } connected_user={ connected_user } hide_help={ header_show_help === false } /> } 
+            // rightColumn={ <POAPProfileMenu hide_help={ header_show_help === false } /> } 
         /> }
+
 
         { /* Main body */ }
         <Main { ...props }>

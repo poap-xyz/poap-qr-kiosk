@@ -7,7 +7,7 @@ import { useCustomCSS } from '../../hooks/custom_css'
 import { log } from '../../modules/helpers'
 import Style from '../atoms/Style'
 import Main from '../atoms/Main'
-import { Container, POAPBookmark, mixin } from '@poap/poap-components'
+import { POAPBookmark, mixin } from '@poap/poap-components'
 
 
 const BackgroundImage = styled.img.attrs( ( { src, generic_styles } ) => ( {
@@ -20,21 +20,21 @@ const BackgroundImage = styled.img.attrs( ( { src, generic_styles } ) => ( {
     opacity: 0.75;
 `
 
-const Wrapper = styled.div`
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    width: 100%;
-    padding:  1rem;
-    box-sizing: border-box;
-    & * {
-        box-sizing: border-box;
-    }
-`
+// const Wrapper = styled.div`
+//     position: relative;
+//     overflow: hidden;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//     min-height: 100vh;
+//     width: 100%;
+//     padding:  1rem;
+//     box-sizing: border-box;
+//     & * {
+//         box-sizing: border-box;
+//     }
+// `
 
 const StyledBookmark = styled( POAPBookmark )`
     position: absolute;
@@ -61,10 +61,15 @@ export default ( { children, background, hide_background, generic_loading_styles
     // Force a blank page until the (potential) custom CSS is loaded?
     if( blank_until_custom_css && css == 'loading' ) return
 
-    return <Main className={ `${ className } global_container` } { ...props }>
-        { show_bookmark && <StyledBookmark /> }
-        { hide_background ? '' : <BackgroundImage id="global_background_image" generic_styles={ generic_loading_styles } src={ background } key='background' /> }
-        { children }
-        <Style styles={ css } />
-    </Main>
+    return <>
+        { show_bookmark && <header style={ { height: 'calc(var(--header-height) + 6px)' } }><StyledBookmark /></header> }
+        <Main className={ `${ className } global_container` } { ...props }>
+
+            { hide_background ? '' : <BackgroundImage id="global_background_image" generic_styles={ generic_loading_styles } src={ background } key='background' /> }
+            { children }
+            <Style styles={ css } />
+        </Main>
+    </> 
+    
+
 }

@@ -45,7 +45,7 @@
         "label": "Your secret admin link",
         "info": "The link to this admin page, the page you are seeing now. This link allows you to delete your POAP Kiosk. Keep it secret!"
       },
-      "clipboard": "Copy secret admin link to clipboard"
+      "clipboard": "Copy to clipboard"
     }
   },
   "create": {

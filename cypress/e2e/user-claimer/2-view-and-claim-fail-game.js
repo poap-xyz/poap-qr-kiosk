@@ -42,10 +42,12 @@ context( 'User can claim POAP after succeeding at challenge game', () => {
         cy.get( '#event-create-date' ).clear().type( admin.events[0].end )
 
         // Select YES to anti-farming
-        cy.get( '#event-create-game-enabled' ).select( 1 )
+        cy.get( '#event-create-game-enabled' ).click( { force: true } )
+        cy.get( '#event-create-game-enabled-1' ).click( { force: true } )
 
         // Select anti-farming timing (10s)
-        cy.get( '#event-create-game-duration' ).select( 1 )
+        cy.get( '#event-create-game-duration' ).click( { force: true } )
+        cy.get( '#event-create-game-duration-1' ).click( { force: true } )
         cy.log( 'Game time selected: 10s AKA 2 game turns' )
 
         // Create event
@@ -93,7 +95,7 @@ context( 'User can claim POAP after succeeding at challenge game', () => {
                 cy.contains( 'Verifying your humanity' )
 				
                 // Human game welcome screen 
-                cy.contains( 'Play a game' )
+                cy.contains( 'Prove you are a human' )
 
                 // Click start game button
                 cy.contains( 'a', 'Start game' ).click()
@@ -102,7 +104,7 @@ context( 'User can claim POAP after succeeding at challenge game', () => {
                 cy.contains( 'Score: 0 of' )
 
                 // Expect winning screen
-                cy.contains( 'You lost!' )
+                cy.contains( 'Oh no' )
 
             } )
 	

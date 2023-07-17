@@ -153,7 +153,5 @@ export default function ComponentName( ) {
         </Section>
 
     </Layout>
-    
-    
 
 }

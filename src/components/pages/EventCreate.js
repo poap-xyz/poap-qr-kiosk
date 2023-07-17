@@ -4,9 +4,8 @@ import { useTranslation } from 'react-i18next'
 import Papa from 'papaparse'
 
 // Components
-import { Button, CardContainer, Container, H2, H3, Input, Dropdown } from '@poap/poap-components'
+import { Button, CardContainer, Container, H3, Input, Dropdown, useViewport } from '@poap/poap-components'
 import Loading from '../molecules/Loading'
-import ViewWrapper from '../molecules/ViewWrapper'
 import Layout from '../molecules/Layout'
 
 // Functionality
@@ -26,10 +25,6 @@ export default function Admin( ) {
 
     // i18next hook
     const { t } = useTranslation()
-    
-    // Options store
-    const options = t( 'EventCreate.form.dropGame.options' )
-    const firstOptionLabel = options && options.length > 0 ? options[0].label : undefined
 
     // Navigation
     const navigate = useNavigate(  )
@@ -153,7 +148,7 @@ export default function Admin( ) {
                 const { data: { event, error } } = await getEventDataFromCode( formatedCode )
                 log( 'Code data received ', event, error )
                 if( error ) throw new Error( error )
-                if( !event ) throw new Error( `${ t( 'EventCreate.form.eventExpired' ) }` )
+                if( !event ) throw new Error( `${ t( 'EventCreate.event.eventExpired' ) }` )
 
                 // Set event details to state
                 if( event.name ) setName( event.name )
@@ -208,20 +203,20 @@ export default function Admin( ) {
 
             // Health noti
             if( !isHealthy ) {
-                const ignore_unhealthy = confirm( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
-                if( !ignore_unhealthy ) throw new Error( `${ t( 'EventCreate.form.eventCancelled' ) }` )
+                const ignore_unhealthy = confirm( `${ t( 'messaging.health.maintenance' ) }` )
+                if( !ignore_unhealthy ) throw new Error( `${ t( 'EventCreate.event.eventCancelled' ) }` )
             }
 
             // Validations
             if( !codes.length ) throw new Error( `${ t( 'EventCreate.file.csvNoEntries' ) }` )
-            if( !name.length ) throw new Error( `${ t( 'EventCreate.form.noName' ) }` )
-            if( !email.includes( '@' ) ) throw new Error( `${ t( 'EventCreate.form.noEmail' ) }` )
-            if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'EventCreate.form.wrongDate' ) }` )
+            if( !name.length ) throw new Error( `${ t( 'EventCreate.event.noName' ) }` )
+            if( !email.includes( '@' ) ) throw new Error( `${ t( 'EventCreate.event.noEmail' ) }` )
+            if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'EventCreate.event.wrongDate' ) }` )
 
             // Confirm date
-            const confirmed = confirm( `${ t( 'EventCreate.form.creationMessage' , { name: name, email: email } ) } ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
+            const confirmed = confirm( `${ t( 'EventCreate.event.creationMessage' , { name: name, email: email } ) } ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
             log( 'Confirmation status: ', confirmed )
-            if( !confirmed ) throw new Error( `${ t( 'EventCreate.form.eventCancelled' ) }` )
+            if( !confirmed ) throw new Error( `${ t( 'EventCreate.event.eventCancelled' ) }` )
 
             // Call the cloud importer
             setLoading( `${ t( 'EventCreate.creatingDispenser' ) }` )
@@ -318,7 +313,7 @@ export default function Admin( ) {
                     <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'EventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'EventCreate.form.dropDate.info' ) }` } value={ date } />
                     <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'EventCreate.form.dropEmail.placeholder' ) } label={ t( 'EventCreate.form.dropEmail.label' ) } toolTip={ t( 'EventCreate.form.dropEmail.info' ) } value={ email } />
                     <Dropdown id="event-create-game-enabled" label={ t( 'EventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'EventCreate.form.dropGame.info' ) }` } options={ optionss } handleOptionSelect={ handleOptionSelect }/>
-                    { gameEnabled && <Dropdown id="event-create-game-duration" onChange={ ( { target } ) => setGameDuration( target.value ) } label={ t( 'EventCreate.gameTime.label' ) } toolTip={ t( 'EventCreate.gameTime.info' ) } options={ t( 'EventCreate.gameTime.options', { returnObjects: true } ) } /> }
+                    { gameEnabled && <Dropdown id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'EventCreate.gameTime.label' ) } toolTip={ t( 'EventCreate.gameTime.info' ) } options={ t( 'EventCreate.gameTime.options', { returnObjects: true } ) } /> }
                     { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'EventCreate.form.dropCss.placeholder' ) } label={ t( 'EventCreate.form.dropCss.label' ) } toolTip={ t( 'EventCreate.form.dropCss.info' ) } value={ css || '' } /> }
                     { developer_mode && <Dropdown options={ t( 'EventCreate.form.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'EventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'EventCreate.form.dropCollectEmails.info' ) } value={ collectEmails } /> }
                     { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'EventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'EventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'EventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }

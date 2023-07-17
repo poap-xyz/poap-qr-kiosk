@@ -7,9 +7,9 @@ import './modules/i18n'
 
 // Pages
 import Homepage from './components/pages/Homepage'
-import ViewQR from './components/organisms/EventView'
-import CreateEvent from './components/organisms/EventCreate'
-import EventAdmin from './components/organisms/EventAdmin'
+import ViewQR from './components/pages/EventView'
+import CreateEvent from './components/pages/EventCreate'
+import EventAdmin from './components/pages/EventAdmin'
 import Claim from './components/organisms/Claim'
 import StaticClaim from './components/organisms/StaticClaim'
 import StaticClaimAdmin from './components/organisms/StaticClaimAdmin'

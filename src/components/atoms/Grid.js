@@ -3,6 +3,10 @@ import styled from 'styled-components'
 
 export const Grid = styled.div`
     width: 100%;
+    margin: 0 auto;
+    max-width:  ${ ( { width } ) => width || '' };
+    padding: ${ ( { padding } ) => padding || '' };
+    margin: ${ ( { margin } ) => margin || '' };
     
 `
 

@@ -1,40 +1,62 @@
 import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation, Trans } from 'react-i18next'
 import useInterval from 'use-interval'
-// import styled from 'styled-components'
-
-import ViewWrapper from '../molecules/ViewWrapper'
-import { H1, H2, Text } from '../atoms/Text'
-import Button from '../atoms/Button'
-import Section from '../atoms/Section'
 
 import { log } from '../../modules/helpers'
 
+import { CardContainer, Container, Divider, Button, Text, H1, H2, Br, HeroIcon } from '@poap/poap-components'
+
+import ViewWrapper from '../molecules/ViewWrapper'
+import Section from '../atoms/Section'
+
+import { Grid } from '../atoms/Grid'
+
+import { StroopButton } from '../atoms/StroopButton'
+
+import { ReactComponent as DiamondLogo } from '../../assets/illustrations/valuable-diamond.svg'
+import { ReactComponent as PlayfulIcon } from '../../assets/illustrations/playful.svg'
+import { ReactComponent as WelldoneIcon } from '../../assets/illustrations/well_done.svg'
+
+import WebpImager from '../atoms/WebpImager'
+
 // Stroop assets
-// const colors = [ 'red', 'green', 'blue', 'coral', 'darkblue', 'darkgreen', 'darkred', 'deeppink', 'lightgreen', 'lightblue', 'magenta', 'turquoise', 'purple', 'black', 'orange', 'grey' ]
-const colors = [ 'red', 'green', 'blue', 'darkblue', 'darkgreen', 'darkred', 'lightgreen', 'lightblue', 'purple', 'black', 'orange', 'grey' ]
+const colors = [ 'orange', 'pink', 'yellow', 'blue', 'green', 'purple', 'red', 'grey' ]
+// const colors = [ 'red', 'green', 'blue', 'darkblue', 'darkgreen', 'darkred', 'lightgreen', 'lightblue', 'purple', 'black', 'orange', 'grey' ]
 const pick_random_array_entry = array => array[ Math.floor( Math.random() * array.length ) ]
 const random_color = except => pick_random_array_entry( colors.filter( color => color != except ) )
 
-const Timer = ( { duration, onComplete } ) => {
+
+const Timer = ( { duration, onComplete, ...props } ) => {
 
     const [ timePassed, setTimePassed ] = useState( 0 )
-    const { t } = useTranslation( [ 'dynamic' ] )
+    const { t } = useTranslation( )
 
     useInterval( f => {
         if( timePassed >= duration ) return onComplete()
         setTimePassed( timePassed + 1 )
     }, 1000 )
 
-    return <Text>{ t( 'stroop.timer' ) } { duration - timePassed }</Text>
+    return <Text { ...props }>{ t( 'EventView.stroop.timer' ) } { duration - timePassed }</Text>
+}
+
+const getColorVariables = ( colorName ) => {
+    const colorVariables = {
+        orange: 'var(--secondary-1)',
+        pink: 'var(--error-200)',
+        yellow: 'var(--secondary-3)',
+        blue: 'var(--secondary-4)',
+        green: 'var(--secondary-5)',
+        purple: 'var(--primary-300)',
+        red: 'var(--error-300)',
+        grey: 'var(--gray-300)'
+    }
+    return colorVariables[colorName] || ''
 }
 
 export default ( { duration_input, target_score_input, onWin, onLose, poap_url, ...props } ) => {
 
-    // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
-    // Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
-    // Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
-    const { t } = useTranslation( [ 'dynamic' , 'dispenser' ] )
+    // i18next hook
+    const { t } = useTranslation()
 
     const [ started, setStarted ] = useState( false )
     const [ answer, setAnswer ] = useState( random_color() )
@@ -47,6 +69,7 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
     // Note: duration & target_score change as challenge changes. If it does from something to undefined, that is because the challenge was completed and nothing should change
     const [ duration, set_duration ] = useState( duration_input )
     const [ target_score, set_target_score ] = useState( target_score_input )
+    
     useEffect( (  ) => {
 
         // Logging
@@ -106,19 +129,6 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
 
     }
 
-    function score_emoji() {
-
-        if( score > target_score * 10 ) return '🦄'
-        if( score > target_score * 5 ) return '🧙'
-        if( score > target_score * 3 ) return '🤯'
-        if( score > target_score * 2 ) return '😱'
-        if( score > target_score * 1.5 ) return '🤩'
-        if( score >= target_score ) return '😁'
-        if( score > target_score / 2 ) return '🤨'
-        return '😞'
-
-    }
-
     function tally_score() {
 
         log( 'Game complete! Score:', score, ' target: ', target_score )
@@ -132,34 +142,64 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
         if( poap_url ) window.location.replace( poap_url )
     }
 
-    if( done ) return <ViewWrapper>
-		
-        <H1 align='center'>{ t( 'stroop.you' ) } { score >= target_score ? t( 'stroop.won' ) : t( 'stroop.lost' ) }!</H1>
-        <H2>{ t( 'stroop.score' ) } { score } { score_emoji() }</H2>
-        { score >= target_score && <Button onClick={ claim_poap }>{ poap_url ? t( 'stroop.claimPoap' ) : t( 'stroop.loadPoap' ) }</Button> }
+    if( done ) return <ViewWrapper center show_bookmark>
+        <Container>
+            <CardContainer width='400px' margin='0 auto'>
 
+                { /* Lost and Won states */ }
+                { score < target_score ? 
+                    <> 
+                        <PlayfulIcon />
+                        <H1 align='center' size='var(--fs-lg)' margin='var(--spacing-5) 0 var(--spacing-1) 0'>{ t( 'EventView.stroop.lost' ) }</H1>
+                        <Divider outline margin='0 0 var(--spacing-6) 0' />
+                        <Text align='center' margin='0 0 var(--spacing-5) 0' whiteSpace>{ t( 'EventView.stroop.failMessage', { target_score: target_score } ) }</Text>
+                        <Text align='center'>{ t( 'EventView.stroop.score' ) } <br/> { score }</Text>
+                        <Button onClick>{ t( 'EventView.stroop.TryAgain' )  }</Button> 
+                    </> 
+                    : 
+                    <>
+                        <WelldoneIcon />
+                        <H1 align='center' size='var(--fs-lg)' margin='var(--spacing-5) 0 var(--spacing-1) 0'> { t( 'EventView.stroop.won' ) }</H1>
+                        <Divider outline margin='0 0 var(--spacing-6) 0' />
+                        <Text align='center' margin='0 0 var(--spacing-6) 0'>{ t( 'EventView.stroop.score' ) } <br/> { score }</Text>
+                        { score >= target_score && <Button onClick={ claim_poap } leftIcon={ <HeroIcon icon={ poap_url ? 'sparkles' : ''  } /> }>{ poap_url ? t( 'EventView.stroop.claimPoap' ) : t( 'EventView.stroop.loadPoap' ) }</Button> }
+                    </> }
+                
+            </CardContainer>
+        </Container>
     </ViewWrapper>
 
-    if( !started ) return <ViewWrapper>
-		
-        <H1 align='center'>{ t( 'stroop.game.title' ) }</H1>
-        <H2 align='center'>{ t( 'stroop.game.subtitle' ) }</H2>
-        <Text align='center'>{ t( 'stroop.game.description', { duration: duration } ) }</Text>
-        <Button onClick={ f => setStarted( true ) }>{ t( 'stroop.game.btn' ) }</Button>
+    if( !started ) return <ViewWrapper center show_bookmark>
+        <Container>
+            <CardContainer width='400px' margin='var(--spacing-8) auto 0 auto'>
+                <DiamondLogo />
+                <Text size='var(--fs-lg)' weight={ 700 } color='var(--primary-700)'  align='center' margin='var(--spacing-5) 0 var(--spacing-2) 0' >{ t( 'EventView.stroop.game.title' ) }</Text>
+                <Divider outline />
+                <Text color='var(--primary-700)' margin='1rem 0' align='center' whiteSpace>{ t( 'EventView.stroop.game.subtitle' ) }</Text>
 
+                <WebpImager imageUrl='/assets/decorations/Stroop-example' alt='test' />
+
+                <Text align='center'>{ t( 'EventView.stroop.game.description', { duration: duration } ) }</Text>
+
+                <Button width='100%' onClick={ f => setStarted( true ) }>{ t( 'EventView.stroop.game.btn' ) }</Button>
+
+            </CardContainer>
+        </Container>
     </ViewWrapper>
 
-    return	<ViewWrapper>
+    return  <ViewWrapper center show_bookmark hide_background>
 
-        <H1 align='center'>{ t( 'stroop.playing.preTitle' ) } <span style={ { color: random_color( answer ) } }>{ answer }</span> { t( 'stroop.playing.postTitle' ) }</H1>
-        <H2>{ t( 'stroop.playing.subtitle', { score: score, target_score: target_score } ) } { score_emoji() }</H2>
-        <Timer onComplete={ tally_score } duration={ duration } />
+        <Container flex='1'>
+            <Grid width='400px' padding='var(--spacing-4) var(--spacing-1)'>
+                <H1 align="center" size='var(--fs-3xl)' lineHeight='--lh-xl' weight={ 700 } margin='0 0 var(--spacing-6) 0'>{ t( 'EventView.stroop.playing.preTitle' ) } <br/> <span style={ { color: getColorVariables( random_color( answer ) ) } }>{ answer }</span> <br/>{ t( 'EventView.stroop.playing.postTitle' ) }</H1>
+                <H2 align='center' color='var(--primary-600)' margin='0 0 var(--spacing-6) 0'>{ t( 'EventView.stroop.playing.subtitle', { score: score, target_score: target_score } ) }</H2>
+                { score >= target_score ? <Text align='center' size='var(--fs-2xs)' color='#797292'>Well done, keep going to see how far you can go!</Text> : <div style={ { height: '40px' } }>    </div> }
+                <Timer align='center' margin='0 0 var(--spacing-8) 0' onComplete={ tally_score } duration={ duration } />
+                
+                { options.map( option => <StroopButton key={ Math.random() + option } color="white" background={ getColorVariables( option ) } width='100%' margin='0 0 var(--spacing-7)' onClick={ f => submit_answer( option ) }>I am { option }</StroopButton> ) }
 
-        <Section direction="row">
-			
-            { options.map( option => <Button key={ Math.random() + option } color="white" background={ option } onClick={ f => submit_answer( option ) }>I am { option }</Button> ) }
-
-        </Section>
-
+            </Grid>
+        </Container>
     </ViewWrapper>
+
 }
