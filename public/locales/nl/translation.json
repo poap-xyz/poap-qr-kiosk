@@ -1,3 +1,13 @@
 {
-    "_comment": "i18next requests this file to be included."
+    "title": "Hello World",
+    "subtitle": "Breng POAPs naar je vrienden IRL",
+    "messaging": {
+        "health": {
+            "check": "Systeem status: ",
+            "error": "",
+            "cancelled": "",
+            "maintenance": "The POAP system is undergoing some maintenance, the POAP Kiosk might not work as expected during this time.\n\nPlease check our official channels for details."
+        }
+    },
+    "homepage": {}
 }

@@ -45,7 +45,7 @@
         "label": "Your secret admin link",
         "info": "The link to this admin page, the page you are seeing now. This link allows you to delete your POAP Kiosk. Keep it secret!"
       },
-      "clipboard": "Copy secret admin link to clipboard"
+      "clipboard": "Copy to clipboard"
     }
   },
   "create": {
@@ -162,7 +162,7 @@
     },
     "expired": {
       "title": "POAP Kiosk expired",
-      "description": "This POAP Kiosk was set to expire on {{ expireDate }} by the organiser."
+      "description": "This POAP Kiosk was set to expire on {{ expireDate }}."
     },
     "codes": {
       "title": "No codes available",

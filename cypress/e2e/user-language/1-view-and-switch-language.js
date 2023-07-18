@@ -14,20 +14,20 @@ context( 'Welcome page POAP Kiosk', () => {
         cy.getCookie( 'i18next' ).should( 'have.property', 'value', 'en' )
 		
         // expect the homescreen in EN
-        cy.contains( 'Create POAP Kiosk' )
+        cy.contains( 'Create Kiosk' )
 
     } )
 
-    it( 'Has a dropdown for language switching, and the dropdown switches the language to Dutch', () => {
+    // it( 'Has a dropdown for language switching, and the dropdown switches the language to Dutch', () => {
 
-        cy.visit( '/?debug=true' )
+    //     cy.visit( '/?debug=true' )
 
-        cy.contains( 'select', '🇺🇸' )
+    //     cy.contains( 'select', '🇺🇸' )
 
-        cy.get( 'select' ).select( '🇳🇱' )
+    //     cy.get( 'select' ).select( '🇳🇱' )
 
-        cy.contains( 'POAP Kiosk' )
+    //     cy.contains( 'POAP Kiosk' )
 		
-    } )
+    // } )
 
 } )

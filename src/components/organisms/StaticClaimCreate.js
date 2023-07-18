@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 // Components
 import Button from "../atoms/Button"
-import Container from "../atoms/Container"
+import ViewWrapper from "../molecules/ViewWrapper"
 import Input from "../atoms/Input"
 import Main from "../atoms/Main"
 import Loading from "../molecules/Loading"
@@ -50,7 +50,7 @@ export default function StaticClaimCreate() {
 
     if( loading ) return <Loading message={ loading } />
 
-    if( success ) return <Container>
+    if( success ) return <ViewWrapper>
 
         <Main align='flex-start' width='600px'>
 
@@ -62,9 +62,9 @@ export default function StaticClaimCreate() {
             <Text>{ t( 'create.succes_screen.fourth_line' ) }</Text>
         </Main>
 
-    </Container>
+    </ViewWrapper>
 
-    return <Container>
+    return <ViewWrapper>
 
         <Main align='flex-start' width='600px'>
 
@@ -85,5 +85,5 @@ export default function StaticClaimCreate() {
 
         </Main>
 
-    </Container>
+    </ViewWrapper>
 }
