@@ -1,20 +1,20 @@
-import ViewWrapper from '../molecules/ViewWrapper'
-import Main from '../atoms/Main'
-import Section from '../atoms/Section'
-import Loading from '../molecules/Loading'
-import { Grid, Row, Col } from '../atoms/Grid'
-
-// Functionality
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { deleteEvent, trackEvent, health_check, listenToEventMeta } from '../../modules/firebase'
-import { log, dev, wait } from '../../modules/helpers'
 const { REACT_APP_publicUrl } = process.env
 
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { CardContainer, Container, Text, H1, H2, Input, Button } from '@poap/poap-components'
+
+import { deleteEvent, trackEvent, health_check, listenToEventMeta } from '../../modules/firebase'
+import { log, dev, wait } from '../../modules/helpers'
+
+
+import Section from '../atoms/Section'
+import { Grid, Row, Col } from '../atoms/Grid'
+
+import Loading from '../molecules/Loading'
 import Layout from '../molecules/Layout'
 
+import { CardContainer, Container, Text, H1, H2, Input, Button } from '@poap/poap-components'
 
 // ///////////////////////////////
 // Render component

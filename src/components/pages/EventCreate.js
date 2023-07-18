@@ -3,20 +3,20 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Papa from 'papaparse'
 
-// Components
-import { Button, CardContainer, Container, H3, Input, Dropdown, useViewport } from '@poap/poap-components'
-import Loading from '../molecules/Loading'
-import Layout from '../molecules/Layout'
-
 // Functionality
 import { registerEvent, trackEvent, getEventDataFromCode, health_check } from '../../modules/firebase'
 import { log, dateOnXDaysFromNow, monthNameToNumber, dev } from '../../modules/helpers'
 
-
+// Components
 import Section from '../atoms/Section'
-import FormFooter from '../molecules/FormFooter'
 import { Col, Grid, Row } from '../atoms/Grid'
+
+import Loading from '../molecules/Loading'
+import Layout from '../molecules/Layout'
+import FormFooter from '../molecules/FormFooter'
 import { UploadButton } from '../molecules/UploadButton'
+
+import { Button, CardContainer, Container, H3, Input, Dropdown } from '@poap/poap-components'
 
 // ///////////////////////////////
 // Render component
@@ -58,11 +58,6 @@ export default function Admin( ) {
             value: 'yes'
         }
     ]
-    
-
-    // ///////////////////////////////
-    // Form handling
-    // ///////////////////////////////
 
     // ///////////////////////////////
     // Lifecycle handling

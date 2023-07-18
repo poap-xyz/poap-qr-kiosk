@@ -1,40 +1,31 @@
-// Data management
+let { REACT_APP_publicUrl, REACT_APP_useEmulator } = process.env
+
 import { useState, useEffect } from 'react'
-import { requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses, trackEvent, health_check } from '../../modules/firebase'
-import { log, dev } from '../../modules/helpers'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import useInterval from 'use-interval'
 import { useTranslation } from 'react-i18next'
 
-// Debugging data
-let { REACT_APP_publicUrl, REACT_APP_useEmulator } = process.env
+import { requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses, trackEvent, health_check } from '../../modules/firebase'
+import { log, dev } from '../../modules/helpers'
 log( `Frontend using live url ${ REACT_APP_publicUrl } with ${ REACT_APP_useEmulator ? 'emulator' : 'live backend' }` )
 
-// Components
+import Section from '../atoms/Section'
 import AnnotatedQR from '../molecules/AnnotatedQR'
 import Loading from '../molecules/Loading'
 import Network from '../molecules/NetworkStatusBar'
+import ViewWrapper from '../molecules/ViewWrapper'
 
 import { H1, H2, H3, Text, Sidenote, Button, Container, CardContainer, Divider } from '@poap/poap-components'
-import ViewWrapper from '../molecules/ViewWrapper'
-import Section from '../atoms/Section'
 
-
-// Assets
 import { ReactComponent as UserConnected } from '../../assets/illustrations/user_connected.svg'
 import { ReactComponent as ManMoon } from '../../assets/illustrations/man_to_the_moon.svg'
 import { ReactComponent as NoCodes } from '../../assets/illustrations/no_more_codes.svg'
-import Stroop from '../molecules/Stroop'
-
 
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
 export default function ViewQR( ) {
 
-    // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
-    // Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
-    // Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
     const { t } = useTranslation( [ 'dynamic' , 'dispenser' ] )
 
     const navigate = useNavigate()

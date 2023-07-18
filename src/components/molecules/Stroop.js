@@ -1,30 +1,27 @@
 import { useState, useEffect } from 'react'
-import { useTranslation, Trans } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import useInterval from 'use-interval'
 
 import { log } from '../../modules/helpers'
 
-import { CardContainer, Container, Divider, Button, Text, H1, H2, Br, HeroIcon } from '@poap/poap-components'
-
-import ViewWrapper from '../molecules/ViewWrapper'
-import Section from '../atoms/Section'
+import { CardContainer, Container, Divider, Button, Text, H1, H2,  HeroIcon } from '@poap/poap-components'
 
 import { Grid } from '../atoms/Grid'
-
+import WebpImager from '../atoms/WebpImager'
 import { StroopButton } from '../atoms/StroopButton'
+
+import ViewWrapper from '../molecules/ViewWrapper'
 
 import { ReactComponent as DiamondLogo } from '../../assets/illustrations/valuable-diamond.svg'
 import { ReactComponent as PlayfulIcon } from '../../assets/illustrations/playful.svg'
 import { ReactComponent as WelldoneIcon } from '../../assets/illustrations/well_done.svg'
 
-import WebpImager from '../atoms/WebpImager'
+
 
 // Stroop assets
 const colors = [ 'orange', 'pink', 'yellow', 'blue', 'green', 'purple', 'red', 'grey' ]
-// const colors = [ 'red', 'green', 'blue', 'darkblue', 'darkgreen', 'darkred', 'lightgreen', 'lightblue', 'purple', 'black', 'orange', 'grey' ]
 const pick_random_array_entry = array => array[ Math.floor( Math.random() * array.length ) ]
 const random_color = except => pick_random_array_entry( colors.filter( color => color != except ) )
-
 
 const Timer = ( { duration, onComplete, ...props } ) => {
 
