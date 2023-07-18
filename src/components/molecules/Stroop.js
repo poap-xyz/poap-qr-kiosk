@@ -16,8 +16,6 @@ import { ReactComponent as DiamondLogo } from '../../assets/illustrations/valuab
 import { ReactComponent as PlayfulIcon } from '../../assets/illustrations/playful.svg'
 import { ReactComponent as WelldoneIcon } from '../../assets/illustrations/well_done.svg'
 
-
-
 // Stroop assets
 const colors = [ 'orange', 'pink', 'yellow', 'blue', 'green', 'purple', 'red', 'grey' ]
 const pick_random_array_entry = array => array[ Math.floor( Math.random() * array.length ) ]

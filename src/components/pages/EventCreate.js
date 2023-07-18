@@ -23,11 +23,11 @@ import { Button, CardContainer, Container, H3, Input, Dropdown } from '@poap/poa
 // ///////////////////////////////
 export default function Admin( ) {
 
+    // Navigation
+    const navigate = useNavigate()
+
     // i18next hook
     const { t } = useTranslation()
-
-    // Navigation
-    const navigate = useNavigate(  )
 
     // ///////////////////////////////
     // State handling
@@ -48,7 +48,7 @@ export default function Admin( ) {
     const [ collectEmails, setCollectEmails ] = useState( false )
     const developer_mode = backgroundTaps >= 20
 
-    const optionss = [
+    const gameOptions = [
         {
             label: 'No (recommended for physical events)',
             value: 'no'
@@ -103,11 +103,11 @@ export default function Admin( ) {
             try {
 
                 // Loading animation
-                setLoading( `${ t( 'EventCreate.file.mintCheck' ) }` )
+                setLoading( `${ t( 'eventCreate.file.mintCheck' ) }` )
 
                 // Validations
                 const { name } = csv
-                if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( `${ t( 'EventCreate.file.acceptedFormat' ) }` )
+                if( !name.includes( '.csv' ) && !name.includes( '.txt' ) ) throw new Error( `${ t( 'eventCreate.file.acceptedFormat' ) }` )
 
                 // Set filename to state
                 setFilename( name )
@@ -129,13 +129,13 @@ export default function Admin( ) {
                 if( erroredCodes.length ) {
 
                     log( 'Errored codes: ', erroredCodes )
-                    throw new Error( `${ erroredCodes.length } ${ t( 'EventCreate.file.codeFormat' ) } ${ erroredCodes[0] }` )
+                    throw new Error( `${ erroredCodes.length } ${ t( 'eventCreate.file.codeFormat' ) } ${ erroredCodes[0] }` )
 
                 }
 
                 // Validated and sanetised codes
                 log( 'Sanetised codes: ', data )
-                if( !data.length ) throw new Error( `${ t( 'EventCreate.file.noCodes' ) }` )
+                if( !data.length ) throw new Error( `${ t( 'eventCreate.file.noCodes' ) }` )
                 if( !cancelled ) setCodes( data )
 
                 // Load event data based on codes
@@ -143,7 +143,7 @@ export default function Admin( ) {
                 const { data: { event, error } } = await getEventDataFromCode( formatedCode )
                 log( 'Code data received ', event, error )
                 if( error ) throw new Error( error )
-                if( !event ) throw new Error( `${ t( 'EventCreate.event.eventExpired' ) }` )
+                if( !event ) throw new Error( `${ t( 'eventCreate.event.eventExpired' ) }` )
 
                 // Set event details to state
                 if( event.name ) setName( event.name )
@@ -199,22 +199,22 @@ export default function Admin( ) {
             // Health noti
             if( !isHealthy ) {
                 const ignore_unhealthy = confirm( `${ t( 'messaging.health.maintenance' ) }` )
-                if( !ignore_unhealthy ) throw new Error( `${ t( 'EventCreate.event.eventCancelled' ) }` )
+                if( !ignore_unhealthy ) throw new Error( `${ t( 'eventCreate.event.eventCancelled' ) }` )
             }
 
             // Validations
-            if( !codes.length ) throw new Error( `${ t( 'EventCreate.file.csvNoEntries' ) }` )
-            if( !name.length ) throw new Error( `${ t( 'EventCreate.event.noName' ) }` )
-            if( !email.includes( '@' ) ) throw new Error( `${ t( 'EventCreate.event.noEmail' ) }` )
-            if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'EventCreate.event.wrongDate' ) }` )
+            if( !codes.length ) throw new Error( `${ t( 'eventCreate.file.csvNoEntries' ) }` )
+            if( !name.length ) throw new Error( `${ t( 'eventCreate.event.noName' ) }` )
+            if( !email.includes( '@' ) ) throw new Error( `${ t( 'eventCreate.event.noEmail' ) }` )
+            if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( `${ t( 'eventCreate.event.wrongDate' ) }` )
 
             // Confirm date
-            const confirmed = confirm( `${ t( 'EventCreate.event.creationMessage' , { name: name, email: email } ) } ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
+            const confirmed = confirm( `${ t( 'eventCreate.event.creationMessage' , { name: name, email: email } ) } ${ new Date( date ).toLocaleDateString() } (${ new Date( date ) })` )
             log( 'Confirmation status: ', confirmed )
-            if( !confirmed ) throw new Error( `${ t( 'EventCreate.event.eventCancelled' ) }` )
+            if( !confirmed ) throw new Error( `${ t( 'eventCreate.event.eventCancelled' ) }` )
 
             // Call the cloud importer
-            setLoading( `${ t( 'EventCreate.creatingDispenser' ) }` )
+            setLoading( `${ t( 'eventCreate.creatingDispenser' ) }` )
 
             // Create remote event
             const { data: newEvent } = await registerEvent( {
@@ -271,11 +271,11 @@ export default function Admin( ) {
         <Section>
             <Container>
                 <CardContainer>
-                    <H3 align='center'>{ t( 'EventCreate.preCodes.title' ) }</H3>
+                    <H3 align='center'>{ t( 'eventCreate.preCodes.title' ) }</H3>
                     <UploadButton 
                         id="event-create-file" 
-                        label={ t( 'EventCreate.input.label' ) } 
-                        toolTip={ t( 'EventCreate.input.info' ) } 
+                        label={ t( 'eventCreate.input.label' ) } 
+                        toolTip={ t( 'eventCreate.input.info' ) } 
                         accept="text/csv, text/plain" 
                         onFileChange={ ( file ) => setCsv( file ) }
                         required
@@ -291,31 +291,31 @@ export default function Admin( ) {
         <Section padding='var(--spacing-4) 0 var(--spacing-4) 0'>
             <Container width='750px'>
                 <br/>
-                <H3 align='center' size=''>{ t( 'EventCreate.title' ) }</H3>
+                <H3 align='center' size=''>{ t( 'eventCreate.title' ) }</H3>
 
                 <Grid>
                     <Row>
                         <Col size={ 1 }>
-                            <Input disabled label={ t( 'EventCreate.form.fileName.label' ) } value={ filename } />
+                            <Input disabled label={ t( 'eventCreate.form.fileName.label' ) } value={ filename } />
                         </Col>
                     </Row>
                     <Row>
                         <Col size={ 1 }>
-                            <Input disabled label={ t( 'EventCreate.form.codesAmount.label' ) } value={ codes.length } width='66px'/>
+                            <Input disabled label={ t( 'eventCreate.form.codesAmount.label' ) } value={ codes.length } width='66px'/>
                         </Col>
                     </Row>
-                    <Input id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'EventCreate.form.dropName.placeholder' ) } label={ t( 'EventCreate.form.dropName.label' ) } toolTip={ t( 'EventCreate.form.dropName.info' ) } value={ name } optional />
-                    <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'EventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'EventCreate.form.dropDate.info' ) }` } value={ date } />
-                    <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'EventCreate.form.dropEmail.placeholder' ) } label={ t( 'EventCreate.form.dropEmail.label' ) } toolTip={ t( 'EventCreate.form.dropEmail.info' ) } value={ email } />
-                    <Dropdown id="event-create-game-enabled" label={ t( 'EventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'EventCreate.form.dropGame.info' ) }` } options={ optionss } handleOptionSelect={ handleOptionSelect }/>
-                    { gameEnabled && <Dropdown id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'EventCreate.gameTime.label' ) } toolTip={ t( 'EventCreate.gameTime.info' ) } options={ t( 'EventCreate.gameTime.options', { returnObjects: true } ) } /> }
-                    { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'EventCreate.form.dropCss.placeholder' ) } label={ t( 'EventCreate.form.dropCss.label' ) } toolTip={ t( 'EventCreate.form.dropCss.info' ) } value={ css || '' } /> }
-                    { developer_mode && <Dropdown options={ t( 'EventCreate.form.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'EventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'EventCreate.form.dropCollectEmails.info' ) } value={ collectEmails } /> }
-                    { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'EventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'EventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'EventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
+                    <Input id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'eventCreate.form.dropName.placeholder' ) } label={ t( 'eventCreate.form.dropName.label' ) } toolTip={ t( 'eventCreate.form.dropName.info' ) } value={ name } optional />
+                    <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'eventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'eventCreate.form.dropDate.info' ) }` } value={ date } />
+                    <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'eventCreate.form.dropEmail.placeholder' ) } label={ t( 'eventCreate.form.dropEmail.label' ) } toolTip={ t( 'eventCreate.form.dropEmail.info' ) } value={ email } />
+                    <Dropdown id="event-create-game-enabled" label={ t( 'eventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` } options={ gameOptions } handleOptionSelect={ handleOptionSelect }/>
+                    { gameEnabled && <Dropdown id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) } /> }
+                    { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'eventCreate.form.dropCss.placeholder' ) } label={ t( 'eventCreate.form.dropCss.label' ) } toolTip={ t( 'eventCreate.form.dropCss.info' ) } value={ css || '' } /> }
+                    { developer_mode && <Dropdown options={ t( 'eventCreate.form.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } value={ collectEmails } /> }
+                    { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'eventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'eventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'eventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
                 </Grid>
                 <FormFooter>
                     <Button onClick={ clearEvent } variation='white' tabIndex='0'>Cancel</Button>
-                    { codes && <Button id="event-create-submit" onClick={ createEvent } tabIndex='0'>{ t( 'EventCreate.form.submitBtn', { count: codes.length } ) }</Button> }
+                    { codes && <Button id="event-create-submit" onClick={ createEvent } tabIndex='0'>{ t( 'eventCreate.form.submitBtn', { count: codes.length } ) }</Button> }
                 </FormFooter>
             </Container>
         </Section>

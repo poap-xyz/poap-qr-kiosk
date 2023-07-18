@@ -6,7 +6,7 @@
       "check": "Systeem status: ",
       "error": "Error getting system health: ",
       "cancelled": "Health effect cancelled",
-      "maintenance": "NL The POAP system is undergoing some maintenance, the POAP Kiosk might not work as expected during this time.\n\nPlease check our official channels for details."
+      "maintenance": "The POAP system is undergoing some maintenance, the POAP Kiosk might not work as expected during this time.\n\nPlease check our official channels for details."
     },
     "upload": {
       "formatInvalid": "Invalid file format.",
@@ -52,7 +52,7 @@
       "getStarted": "Get started now!"
     }
   },
-  "EventCreate": {
+  "eventCreate": {
     "title": "Set up POAP Kiosk",
     "creatingDispenser": "Creating POAP Kiosk",
     "preCodes": {
@@ -245,6 +245,55 @@
         "red",
         "grey"
       ]
+    }
+  },
+  "eventAdmin": {
+    "title": "POAP Kiosk",
+    "loadingDispenser": "Loading POAP Kiosk",
+    "setLoadingDispenser": "Delete POAP Kiosk",
+    "loadingValidity": "Double-checking admin link validity",
+    "invalidValidity": "Invalid event admin link",
+    "confirmDeleteDispenser": "Are you sure you want to delete your POAP Kiosk?\n\nThis cannot be undone, but you can always create a new POAP Kiosk following the same simple steps you used to make this one.",
+    "succesDeleteDispenser": "Deletion success!\n\nYour POAP Kiosk has been deleted.\n\nClick OK to be redirected to the home page. ",
+    "deletionCancelled": "Deletion cancelled, your event still exists.",
+    "errorDeleteDispenser": "Error Deleting POAP Kiosk: {{ message }}",
+    "hero": {
+      "subheading": {
+        "reviewed": "⚠️ Your event is being reviewed",
+        "unique": "Your unique POAP Kiosk link"
+      },
+      "description": {
+        "pre": "This link is intended to be displayed on a physical device, or through a screenshare during a stream. ",
+        "bold": "NEVER",
+        "post": " send it to anyone."
+      },
+      "input": {
+        "label": "Your public POAP Kiosk link",
+        "info": "This link takes you to your POAP Kiosk page. For example, you can display this page on an iPad at your check-in desk."
+      },
+      "distribute": {
+        "button": "Open link & start distributing POAPs",
+        "clipboard": "Copy to clipboard"
+      },
+      "notavailable": {
+        "title": "This POAP Kiosk will become available once the curation team approves your event.",
+        "description": "You will receive an email when your event is approved. This email will also send you the manual claim links in a links.txt file. You don&apos;t have to use them, but it is ok to use them in combination with this POAP Kiosk."
+      }
+    },
+    "deleteDispenser": {
+      "title": "Secret Admin Section",
+      "subheading": "Delete this POAP Kiosk",
+      "description": "Want to create a new POAP Kiosk for this drop? Delete this POAP Kiosk first, and then create a new dispenser when you are ready.",
+      "deleteBtn": "Delete POAP Kiosk"
+    },
+    "adminDispenser": {
+      "title": "Admin link",
+      "description": "Your admin link is yours to make changes to this instance of the magic POAP dispenser. Don't share this with anyone!",
+      "input": {
+        "label": "Your secret admin link",
+        "info": "The link to this admin page, the page you are seeing now. This link allows you to delete your POAP Kiosk. Keep it secret!"
+      },
+      "clipboard": "Copy to clipboard"
     }
   }
 }

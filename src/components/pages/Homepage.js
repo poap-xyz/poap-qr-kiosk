@@ -20,6 +20,7 @@ import { H2, H3, Text, Button, Container, LayeredText, DynamicTag, Divider, useV
 // ///////////////////////////////
 export default function ComponentName( ) {
 
+    // Navigation hooks
     const navigate = useNavigate()
     const [ allowAccess, setAllowAccess ] = useState( true )
 
