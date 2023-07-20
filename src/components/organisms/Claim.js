@@ -1,31 +1,29 @@
-// Data management
+const { REACT_APP_publicUrl } = process.env
+
 import { useState, useEffect } from 'react'
-import { log, dev, wait } from '../../modules/helpers'
 import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+
+import { log, dev, wait } from '../../modules/helpers'
 import { validateCallerDevice, validateCallerCaptcha, trackEvent, listen_to_claim_challenge, get_code_by_challenge, requestManualCodeRefresh, health_check } from '../../modules/firebase'
 
-import { useTranslation } from 'react-i18next'
+
+import { useEventOfChallenge } from '../../hooks/events'
 
 // Components
 import Loading from '../molecules/Loading'
 import Stroop from '../molecules/Stroop'
 import Captcha from '../molecules/Captcha'
-import { useEventOfChallenge } from '../../hooks/events'
-const { REACT_APP_publicUrl } = process.env
 
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
 export default function ViewQR( ) {
 
-    // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
-    // Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
-    // Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
-    const { t } = useTranslation( [ 'dynamic' , 'dispenser' ] )
+    // i18next hook
+    const { t } = useTranslation()
 
-    // ///////////////////////////////
     // State handling
-    // ///////////////////////////////
     const { challenge_code, error_code } = useParams( )
     const [ loading, setLoading ] = useState( `${ t( 'claim.setLoading' ) }` )
     const [ userValid, setUserValid ] = useState( false )
@@ -34,7 +32,6 @@ export default function ViewQR( ) {
     const [ poaplink, setPoaplink ] = useState(  )
     const [ captchaResponse, setCaptchaResponse ] = useState(  )
     const event = useEventOfChallenge( challenge_code )
-
 
     /* ///////////////////////////////
   // Component functions
@@ -111,7 +108,7 @@ export default function ViewQR( ) {
                 if( cancelled ) return log( `Health effect cancelled` )
                 if( !dev && !health.healthy ) {
                     trackEvent( `claim_system_down` )
-                    return alert( `${ t( 'health.maintenance', { ns: 'dispenser' } ) }` )
+                    return alert( `${ t( 'messaging.health.maintenance' ) }` )
                 }
 
             } catch ( e ) {

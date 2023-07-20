@@ -11,9 +11,9 @@ import ViewQR from './components/pages/EventView'
 import CreateEvent from './components/pages/EventCreate'
 import EventAdmin from './components/pages/EventAdmin'
 import Claim from './components/organisms/Claim'
-import StaticClaim from './components/organisms/StaticClaim'
-import StaticClaimAdmin from './components/organisms/StaticClaimAdmin'
-import StaticClaimCreate from './components/organisms/StaticClaimCreate'
+import StaticClaim from './components/pages/StaticClaim'
+import StaticAdmin from './components/pages/StaticAdmin'
+import StaticCreate from './components/pages/StaticCreate'
 
 // Components
 import Loading from './components/molecules/Loading'
@@ -53,8 +53,8 @@ export default function App( ) {
                     <Route path='/static/'>
 
                         <Route path='claim/:claim_code' element={ <StaticClaim /> } />
-                        <Route path='admin/export' element={ <StaticClaimAdmin /> } />
-                        <Route path='admin/create' element={ <StaticClaimCreate /> } />
+                        <Route path='admin/export' element={ <StaticAdmin /> } />
+                        <Route path='admin/create' element={ <StaticCreate /> } />
 
                     </Route>
 

@@ -1,229 +1,393 @@
 {
-  "title": "POAP Kiosk",
-  "subtitle": "Get POAPs to your friends IRL",
-  "messaging": {
-    "health": {
-      "check": "Systeem status: ",
-      "error": "Error getting system health: ",
-      "cancelled": "Health effect cancelled",
-      "maintenance": "NL The POAP system is undergoing some maintenance, the POAP Kiosk might not work as expected during this time.\n\nPlease check our official channels for details."
-    },
-    "upload": {
-      "formatInvalid": "Invalid file format.",
-      "dragndrop": "Drop your file(s) here",
-      "standard": "Upload .txt file"
-    }
-  },
-  "homepage": {
-    "createBtn": "Create Kiosk",
-    "hero": {
-      "title": "POAP Kiosk ",
-      "subheading": "Get POAPs to your friends IRL",
-      "description": "Just input your .txt file of mint links and watch your phone turn into a POAP Kiosk at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one."
-    },
-    "whatis": {
-      "layeredTitle": {
-        "part1": "What is ",
-        "part2": "POAP Kiosk"
-      },
-      "checkin": {
-        "title": "Physical POAP distribution made easy",
-        "description": "For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees."
-      },
-      "stream": {
-        "title": "Stream-friendly QR sharing",
-        "description": "During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner."
-      }
-    },
-    "howdo": {
-      "title": "How do I set up a POAP kiosk?",
-      "one": {
-        "title": "Upload",
-        "description": "Upload the links.txt file containing your mint links."
-      },
-      "two": {
-        "title": "Kiosk",
-        "description": "Kiosk details and add your email address to create your POAP kiosk. "
-      },
-      "three": {
-        "title": "Share",
-        "description": "Display your POAP kiosk QR code via a device  or a screen share, and share!"
-      },
-      "getStarted": "Get started now!"
-    }
-  },
-  "EventCreate": {
-    "title": "Set up POAP Kiosk",
-    "creatingDispenser": "Creating POAP Kiosk",
-    "preCodes": {
-      "title": "Upload your mint links to your POAP kiosk"
-    },
-    "form": {
-      "codesAmount": {
-        "label": "Number of mint links"
-      },
-      "submitBtn": "Create Kiosk",
-      "dropName": {
-        "label": "Kiosk title",
-        "placeholder": "Best launch party ever",
-        "info": "For your own reference, not visible to the world."
-      },
-      "fileName": {
-        "label": "Uploaded mint links",
-        "placeholder": "",
-        "info": ""
-      },
-      "dropDate": {
-        "label": "Kiosk expiry date",
-        "info": "After this date in your local timezone, your POAP Kiosk will stop working\n\n⚠️ You can only schedule up to 30 days in advance."
-      },
-      "dropEmail": {
-        "label": "Your email",
-        "placeholder": "revered@organizer.com",
-        "info": "We will send the POAP Kiosk link and the admin link there."
-      },
-      "dropGame": {
-        "label": "Enable anti-farming game?",
-        "info": "Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.",
-        "options": [
-          {
-            "label": "No (recommended for physical events)",
-            "value": "no"
-          },
-          {
-            "label": "Yes (recommended for online drops)",
-            "value": "yes"
-          }
-        ]
-      },
-      "dropCss": {
-        "placeholder": "body, p {}",
-        "label": "Custom CSS overrides",
-        "info": "This field will be injected as CSS overrides during the claiming process."
-      },
-      "dropBaseurl": {
-        "placeholder": "https://kiosk.poap.xyz/#/static/claim/",
-        "label": "POAP Claim Baseurl Override",
-        "info": "Instead of redirecting to the POAP interface to claim a POAP, redirect it to any URL of your choosing."
-      },
-      "dropCollectEmails": {
-        "label": "Collect emails?",
-        "info": "This assumed you set up the email collection system. This requires manual approval, if you don't know what this is you should not touch it.",
-        "options": [
-          {
-            "label": "No (default setting)",
-            "value": "no"
-          },
-          {
-            "label": "Yes (requires manual approval)",
-            "value": "yes"
-          }
-        ]
-      }
-    },
-    "gameTime": {
-      "label": "How many seconds should the anti-farming game last?",
-      "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",
-      "options": [
-        {
-          "label": "30 sec",
-          "value": "30"
+    "title": "POAP Kiosk",
+    "subtitle": "Get POAPs to your friends IRL",
+    "homepage": {
+        "createBtn": "Create Kiosk",
+        "hero": {
+            "title": "POAP Kiosk ",
+            "subheading": "Get POAPs to your friends IRL",
+            "description": "Just input your .txt file of mint links and watch your phone turn into a POAP Kiosk at the click of a button. You'll be able to display QR codes for attendees to scan one-by-one."
         },
-        {
-          "label": "10 sec",
-          "value": "10"
+        "whatis": {
+            "layeredTitle": {
+                "part1": "What is ",
+                "part2": "POAP Kiosk"
+            },
+            "checkin": {
+                "title": "Physical POAP distribution made easy",
+                "description": "For IRL events, easily set up a device, or multiple devices, to display unique POAP QR codes to attendees."
+            },
+            "stream": {
+                "title": "Stream-friendly QR sharing",
+                "description": "During a livestream, set up a screenshare that displays POAP QR codes in a farming-resistant manner."
+            }
         },
-        {
-          "label": "20 sec",
-          "value": "20"
-        },
-        {
-          "label": "60 sec",
-          "value": "60"
+        "howdo": {
+            "title": "How do I set up a POAP kiosk?",
+            "one": {
+                "title": "Upload",
+                "description": "Upload the links.txt file containing your mint links."
+            },
+            "two": {
+                "title": "Kiosk",
+                "description": "Kiosk details and add your email address to create your POAP kiosk. "
+            },
+            "three": {
+                "title": "Share",
+                "description": "Display your POAP kiosk QR code via a device  or a screen share, and share!"
+            },
+            "getStarted": "Get started now!"
         }
-      ]
     },
-    "file": {
-      "acceptedFormat": "File is not a csv/txt",
-      "noCodes": "No codes found",
-      "codesDetected": "{{ count }} codes detected.",
-      "codesDetected_one": "{{ count }} code detected.",
-      "codesDetected_two": "{{ count }} codes detected.",
-      "mintCheck": "Checking your mint links",
-      "codeFormat": " codes had an invalid format. Example of a malformed code: ",
-      "csvNoEntries": "Csv has 0 entries"
+    "eventCreate": {
+        "title": "Set up POAP Kiosk",
+        "creatingDispenser": "Creating POAP Kiosk",
+        "preCodes": {
+            "title": "Upload your mint links to your POAP kiosk"
+        },
+        "form": {
+            "codesAmount": {
+                "label": "Number of mint links"
+            },
+            "submitBtn": "Create Kiosk",
+            "dropName": {
+                "label": "Kiosk title",
+                "placeholder": "Best launch party ever",
+                "info": "For your own reference, not visible to the world."
+            },
+            "fileName": {
+                "label": "Uploaded mint links",
+                "placeholder": "",
+                "info": ""
+            },
+            "dropDate": {
+                "label": "Kiosk expiry date",
+                "info": "After this date in your local timezone, your POAP Kiosk will stop working\n\n⚠️ You can only schedule up to 30 days in advance."
+            },
+            "dropEmail": {
+                "label": "Your email",
+                "placeholder": "revered@organizer.com",
+                "info": "We will send the POAP Kiosk link and the admin link there."
+            },
+            "dropGame": {
+                "label": "Enable anti-farming game?",
+                "info": "Especially online events tend to attract malicious POAP farmers (people who just show up to get as many POAPs as they can without being useful participants).\n\nEnabling this setting will force your participants to play a minigame for a minute before being given a POAP.",
+                "options": [
+                    {
+                        "label": "No (recommended for physical events)",
+                        "value": "no"
+                    },
+                    {
+                        "label": "Yes (recommended for online drops)",
+                        "value": "yes"
+                    }
+                ]
+            },
+            "dropCss": {
+                "placeholder": "body, p {}",
+                "label": "Custom CSS overrides",
+                "info": "This field will be injected as CSS overrides during the claiming process."
+            },
+            "dropBaseurl": {
+                "placeholder": "https://kiosk.poap.xyz/#/static/claim/",
+                "label": "POAP Claim Baseurl Override",
+                "info": "Instead of redirecting to the POAP interface to claim a POAP, redirect it to any URL of your choosing."
+            },
+            "dropCollectEmails": {
+                "label": "Collect emails?",
+                "info": "This assumed you set up the email collection system. This requires manual approval, if you don't know what this is you should not touch it.",
+                "options": [
+                    {
+                        "label": "No (default setting)",
+                        "value": "no"
+                    },
+                    {
+                        "label": "Yes (requires manual approval)",
+                        "value": "yes"
+                    }
+                ]
+            }
+        },
+        "gameTime": {
+            "label": "How many seconds should the anti-farming game last?",
+            "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",
+            "options": [
+                {
+                    "label": "30 sec",
+                    "value": "30"
+                },
+                {
+                    "label": "10 sec",
+                    "value": "10"
+                },
+                {
+                    "label": "20 sec",
+                    "value": "20"
+                },
+                {
+                    "label": "60 sec",
+                    "value": "60"
+                }
+            ]
+        },
+        "file": {
+            "acceptedFormat": "File is not a csv/txt",
+            "noCodes": "No codes found",
+            "codesDetected": "{{ count }} codes detected.",
+            "codesDetected_one": "{{ count }} code detected.",
+            "codesDetected_two": "{{ count }} codes detected.",
+            "mintCheck": "Checking your mint links",
+            "codeFormat": " codes had an invalid format. Example of a malformed code: ",
+            "csvNoEntries": "Csv has 0 entries"
+        },
+        "event": {
+            "eventExpired": "This event appears to have expired!",
+            "eventCancelled": "Event creation cancelled.",
+            "eventCreate": "Create dispenser with {{ count }} codes",
+            "eventCreate_one": "Create dispenser with {{ count }} code",
+            "eventCreate_two": "Create dispenser with {{ count }} codes",
+            "noName": "Please specify an event name",
+            "noEmail": "Please specify a valid email address",
+            "wrongDate": "Please specify the date in YYYY-MM-DD, for example 2021-11-25",
+            "creationMessage": "Please confirm that this is correct:\n\nDrop name: {{ name }}\n\nAdministrator email: {{ email }}\n\nPOAP Kiosk expires at: ",
+            "gameTime": {
+                "label": "How many seconds should the anti-farming game last?",
+                "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",
+                "options": [
+                    {
+                        "label": "30 sec",
+                        "value": "30"
+                    },
+                    {
+                        "label": "10 sec",
+                        "value": "10"
+                    },
+                    {
+                        "label": "20 sec",
+                        "value": "20"
+                    },
+                    {
+                        "label": "60 sec",
+                        "value": "60"
+                    }
+                ]
+            }
+        },
+        "input": {
+            "label": "Select .txt file that contains your POAP mint links",
+            "info": "This is the .txt file you received via email after you created your POAP drop at https://app.poap.xyz/admin"
+        }
     },
-    "event": {
-      "eventExpired": "This event appears to have expired!",
-      "eventCancelled": "Event creation cancelled.",
-      "eventCreate": "Create dispenser with {{ count }} codes",
-      "eventCreate_one": "Create dispenser with {{ count }} code",
-      "eventCreate_two": "Create dispenser with {{ count }} codes",
-      "noName": "Please specify an event name",
-      "noEmail": "Please specify a valid email address",
-      "wrongDate": "Please specify the date in YYYY-MM-DD, for example 2021-11-25",
-      "creationMessage": "Please confirm that this is correct:\n\nDrop name: {{ name }}\n\nAdministrator email: {{ email }}\n\nPOAP Kiosk expires at: ",
-      "gameTime": {
-        "label": "How many seconds should the anti-farming game last?",
-        "info": "The longer you set this, the harder it becomes for humans to farm your POAP drop",
-        "options": [
-          {
-            "label": "30 sec",
-            "value": "30"
-          },
-          {
-            "label": "10 sec",
-            "value": "10"
-          },
-          {
-            "label": "20 sec",
-            "value": "20"
-          },
-          {
-            "label": "60 sec",
-            "value": "60"
-          }
-        ]
-      }
+    "eventView": {
+        "eventLoading": "Loading event data",
+        "eventNoCache": "Error: No event ID known.\n\nMake sure to open this page through the event link from the admin interface.\n\nThis is an anti-abuse measure.",
+        "setKiosk": "Setting up your POAP Kiosk",
+        "terms": {
+            "title": "Before we begin",
+            "subheading": "Keep your internet on",
+            "description": "Without an internet connection new codes will stop loading. You will receive a notification if the dispenser notices you are offline.",
+            "acceptBtn": "I understand, let's go!"
+        },
+        "expired": {
+            "title": "POAP Kiosk expired",
+            "description": "This POAP Kiosk was set to expire on {{ expireDate }}."
+        },
+        "codes": {
+            "title": "No codes available",
+            "description": "If you just uploaded new ones, give the backend a minute to catch up. If nothing happens for a while, click here to open the admin interface."
+        },
+        "display": {
+            "subheading": "Scan the QR with your camera to collect your POAP",
+            "claimed": "{{ available }} of {{ codes }} codes collected or pending"
+        },
+        "stroop": {
+            "timer": "Timer: ",
+            "score": "Your score: ",
+            "failMessage": "You need to click \n{{ target_score }} correct buttons.",
+            "you": "You ",
+            "won": "Well done!",
+            "lost": "Oh no",
+            "claimPoap": "Collect your POAP",
+            "loadPoap": "Loading your POAP...",
+            "TryAgain": "Try again",
+            "game": {
+                "title": "Prove you are a human",
+                "subtitle": "Instructions:\n click the button with the right color",
+                "description": "Get the highest score you can in {{ duration }} seconds.",
+                "example": "Click the <1/><2>{{ color }}</2><3/> button.",
+                "btn": "Start game"
+            },
+            "playing": {
+                "preTitle": "Click the ",
+                "postTitle": " button",
+                "subtitle": "Score: {{ score }} of {{ target_score }}"
+            },
+            "colors": [
+                "orange",
+                "pink",
+                "yellow",
+                "blue",
+                "green",
+                "purple",
+                "red",
+                "grey"
+            ]
+        }
     },
-    "input": {
-      "label": "Select .txt file that contains your POAP mint links",
-      "info": "This is the .txt file you received via email after you created your POAP drop at https://app.poap.xyz/admin"
+    "eventAdmin": {
+        "title": "POAP Kiosk",
+        "loadingDispenser": "Loading POAP Kiosk",
+        "setLoadingDispenser": "Delete POAP Kiosk",
+        "loadingValidity": "Double-checking admin link validity",
+        "invalidValidity": "Invalid event admin link",
+        "confirmDeleteDispenser": "Are you sure you want to delete your POAP Kiosk?\n\nThis cannot be undone, but you can always create a new POAP Kiosk following the same simple steps you used to make this one.",
+        "succesDeleteDispenser": "Deletion success!\n\nYour POAP Kiosk has been deleted.\n\nClick OK to be redirected to the home page. ",
+        "deletionCancelled": "Deletion cancelled, your event still exists.",
+        "errorDeleteDispenser": "Error Deleting POAP Kiosk: {{ message }}",
+        "hero": {
+            "subheading": {
+                "reviewed": "⚠️ Your event is being reviewed",
+                "unique": "Your unique POAP Kiosk link"
+            },
+            "description": {
+                "pre": "This link is intended to be displayed on a physical device, or through a screenshare during a stream. ",
+                "bold": "NEVER",
+                "post": " send it to anyone."
+            },
+            "input": {
+                "label": "Your public POAP Kiosk link",
+                "info": "This link takes you to your POAP Kiosk page. For example, you can display this page on an iPad at your check-in desk."
+            },
+            "distribute": {
+                "button": "Open link & start distributing POAPs",
+                "clipboard": "Copy to clipboard"
+            },
+            "notavailable": {
+                "title": "This POAP Kiosk will become available once the curation team approves your event.",
+                "description": "You will receive an email when your event is approved. This email will also send you the manual claim links in a links.txt file. You don&apos;t have to use them, but it is ok to use them in combination with this POAP Kiosk."
+            }
+        },
+        "deleteDispenser": {
+            "title": "Secret Admin Section",
+            "subheading": "Delete this POAP Kiosk",
+            "description": "Want to create a new POAP Kiosk for this drop? Delete this POAP Kiosk first, and then create a new dispenser when you are ready.",
+            "deleteBtn": "Delete POAP Kiosk"
+        },
+        "adminDispenser": {
+            "title": "Admin link",
+            "description": "Your admin link is yours to make changes to this instance of the magic POAP dispenser. Don't share this with anyone!",
+            "input": {
+                "label": "Your secret admin link",
+                "info": "The link to this admin page, the page you are seeing now. This link allows you to delete your POAP Kiosk. Keep it secret!"
+            },
+            "clipboard": "Copy to clipboard"
+        }
+    },
+    "claim": {
+        "setLoading": "Verifying your humanity, you'll be forwarded soon",
+        "formulateRedirect": "Claim link generated: ",
+        "preppingMessage": "Prepping your POAP",
+        "stall": {
+            "loadingPrimary": "👀 Have I seen you before?",
+            "loadingSecondary": "🧐 You look a bit suspicious my friend...",
+            "loadingNewScan": "Please scan a new QR code",
+            "loadingError": "Verification failed! Either you took too long, or a lot of people are scanning at the same time, please scan again :).\n\nDebug info: {{ error_code }}, bc {{ challenge_code }}, fe {{ trail }}"
+        },
+        "validation": {
+            "alreadyUsed": "This link was already used, please scan the QR again"
+        }
+    },
+    "messaging": {
+        "health": {
+            "check": "Systeem status: ",
+            "error": "Error getting system health: ",
+            "cancelled": "Health effect cancelled",
+            "maintenance": "The POAP system is undergoing some maintenance, the POAP Kiosk might not work as expected during this time.\n\nPlease check our official channels for details."
+        },
+        "upload": {
+            "formatInvalid": "Invalid file format.",
+            "dragndrop": "Drop your file(s) here",
+            "standard": "Upload .txt file"
+        }
+    },
+    "staticCreate": {
+        "title": "Static POAP Kiosk drop creation",
+        "set_loading": "Creating drop",
+        "note": "Note: this is an internal POAP tool, anything you do here will not work unless it received preapproval from the engineering team.",
+        "labels": {
+            "drop_id": {
+                "label": "Drop ID",
+                "info": "The event ID of your drop, this can be found in the confirmation email"
+            },
+            "welcome_text": {
+                "label": "Welcome text",
+                "info": "The welcome text above the email field"
+            },
+            "optin_text": {
+                "label": "Opt-in text (html)",
+                "info": "The opt in text displayed at POAP claim."
+            }
+        },
+        "buttons": {
+            "create_drop": "Create static drop"
+        },
+        "succes_screen": {
+            "title": "Creation success",
+            "steps_title": "Next steps:",
+            "first_line": "1. Save your authentication code: {{ code }}.",
+            "second_line": "2. Ask for this drop to be approved.",
+            "third_line": "3. Print your physical QRS with the format: https://qr.poap.xyz/#/static/claim/CLAIM_CODE.",
+            "fourth_line": "4. Export emails after the event at https://qr.poap.xyz/#/static/admin/export."
+        }
+    },
+    "staticClaim": {
+        "title": "Collect your POAP",
+        "set_loading": "Collecting your POAP",
+        "validations": {
+            "accept_terms": "Please accept the terms in order to continue",
+            "valid_email": "Please input a valid email or wallet address address",
+            "invalid_qr": "Your QR is invalid, please scan it again",
+            "verifying_qr": "Verifying your POAP",
+            "used_qr": "This QR was already used.",
+            "invalid_link": "You scanned an invalid link, please contact the event organiser."
+        },
+        "labels": {
+            "email": {
+                "label": "Your email",
+                "label_with_wallet": "Your email or wallet address"
+            }
+        },
+        "buttons": {
+            "claim_poap": "Collect your POAP"
+        },
+        "user_claimed": {
+            "title": "You successfully collected your POAP!",
+            "subtitle": "Check your inbox at {{ email }}",
+            "description": "The email contains instructions on how to view your POAP, and claim it to a crypto wallet if you want to do so."
+        }
+    },
+    "staticAdmin": {
+        "title": "Static POAP Kiosk drop export",
+        "set_loading": "Verifying credentials",
+        "auth_succes": "Authentication success",
+        "labels": {
+            "drop_id": {
+                "label": "Drop ID",
+                "info": "The event ID of your drop, this can be found in the confirmation email"
+            },
+            "secret_code": {
+                "label": "Drop Secret Edit Code",
+                "info": "The secret edit code of your drop, this can be found in the confirmation email"
+            },
+            "auth_code": {
+                "label": "Authentication code",
+                "info": "The secret edit code of your drop, this can be found in the confirmation email"
+            }
+        },
+        "buttons": {
+            "download_csv": "Download emails CSV file",
+            "export_drop": "Authenticate and Export CSV",
+            "delete_drop_emails": "Delete drop data"
+        }
     }
-  },
-  "EventView": {
-    "stroop": {
-      "timer": "Timer: ",
-      "score": "Your score: ",
-      "failMessage": "You need to click \n{{ target_score }} correct buttons.",
-      "you": "You ",
-      "won": "Well done!",
-      "lost": "Oh no",
-      "claimPoap": "Collect your POAP",
-      "loadPoap": "Loading your POAP...",
-      "TryAgain": "Try again",
-      "game": {
-        "title": "Prove you are a human",
-        "subtitle": "Instructions:\n click the button with the right color",
-        "description": "Get the highest score you can in {{ duration }} seconds.",
-        "example": "Click the <1/><2>{{ color }}</2><3/> button.",
-        "btn": "Start game"
-      },
-      "playing": {
-        "preTitle": "Click the ",
-        "postTitle": " button",
-        "subtitle": "Score: {{ score }} of {{ target_score }}"
-      },
-      "colors": [
-        "orange",
-        "pink",
-        "yellow",
-        "blue",
-        "green",
-        "purple",
-        "red",
-        "grey"
-      ]
-    }
-  }
 }

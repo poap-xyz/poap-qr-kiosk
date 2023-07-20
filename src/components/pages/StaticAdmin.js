@@ -17,10 +17,8 @@ import ViewWrapper from "../molecules/ViewWrapper"
 
 export default function StaticClaimAdmin() {
 
-    // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
-    // Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
-    // Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
-    const { t } = useTranslation( [ 'static' , 'dispenser' ] )
+    // i18next hook
+    const { t } = useTranslation()
 
     const [ drop_id, set_drop_id ] = useState( '' )
     const [ secret_code, set_secret_code ] = useState( '' )
@@ -32,7 +30,7 @@ export default function StaticClaimAdmin() {
 
         try {
 
-            set_loading( `${ t( 'admin.set_loading' ) }` )
+            set_loading( `${ t( 'staticAdmin.set_loading' ) }` )
             const { data } = await export_emails_of_static_drop( { drop_id, secret_code, auth_code } )
             log( `Remote response: `, data )
             const { csv_string, error } = data
@@ -55,7 +53,7 @@ export default function StaticClaimAdmin() {
             const very_sure = confirm( `This action deletes all collected emails and CANNOT BE UNDONE.\n\nThis is a compliance action that purges user data related to this drop from POAPs systems.` )
             if( !very_sure ) return alert( `Action aborted. Nothing was deleted.` )
 
-            set_loading( `${ t( 'admin.set_loading' ) }` )
+            set_loading( `${ t( 'staticAdmin.set_loading' ) }` )
             const { data } = await delete_emails_of_static_drop( { drop_id, secret_code, auth_code } )
             log( `Remote response: `, data )
             const { error } = data
@@ -77,8 +75,8 @@ export default function StaticClaimAdmin() {
 
         <Main width='600px'>
 
-            <H1>{ t( 'admin.auth_succes' ) }</H1>
-            <Button download={ `poap_drop_${ drop_id }_email_claims-${ new Date().toDateString() }.csv` } href={ `data:text/csv;charset=utf-8,${ csv_emails }` }>{ t( 'admin.buttons.download_csv' ) }</Button>
+            <H1>{ t( 'staticAdmin.auth_succes' ) }</H1>
+            <Button download={ `poap_drop_${ drop_id }_email_claims-${ new Date().toDateString() }.csv` } href={ `data:text/csv;charset=utf-8,${ csv_emails }` }>{ t( 'staticAdmin.buttons.download_csv' ) }</Button>
 
         </Main>
 
@@ -88,12 +86,12 @@ export default function StaticClaimAdmin() {
 
         <Main align='flex-start' width='600px'>
 
-            <H1>{ t( 'admin.title' ) }</H1>
-            <Input type='text' value={ drop_id } onChange={ ( { target } ) => set_drop_id( target.value ) } label={ t( 'admin.labels.drop_id.label' ) } info={ t( 'admin.labels.drop_id.info' ) } />
-            <Input type='text' value={ secret_code } onChange={ ( { target } ) => set_secret_code( target.value ) } label={ t( 'admin.labels.secret_code.label' ) } info={ t( 'admin.labels.secret_code.info' ) } />
-            <Input type='text' value={ auth_code } onChange={ ( { target } ) => set_auth_code( target.value ) } label={ t( 'admin.labels.auth_code.label' ) } info={ t( 'admin.labels.auth_code.info' ) } />
-            <Button onClick={ export_drop }>{ t( 'admin.buttons.export_drop' ) }</Button>
-            <Button onClick={ delete_drop_emails }>{ t( 'admin.buttons.delete_drop_emails' ) }</Button>
+            <H1>{ t( 'staticAdmin.title' ) }</H1>
+            <Input type='text' value={ drop_id } onChange={ ( { target } ) => set_drop_id( target.value ) } label={ t( 'staticAdmin.labels.drop_id.label' ) } info={ t( 'staticAdmin.labels.drop_id.info' ) } />
+            <Input type='text' value={ secret_code } onChange={ ( { target } ) => set_secret_code( target.value ) } label={ t( 'staticAdmin.labels.secret_code.label' ) } info={ t( 'staticAdmin.labels.secret_code.info' ) } />
+            <Input type='text' value={ auth_code } onChange={ ( { target } ) => set_auth_code( target.value ) } label={ t( 'staticAdmin.labels.auth_code.label' ) } info={ t( 'staticAdmin.labels.auth_code.info' ) } />
+            <Button onClick={ export_drop }>{ t( 'staticAdmin.buttons.export_drop' ) }</Button>
+            <Button onClick={ delete_drop_emails }>{ t( 'staticAdmin.buttons.delete_drop_emails' ) }</Button>
 
         </Main>
 

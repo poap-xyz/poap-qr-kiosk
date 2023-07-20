@@ -13,10 +13,8 @@ import { log, uuidv4 } from "../../modules/helpers"
 
 export default function StaticClaimCreate() {
 
-    // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
-    // Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
-    // Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
-    const { t } = useTranslation( [ 'static' , 'dispenser' ] )
+    // i18next hook
+    const { t } = useTranslation()
 
     const [ drop_id, set_drop_id ] = useState( '' )
     const [ optin_text, set_optin_text ] = useState( '' )
@@ -32,7 +30,7 @@ export default function StaticClaimCreate() {
 
         try {
 
-            set_loading( `${ t( 'create.set_loading' ) }` )
+            set_loading( `${ t( 'staticCreate.set_loading' ) }` )
             const { data } = await create_static_drop( { drop_id, auth_code, optin_text, welcome_text, custom_css, custom_email, allow_wallet_claim } )
             log( `Remote response: `, data )
             const { error } = data
@@ -54,12 +52,12 @@ export default function StaticClaimCreate() {
 
         <Main align='flex-start' width='600px'>
 
-            <H1>{ t( 'create.succes_screen.title' ) }</H1>
-            <Text>{ t( 'create.succes_screen.steps_title' ) }</Text>
-            <Text>{ t( 'create.succes_screen.first_line' , { code: auth_code } ) }</Text>
-            <Text>{ t( 'create.succes_screen.second_line' ) }</Text>
-            <Text>{ t( 'create.succes_screen.third_line' ) }</Text>
-            <Text>{ t( 'create.succes_screen.fourth_line' ) }</Text>
+            <H1>{ t( 'staticCreate.succes_screen.title' ) }</H1>
+            <Text>{ t( 'staticCreate.succes_screen.steps_title' ) }</Text>
+            <Text>{ t( 'staticCreate.succes_screen.first_line' , { code: auth_code } ) }</Text>
+            <Text>{ t( 'staticCreate.succes_screen.second_line' ) }</Text>
+            <Text>{ t( 'staticCreate.succes_screen.third_line' ) }</Text>
+            <Text>{ t( 'staticCreate.succes_screen.fourth_line' ) }</Text>
         </Main>
 
     </ViewWrapper>
@@ -68,11 +66,11 @@ export default function StaticClaimCreate() {
 
         <Main align='flex-start' width='600px'>
 
-            <H1>{ t( 'create.title' ) }</H1>
-            <Text>{ t( 'create.note' ) }</Text>
-            <Input type='text' value={ drop_id } onChange={ ( { target } ) => set_drop_id( target.value ) } label={ t( 'create.labels.drop_id.label' ) } info={ t( 'create.labels.drop_id.info' ) } />
-            <Input type='text' value={ welcome_text } onChange={ ( { target } ) => set_welcome_text( target.value ) } label={ t( 'create.labels.welcome_text.label' ) } info={ t( 'create.labels.welcome_text.info' ) } />
-            <Input type='text' value={ optin_text } onChange={ ( { target } ) => set_optin_text( target.value ) } label={ t( 'create.labels.optin_text.label' ) } info={ t( 'create.labels.optin_text.info' ) } />
+            <H1>{ t( 'staticCreate.title' ) }</H1>
+            <Text>{ t( 'staticCreate.note' ) }</Text>
+            <Input type='text' value={ drop_id } onChange={ ( { target } ) => set_drop_id( target.value ) } label={ t( 'staticCreate.labels.drop_id.label' ) } info={ t( 'staticCreate.labels.drop_id.info' ) } />
+            <Input type='text' value={ welcome_text } onChange={ ( { target } ) => set_welcome_text( target.value ) } label={ t( 'staticCreate.labels.welcome_text.label' ) } info={ t( 'staticCreate.labels.welcome_text.info' ) } />
+            <Input type='text' value={ optin_text } onChange={ ( { target } ) => set_optin_text( target.value ) } label={ t( 'staticCreate.labels.optin_text.label' ) } info={ t( 'staticCreate.labels.optin_text.info' ) } />
             <Input type='text' value={ custom_css } onChange={ ( { target } ) => set_custom_css( target.value ) } label='Custom CSS' info='Custom style code that will be injected. This can be used for fonts, logos, adn colors.' />
             <Input type='text' value={ custom_email } onChange={ ( { target } ) => set_custom_email( target.value ) } label='Custom Email HTML' info='Custom email HTML that will be sent instead of the default POAP email.' />
             <Text id='static-print-qr-optin-field' align='flex-start' onClick={ f => set_allow_wallet_claim( !allow_wallet_claim ) } direction='row'>
@@ -81,7 +79,7 @@ export default function StaticClaimCreate() {
                 { /* This allows us to set terms & conditions texts through the firebase entry */ }
                 Allow claims by wallet address. This bypasses the collection of emails, allowing you to use the static claim page as a whitelabel claim experience.
             </Text>
-            <Button onClick={ create_drop }>{ t( 'create.buttons.create_drop' ) }</Button>
+            <Button onClick={ create_drop }>{ t( 'staticCreate.buttons.create_drop' ) }</Button>
 
         </Main>
 

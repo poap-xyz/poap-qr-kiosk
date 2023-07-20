@@ -1,25 +1,26 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 // Functionality
-import { useNavigate } from 'react-router-dom'
 import { health_check } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 
 // Components
-import { HeroIcon, H1, H2, H3, Text, Button, Container, LayeredText, DynamicTag, Divider, useViewport } from '@poap/poap-components'
-import { HeroImage, GirlQRImage, FooterImage, FullLine, StyledDutchBackgroundFullWidth, GroupPhoneImage, FooterDecorationLeft, FooterDecorationRight } from '../molecules/HomeDecorations'
 import Section from '../atoms/Section'
-
-import { Grid, Row, Col } from '../atoms/Grid'
-import Layout from '../molecules/Layout'
+import { Row, Col } from '../atoms/Grid'
 import { NumberedUps } from '../atoms/NumberedUps'
+import Layout from '../molecules/Layout'
+import { HeroImage, GirlQRImage, FooterImage, FullLine, StyledDutchBackgroundFullWidth, GroupPhoneImage, FooterDecorationLeft, FooterDecorationRight } from '../molecules/HomeDecorations'
+
+import { H2, H3, Text, Button, Container, LayeredText, DynamicTag, Divider, useViewport } from '@poap/poap-components'
 
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
 export default function ComponentName( ) {
 
+    // Navigation hooks
     const navigate = useNavigate()
     const [ allowAccess, setAllowAccess ] = useState( true )
 

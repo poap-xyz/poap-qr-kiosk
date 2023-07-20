@@ -1,4 +1,4 @@
-import { Text, Button, Container } from '@poap/poap-components'
+import { Container } from '@poap/poap-components'
 
 import styled from 'styled-components'
 
