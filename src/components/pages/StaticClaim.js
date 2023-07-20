@@ -21,10 +21,8 @@ import Style from '../atoms/Style'
 
 export default function StaticClaim() {
 
-    // useTranslation loads the first namespace (example 1) by default and pre caches the second variable, the t hook still needs a reference like example 2.
-    // Example 1: Translations for this organism are loaded by i18next like: t( 'key.reference' )
-    // Example 2: Translations for sitewide texts are in Namespace 'dispenser' and are loaded like: t( 'key.reference', { ns: 'dispenser' } )
-    const { t } = useTranslation( [ 'static' , 'dispenser' ] )
+    // i18next hook
+    const { t } = useTranslation()
 
     const [ email_or_0x_address, set_email_or_0x_address ] = useState( '' )
     const [ termsAccepted, setTermsAccepted ] = useState( false )
@@ -39,12 +37,12 @@ export default function StaticClaim() {
         try {
 
             // Validate inputs
-            if( code_meta?.drop_meta?.optin_text && !termsAccepted ) throw new Error( `${ t( 'claim.validations.accept_terms' ) }` )
-            if( !email_or_0x_address?.includes( '@' ) && !email_or_0x_address.match( /0x[0-9-a-z]{40}/ig ) ) throw new Error( `${ t( 'claim.validations.valid_email' ) }` )
-            if( !claim_code ) throw new Error( `${ t( 'claim.validations.invalid_qr' ) }` )
+            if( code_meta?.drop_meta?.optin_text && !termsAccepted ) throw new Error( `${ t( 'staticClaim.validations.accept_terms' ) }` )
+            if( !email_or_0x_address?.includes( '@' ) && !email_or_0x_address.match( /0x[0-9-a-z]{40}/ig ) ) throw new Error( `${ t( 'staticClaim.validations.valid_email' ) }` )
+            if( !claim_code ) throw new Error( `${ t( 'staticClaim.validations.invalid_qr' ) }` )
 
             // Register claim with firebase
-            setLoading( `${ t( 'claim.set_loading' ) }` )
+            setLoading( `${ t( 'staticClaim.set_loading' ) }` )
             const { data: response } = await claim_code_by_email( { claim_code, email_or_0x_address, is_static_drop: true } )
             const { error } = response
             log( `Remote response `, response )
@@ -72,25 +70,25 @@ export default function StaticClaim() {
     if( drop_meta == 'loading' || loading ) return <Loading generic_loading_styles={ true } message={ loading } />
 
     // If no code meta is available yet, show spinner
-    if( code_meta?.event === 'loading' ) return <Loading generic_loading_styles={ true } message={ t( 'claim.validations.verifying_qr' ) } />
+    if( code_meta?.event === 'loading' ) return <Loading generic_loading_styles={ true } message={ t( 'staticClaim.validations.verifying_qr' ) } />
 
     // If code was already used, show error message
     if( code_meta?.claimed === true ) return <ViewWrapper generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
-        <Text>{ t( 'claim.validations.used_qr' ) }</Text>
+        <Text>{ t( 'staticClaim.validations.used_qr' ) }</Text>
     </ViewWrapper>
 
     // If no drop meta available, the user is trying to cheat or has a malformed link
     if( !code_meta?.event ) return <ViewWrapper generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
-        <Text>{ t( 'claim.validations.invalid_link' ) }</Text>
+        <Text>{ t( 'staticClaim.validations.invalid_link' ) }</Text>
     </ViewWrapper>
 
     // If the user claimed the POAP, tell them to check their email
     if( user_claimed ) return <ViewWrapper generic_loading_styles={ true } id='static-print-qr-top-container-success'>
 
         <Main align='flex-start' width='400px'>
-            <H1>{ t( 'claim.user_claimed.title' ) }</H1>
-            <H2>{ t( 'claim.user_claimed.subtitle' , { email: email_or_0x_address } ) }</H2>
-            <Text>{ t( 'claim.user_claimed.description' ) }</Text>
+            <H1>{ t( 'staticClaim.user_claimed.title' ) }</H1>
+            <H2>{ t( 'staticClaim.user_claimed.subtitle' , { email: email_or_0x_address } ) }</H2>
+            <Text>{ t( 'staticClaim.user_claimed.description' ) }</Text>
         </Main>
 
     </ViewWrapper>
@@ -99,7 +97,7 @@ export default function StaticClaim() {
     return <ViewWrapper generic_loading_styles={ true } id='static-print-qr-top-container'>
 
         <Main align='flex-start' width='400px'>
-            <H1 id='static-print-qr-h1'>{ t( 'claim.title' ) }</H1>
+            <H1 id='static-print-qr-h1'>{ t( 'staticClaim.title' ) }</H1>
 
             { drop_meta?.welcome_text && <Text id='static-print-qr-welcome-text'>{ code_meta?.drop_meta?.welcome_text }</Text> }
 
@@ -112,7 +110,7 @@ export default function StaticClaim() {
                 <span dangerouslySetInnerHTML={ { __html: remove_script_tags( drop_meta?.optin_text ) } } />
             </Text> }
             
-            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={  termsAccepted || !drop_meta?.optin_text  ? 'primary' : 'text' }>{ t( 'claim.buttons.claim_poap' ) }</Button>
+            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={  termsAccepted || !drop_meta?.optin_text  ? 'primary' : 'text' }>{ t( 'staticClaim.buttons.claim_poap' ) }</Button>
         </Main>
 
         { /* If this drop has custom CSS associated with it, inject it */ }

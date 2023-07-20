@@ -24,7 +24,7 @@ const random_color = except => pick_random_array_entry( colors.filter( color => 
 const Timer = ( { duration, onComplete, ...props } ) => {
 
     const [ timePassed, setTimePassed ] = useState( 0 )
-    const { t } = useTranslation( )
+    const { t } = useTranslation()
 
     useInterval( f => {
         if( timePassed >= duration ) return onComplete()

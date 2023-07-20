@@ -26,7 +26,7 @@ import { ReactComponent as NoCodes } from '../../assets/illustrations/no_more_co
 // ///////////////////////////////
 export default function ViewQR( ) {
 
-    const { t } = useTranslation( )
+    const { t } = useTranslation()
 
     const navigate = useNavigate()
     const location = useLocation()
