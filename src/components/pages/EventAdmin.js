@@ -102,7 +102,7 @@ export default function EventAdmin( ) {
     const focus = e => e.target.select()
     const clipboard = async text => {
         await navigator.clipboard.writeText( text )
-        alert( `${ t( 'clipboardCopy' ) }` ) 
+        alert( `${ t( 'messaging.clipboard.copy' ) }` ) 
         trackEvent( 'admin_link_copied_clipboard' )
     }
     // Data management
@@ -141,7 +141,7 @@ export default function EventAdmin( ) {
         <Section>
             <Container>
                 
-                <CardContainer margin='0 0 var(--spacing-6) 0'>
+                <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
                     <H1 align='center'>{ t( 'eventAdmin.title' ) }</H1>
                     <Grid>
 
@@ -180,7 +180,7 @@ export default function EventAdmin( ) {
                         </> }
                     </Grid>
                 </CardContainer>
-                <CardContainer>
+                <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
                     <H1>{ t( 'eventAdmin.deleteDispenser.title' ) }</H1>
                     <Grid>
                         <Row>

@@ -14,7 +14,6 @@ import Loading from '../molecules/Loading'
 import Button from '../atoms/Button'
 import ViewWrapper from '../molecules/ViewWrapper'
 import Input from '../atoms/Input'
-import Main from '../atoms/Main'
 import { H1, H2, Text } from '../atoms/Text'
 import Style from '../atoms/Style'
 
@@ -85,33 +84,29 @@ export default function StaticClaim() {
     // If the user claimed the POAP, tell them to check their email
     if( user_claimed ) return <ViewWrapper generic_loading_styles={ true } id='static-print-qr-top-container-success'>
 
-        <Main align='flex-start' width='400px'>
-            <H1>{ t( 'staticClaim.user_claimed.title' ) }</H1>
-            <H2>{ t( 'staticClaim.user_claimed.subtitle' , { email: email_or_0x_address } ) }</H2>
-            <Text>{ t( 'staticClaim.user_claimed.description' ) }</Text>
-        </Main>
+        <H1>{ t( 'staticClaim.user_claimed.title' ) }</H1>
+        <H2>{ t( 'staticClaim.user_claimed.subtitle' , { email: email_or_0x_address } ) }</H2>
+        <Text>{ t( 'staticClaim.user_claimed.description' ) }</Text>
 
     </ViewWrapper>
 
     // Show claim interface
     return <ViewWrapper generic_loading_styles={ true } id='static-print-qr-top-container'>
 
-        <Main align='flex-start' width='400px'>
-            <H1 id='static-print-qr-h1'>{ t( 'staticClaim.title' ) }</H1>
+        <H1 id='static-print-qr-h1'>{ t( 'staticClaim.title' ) }</H1>
 
-            { drop_meta?.welcome_text && <Text id='static-print-qr-welcome-text'>{ code_meta?.drop_meta?.welcome_text }</Text> }
+        { drop_meta?.welcome_text && <Text id='static-print-qr-welcome-text'>{ code_meta?.drop_meta?.welcome_text }</Text> }
 
-            <Input id='static-print-qr-email-field' label={ t( `claim.labels.email.${ drop_meta?.allow_wallet_claim ? 'label_with_wallet' : 'label' }` ) } value={ email_or_0x_address } onChange={ ( { target } ) => set_email_or_0x_address( target.value ) } />
+        <Input id='static-print-qr-email-field' label={ t( `claim.labels.email.${ drop_meta?.allow_wallet_claim ? 'label_with_wallet' : 'label' }` ) } value={ email_or_0x_address } onChange={ ( { target } ) => set_email_or_0x_address( target.value ) } />
                             
-            { drop_meta?.optin_text && <Text id='static-print-qr-optin-field' align='flex-start' onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
-                <Input style={ { zoom: 1.3 } } margin='0 .5rem 0 0' width='50px' type='checkbox' onChange={ ( { target } ) => setTermsAccepted( target.checked ) } checked={ termsAccepted } />
+        { drop_meta?.optin_text && <Text id='static-print-qr-optin-field' align='flex-start' onClick={ f => setTermsAccepted( !termsAccepted ) } direction='row'>
+            <Input style={ { zoom: 1.3 } } margin='0 .5rem 0 0' width='50px' type='checkbox' onChange={ ( { target } ) => setTermsAccepted( target.checked ) } checked={ termsAccepted } />
                 
-                { /* This allows us to set terms & conditions texts through the firebase entry */ }
-                <span dangerouslySetInnerHTML={ { __html: remove_script_tags( drop_meta?.optin_text ) } } />
-            </Text> }
+            { /* This allows us to set terms & conditions texts through the firebase entry */ }
+            <span dangerouslySetInnerHTML={ { __html: remove_script_tags( drop_meta?.optin_text ) } } />
+        </Text> }
             
-            <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={  termsAccepted || !drop_meta?.optin_text  ? 'primary' : 'text' }>{ t( 'staticClaim.buttons.claim_poap' ) }</Button>
-        </Main>
+        <Button id='static-print-qr-claim-button' onClick={ claim_poap } color={  termsAccepted || !drop_meta?.optin_text  ? 'primary' : 'text' }>{ t( 'staticClaim.buttons.claim_poap' ) }</Button>
 
         { /* If this drop has custom CSS associated with it, inject it */ }
         <Style styles={ drop_meta?.custom_css } />

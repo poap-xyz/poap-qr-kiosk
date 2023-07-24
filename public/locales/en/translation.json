@@ -308,6 +308,9 @@
             "formatInvalid": "Invalid file format.",
             "dragndrop": "Drop your file(s) here",
             "standard": "Upload .txt file"
+        },
+        "clipboard": {
+            "copy": "Copied to clipboard"
         }
     },
     "staticCreate": {
