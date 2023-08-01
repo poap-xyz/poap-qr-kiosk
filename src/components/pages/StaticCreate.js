@@ -2,12 +2,13 @@ import { useRef, useState } from "react"
 import { useTranslation } from 'react-i18next'
 
 // Components
+import { Grid, Row, Col } from "../atoms/Grid"
 import Section from "../atoms/Section"
 import Loading from "../molecules/Loading"
 import Layout from "../molecules/Layout"
 import { create_static_drop } from '../../modules/firebase'
 import { log, uuidv4 } from "../../modules/helpers"
-import { H1, Text, Input, Button, Container, CardContainer } from "@poap/poap-components"
+import { H1, Text, Input, Button, Container, CardContainer, Checkbox } from "@poap/poap-components"
 
 export default function StaticClaimCreate() {
 
@@ -46,17 +47,21 @@ export default function StaticClaimCreate() {
 
     if( loading ) return <Loading message={ loading } />
 
-    if( success ) return <Layout hide_footer>
+    if( success ) return <Layout center hide_footer>
 
         <Section padding='var(--spacing-4) 0 var(--spacing-4) 0'>
-            <Container width='600px'>
+            <Container width='750px'>
                 <CardContainer>
+
                     <H1>{ t( 'staticCreate.succes_screen.title' ) }</H1>
-                    <Text>{ t( 'staticCreate.succes_screen.steps_title' ) }</Text>
-                    <Text>{ t( 'staticCreate.succes_screen.first_line' , { code: auth_code } ) }</Text>
-                    <Text>{ t( 'staticCreate.succes_screen.second_line' ) }</Text>
-                    <Text>{ t( 'staticCreate.succes_screen.third_line' ) }</Text>
-                    <Text>{ t( 'staticCreate.succes_screen.fourth_line' ) }</Text>
+                    <Grid>
+                        <Text weight='600'>{ t( 'staticCreate.succes_screen.steps_title' ) }</Text>
+                        <Text>{ t( 'staticCreate.succes_screen.first_line' , { code: auth_code } ) }</Text>
+                        <Text>{ t( 'staticCreate.succes_screen.second_line' ) }</Text>
+                        <Text>{ t( 'staticCreate.succes_screen.third_line' ) }</Text>
+                        <Text>{ t( 'staticCreate.succes_screen.fourth_line' ) }</Text>
+                    </Grid>
+
                 </CardContainer>
 
 
@@ -77,12 +82,13 @@ export default function StaticClaimCreate() {
                     <Input type='text' value={ optin_text } onChange={ ( { target } ) => set_optin_text( target.value ) } label={ t( 'staticCreate.labels.optin_text.label' ) } info={ t( 'staticCreate.labels.optin_text.info' ) } />
                     <Input type='text' value={ custom_css } onChange={ ( { target } ) => set_custom_css( target.value ) } label='Custom CSS' info='Custom style code that will be injected. This can be used for fonts, logos, adn colors.' />
                     <Input type='text' value={ custom_email } onChange={ ( { target } ) => set_custom_email( target.value ) } label='Custom Email HTML' info='Custom email HTML that will be sent instead of the default POAP email.' />
-                    <Text id='static-print-qr-optin-field' align='flex-start' onClick={ f => set_allow_wallet_claim( !allow_wallet_claim ) } direction='row'>
-                        <Input style={ { zoom: 1.3 } } margin='0 .5rem 0 0' width='50px' type='checkbox' onChange={ ( { target } ) => set_allow_wallet_claim( target.checked ) } checked={ allow_wallet_claim } />
-                
-                        { /* This allows us to set terms & conditions texts through the firebase entry */ }
-                        Allow claims by wallet address. This bypasses the collection of emails, allowing you to use the static claim page as a whitelabel claim experience.
-                    </Text>
+                    <Grid>
+                        <Row>
+                            <Checkbox id="static-print-qr-optin-field" label="Allow claims by wallet address." style={ { alignSelf: 'flex-start' } } onChange={ ( { target } ) => set_allow_wallet_claim( target.checked ) } error="hello"/>
+                            <Text size='var(--fs-3xs)' color='var(--primary-600)'>This bypasses the collection of emails, allowing you to use the static claim page as a whitelabel claim experience.</Text> 
+                        </Row>
+                    </Grid>
+
                     <Button onClick={ create_drop }>{ t( 'staticCreate.buttons.create_drop' ) }</Button>
 
                 </CardContainer>
