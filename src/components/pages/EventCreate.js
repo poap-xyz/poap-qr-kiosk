@@ -293,7 +293,7 @@ export default function Admin( ) {
                 <br/>
                 <H3 align='center' size=''>{ t( 'eventCreate.title' ) }</H3>
 
-                <Grid>
+                <Grid margin={ developer_mode ? '0 auto var(--spacing-12) auto' : '' }>
                     <Row>
                         <Col size={ 1 }>
                             <Input disabled label={ t( 'eventCreate.form.fileName.label' ) } value={ filename } />

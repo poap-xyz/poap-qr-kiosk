@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@heroicons/react": "^2.0.18",
-    "@poap/poap-components": "^0.0.82",
+    "@poap/poap-components": "^0.0.86",
     "@rive-app/react-canvas": "^3.0.53",
     "cypress": "^11.2.0",
     "firebase": "^9.15.0",

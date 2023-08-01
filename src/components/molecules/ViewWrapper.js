@@ -61,9 +61,14 @@ export default ( { children, background, hide_background, generic_loading_styles
     // Force a blank page until the (potential) custom CSS is loaded?
     if( blank_until_custom_css && css == 'loading' ) return
 
+    // const shouldHideHeader = show_bookmark == true 
+
+
     return <>
+
         { show_bookmark && <header style={ { height: 'calc(var(--header-height) + 6px)' } }><StyledBookmark /></header> }
-        <Main className={ `${ className } global_container` } { ...props }>
+        
+        <Main hideHeader={ !show_bookmark } className={ `${ className } global_container` } { ...props }>
 
             { hide_background ? '' : <BackgroundImage id="global_background_image" generic_styles={ generic_loading_styles } src={ background } key='background' /> }
             { children }

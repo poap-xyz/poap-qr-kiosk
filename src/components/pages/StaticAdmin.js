@@ -6,12 +6,11 @@ import { export_emails_of_static_drop, delete_emails_of_static_drop } from '../.
 import { log } from "../../modules/helpers"
 
 // Components
-import Button from "../atoms/Button"
-import Input from "../atoms/Input"
-import Main from "../atoms/Main"
 import Loading from "../molecules/Loading"
-import { H1 } from "../atoms/Text"
-import ViewWrapper from "../molecules/ViewWrapper"
+import Layout from "../molecules/Layout"
+import Section from "../atoms/Section"
+import { Row, Col } from "../atoms/Grid"
+import { CardContainer, Container, Button, Input, H1 } from "@poap/poap-components"
 
 
 
@@ -71,29 +70,36 @@ export default function StaticClaimAdmin() {
 
     if( loading ) return <Loading message={ loading } />
 
-    if( csv_emails ) return <ViewWrapper>
+    if( csv_emails ) return <Layout center hide_footer>
+        <Section>
+            <Container>
+                <CardContainer width='900px'>
+                    <H1>{ t( 'staticAdmin.auth_succes' ) }</H1>
+                    <Button download={ `poap_drop_${ drop_id }_email_claims-${ new Date().toDateString() }.csv` } href={ `data:text/csv;charset=utf-8,${ csv_emails }` }>{ t( 'staticAdmin.buttons.download_csv' ) }</Button>
 
-        <Main width='600px'>
+                </CardContainer>
+            </Container>
+        </Section>
+    </Layout>
 
-            <H1>{ t( 'staticAdmin.auth_succes' ) }</H1>
-            <Button download={ `poap_drop_${ drop_id }_email_claims-${ new Date().toDateString() }.csv` } href={ `data:text/csv;charset=utf-8,${ csv_emails }` }>{ t( 'staticAdmin.buttons.download_csv' ) }</Button>
+    return <Layout center hide_footer>
+        <Section>
+            <Container>
+                <CardContainer width='900px'>
+                    <H1>{ t( 'staticAdmin.title' ) }</H1>
+                    <Input type='text' value={ drop_id } onChange={ ( { target } ) => set_drop_id( target.value ) } label={ t( 'staticAdmin.labels.drop_id.label' ) } info={ t( 'staticAdmin.labels.drop_id.info' ) } />
+                    <Input type='text' value={ secret_code } onChange={ ( { target } ) => set_secret_code( target.value ) } label={ t( 'staticAdmin.labels.secret_code.label' ) } info={ t( 'staticAdmin.labels.secret_code.info' ) } />
+                    <Input type='text' value={ auth_code } onChange={ ( { target } ) => set_auth_code( target.value ) } label={ t( 'staticAdmin.labels.auth_code.label' ) } info={ t( 'staticAdmin.labels.auth_code.info' ) } />
+                    <Row>
+                        <Col><Button onClick={ export_drop }>{ t( 'staticAdmin.buttons.export_drop' ) }</Button></Col>
+                        <Col><Button onClick={ delete_drop_emails } margin='0 0 0 var(--spacing-2)'>{ t( 'staticAdmin.buttons.delete_drop_emails' ) }</Button></Col>
+                    </Row>
+                    
 
-        </Main>
 
-    </ViewWrapper>
+                </CardContainer>
+            </Container>
+        </Section>
 
-    return <ViewWrapper>
-
-        <Main align='flex-start' width='600px'>
-
-            <H1>{ t( 'staticAdmin.title' ) }</H1>
-            <Input type='text' value={ drop_id } onChange={ ( { target } ) => set_drop_id( target.value ) } label={ t( 'staticAdmin.labels.drop_id.label' ) } info={ t( 'staticAdmin.labels.drop_id.info' ) } />
-            <Input type='text' value={ secret_code } onChange={ ( { target } ) => set_secret_code( target.value ) } label={ t( 'staticAdmin.labels.secret_code.label' ) } info={ t( 'staticAdmin.labels.secret_code.info' ) } />
-            <Input type='text' value={ auth_code } onChange={ ( { target } ) => set_auth_code( target.value ) } label={ t( 'staticAdmin.labels.auth_code.label' ) } info={ t( 'staticAdmin.labels.auth_code.info' ) } />
-            <Button onClick={ export_drop }>{ t( 'staticAdmin.buttons.export_drop' ) }</Button>
-            <Button onClick={ delete_drop_emails }>{ t( 'staticAdmin.buttons.delete_drop_emails' ) }</Button>
-
-        </Main>
-
-    </ViewWrapper>
+    </Layout>
 }
