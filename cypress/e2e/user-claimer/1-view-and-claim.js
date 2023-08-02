@@ -37,13 +37,14 @@ context( 'Claimer can view valid events', () => {
         cy.visit( '/create?debug=true' )
 
         // Input the event data
-        cy.get( 'input[type=file]' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
+        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
         cy.get( '#event-create-name' ).clear().type( admin.events[0].name )
         cy.get( '#event-create-email' ).clear().type( admin.email )
         cy.get( '#event-create-date' ).clear().type( admin.events[0].end )
 
         // Select no anti-farming
-        cy.get( '#event-create-game-enabled' ).select( 0 )
+        cy.get( '#event-create-game-enabled' ).click( { force: true } )
+        cy.get( '#event-create-game-enabled-0' ).click( { force: true } )
 
         // Create event
         cy.get( '#event-create-submit' ).click()
@@ -186,13 +187,14 @@ context( 'Claimer can view valid events', () => {
         cy.visit( '/create?debug=true' )
 
         // Input the event data
-        cy.get( 'input[type=file]' ).attachFile( Cypress.env( 'LOCAL' ) ? `five-correct-codes.txt` : `five-correct-codes-ci.txt` )
-        cy.get( '#event-create-name' ).type( admin.events[1].name )
-        cy.get( '#event-create-email' ).type( admin.email )
-        cy.get( '#event-create-date' ).type( admin.events[1].end )
+        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `five-correct-codes.txt` : `five-correct-codes-ci.txt` )
+        cy.get( '#event-create-name' ).clear().type( admin.events[1].name )
+        cy.get( '#event-create-email' ).clear().type( admin.email )
+        cy.get( '#event-create-date' ).clear().type( admin.events[1].end )
 
         // Select no anti-farming
-        cy.get( '#event-create-game-enabled' ).select( 0 )
+        cy.get( '#event-create-game-enabled' ).click( { force: true } )
+        cy.get( '#event-create-game-enabled-0' ).click( { force: true } )
 
         // Create event
         cy.get( '#event-create-submit' ).click()

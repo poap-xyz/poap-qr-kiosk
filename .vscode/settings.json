@@ -1,6 +1,6 @@
 {
 	"i18n-ally.localesPaths": [
-		"public/locales"
+		"public/locales/"
 	],
 	"i18n-ally.keystyle": "nested",
 	"eslint.validate": [
@@ -16,5 +16,5 @@
 	"editor.formatOnSave": true,
 	"eslint.format.enable": true,
 	"eslint.run": "onType",
-	"i18next.i18nPaths": "/Users/ruben/Dev/POAP/poap-qr-kiosk/public/locales"
+	"i18next.i18nPaths": "/public/locales"
 }

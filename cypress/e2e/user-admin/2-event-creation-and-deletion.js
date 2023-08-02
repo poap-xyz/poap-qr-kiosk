@@ -9,9 +9,10 @@ context( 'Organiser successful event creation', () => {
     it( 'Shows only file box if no file was selected', () => {
 
         cy.visit( '/create?debug=true' )
-        cy.get( 'a' ).should( 'not.exist' )
-        cy.contains( 'label', 'Select .txt file that' )
 
+        cy.get( '#event-create-file' ).should( 'exist' )
+        cy.contains( 'label', 'Select .txt file that' )
+        
     } )
 
     it( 'Shows prefilled fields after file selected', () => {
@@ -20,13 +21,13 @@ context( 'Organiser successful event creation', () => {
 
         // Select file
         cy.contains( 'label', 'Select .txt file that' )
-        cy.get( 'input[type=file]' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
+        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
         cy.contains( 'Checking your mint links' )
 
         // Relevant inputs appear
-        cy.contains( 'label', 'Drop name' )
+        cy.contains( 'label', 'Kiosk title' )
         cy.contains( 'label', 'Your email' )
-        cy.contains( 'label', 'POAP Kiosk expiry date' )
+        cy.contains( 'label', 'Kiosk expiry date' )
 
         // Inputs are prefilled with expected values (generated based on backend testing defaults)
         cy.get( 'input#event-create-name' ).should( input => {
@@ -42,8 +43,7 @@ context( 'Organiser successful event creation', () => {
         const YMD = `${ tomorrow.getFullYear() }-${ month }-${ day }`
         cy.get( 'input#event-create-date' ).should( 'have.value', YMD )
 
-        cy.contains( 'Create dispenser with 2 codes' )
-		
+        cy.contains( 'Create Kiosk' )
 
     } )
 
@@ -60,7 +60,7 @@ context( 'Organiser successful event creation', () => {
         cy.visit( '/create?debug=true' )
 
         // Select codes file
-        cy.get( 'input[type=file]' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
+        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
 
         // Clear inputs
         cy.get( '#event-create-name' ).clear()
