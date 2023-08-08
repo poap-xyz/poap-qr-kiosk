@@ -20,7 +20,6 @@ import { H1, H2, H3, Text, Sidenote, Button, Container, CardContainer, Divider }
 import { ReactComponent as UserConnected } from '../../assets/illustrations/user_connected.svg'
 import { ReactComponent as ManMoon } from '../../assets/illustrations/man_to_the_moon.svg'
 import { ReactComponent as NoCodes } from '../../assets/illustrations/no_more_codes.svg'
-import Stroop from '../molecules/Stroop'
 
 // ///////////////////////////////
 // Render component
