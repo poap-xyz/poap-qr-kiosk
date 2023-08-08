@@ -6,7 +6,7 @@ import { ReactComponent as FooterBG } from '../../assets/decorations/footer-line
 import { ReactComponent as FooterDecoLeft } from '../../assets/decorations/footer-deco-left.svg'
 import { ReactComponent as FooterDecoRight } from '../../assets/decorations/footer-deco-right.svg'
 import { ReactComponent as GirlQR } from '../../assets/illustrations/Girl_holding_phoneQR.svg'
-import { ReactComponent as GroupPhone } from '../../assets/illustrations/Group_holding_phones.svg'
+import { ReactComponent as KioskExample } from '../../assets/illustrations/Kiosk-exampled.svg'
 import { ReactComponent as LineImg } from '../../assets/decorations/hero-full-width-line.svg'
 import { ReactComponent as FullWidthBackgroundImage } from '../../assets/illustrations/Illustration_Cities_Amsterdam_FullWidth.svg'
 import BackgroundImage from '../atoms/DutchBackground'
@@ -35,11 +35,13 @@ export const GirlQRImage = styled( GirlQR )`
     ` }
 `
 
-export const GroupPhoneImage = styled( GroupPhone )`
-    position: relative;
-    z-index: 0;
-    height: 100%;
-    max-width: 100%;
+export const GroupPhoneImage = styled( KioskExample )`
+    max-width: 100%; 
+    display: block;
+    margin: 0 auto;
+    ${ mixin.sm_up`
+        margin: 2.5rem auto;
+    ` }
 `
 
 export const FullLine = styled( LineImg )`
@@ -53,8 +55,8 @@ export const FooterImage = styled( FooterBG )`
     left: 0;
     bottom: -1px;
     z-index: 0;
+    width: 100%;
     ${ mixin.sm_down`
-        width: 100%;
         max-height: 100%;
     ` }
 `
