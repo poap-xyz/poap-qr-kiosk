@@ -55,8 +55,8 @@ export const FooterImage = styled( FooterBG )`
     left: 0;
     bottom: -1px;
     z-index: 0;
+    width: 100%;
     ${ mixin.sm_down`
-        width: 100%;
         max-height: 100%;
     ` }
 `
