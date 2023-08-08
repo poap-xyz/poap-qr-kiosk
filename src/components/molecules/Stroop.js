@@ -15,6 +15,7 @@ import ViewWrapper from '../molecules/ViewWrapper'
 import { ReactComponent as DiamondLogo } from '../../assets/illustrations/valuable-diamond.svg'
 import { ReactComponent as PlayfulIcon } from '../../assets/illustrations/playful.svg'
 import { ReactComponent as WelldoneIcon } from '../../assets/illustrations/well_done.svg'
+import AnimatedDots from '../atoms/AnimatedDots'
 
 // Stroop assets
 const colors = [ 'orange', 'pink', 'yellow', 'blue', 'green', 'purple', 'red', 'grey' ]
@@ -136,13 +137,17 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
     function claim_poap() {
         if( poap_url ) window.location.replace( poap_url )
     }
-
-    if( done ) return <ViewWrapper center show_bookmark>
+    log( 'url: ' + poap_url )
+    const abc = true
+    const def = true
+    // if( done ) return <ViewWrapper center show_bookmark>
+    if( abc == true ) return <ViewWrapper center show_bookmark>
         <Container>
             <CardContainer width='400px' margin='0 auto'>
 
                 { /* Lost and Won states */ }
-                { score < target_score ? 
+                { /* { score < target_score ?  */ }
+                { def == false ? 
                     <> 
                         <PlayfulIcon />
                         <H1 align='center' size='var(--fs-lg)' margin='var(--spacing-5) 0 var(--spacing-1) 0'>{ t( 'eventView.stroop.lost' ) }</H1>
@@ -157,6 +162,9 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
                         <H1 align='center' size='var(--fs-lg)' margin='var(--spacing-5) 0 var(--spacing-1) 0'> { t( 'eventView.stroop.won' ) }</H1>
                         <Divider outline margin='0 0 var(--spacing-6) 0' />
                         <Text align='center' margin='0 0 var(--spacing-6) 0'>{ t( 'eventView.stroop.score' ) } <br/> { score }</Text>
+                        <br/>
+                        { poap_url ? <Button onClick={ claim_poap } leftIcon={ <HeroIcon icon='sparkles' /> }>{ t( 'eventView.stroop.claimPoap' )  }</Button> : <AnimatedDots>Minting your POAP, please wait</AnimatedDots> }
+                        
                         { score >= target_score && <Button onClick={ claim_poap } leftIcon={ <HeroIcon icon={ poap_url ? 'sparkles' : ''  } /> }>{ poap_url ? t( 'eventView.stroop.claimPoap' ) : t( 'eventView.stroop.loadPoap' ) }</Button> }
                     </> }
                 

@@ -31,7 +31,7 @@ const IconContainer = styled.div`
         --fs: 32px;
         --width: 48px;
         --height: 48px;
-    --border-radius: 12px;
+        --border-radius: 12px;
 	` } */
 `
 
@@ -42,11 +42,11 @@ const TextContainer = styled.div`
 `
 
 const layerStyles = css`
-  position: absolute;
-  width: var(--width);
-  height: var(--height);
-  border: 1px solid var(--color-stroke);
-  border-radius: var(--border-radius);
+    position: absolute;
+    width: var(--width);
+    height: var(--height);
+    border: 1px solid var(--color-stroke);
+    border-radius: var(--border-radius);
 `
 
 const Number = styled.p`
@@ -61,7 +61,7 @@ const Number = styled.p`
 `
 
 const StyledStar = styled( Star )`
-position: absolute;
+    position: absolute;
     top: -7.5px;
     right: -12.5px;
 `
@@ -101,18 +101,22 @@ export const NumberedUps = ( { number, title, description } ) => {
     return (
         <ComponentContainer>
             <IconContainer>
+
                 <LayerThree/>
                 <LayerTwo/>
                 <LayerOne/>
+
                 <Number>
                     { number }
                     <StyledStar />
                 </Number>
+
             </IconContainer>
             <TextContainer>
                 
                 <Title>{ title }</Title>
                 <Description>{ description }</Description>
+
             </TextContainer>
         </ComponentContainer>
     )
