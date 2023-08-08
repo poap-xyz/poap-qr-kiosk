@@ -19,7 +19,7 @@ i18n
             // translation file path
             loadPath: '/locales/{{lng}}/{{ns}}.json',
         },
-        supportedLngs: [ 'en', 'nl' ],
+        supportedLngs: [ 'en' ],
         fallbackLng: 'en',
         nonExplicitSupportedLngs: true,
         interpolation: {
