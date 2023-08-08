@@ -84,6 +84,7 @@ export default function StaticClaim() {
     if( !code_meta?.event ) return <ViewWrapper center generic_loading_styles={ true } id='static-print-qr-top-container-invalid'>
         <Section>
             <Container>
+
                 <Text>{ t( 'staticClaim.validations.invalid_link' ) }</Text>
             </Container>
         </Section>
@@ -98,6 +99,7 @@ export default function StaticClaim() {
                 <Text>{ t( 'staticClaim.user_claimed.description' ) }</Text>
             </Container>
         </Section>
+
     </ViewWrapper>
 
     // Show claim interface

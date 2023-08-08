@@ -210,7 +210,6 @@
             "claimPoap": "Collect your POAP",
             "loadPoap": "Loading your POAP...",
             "TryAgain": "Try again",
-            "MintLoad": "Minting your POAP, please wait",
             "game": {
                 "title": "Prove you are a human",
                 "subtitle": "Instructions:\n click the button with the right color",
@@ -221,8 +220,7 @@
             "playing": {
                 "preTitle": "Click the ",
                 "postTitle": " button",
-                "subtitle": "Score: {{ score }} of {{ target_score }}",
-                "keepGoing": "Well done, keep going to see how far you can go!"
+                "subtitle": "Score: {{ score }} of {{ target_score }}"
             },
             "colors": [
                 "orange",
