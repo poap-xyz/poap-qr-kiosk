@@ -15,7 +15,6 @@ import ViewWrapper from '../molecules/ViewWrapper'
 import { ReactComponent as DiamondLogo } from '../../assets/illustrations/valuable-diamond.svg'
 import { ReactComponent as PlayfulIcon } from '../../assets/illustrations/playful.svg'
 import { ReactComponent as WelldoneIcon } from '../../assets/illustrations/well_done.svg'
-import AnimatedDots from '../atoms/AnimatedDots'
 
 // Stroop assets
 const colors = [ 'orange', 'pink', 'yellow', 'blue', 'green', 'purple', 'red', 'grey' ]
@@ -158,9 +157,7 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
                         <H1 align='center' size='var(--fs-lg)' margin='var(--spacing-5) 0 var(--spacing-1) 0'> { t( 'eventView.stroop.won' ) }</H1>
                         <Divider outline margin='0 0 var(--spacing-6) 0' />
                         <Text align='center' margin='0 0 var(--spacing-6) 0'>{ t( 'eventView.stroop.score' ) } <br/> { score }</Text>
-                        <br/>
-                        { poap_url ? <Button onClick={ claim_poap } leftIcon={ <HeroIcon icon='sparkles' /> }>{ t( 'eventView.stroop.claimPoap' )  }</Button> : <AnimatedDots>{ t( 'eventView.stroop.MintLoad' ) } </AnimatedDots> }
-
+                        { score >= target_score && <Button onClick={ claim_poap } leftIcon={ <HeroIcon icon={ poap_url ? 'sparkles' : ''  } /> }>{ poap_url ? t( 'eventView.stroop.claimPoap' ) : t( 'eventView.stroop.loadPoap' ) }</Button> }
                     </> }
                 
             </CardContainer>
@@ -191,7 +188,7 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
             <Grid width='400px' padding='var(--spacing-4) var(--spacing-1)'>
                 <H1 align="center" size='var(--fs-3xl)' lineHeight='--lh-xl' weight={ 700 } margin='0 0 var(--spacing-6) 0'>{ t( 'eventView.stroop.playing.preTitle' ) } <br/> <span style={ { color: getColorVariables( random_color( answer ) ) } }>{ answer }</span> <br/>{ t( 'eventView.stroop.playing.postTitle' ) }</H1>
                 <H2 align='center' color='var(--primary-600)' margin='0 0 var(--spacing-6) 0'>{ t( 'eventView.stroop.playing.subtitle', { score: score, target_score: target_score } ) }</H2>
-                { score >= target_score ? <Text align='center' size='var(--fs-2xs)' color='#797292'>{ t( 'eventView.stroop.playing.keepGoing' ) }</Text> : <div style={ { height: '40px' } }>    </div> }
+                { score >= target_score ? <Text align='center' size='var(--fs-2xs)' color='#797292'>Well done, keep going to see how far you can go!</Text> : <div style={ { height: '40px' } }>    </div> }
                 <Timer align='center' margin='0 0 var(--spacing-8) 0' onComplete={ tally_score } duration={ duration } />
                 
                 { options.map( option => <StroopButton key={ Math.random() + option } color="white" background={ getColorVariables( option ) } width='100%' margin='0 0 var(--spacing-7)' onClick={ f => submit_answer( option ) }>I am { option }</StroopButton> ) }
