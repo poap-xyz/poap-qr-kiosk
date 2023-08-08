@@ -221,7 +221,8 @@
             "playing": {
                 "preTitle": "Click the ",
                 "postTitle": " button",
-                "subtitle": "Score: {{ score }} of {{ target_score }}"
+                "subtitle": "Score: {{ score }} of {{ target_score }}",
+                "keepGoing": "Well done, keep going to see how far you can go!"
             },
             "colors": [
                 "orange",
