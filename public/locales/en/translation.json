@@ -210,6 +210,7 @@
             "claimPoap": "Collect your POAP",
             "loadPoap": "Loading your POAP...",
             "TryAgain": "Try again",
+            "MintLoad": "Minting your POAP, please wait",
             "game": {
                 "title": "Prove you are a human",
                 "subtitle": "Instructions:\n click the button with the right color",

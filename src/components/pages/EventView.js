@@ -255,21 +255,20 @@ export default function ViewQR( ) {
     </ViewWrapper>
 
     // Display QR
-    return <Stroop duration_input={ 30 } target_score_input={ 12 }  poap_url="" />
-    // return <ViewWrapper hide_header hide_footer center background={ template?.footer_icon } show_bookmark>
+    return <ViewWrapper hide_header hide_footer center background={ template?.footer_icon } show_bookmark>
 
-    //     {  /* Event metadata */ }
-    //     { event && <H1 color={ template?.main_color } align="center">{ event.name }</H1> }
-    //     <H2 color={ template?.header_link_color || 'var(--primary-600)' } align="center">{ t( 'eventView.display.subheading' ) }</H2>
+        {  /* Event metadata */ }
+        { event && <H1 color={ template?.main_color } align="center">{ event.name }</H1> }
+        <H2 color={ template?.header_link_color || 'var(--primary-600)' } align="center">{ t( 'eventView.display.subheading' ) }</H2>
 
-    //     {  /* QR showing code */ }
-    //     <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
-    //     { /* <Button onClick={ nextCode }>Next code</Button> */ }
+        {  /* QR showing code */ }
+        <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+        { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
-    //     { event && <Sidenote margin='0'>{ t( 'eventView.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
+        { event && <Sidenote margin='0'>{ t( 'eventView.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
     
-    //     <Network />
+        <Network />
 
-    // </ViewWrapper>
+    </ViewWrapper>
 
 }

@@ -163,9 +163,7 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
                         <Divider outline margin='0 0 var(--spacing-6) 0' />
                         <Text align='center' margin='0 0 var(--spacing-6) 0'>{ t( 'eventView.stroop.score' ) } <br/> { score }</Text>
                         <br/>
-                        { poap_url ? <Button onClick={ claim_poap } leftIcon={ <HeroIcon icon='sparkles' /> }>{ t( 'eventView.stroop.claimPoap' )  }</Button> : <AnimatedDots>Minting your POAP, please wait</AnimatedDots> }
-                        
-                        { score >= target_score && <Button onClick={ claim_poap } leftIcon={ <HeroIcon icon={ poap_url ? 'sparkles' : ''  } /> }>{ poap_url ? t( 'eventView.stroop.claimPoap' ) : t( 'eventView.stroop.loadPoap' ) }</Button> }
+                        { poap_url ? <Button onClick={ claim_poap } leftIcon={ <HeroIcon icon='sparkles' /> }>{ t( 'eventView.stroop.claimPoap' )  }</Button> : <AnimatedDots>{ t( 'eventView.stroop.MintLoad' ) } </AnimatedDots> }
                     </> }
                 
             </CardContainer>
