@@ -23,18 +23,18 @@
             }
         },
         "howdo": {
-            "title": "How do I set up a POAP kiosk?",
+            "title": "How do I set up a POAP Kiosk?",
             "one": {
                 "title": "Upload",
                 "description": "Upload the links.txt file containing your mint links."
             },
             "two": {
                 "title": "Kiosk",
-                "description": "Kiosk details and add your email address to create your POAP kiosk. "
+                "description": "Kiosk details and add your email address to create your POAP Kiosk. "
             },
             "three": {
                 "title": "Share",
-                "description": "Display your POAP kiosk QR code via a device  or a screen share, and share!"
+                "description": "Display your POAP Kiosk QR code via a device  or a screen share, and share!"
             },
             "getStarted": "Get started now!"
         }
@@ -43,7 +43,7 @@
         "title": "Set up POAP Kiosk",
         "creatingDispenser": "Creating POAP Kiosk",
         "preCodes": {
-            "title": "Upload your mint links to your POAP kiosk"
+            "title": "Upload your mint links to your POAP Kiosk"
         },
         "form": {
             "codesAmount": {
