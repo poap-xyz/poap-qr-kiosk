@@ -1,8 +1,10 @@
-const { live_access_token, call_poap_endpoint } = require( './poap_api' ) 
-const { log, wait, throttle_and_retry } = require( './helpers' )
-const { db, dataFromSnap } = require( './firebase' )
+const { log } = require( './helpers' )
+const { db } = require( './firebase' )
 
 const health_check = async () => {
+
+    // Function dependencies
+    const { live_access_token, call_poap_endpoint } = require( './poap_api' )
 
     const status = {
         healthy: false,
@@ -60,6 +62,9 @@ exports.clean_up_expired_items = async () => {
     const maxInProgress = 500
     const day_in_ms = 1000 * 60 * 60 * 24
     const time_to_keep_after_expiry = day_in_ms * 30
+
+    // Function dependencies
+    const { throttle_and_retry } = require( './helpers' )
 
     try {
 

@@ -28,6 +28,7 @@ const Timer = ( { duration, onComplete, ...props } ) => {
     const { t } = useTranslation()
 
     useInterval( f => {
+        log( `Time passed: `, timePassed, ` timer duration: `, duration )
         if( timePassed >= duration ) return onComplete()
         setTimePassed( timePassed + 1 )
     }, 1000 )

@@ -1,12 +1,12 @@
-const { db, dataFromSnap, increment } = require( './firebase' )
 const app = require( './express' )()
-const { generate_new_event_public_auth } = require( './events' )
-
-// Configs
-const functions = require( 'firebase-functions' )
-const { kiosk } = functions.config()
 
 app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
+
+    // Function dependencies
+    const { db, dataFromSnap } = require( './firebase' )
+    const { generate_new_event_public_auth } = require( './events' )
+    const functions = require( 'firebase-functions' )
+    const { kiosk } = functions.config()
 
     try {
 

@@ -1,13 +1,8 @@
 // Firebase interactors
-const functions = require( 'firebase-functions' )
 const { db, dataFromSnap, increment } = require( './firebase' )
-const { log, dev, isEmail, isWalletOrENS, isWallet } = require( './helpers' )
+const { log, isEmail, isWalletOrENS, isWallet } = require( './helpers' )
 const { throw_on_failed_app_check } = require( './security' )
-const { call_poap_endpoint } = require( './poap_api' )
 
-// Libraries
-const Throttle = require( 'promise-parallel-throttle' )
-const { sendCustomClaimEmail } = require( './email' )
 
 // ///////////////////////////////
 // Code helpers
@@ -41,6 +36,7 @@ const checkCodeStatus = async code => {
     }
 
     // Get API data
+    const { call_poap_endpoint } = require( './poap_api' )
     return call_poap_endpoint( `/actions/claim-qr`, { qr_hash: code } )
 
 }
@@ -55,6 +51,9 @@ exports.check_code_status = function( code, context ) {
 
 // Code claiming function
 async function claim_code_to_address( claim_code, drop_id, address, claim_secret, send_default_email=true ) {
+
+    // Function dependencies
+    const { call_poap_endpoint } = require( './poap_api' )
 
     log( `Claiming ${ claim_code } to ${ address } with ${ send_default_email ? 'default' : 'custom' } email` )
 
@@ -236,6 +235,9 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
             return updateCodeStatus( uid )
 
         } )
+
+        // Throttle dependency
+        const Throttle = require( 'promise-parallel-throttle' )
 
         // Check old unknowns against the live API
         await Throttle.all( old_unknown_queue, {
@@ -512,6 +514,7 @@ exports.claim_code_by_email = async ( data, context ) => {
         // If custom email was requested, formulate and send it
         if( custom_email && isEmail( email_or_0x_address ) ) {
             log( `Sending custom email to ${ email_or_0x_address }` )
+            const { sendCustomClaimEmail } = require( './email' )
             await sendCustomClaimEmail( { email: email_or_0x_address, event, claim_code, html: custom_email } )
         }
 

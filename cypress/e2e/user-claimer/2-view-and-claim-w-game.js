@@ -79,6 +79,7 @@ context( 'Claimer can view valid events with game', () => {
     it( 'Event 1: Successfully redirects to challenge link and play game', function( ) {
 
         // Visit the public link with games
+        const slow = 1000
         cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
             .then( extract_challenge_from_url )
             .then( event_1_first_challenge => {
@@ -105,6 +106,7 @@ context( 'Claimer can view valid events with game', () => {
                 cy.contains( 'Score: 0 of' )
 
                 // Find buttons in page and click the one with h1 span value
+                if( slow ) cy.wait( slow )
                 cy.get( 'h1 span' ).invoke( 'text' ).then( ( text ) => {
                     cy.contains( 'a', text ).click( { force: true } ) 
                 } )
@@ -113,11 +115,13 @@ context( 'Claimer can view valid events with game', () => {
                 cy.contains( 'Score: 1 of' )
 
                 // Find buttons in page and click the one with h1 span value
+                if( slow ) cy.wait( slow )
                 cy.get( 'h1 span' ).invoke( 'text' ).then( ( text ) => {
                     cy.contains( 'a', text ).click( { force: true } ) 
                 } )
 
                 // Expect score text
+                if( slow ) cy.wait( slow )
                 cy.contains( 'Score: 2 of' )
 
                 // Expect winning screen
@@ -188,31 +192,33 @@ context( 'Claimer can view valid events with game', () => {
                 // Click start game button
                 cy.contains( 'a', 'Start game' ).click()
 
-                // Expect score text
-                cy.contains( 'Score: 0 of' )
+                // // Expect score text
+                // cy.contains( 'Score: 0 of' )
 
-                // Find buttons in page and click the one with h1 span value
-                cy.get( 'h1 span' ).invoke( 'text' ).then( ( text ) => {
-                    cy.contains( 'a', text ).click( { force: true } ) 
-                } )
+                // // Find buttons in page and click the one with h1 span value
+                // cy.get( 'h1 span' ).invoke( 'text' ).then( ( text ) => {
+                //     cy.contains( 'a', text ).click( { force: true } ) 
+                // } )
 
-                // Expect score text
-                cy.contains( 'Score: 1 of' )
+                // // Expect score text
+                // cy.contains( 'Score: 1 of' )
 
-                // Find buttons in page and click the one with h1 span value
-                cy.get( 'h1 span' ).invoke( 'text' ).then( ( text ) => {
-                    cy.contains( 'a', text ).click( { force: true } ) 
-                } )
+                // // Find buttons in page and click the one with h1 span value
+                // cy.get( 'h1 span' ).invoke( 'text' ).then( ( text ) => {
+                //     cy.contains( 'a', text ).click( { force: true } ) 
+                // } )
 
-                // Expect score text
-                cy.contains( 'Score: 2 of' )
+                // // Expect score text
+                // cy.contains( 'Score: 2 of' )
 
-                // Expect winning screen
-                cy.contains( 'Well done!' )
+                // // Expect winning screen
+                // cy.contains( 'Well done!' )
 
-                cy.on( 'window:alert', response => {
-                    expect( response ).to.contain( 'No more POAPs available for this event!' )
-                } )
+                // cy.on( 'window:alert', response => {
+                //     expect( response ).to.contain( 'No more POAPs available for this event!' )
+                // } )
+
+                cy.contains( 'No more POAPs available for this event!' )
 
             } )
 

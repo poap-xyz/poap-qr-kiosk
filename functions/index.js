@@ -3,6 +3,9 @@ const generousRuntime = {
     timeoutSeconds: 540,
     memory: '4GB'
 }
+const keepWarmRuntime = {
+    minInstances: 1,
+}
 const { log, dev } = require( './modules/helpers' )
 log( `⚠️ Verbose mode on, ${ dev ? '⚙️ dev mode on' : '🚀 production mode on' }` )
 
@@ -39,7 +42,7 @@ exports.getUniqueOrganiserEmails = functions.https.onCall( getUniqueOrganiserEma
 // QR Middleware API
 // ///////////////////////////////
 const claimMiddleware = require( './modules/claim' )
-exports.claimMiddleware = functions.https.onRequest( claimMiddleware )
+exports.claimMiddleware = functions.runWith( keepWarmRuntime ).https.onRequest( claimMiddleware )
 
 /* ///////////////////////////////
 // Kiosk generator middleware API
@@ -68,7 +71,7 @@ exports.updateEventAvailableCodes = functions.firestore.document( `codes/{codeId
 // Security
 // /////////////////////////////*/
 const { validateCallerDevice, validateCallerCaptcha } = require( './modules/security' )
-exports.validateCallerDevice = functions.https.onCall( validateCallerDevice )
+exports.validateCallerDevice = functions.runWith( keepWarmRuntime ).https.onCall( validateCallerDevice )
 exports.validateCallerCaptcha = functions.https.onCall( validateCallerCaptcha )
 
 /* ///////////////////////////////
