@@ -192,33 +192,31 @@ context( 'Claimer can view valid events with game', () => {
                 // Click start game button
                 cy.contains( 'a', 'Start game' ).click()
 
-                // // Expect score text
-                // cy.contains( 'Score: 0 of' )
+                // Expect score text
+                cy.contains( 'Score: 0 of' )
 
-                // // Find buttons in page and click the one with h1 span value
-                // cy.get( 'h1 span' ).invoke( 'text' ).then( ( text ) => {
-                //     cy.contains( 'a', text ).click( { force: true } ) 
-                // } )
+                // Find buttons in page and click the one with h1 span value
+                cy.get( 'h1 span' ).invoke( 'text' ).then( ( text ) => {
+                    cy.contains( 'a', text ).click( { force: true } ) 
+                } )
 
-                // // Expect score text
-                // cy.contains( 'Score: 1 of' )
+                // Expect score text
+                cy.contains( 'Score: 1 of' )
 
-                // // Find buttons in page and click the one with h1 span value
-                // cy.get( 'h1 span' ).invoke( 'text' ).then( ( text ) => {
-                //     cy.contains( 'a', text ).click( { force: true } ) 
-                // } )
+                // Find buttons in page and click the one with h1 span value
+                cy.get( 'h1 span' ).invoke( 'text' ).then( ( text ) => {
+                    cy.contains( 'a', text ).click( { force: true } ) 
+                } )
 
-                // // Expect score text
-                // cy.contains( 'Score: 2 of' )
+                // Expect score text
+                cy.contains( 'Score: 2 of' )
 
-                // // Expect winning screen
-                // cy.contains( 'Well done!' )
+                // Expect winning screen
+                cy.contains( 'Well done!' )
 
-                // cy.on( 'window:alert', response => {
-                //     expect( response ).to.contain( 'No more POAPs available for this event!' )
-                // } )
-
-                cy.contains( 'No more POAPs available for this event!' )
+                cy.on( 'window:alert', response => {
+                    expect( response ).to.contain( 'No more POAPs available for this event!' )
+                } )
 
             } )
 

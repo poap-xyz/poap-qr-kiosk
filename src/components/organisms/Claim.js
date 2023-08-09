@@ -31,10 +31,11 @@ export default function ViewQR( ) {
 
     // If this challenge includes a game, set the default gameDone to false (and the reverse too)
     const [ gameDone, setGameDone ] = useState()
-    const { claim_link, error } = useClaimcodeForChallenge( captchaResponse )
+    const should_fetch_poap_claim_code = gameDone || challenge && !has_game_challenge
+    const { claim_link, error } = useClaimcodeForChallenge( captchaResponse, should_fetch_poap_claim_code )
 
     log( `Challenge ${ challenge_code }: `, challenge )
-    log( `Has game: ${ has_game_challenge }, Game done: ${ gameDone }. User valid: ${ user_valid } (${ user_validation_status_message || 'no message' }) .Claim link: ${ claim_link }` )
+    log( `Has game: ${ has_game_challenge }, Game done: ${ gameDone }. User valid: ${ user_valid } (${ user_validation_status_message || 'no message' }). Claim link: ${ claim_link } (${ should_fetch_poap_claim_code ? 'should' : 'should not' } fetch)` )
 
     /* ///////////////////////////////
   // Component functions

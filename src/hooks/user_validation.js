@@ -19,6 +19,9 @@ export const useValidateUser = ( captchaResponse ) => {
     // Stakking function 
     async function stall( trail, step_delay=5000, error=true ) {
 
+        // Mark user as invalid
+        set_user_valid( false )
+
         log( `Stalling for ${ trail } with ${ step_delay }, end in ${ error ? 'error' : 'continue' }` )
 
         trackEvent( 'claim_spammer_stall_triggered' )
@@ -49,7 +52,7 @@ export const useValidateUser = ( captchaResponse ) => {
 
             try {
 
-                log( `Starting client validation` )
+                log( `🕵️ Starting client validation` )
                 if( slow_users_down ) await wait( 1000 )
 
                 /* ///////////////////////////////
@@ -58,9 +61,9 @@ export const useValidateUser = ( captchaResponse ) => {
                 if( cancelled ) return
 
                 // Validate device using appcheck
-                log( `Validating caller device` )
+                log( `🕵️ Validating caller device` )
                 let { data: isValid } = await validateCallerDevice()
-                log( `Caller validated: `, isValid )
+                log( `🕵️ Caller validated: `, isValid )
                 if( cancelled ) return
 
                 // Allow for a manual triggering of invalid device
@@ -94,7 +97,9 @@ export const useValidateUser = ( captchaResponse ) => {
                 // Check local captcha response with backend
                 if( !isValid && captchaResponse ) {
 
+                    log( `🕵️ Starting manual captcha validation` )
                     const { data: captchaIsValid } = await validateCallerCaptcha( captchaResponse )
+                    log( `🕵️ Manual captcha validation: `, captchaIsValid )
 
                     // If captcha is invalid, trigger fail
                     if( !captchaIsValid ) {

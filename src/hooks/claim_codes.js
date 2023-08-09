@@ -8,7 +8,7 @@ import { useEventOfChallenge } from "./events"
 import { useTranslation } from "react-i18next"
 const { REACT_APP_publicUrl } = process.env
 
-export const useClaimcodeForChallenge = ( captchaResponse ) => {
+export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) => {
 
     // i18next hook
     const { t } = useTranslation()
@@ -23,6 +23,7 @@ export const useClaimcodeForChallenge = ( captchaResponse ) => {
 
     // Get claim code
     async function get_poap_link() {
+
 
         log( `Getting code for ${ challenge_code }: `, challenge )
         let { data: claim_code } = await get_code_by_challenge( { challenge_code, captcha_response: captchaResponse } )
@@ -49,8 +50,10 @@ export const useClaimcodeForChallenge = ( captchaResponse ) => {
         return link
     }
 
-    // Once the user is validated, trigger the next step
+    // Once the user is validated, get a POAP claim code
     useEffect( (  ) => {
+
+        log( `claim_codes.js triggered with User valid: ${ user_valid }, fetch code: ${ fetch_code }` )
 
         let cancelled = false;
 
@@ -62,18 +65,19 @@ export const useClaimcodeForChallenge = ( captchaResponse ) => {
                 if( !user_valid ) return log( 'User not (yet) validated' )
 
                 // Validate for expired challenge
-                if( user_valid && !challenge ) {
+                if( user_valid && challenge?.deleted ) {
                     trackEvent( `claim_challenge_expired` )
                     throw new Error( `${ t( 'claim.validation.alreadyUsed' ) }` )
                 }
 
                 log( `Challenge received: `, challenge )
 
-                // If this is a game challenge, end here
-                if( challenge?.challenges?.includes( 'game' ) ) return log( 'Game challenge requested' )
 
                 // If we already have a link in the state, do not get a new one
                 if( claim_link ) return
+
+                // If we are not ready to fetch the code ret, return undefined
+                if( !fetch_code ) return
 
                 // If no game challenge, get a code
                 const link = await get_poap_link()
@@ -94,7 +98,7 @@ export const useClaimcodeForChallenge = ( captchaResponse ) => {
 
         return () => cancelled = true
 
-    }, [ user_valid ] )
+    }, [ user_valid, fetch_code ] )
 
     return { claim_link, error }
 

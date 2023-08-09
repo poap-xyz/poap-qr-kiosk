@@ -329,6 +329,7 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
         } )
 
         // For every unknown, check the status against live API
+        const Throttle = require( 'promise-parallel-throttle' )
         await Throttle.all( queue, {
             maxInProgress: maxInProgress
         } )
@@ -443,12 +444,13 @@ exports.get_code_by_challenge = async ( data, context ) => {
             const [ oldestCode ] = await db.collection( 'codes' )
                 .where( 'event', '==', challenge.eventId )
                 .where( 'claimed', '==', false )
-                .orderBy( 'updated', 'desc' )
+                .orderBy( 'updated', 'asc' )
                 .limit( 1 ).get().then( dataFromSnap )
 
             if( !oldestCode || !oldestCode.uid ) throw new Error( `No more POAPs available for this event!` )
 
             // Mark oldest code as unknown status so other users don't get it suggested
+            log( `Marking code ${ oldestCode.uid } claimed status as ${ oldestCode.uid.includes( 'testing' ) ? true : 'unknown' }: `, oldestCode )
             await db.collection( 'codes' ).doc( oldestCode.uid ).set( {
                 updated: Date.now(),
                 scanned: true,

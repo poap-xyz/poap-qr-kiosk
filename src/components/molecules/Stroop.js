@@ -28,7 +28,6 @@ const Timer = ( { duration, onComplete, ...props } ) => {
     const { t } = useTranslation()
 
     useInterval( f => {
-        log( `Time passed: `, timePassed, ` timer duration: `, duration )
         if( timePassed >= duration ) return onComplete()
         setTimePassed( timePassed + 1 )
     }, 1000 )
@@ -151,7 +150,7 @@ export default ( { duration_input, target_score_input, onWin, onLose, poap_url, 
                         <Divider outline margin='0 0 var(--spacing-6) 0' />
                         <Text align='center' margin='0 0 var(--spacing-5) 0' whiteSpace>{ t( 'eventView.stroop.failMessage', { target_score: target_score } ) }</Text>
                         <Text align='center'>{ t( 'eventView.stroop.score' ) } <br/> { score }</Text>
-                        <Button onClick>{ t( 'eventView.stroop.TryAgain' )  }</Button> 
+                        <Button onClick={ () => setDone( false ) }>{ t( 'eventView.stroop.TryAgain' )  }</Button> 
                     </> 
                     : 
                     <>
