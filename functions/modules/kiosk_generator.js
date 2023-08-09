@@ -1,13 +1,4 @@
-const { db, dataFromSnap, arrayUnion, increment } = require( './firebase' )
-const { call_poap_endpoint } = require( './poap_api' )
 const app = require( './express' )()
-const { generate_new_event_public_auth, validate_and_write_event_codes, get_event_template_by_code } = require( './events' )
-const { log } = require( './helpers' )
-const { v4: uuidv4 } = require( 'uuid' )
-
-// Configs
-const functions = require( 'firebase-functions' )
-const { kiosk } = functions.config()
 
 /**
 * Generate a new kiosk through a POST request (or return an existing one)
@@ -19,6 +10,17 @@ const { kiosk } = functions.config()
 * @returns 301 redirect 
 */
 app.post( '/generate/:event_id', async ( req, res ) => {
+
+    // Function dependencies
+    const { db, dataFromSnap, arrayUnion, increment } = require( './firebase' )
+    const { call_poap_endpoint } = require( './poap_api' )
+    const { generate_new_event_public_auth, validate_and_write_event_codes, get_event_template_by_code } = require( './events' )
+    const { log } = require( './helpers' )
+    const { v4: uuidv4 } = require( 'uuid' )
+
+    // Configs
+    const functions = require( 'firebase-functions' )
+    const { kiosk } = functions.config()
 
     try {
 

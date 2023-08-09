@@ -1,6 +1,6 @@
 // Firebase interactors
 const functions = require( 'firebase-functions' )
-const { db, dataFromSnap, increment } = require( './firebase' )
+const { db, dataFromSnap } = require( './firebase' )
 const { log, dev } = require( './helpers' )
 
 // Secrets

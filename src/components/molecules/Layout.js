@@ -8,9 +8,8 @@ export const Layout = ( { hide_header, hide_footer, header_show_help = true, hid
 
         { /* Header */ }
         { !hide_header && <Header 
-            hide_help={ header_show_help } 
             leftColumn={ <POAPProductTitle productName='Kiosk' beta /> } 
-            // rightColumn={ <POAPProfileMenu hide_help={ header_show_help === false } /> } 
+            rightColumn={ <POAPProfileMenu hide_help={ !header_show_help } help_url = 'https://poap.zendesk.com/' /> } 
         /> }
 
 

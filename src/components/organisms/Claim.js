@@ -1,37 +1,41 @@
-const { REACT_APP_publicUrl } = process.env
-
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 
-import { log, dev, wait } from '../../modules/helpers'
-import { validateCallerDevice, validateCallerCaptcha, trackEvent, listen_to_claim_challenge, get_code_by_challenge, requestManualCodeRefresh, health_check } from '../../modules/firebase'
+import { trackEvent } from '../../modules/firebase'
+import { dev, log } from '../../modules/helpers'
 
 
-import { useEventOfChallenge } from '../../hooks/events'
 
 // Components
+import { useChallenge } from '../../hooks/challenges'
+import { useHealthCheck } from '../../hooks/health_check'
+import { useValidateUser } from '../../hooks/user_validation'
+import Captcha from '../molecules/Captcha'
 import Loading from '../molecules/Loading'
 import Stroop from '../molecules/Stroop'
-import Captcha from '../molecules/Captcha'
+import { useClaimcodeForChallenge } from '../../hooks/claim_codes'
 
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
 export default function ViewQR( ) {
 
-    // i18next hook
-    const { t } = useTranslation()
-
     // State handling
-    const { challenge_code, error_code } = useParams( )
-    const [ loading, setLoading ] = useState( `${ t( 'claim.setLoading' ) }` )
-    const [ userValid, setUserValid ] = useState( false )
-    const [ gameDone, setGameDone ] = useState( false )
-    const [ challenge, setChallenge ] = useState( {} )
-    const [ poaplink, setPoaplink ] = useState(  )
+    const { challenge_code } = useParams( )
+    const challenge = useChallenge( challenge_code )
     const [ captchaResponse, setCaptchaResponse ] = useState(  )
-    const event = useEventOfChallenge( challenge_code )
+    const { message: user_validation_status_message, user_valid } = useValidateUser( captchaResponse )
+
+    // Game state management]
+    const has_game_challenge = challenge?.challenges?.includes( 'game' )
+
+    // If this challenge includes a game, set the default gameDone to false (and the reverse too)
+    const [ gameDone, setGameDone ] = useState()
+    const should_fetch_poap_claim_code = gameDone || challenge && !has_game_challenge
+    const { claim_link, error } = useClaimcodeForChallenge( captchaResponse, should_fetch_poap_claim_code )
+
+    log( `Challenge ${ challenge_code }: `, challenge )
+    log( `Has game: ${ has_game_challenge }, Game done: ${ gameDone }. User valid: ${ user_valid } (${ user_validation_status_message || 'no message' }). Claim link: ${ claim_link } (${ should_fetch_poap_claim_code ? 'should' : 'should not' } fetch)` )
 
     /* ///////////////////////////////
   // Component functions
@@ -45,266 +49,39 @@ export default function ViewQR( ) {
         trackEvent( `claim_game_lost_with_${ score }` )
     }
 
-    async function stall( trail, step_delay=5000, error=true ) {
-
-        log( `Stalling for ${ trail } with ${ step_delay }, end in ${ error ? 'error' : 'continue' }` )
-
-        trackEvent( 'claim_spammer_stall_triggered' )
-        // Wait to keep the spammer busy
-        await wait( step_delay )
-        setLoading( `${ t( 'claim.stall.loadingPrimary' ) }` )
-        await wait( step_delay )
-        setLoading( `${ t( 'claim.stall.loadingSecondary' ) }` )
-        await wait( step_delay )
-        setLoading( `${ t( 'claim.stall.loadingNewScan' ) }` )
-        if( error ) throw new Error( `${ t( 'claim.stall.loadingError', {  error_code: error_code, challenge_code: challenge_code, trail: trail } ) }` )
-    
-        setLoading( false )
-
-    }
-
-    async function get_poap_link() {
-
-        log( `Getting code for ${ challenge_code }: `, challenge )
-        let { data: claim_code } = await get_code_by_challenge( { challenge_code, captcha_response: captchaResponse } )
-
-        // On first fail, refresh codes and try again
-        if( claim_code.error ) {
-            const { data } = await requestManualCodeRefresh().catch( e => ( { data: e } ) )
-            log( `Remote code update response : `, data )
-            const { data: retried_claim_code } = await get_code_by_challenge( { challenge_code, captcha_response: captchaResponse } )
-            claim_code = retried_claim_code
-        }
-
-        // Handle code errors
-        if( claim_code.error ) throw new Error( claim_code.error )
-        log( `Received code: `, claim_code )
-        trackEvent( `claim_code_received` )
-
-        // Formulate redirect depending on claim type
-        let link = `https://poap.xyz/claim/${ claim_code }`
-        if( event?.collect_emails ) link = `${ REACT_APP_publicUrl }/#/static/claim/${ claim_code }`
-        if( event?.claim_base_url ) link = `${ event?.claim_base_url }${ claim_code }`
-        log( `${ t( 'claim.formulateRedirect' ) }`, link )
-
-        return link
-    }
-
     // ///////////////////////////////
     // Lifecycle handling
     // ///////////////////////////////
 
     // Health check
+    useHealthCheck()
+
+    // If the game is done, and the user is valid, redirect for claiming
     useEffect( (  ) => {
+        if( !user_valid || !gameDone || !claim_link ) return
+        if( !dev ) window.location.replace( claim_link )
+    }, [ claim_link, user_valid, gameDone ] )
 
-        let cancelled = false;
-
-        ( async () => {
-
-            try {
-
-                const { data: health } = await health_check()
-                log( `Systems health: `, health )
-                if( cancelled ) return log( `Health effect cancelled` )
-                if( !dev && !health.healthy ) {
-                    trackEvent( `claim_system_down` )
-                    return alert( `${ t( 'messaging.health.maintenance' ) }` )
-                }
-
-            } catch ( e ) {
-                log( `Error getting system health: `, e )
-            }
-
-        } )( )
-
-        return () => cancelled = true
-
-    }, [] )
-
-    // Validate client as non bot
-    // Note: in the past we deliberately slowed the users down in this process to prevent farmers of the "multiple tabs open at the same time" kind.
-    // As a business decision this was decided against, so I made it a toggle
-    const slow_users_down = false
-    useEffect( f => {
-
-        let cancelled = false;
-
-        // Validate client
-        ( async () => {
-
-            try {
-
-                log( `Starting client validation` )
-                if( slow_users_down ) await wait( 1000 )
-
-                /* ///////////////////////////////
-                // Failure mode 1: Backend marked this device as invalid */
-                if( challenge_code == 'robot' ) await stall( 'ch_c robot', 2000, false )
-                if( cancelled ) return
-
-                // Validate device using appcheck
-                let { data: isValid } = await validateCallerDevice()
-                if( cancelled ) return
-
-                // Allow for a manual triggering of invalid device
-                if( error_code == 'force_failed_appcheck' ) {
-                    log( `Simulating failed appcheck through force_failed_appcheck parameter` )
-                    isValid = false
-                }
-
-                // Always wait an extra second
-                await wait( slow_users_down ? 2000: 1000 )
-                if( cancelled ) return
-                setLoading( `${ t( 'claim.preppingMessage' ) }` )
-                if( slow_users_down ) await wait( 2000 )
-                if( cancelled ) return
-
-
-                /* ///////////////////////////////
-                 // Failure mode 2: challenge link is invalid */
-        
-                // if the challenge is invalid, stall and error
-                if( challenge?.expires < Date.now() ) return stall( `${ isValid ? 'v' : 'iv' }_expired` )
-
-                /* ///////////////////////////////
-                // Failure mode 3: Invalid captcha 3, no captcha 2 data yet */
-
-                if( !isValid && !captchaResponse ) return stall( `Stall before captcha`, 3000, false )
-
-                /* ///////////////////////////////
-                // Failure mode 4: fallback captcha is not valid */
-
-                // Check local captcha response with backend
-                if( !isValid && captchaResponse ) {
-
-                    const { data: captchaIsValid } = await validateCallerCaptcha( captchaResponse )
-
-                    // If captcha is invalid, trigger fail
-                    if( !captchaIsValid ) {
-                        trackEvent( 'claim_device_captcha_fail' )
-                        await stall( `cfail` )
-                    } else {
-                        trackEvent( 'claim_device_captcha_success' )
-                    }
-
-                }
-
-                /* ///////////////////////////////
-                // Success mode: nothing failed */
-
-                // If the challenge is valid, continue
-                trackEvent( 'claim_device_validation_success' )
-                setUserValid( true )
-
-            } catch ( e ) {
-
-                log( e )
-                trackEvent( 'claim_device_validation_failed' )
-                alert( e.message )
-                if( !cancelled ) setLoading( e.message )
-
-            }
-
-        } )()
-
-        return () => cancelled = true
-
-    }, [ challenge_code, captchaResponse ] )
-
-    // Once the user is validated, trigger the next step
-    useEffect( (  ) => {
-
-        let cancelled = false;
-
-        ( async () => {
-
-            try {
-
-                // Check for presence of challenge data
-                if( !userValid ) return log( 'User not (yet) validated' )
-
-                // Validate for expired challenge
-                if( userValid && !challenge ) {
-                    trackEvent( `claim_challenge_expired` )
-                    throw new Error( `${ t( 'claim.validation.alreadyUsed' ) }` )
-                }
-
-                log( `Challenge received: `, challenge )
-
-                // If this is a game challenge, end here
-                if( challenge?.challenges?.includes( 'game' ) ) return log( 'Game challenge requested' )
-
-                // If no game challenge, get a code
-                const link = await get_poap_link()
-                if( cancelled ) return
-
-                if( !dev ) window.location.replace( link )
-                else setLoading( `POAP link: ${ link }` )
-        
-
-            } catch ( e ) {
-
-                alert( e.message )
-                log( `Error getting challenge: `, e )
-
-                // Setting error to loading screen ( CI relies on this )
-                setLoading( e.message )
-
-            }
-
-        } )( )
-
-        return () => cancelled = true
-
-    }, [ userValid ] )
-
-    // POAP getting for the game
-    useEffect( (  ) => {
-
-        if( !gameDone ) return log( 'Game not done, not loading code' )
-        let cancelled = false;
-
-        ( async () => {
-
-            try {
-
-                // Game won? Get a code
-                const link = await get_poap_link()
-                if( cancelled ) return
-                trackEvent( 'claim_device_game_won' )
-                log( `Setting state link to `, link )
-                setPoaplink( link )
-
-            } catch ( e ) {
-
-                log( 'Error getting POAP: ', e )
-                trackEvent( 'claim_poap_fetch_failed' )
-                alert( e.message )
-                if( !cancelled ) setLoading( e.message )
-
-            }
-
-        } )( )
-
-        return () => cancelled = true
-
-    }, [ gameDone ] )
-
-    // Listen to challenge data
-    useEffect( () => challenge_code && listen_to_claim_challenge( challenge_code, setChallenge ), [ challenge_code ] )
 
     // ///////////////////////////////
     // Render component
     // ///////////////////////////////
 
+    // If there is a validation status use it
+    if( user_validation_status_message || error ) return <Loading message={ user_validation_status_message || error } />
+
     // If user is not valid, and no captcha response is known, show captcha
-    if( !userValid && !captchaResponse && !loading ) return <Captcha onChange={ response => setCaptchaResponse( response ) } />
+    if( !user_valid && !captchaResponse ) return <Captcha onChange={ response => setCaptchaResponse( response ) } />
 
     // If game challenge requested, show
-    if( userValid && ( gameDone || challenge?.challenges?.includes( 'game' ) ) ) return <Stroop duration_input={ challenge?.game_config?.duration } target_score_input={ challenge?.game_config?.target_score } onLose={ handleLose } onWin={ handleWin } poap_url={ poaplink } />
+    // Note that the Stroop module also handles the showing of the "claim POAP" button and we do not rely on the other components in here
+    if( user_valid && has_game_challenge ) return <Stroop duration_input={ challenge?.game_config?.duration } target_score_input={ challenge?.game_config?.target_score } onLose={ handleLose } onWin={ handleWin } poap_url={ claim_link  } />
 
-    // loading screen is default
-    return <Loading message={ loading } />
+    // In the CI, we display the successful claim flows using the loading component, this is so Cypress can check that we got the right code
+    // note that the above useEffect forwards a user to the claim link when we are not in dev mode
+    if( dev && user_valid && ( gameDone || !has_game_challenge ) && claim_link ) return <Loading message={ `POAP link: ${ claim_link }` } />
 
+    // Default loading state
+    return <Loading message="Loading..." />
 
 }

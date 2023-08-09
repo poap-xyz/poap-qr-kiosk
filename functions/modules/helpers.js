@@ -52,8 +52,6 @@ const isWallet = string => !!string.match( wallet_regex )
 /* ///////////////////////////////
 // Retryable & throttled async
 // /////////////////////////////*/
-const Throttle = require( 'promise-parallel-throttle' )
-const Retrier = require( 'promise-retry' )
 
 /**
 * Make async function (promise) retryable
@@ -65,6 +63,9 @@ const Retrier = require( 'promise-retry' )
 * @returns { function } An async function (promise) that will retry retry_times before throwing
 */
 function make_retryable( async_function, logging_label='unlabeled retry', retry_times=5, cooldown_in_s=10, cooldown_entropy=true ) {
+
+    // Function dependencies
+    const Retrier = require( 'promise-retry' )
 
     // Formulate retry logic
     const retryable_function = () => Retrier( ( do_retry, retry_counter ) => {
@@ -105,6 +106,9 @@ function make_retryable( async_function, logging_label='unlabeled retry', retry_
 * @returns { Promise } An async function (promise) that will retry retry_times before throwing
 */
 async function throttle_and_retry( async_function_array=[], max_parallell=2, logging_label, retry_times, cooldown_in_s ) {
+
+    // Function dependencies
+    const Throttle = require( 'promise-parallel-throttle' )
 
     // Create array of retryable functions
     const retryable_async_functions = async_function_array.map( async_function => {

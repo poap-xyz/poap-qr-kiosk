@@ -15,11 +15,13 @@ exports.throw_on_failed_app_check = context => {
 
 /* ///////////////////////////////
 // reCaptcha v2 validation */
-const fetch = require( 'isomorphic-fetch' )
-const { db } = require( './firebase' )
-const functions = require( 'firebase-functions' )
-const { recaptcha } = functions.config()
 exports.validateCallerCaptcha = async ( captcha_response, context ) => {
+
+    // Function dependencies
+    const fetch = require( 'isomorphic-fetch' )
+    const { db } = require( './firebase' )
+    const functions = require( 'firebase-functions' )
+    const { recaptcha } = functions.config()
 
     try {
 

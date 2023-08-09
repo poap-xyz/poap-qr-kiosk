@@ -113,6 +113,7 @@ export default function EventAdmin( ) {
             if( !confirm( `${ t( 'eventAdmin.confirmDeleteDispenser' ) }` ) ) throw new Error( `${ t( 'eventAdmin.deletionCancelled' ) }` )
 
             setLoading( `${ t( 'eventAdmin.setLoadingDispenser' ) }` )
+            log( `Deleting event ${ eventId } using auth token ${ authToken }` )
             const { data: { error } } = await deleteEvent( {
                 eventId,
                 authToken
@@ -126,7 +127,7 @@ export default function EventAdmin( ) {
 
         } catch ( e ) {
             alert( `${ t( 'eventAdmin.errorDeleteDispenser', { message: e.message } ) }` )
-            log( e )
+            log( `Error deleting Kiosk:`, e )
             setLoading( false )
         }
 
