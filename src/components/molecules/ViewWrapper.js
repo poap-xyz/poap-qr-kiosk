@@ -56,7 +56,7 @@ export default ( { children, background, hide_background, generic_loading_styles
     const css = useCustomCSS()
     const { search } = useLocation()
     const blank_until_custom_css = search.includes( 'blank_loading=true' )
-    log( `Query paran lazy_css requested a blank page until custom CSS is checked: ${ blank_until_custom_css }`, css )
+    if( blank_until_custom_css ) log( `Query paran lazy_css requested a blank page until custom CSS is checked: ${ blank_until_custom_css }`, css )
 
     // Force a blank page until the (potential) custom CSS is loaded?
     if( blank_until_custom_css && css == 'loading' ) return

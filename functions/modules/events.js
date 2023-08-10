@@ -1,14 +1,10 @@
 // Firebase interactors
-const { db, dataFromSnap, arrayUnion, increment } = require( './firebase' )
 const { v4: uuidv4 } = require( 'uuid' )
-const { sendEventAdminEmail } = require( './email' )
-const Throttle = require( 'promise-parallel-throttle' )
-const { throttle_and_retry, log, email_pseudo_anonymous } = require( './helpers' )
+const { log, email_pseudo_anonymous } = require( './helpers' )
 const { throw_on_failed_app_check } = require( './security' )
 
 // Configs
 const functions = require( 'firebase-functions' )
-const { call_poap_endpoint } = require( './poap_api' )
 const { kiosk } = functions.config()
 
 // Public auth helper, used here and in the claimcode handler
@@ -30,6 +26,10 @@ exports.generate_new_event_public_auth = generate_new_event_public_auth
 * @throws {Error} error Throws if anything failed
 */
 async function validate_and_write_event_codes( event_id, expiration_date, codes, existing_codes=[] ) {
+
+    // Function dependencies
+    const Throttle = require( 'promise-parallel-throttle' )
+    const { db, dataFromSnap } = require( './firebase' )
 
     log( `Writing ${ codes?.length } (of which ${ existing_codes?.length } old) for event ${ event_id } (expired ${ expiration_date })` )
 
@@ -117,6 +117,9 @@ async function get_event_template_by_code( an_event_qr_hash ) {
 
         if( an_event_qr_hash.includes( 'testing'  ) ) return {}
 
+        // Function dependencies
+        const { call_poap_endpoint } = require( './poap_api' )
+
         // Get event ID as known within the POAP system
         const { event } = await call_poap_endpoint( `/actions/claim-qr`, { qr_hash: an_event_qr_hash } )
         const { event_template_id } = event
@@ -143,6 +146,9 @@ exports.get_event_template_by_code = get_event_template_by_code
 exports.registerEvent = async function( data, context ) {
 
     try {
+
+        // Function dependencies
+        const { db, arrayUnion, increment } = require( './firebase' )
 
         // Add a week grace period in case we need to debug anything
         const weekInMs = 1000 * 60 * 60 * 24 * 7
@@ -188,6 +194,7 @@ exports.registerEvent = async function( data, context ) {
         await validate_and_write_event_codes( id, date, formatted_codes )
 
         // Send email to user with event and admin links
+        const { sendEventAdminEmail } = require( './email' )
         await sendEventAdminEmail( {
             email: email,
             event: {
@@ -228,6 +235,9 @@ exports.updatePublicEventData = async function( change, context ) {
     const { after, before } = change
     const { eventId } = context.params
 
+    // Function dependencies
+    const { db } = require( './firebase' )
+
     // If this was a deletion, delete public data
     if( !after.exists ) return db.collection( 'publicEventData' ).doc( eventId ).delete()
 
@@ -255,6 +265,9 @@ exports.updatePublicEventData = async function( change, context ) {
 exports.deleteEvent = async function( data, context ) {
 	
     try {
+
+        // Function dependencies
+        const { db, dataFromSnap } = require( './firebase' )
 
         throw_on_failed_app_check( context )
 
@@ -285,6 +298,10 @@ exports.deleteEvent = async function( data, context ) {
 
 exports.delete_data_of_deleted_event = async function( snap, context ) {
 
+    // Function dependencies
+    const { throttle_and_retry } = require( './helpers' )
+    const { db } = require( './firebase' )
+
     // Throttle config
     const maxInProgress = 500
 
@@ -314,6 +331,9 @@ exports.getUniqueOrganiserEmails = async function(  ) {
     try {
 
         if( !process.env.development ) return console.error( 'getUniqueOrganiserEmails called externally which is never allowed' )
+
+        // Function dependencies
+        const { db, dataFromSnap } = require( './firebase' )
 
         const events = await db.collection( 'events' ).get().then( dataFromSnap )
         const emails = events.map( ( { email } ) => email )

@@ -1,10 +1,12 @@
 const { db, dataFromSnap } = require( "./firebase" )
-const { log, throttle_and_retry } = require( "./helpers" )
-const { call_poap_endpoint } = require( "./poap_api" )
-const Papa = require( 'papaparse' )
+const { log } = require( "./helpers" )
 const { validate: validate_uuid } = require( 'uuid' )
 
 exports.export_emails_of_static_drop = async ( data, context ) => {
+
+    // Function dependencies
+    const { call_poap_endpoint } = require( "./poap_api" )
+    const Papa = require( 'papaparse' )
 
     try {
 
@@ -14,7 +16,6 @@ exports.export_emails_of_static_drop = async ( data, context ) => {
         // Destructure inputs
         log( `Export called with `, data )
         const { drop_id, secret_code, auth_code } = data
-        const is_mock_claim = drop_id?.includes( `mock` )
 
         // Grab internal drop config
         const drop_config = await db.collection( `static_drop_private` ).doc( drop_id ).get().then( dataFromSnap )
@@ -50,6 +51,10 @@ exports.export_emails_of_static_drop = async ( data, context ) => {
 }
 
 exports.delete_emails_of_static_drop = async ( data, context ) => {
+
+    // Function dependencies
+    const { call_poap_endpoint } = require( "./poap_api" )
+    const { throttle_and_retry } = require( "./helpers" )
 
     try {
 
@@ -99,7 +104,6 @@ exports.create_static_drop = async ( data, context ) => {
         // Destructure inputs
         log( `Create called with `, data )
         const { drop_id, auth_code, optin_text, welcome_text, custom_css, custom_email, allow_wallet_claim } = data
-        const is_mock_claim = drop_id?.includes( `mock` )
 
         // Validate config versus inputs
         if( !drop_id?.match( /\d*/ ) ) throw new Error( `Drop ID is invalid, it should be only digits` )

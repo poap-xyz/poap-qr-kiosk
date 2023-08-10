@@ -1,15 +1,22 @@
+// Sendgrid email module
 const functions = require( 'firebase-functions' )
 const { sendgrid } = functions.config()
-const mail = require( '@sendgrid/mail' )
-const juice = require( 'juice' )
-
-// Email templates
-const pug = require( 'pug' )
-const { promises: fs } = require( 'fs' )
-const csso = require( 'csso' )
-const { log } = require( './helpers' )
+let configured_email_module = undefined
+const get_configured_mail_instance = () => {
+    if( configured_email_module ) return configured_email_module
+    const mail = require( '@sendgrid/mail' )
+    mail.setApiKey( sendgrid.apikey )
+    configured_email_module = mail
+    return configured_email_module
+}
 
 async function compilePugToEmail( pugFile, event ) {
+
+    // Function dependencies
+    const pug = require( 'pug' )
+    const { promises: fs } = require( 'fs' )
+    const csso = require( 'csso' )
+    const juice = require( 'juice' )
 
     const [ emailPug, inlineNormalise, styleExtra, styleOutlook, poapStyles ] = await Promise.all( [
         fs.readFile( pugFile ),
@@ -30,10 +37,13 @@ async function compilePugToEmail( pugFile, event ) {
 
 exports.sendEventAdminEmail = async ( { email, event } ) => {
 
+    // Function dependencies
+    const { promises: fs } = require( 'fs' )
+
     try {
 
         // API auth
-        mail.setApiKey( sendgrid.apikey )
+        get_configured_mail_instance().setApiKey( sendgrid.apikey )
 
         // Build email
         const msg = {
@@ -44,7 +54,7 @@ exports.sendEventAdminEmail = async ( { email, event } ) => {
             html: await compilePugToEmail( `${ __dirname }/../templates/kiosk-created.email.pug`, event ),
         }
 
-        await mail.send( msg )
+        await get_configured_mail_instance().send( msg )
 
     } catch ( e ) {
 
@@ -56,10 +66,10 @@ exports.sendEventAdminEmail = async ( { email, event } ) => {
 
 exports.sendCustomClaimEmail = async ( { email, event, claim_code, html } ) => {
 
-    try {
+    // Function dependencies
+    const { log } = require( './helpers' )
 
-        // API auth
-        mail.setApiKey( sendgrid.apikey )
+    try {
 
         // Substitute event properties in the HTML
         const event_keys = Object.keys( event )
@@ -82,7 +92,7 @@ exports.sendCustomClaimEmail = async ( { email, event, claim_code, html } ) => {
         }
 
         log( `Sending custom email: `, substituted_html )
-        await mail.send( msg )
+        await get_configured_mail_instance().send( msg )
 
     } catch ( e ) {
 

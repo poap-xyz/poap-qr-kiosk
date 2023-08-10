@@ -59,10 +59,13 @@ export const delete_emails_of_static_drop = httpsCallable( functions, 'delete_em
 export const create_static_drop = httpsCallable( functions, 'create_static_drop' )
 
 // Offline functions emulator
-// Connect to functions emulator
+const functions_emulator_port = 5001
+const firestore_emulator_port = 8080
 if( process.env.REACT_APP_useEmulator ) {
-    connectFunctionsEmulator( functions, 'localhost', 5001 )
-    log( `Using firebase functions emulator` )
+    connectFunctionsEmulator( functions, 'localhost', functions_emulator_port )
+    log( `Using firebase functions emulator on port ${ functions_emulator_port }` )
+    // connectFirestoreEmulator( db, 'localhost', firestore_emulator_port )
+    // log( `Using firebase firestore emulator on port ${ firestore_emulator_port }` )
 }
 
 // ///////////////////////////////

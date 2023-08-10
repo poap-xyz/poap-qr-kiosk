@@ -1,8 +1,26 @@
 // Firebase interactors
 const { initializeApp } = require( "firebase-admin/app" )
 const { getFirestore, FieldValue } = require( 'firebase-admin/firestore' )
-const app = initializeApp()
-const db = getFirestore( app )
+
+// Cached app instalce
+let cached_app = undefined
+const get_app = () => {
+    if( cached_app ) return cached_app
+    cached_app = initializeApp()
+    return cached_app
+}
+
+// Cached firestore instalce
+let cached_db = undefined
+const get_db = () => {
+    if( cached_db ) return cached_db
+    cached_db = getFirestore( get_app() )
+    return cached_db
+}
+
+// Get cached instances
+const app = get_app()
+const db = get_db()
 
 const dataFromSnap = ( snapOfDocOrDocs, withDocId=true ) => {
 	
