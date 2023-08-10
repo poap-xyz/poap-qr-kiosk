@@ -58,9 +58,20 @@ export default function ViewQR( ) {
 
     // If the game is done, and the user is valid, redirect for claiming
     useEffect( (  ) => {
-        if( !user_valid || !gameDone || !claim_link ) return
+
+        // Catch-all case: If user unverified, or no claim link, do nothing
+        if( !user_valid || !claim_link ) return
+
+        // Case 1: this is a game version, and the user did NOT complete
+        if( has_game_challenge && !gameDone ) return
+
+        // Case 2: not a game version, but user still verifying
+        if( !has_game_challenge && ( !user_valid || !claim_link ) ) return
+
+        // User is done
         if( !dev ) window.location.replace( claim_link )
-    }, [ claim_link, user_valid, gameDone ] )
+
+    }, [ claim_link, user_valid, gameDone, has_game_challenge ] )
 
 
     // ///////////////////////////////
@@ -81,7 +92,7 @@ export default function ViewQR( ) {
     // note that the above useEffect forwards a user to the claim link when we are not in dev mode
     if( dev && user_valid && ( gameDone || !has_game_challenge ) && claim_link ) return <Loading message={ `POAP link: ${ claim_link }` } />
 
-    // Default loading state
-    return <Loading message="Loading..." />
+    // Default loading state, should only trigger while waiting for link that the user will be forwarded to
+    return <Loading message="Loading your POAP..." />
 
 }
