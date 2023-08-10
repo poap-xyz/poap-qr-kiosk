@@ -59,19 +59,17 @@ export default function ViewQR( ) {
     // If the game is done, and the user is valid, redirect for claiming
     useEffect( (  ) => {
 
-        // Catch-all case: If user unverified, or no claim link, do nothing
+        // Game version do their claiming through a subcomponent of <Stroop />
+        // for that reason we never forward game-based challenges
+        if( has_game_challenge ) return
+
+        // If user not yet verified, or link unavailable, exit
         if( !user_valid || !claim_link ) return
 
-        // Case 1: this is a game version, and the user did NOT complete
-        if( has_game_challenge && !gameDone ) return
-
-        // Case 2: not a game version, but user still verifying
-        if( !has_game_challenge && ( !user_valid || !claim_link ) ) return
-
-        // User is done
+        // User verified, and link available, forward
         if( !dev ) window.location.replace( claim_link )
 
-    }, [ claim_link, user_valid, gameDone, has_game_challenge ] )
+    }, [ claim_link, user_valid, has_game_challenge ] )
 
 
     // ///////////////////////////////
