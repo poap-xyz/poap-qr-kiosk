@@ -25,7 +25,7 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
     async function get_poap_link() {
 
 
-        log( `Getting code for ${ challenge_code }: `, challenge )
+        log( `Getting code for ${ challenge_code }: `, challenge, event )
         let { data: claim_code } = await get_code_by_challenge( { challenge_code, captcha_response: captchaResponse } )
 
         // On first fail, refresh codes and try again
@@ -42,6 +42,7 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
         trackEvent( `claim_code_received` )
 
         // Formulate redirect depending on claim type
+        log( `Generating claim link based on code ${ claim_code } and event data `, event )
         let link = `https://poap.xyz/claim/${ claim_code }`
         if( event?.collect_emails ) link = `${ REACT_APP_publicUrl }/#/static/claim/${ claim_code }`
         if( event?.claim_base_url ) link = `${ event?.claim_base_url }${ claim_code }`
@@ -53,7 +54,7 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
     // Once the user is validated, get a POAP claim code
     useEffect( (  ) => {
 
-        log( `claim_codes.js triggered with User valid: ${ user_valid }, fetch code: ${ fetch_code }` )
+        log( `claim_codes.js triggered with User valid: ${ user_valid }, fetch code: ${ fetch_code }, challenge: `, challenge, ` event: `, event )
 
         let cancelled = false;
 
@@ -64,14 +65,14 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
                 // Check for presence of challenge data
                 if( !user_valid ) return log( 'User not (yet) validated' )
 
-                // Validate for expired challenge
-                if( user_valid && challenge?.deleted ) {
+                // Validate for expired challenge, note that the claim_link check here exists because challenges are expired once links are retreived, so once a claim_code is loaded the challenge is expired while the page is still open
+                if( !claim_link && user_valid && challenge?.deleted ) {
                     trackEvent( `claim_challenge_expired` )
                     throw new Error( `${ t( 'claim.validation.alreadyUsed' ) }` )
                 }
 
-                log( `Challenge received: `, challenge )
-
+                // Check if the event data was loaded yet, we need this for custom behaviour like claim_base_url and collect_emails
+                if( !event ) return log( 'Event not (yet) loaded' )
 
                 // If we already have a link in the state, do not get a new one
                 if( claim_link ) return
@@ -98,7 +99,7 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
 
         return () => cancelled = true
 
-    }, [ user_valid, fetch_code ] )
+    }, [ user_valid, fetch_code, event?.name ] ) // Note that we're comparing to the event?.name which is a base type, meaning the hook will not retrigger if the event is reloaded (and the object reference changes)
 
     return { claim_link, error }
 
