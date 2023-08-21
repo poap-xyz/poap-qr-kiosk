@@ -29,7 +29,7 @@ app.post( '/generate/:event_id', async ( req, res ) => {
 
         // Get request data
         const { event_id } = req.params
-        const { secret_code, email } = req.body
+        const { secret_code, email, naive } = req.body
         const { CI } = req.query
         log( `Creating kiosk for event ${ event_id } with secret code: ${ secret_code } for ${ email }` )
 
@@ -104,6 +104,7 @@ app.post( '/generate/:event_id', async ( req, res ) => {
                 template: await get_event_template_by_code( codes[0] ),
                 game_config: {},
                 challenges: [],
+                naive,
                 expires: new Date( expiry_date ).getTime() + weekInMs,
                 expires_yyyy_mm_dd: expiry_date,
                 public_auth: generate_new_event_public_auth(),
