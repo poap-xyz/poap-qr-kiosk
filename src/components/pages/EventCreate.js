@@ -16,7 +16,7 @@ import Layout from '../molecules/Layout'
 import FormFooter from '../molecules/FormFooter'
 import { UploadButton } from '../molecules/UploadButton'
 
-import { Button, CardContainer, Container, H3, Input, Dropdown } from '@poap/poap-components'
+import { Button, CardContainer, Container, H3, Input, Dropdown, Toggle } from '@poap/poap-components'
 
 // ///////////////////////////////
 // Render component
@@ -46,6 +46,7 @@ export default function Admin( ) {
     const [ isHealthy, setIsHealthy ] = useState( true )
     const [ backgroundTaps, setBackgroundTaps ] = useState( 0 )
     const [ collectEmails, setCollectEmails ] = useState( false )
+    const [ naiveMode, setNaiveMode ] = useState( false )
     const developer_mode = backgroundTaps >= 20
 
     const gameOptions = [
@@ -222,7 +223,8 @@ export default function Admin( ) {
                 email,
                 date,
                 codes,
-                challenges: gameEnabled ? [ 'game' ] : [],
+                // If naiveMode is true skip game, else check if gameEnabled 
+                challenges: naiveMode ? [ 'naive' ] : gameEnabled ? [ 'game' ] : [],
                 collect_emails: !!collectEmails,
                 // Custom base URLs may only be used is collectEmails is off, this is because collectEmails works by setting the base url in Claim.js
                 ... !collectEmails && customBaseurl && { claim_base_url: customBaseurl } ,
@@ -312,6 +314,13 @@ export default function Admin( ) {
                     { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'eventCreate.form.dropCss.placeholder' ) } label={ t( 'eventCreate.form.dropCss.label' ) } toolTip={ t( 'eventCreate.form.dropCss.info' ) } value={ css || '' } /> }
                     { developer_mode && <Dropdown options={ t( 'eventCreate.form.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } value={ collectEmails } /> }
                     { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'eventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'eventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'eventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
+                    { developer_mode && <Toggle label='Naive mode' 
+                        name='naiveMode'
+                        options={ [ { label: 'Yes', value: true }, { label: 'No', value: false } ] }
+                        defaultValue="false"
+                        toolTip='Bypass all artificial delay and direct redirect the collector to the POAP claimpage'
+                        onChange={ ( { target } ) => setNaiveMode( target.value.includes( 'yes' ) ) }
+                    /> }
                 </Grid>
                 <FormFooter>
                     <Button onClick={ clearEvent } variation='white' tabIndex='0'>Cancel</Button>

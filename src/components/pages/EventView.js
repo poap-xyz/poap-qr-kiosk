@@ -220,7 +220,7 @@ export default function ViewQR( ) {
 
                     <ManMoon />
                     <br />
-                    <h3>{ t( 'eventView.expired.title' ) }</h3>
+                    <H3>{ t( 'eventView.expired.title' ) }</H3>
                     <Divider />
                     <br />
                     <Text align='center'>{ t( 'eventView.expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Text>
@@ -240,7 +240,7 @@ export default function ViewQR( ) {
 
                     <NoCodes />
                     <br />
-                    <h3>{ t( 'eventView.codes.title' ) }</h3>
+                    <H3>{ t( 'eventView.codes.title' ) }</H3>
                     <Divider />
                     <br />
                     { /* TODO discuss link */ }

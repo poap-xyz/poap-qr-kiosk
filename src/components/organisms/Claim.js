@@ -26,7 +26,8 @@ export default function ViewQR( ) {
     const [ captchaResponse, setCaptchaResponse ] = useState(  )
     const { message: user_validation_status_message, user_valid } = useValidateUser( captchaResponse )
 
-    // Game state management]
+    // Challenge state management]
+    const has_naive_challenge = challenge?.challenges?.includes( 'naive' )
     const has_game_challenge = challenge?.challenges?.includes( 'game' )
 
     // If this challenge includes a game, set the default gameDone to false (and the reverse too)
@@ -35,6 +36,7 @@ export default function ViewQR( ) {
     const { claim_link, error } = useClaimcodeForChallenge( captchaResponse, should_fetch_poap_claim_code )
 
     log( `Challenge ${ challenge_code }: `, challenge )
+    log( `Has naive: ${ has_naive_challenge }, User valid: ${ user_valid } (${ user_validation_status_message || 'no message' }). Claim link: ${ claim_link } (${ should_fetch_poap_claim_code ? 'should' : 'should not' } fetch)` )
     log( `Has game: ${ has_game_challenge }, Game done: ${ gameDone }. User valid: ${ user_valid } (${ user_validation_status_message || 'no message' }). Claim link: ${ claim_link } (${ should_fetch_poap_claim_code ? 'should' : 'should not' } fetch)` )
 
     /* ///////////////////////////////
