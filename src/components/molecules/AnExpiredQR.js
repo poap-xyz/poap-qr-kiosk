@@ -6,12 +6,10 @@ import { ReactComponent as ExpiredIcon } from '../../assets/ExpiredQR.svg'
 
 import { ReactComponent as NoCodesIcon } from '../../assets/NocodesQR.svg'
 
-// Sample SVG components
 const ExpiredSVG = styled( ExpiredIcon )`
     margin: 0;
 `
 
-// Sample SVG components
 const NoCodesSVG = styled( NoCodesIcon )`
     margin: 0;
 `
