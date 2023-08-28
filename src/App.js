@@ -36,7 +36,6 @@ export default function App( ) {
                     <Route path='/event/admin/:eventId/:authToken' element={ <EventAdmin /> } />
 
                     <Route path='/event'>
-
                         <Route path=':eventId/:viewMode' element={ <ViewQR /> } />
                         <Route path=':eventId' element={ <ViewQR /> } />
                         <Route path='' element={ <ViewQR /> } />

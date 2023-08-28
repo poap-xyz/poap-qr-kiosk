@@ -20,6 +20,7 @@ import { H1, H2, H3, Text, Sidenote, Button, Container, CardContainer, Divider }
 import { ReactComponent as UserConnected } from '../../assets/illustrations/user_connected.svg'
 import { ReactComponent as ManMoon } from '../../assets/illustrations/man_to_the_moon.svg'
 import { ReactComponent as NoCodes } from '../../assets/illustrations/no_more_codes.svg'
+import ExpiredQR from '../molecules/AnExpiredQR'
 
 // ///////////////////////////////
 // Render component
@@ -180,36 +181,21 @@ export default function ViewQR( ) {
 
 
     // ///////////////////////////////
-    // Render component
+    // Render iframe component
     // ///////////////////////////////
+
+    // Expired event qr error
+    if( iframeMode && event?.expires && event.expires < Date.now() ) return <ExpiredQR status='expired'/>
+
+    // // No code qr error
+    if( iframeMode && !event?.public_auth?.expires ) return  <ExpiredQR status='noCodes'/>
 
     // If iframe mode, render only QR
     if( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
 
-    // Show welcome screen
-    if( !acceptedTerms ) return <ViewWrapper center show_bookmark>
-
-        <Section>
-            <Container>
-                <CardContainer width='400px'>
-
-                    <UserConnected />
-                    <br />
-                    <H3>{ t( 'eventView.terms.subheading' ) }</H3>
-                    <Divider />
-                    <br />
-                    <Text align="center">{ t( 'eventView.terms.description' ) }</Text>
-
-                    <Button id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>{ t( 'eventView.terms.acceptBtn' ) }</Button>
-
-                </CardContainer>
-            </Container>
-        </Section>
-
-    </ViewWrapper>
-
-    // loading screen
-    if( loading ) return <Loading message={ loading } />
+    // ///////////////////////////////
+    // Render default component
+    // ///////////////////////////////
 
     // Expired event error
     if( event?.expires && event.expires < Date.now() ) return <ViewWrapper center show_bookmark>
@@ -220,7 +206,7 @@ export default function ViewQR( ) {
 
                     <ManMoon />
                     <br />
-                    <h3>{ t( 'eventView.expired.title' ) }</h3>
+                    <H3>{ t( 'eventView.expired.title' ) }</H3>
                     <Divider />
                     <br />
                     <Text align='center'>{ t( 'eventView.expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Text>
@@ -240,12 +226,37 @@ export default function ViewQR( ) {
 
                     <NoCodes />
                     <br />
-                    <h3>{ t( 'eventView.codes.title' ) }</h3>
+                    <H3>{ t( 'eventView.codes.title' ) }</H3>
                     <Divider />
                     <br />
                     { /* TODO discuss link */ }
                     <Text align='center'>{ t( 'eventView.codes.description' ) }</Text>
                     { /* <Text onClick={ f => navigate( '/event/admin' ) } align='center'>{ t( 'eventView.codes.description' ) }</Text> */ }
+
+                </CardContainer>
+            </Container>
+        </Section>
+
+    </ViewWrapper>
+
+    // loading screen
+    if( loading ) return <Loading message={ loading } />
+
+    // Show welcome screen
+    if( !acceptedTerms ) return <ViewWrapper center show_bookmark>
+
+        <Section>
+            <Container>
+                <CardContainer width='400px'>
+
+                    <UserConnected />
+                    <br />
+                    <H3>{ t( 'eventView.terms.subheading' ) }</H3>
+                    <Divider />
+                    <br />
+                    <Text align="center">{ t( 'eventView.terms.description' ) }</Text>
+
+                    <Button id="event-view-accept-disclaimer" onClick={ f => setAcceptedTerms( true ) }>{ t( 'eventView.terms.acceptBtn' ) }</Button>
 
                 </CardContainer>
             </Container>
