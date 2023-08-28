@@ -46,8 +46,6 @@ export default function ViewQR( ) {
     // ///////////////////////////////
     // State handling
     // ///////////////////////////////
-    const scanInterval = 2 * 60 * 1000
-    const [ loading, setLoading ] = useState( `${ t( 'eventView.setKiosk' ) }` )
     const [ internalEventId, setInternalEventId ] = useState( stateEventId || eventId )
     const [ acceptedTerms, setAcceptedTerms ] = useState( viewMode == 'silent' )
     const [ iframeMode, setIframeMode ] = useState( false )
@@ -105,7 +103,6 @@ export default function ViewQR( ) {
             if( !cached_event_id ) throw new Error( `${ t( 'eventView.eventNoCache' ) }` )
             trackEvent( `event_view_event_id_from_cache` )
             setInternalEventId( cached_event_id )
-            setLoading( `${ t( 'eventView.eventLoading' ) }` )
 
         } catch ( e ) {
 
@@ -122,7 +119,7 @@ export default function ViewQR( ) {
     // On mount, do single code force-refresh
     useEffect( () => {
 
-        if( !internalEventId ) return log( `No internal event ID, cancelling manual code refresh` )
+        if( !internalEventId || internalEventId == 'cached' ) return log( `No internal event ID, cancelling manual code refresh` )
 
         log( `Triggering remote refresh of unknown and unscanned codes` )
         requestManualCodeRefresh( internalEventId )
@@ -132,9 +129,10 @@ export default function ViewQR( ) {
     }, [ internalEventId ] )
 
     // Update the state of scanned codes periodically
+    const scanInterval = 2 * 60 * 1000
     useInterval( () => {
 
-        if( !internalEventId ) return log( `No internal event ID, cancelling scanned code refresh` )
+        if( !internalEventId || internalEventId == 'cached' ) return log( `No internal event ID, cancelling scanned code refresh` )
 
         refreshScannedCodesStatuses( internalEventId )
             .then( ( { data } ) => log( `Remote code update response : `, data ) )
@@ -150,13 +148,20 @@ export default function ViewQR( ) {
 
     },  [ event?.public_auth?.token ] )
 
+    /* ///////////////////////////////
+    // Loading states
+    // /////////////////////////////*/
+
+    // Iframe renderer should remain empty until event data arrives
+    if( iframeMode && !event ) return null
+
+    // Loading state
+    if( !iframeMode && !event ) return <Loading message={ t( 'eventView.eventLoading' ) } />
+
 
     // ///////////////////////////////
     // Render iframe component
     // ///////////////////////////////
-
-    // Iframe renderer should remain empty until event data arrives
-    if( iframeMode && !event ) return null
 
     // Expired event qr error
     if( iframeMode && event?.expires && event.expires < Date.now() ) return <ExpiredQR status='expired'/>
@@ -216,9 +221,6 @@ export default function ViewQR( ) {
     /* ///////////////////////////////
     // Render default component
     // /////////////////////////////*/
-
-    // Loading state
-    if( loading ) return <Loading message={ loading } />
 
     // Show welcome screen
     if( !acceptedTerms ) return <ViewWrapper center show_bookmark>

@@ -1,5 +1,5 @@
 // Firebase interactors
-const { db, dataFromSnap, increment } = require( './firebase' )
+const { db, dataFromSnap, increment, deleteField } = require( './firebase' )
 const { log, isEmail, isWalletOrENS, isWallet } = require( './helpers' )
 const { throw_on_failed_app_check } = require( './security' )
 
@@ -176,6 +176,7 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
     const ageInMs = 1000 * ageInSeconds
     const errorSlowdownFactor = 10
     const maxInProgress = 500
+    const debounce_ms = 1000 * 60
 
 
     try {
@@ -187,22 +188,14 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
         if( !event_id ) throw new Error( `Event ID was not passed to refresh` )
 
         /* ///////////////////////////////
-		// Clash throttle */
-        const currently_running = await db.collection( 'meta' ).doc( `event_refresh_blocker_${ event_id }` ).get().then( dataFromSnap )
+        // Debounce this function */
+        const { started } = await db.collection( 'meta' ).doc( `event_refresh_debounce_${ event_id }` ).get().then( dataFromSnap )
 
-        // If there is a running refresh ...
-        // and it is the first refresh ever (ie .ended exists)...
-        // or this is not the first, but the last run did not finish yet ...
-        if( currently_running && ( !currently_running.ended || currently_running.started > currently_running.ended ) ) {
-
-            // ...and it is younger than 5 minutes, exit
-            const five_minutes_from_now = Date.now() +  1000 * 60 * 5 
-            if( currently_running.started < five_minutes_from_now ) return
-
-        }
+        // If there is a running refresh, and it is within the debounce window, exit
+        if( started && started < Date.now() - debounce_ms ) return log( `Refresh already running for ${ event_id }` )
 
         // Set this run as the running one
-        await db.collection( 'meta' ).doc( `event_refresh_${ event_id }` ).set( { started: Date.now(), started_human: new Date().toString() }, { merge: true } )
+        await db.collection( 'meta' ).doc( `event_refresh_debounce_${ event_id }` ).set( { started: Date.now(), started_human: new Date().toString() }, { merge: true } )
 
         // Get old unknown codes
         const oldUnknowns = await db.collection( 'codes' )
@@ -266,7 +259,7 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
         await db.collection( 'events' ).doc( event_id ).set( { codesAvailable: increment( -codes_already_claimed ), updated: Date.now(), updated_by: 'refresh_unknown_and_unscanned_codes' }, { merge: true } )
 
         // Mark this run as finished
-        await db.collection( 'meta' ).doc( `event_refresh_${ event_id }` ).set( { ended: Date.now(), ended_human: new Date().toString() }, { merge: true } )
+        await db.collection( 'meta' ).doc( `event_refresh_debounce_${ event_id }` ).set( { started: deleteField(), started_human: deleteField(), ended: Date.now(), ended_human: new Date().toString() }, { merge: true } )
 
         return 'success'
 
@@ -284,10 +277,10 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
 exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 
     // const oneHour = 1000 * 60 * 60
-    const fiveMinutes = 1000 * 60 * 5
     const checkCodesAtLeast = 2
     const checkCooldown = 1000 * 30
     const maxInProgress = 10
+    const debounce_ms = 1000 * 60
 
 
     try {
@@ -296,6 +289,16 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
         throw_on_failed_app_check( context )
 
         if( !eventId ) throw new Error( `Code refresh called without event ID` )
+
+        /* ///////////////////////////////
+        // Debounce this function */
+        const { started } = await db.collection( 'meta' ).doc( `scanned_codes_debounce_${ eventId }` ).get().then( dataFromSnap )
+
+        // If there is a running refresh, and it is within the debounce window, exit
+        if( started && started < Date.now() - debounce_ms ) return log( `Refresh already running for ${ eventId }` )
+
+        // Set this run as the running one
+        await db.collection( 'meta' ).doc( `scanned_codes_debounce_${ eventId }` ).set( { started: Date.now(), started_human: new Date().toString() }, { merge: true } )
 
         // Get event data
         const event = await db.collection( 'events' ).doc( eventId ).get().then( dataFromSnap )
@@ -322,17 +325,16 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
         const codesToCheck = scannedAndUnclaimedCodes.filter( ( { updated } ) => updated <  Date.now() - checkCooldown  )
 
         // Build action queue
-        const queue = codesToCheck.map( ( { uid } ) => function() {
-
-            return updateCodeStatus( uid )
-
-        } )
+        const queue = codesToCheck.map( ( { uid } ) => () => updateCodeStatus( uid ) )
 
         // For every unknown, check the status against live API
         const Throttle = require( 'promise-parallel-throttle' )
         await Throttle.all( queue, {
             maxInProgress: maxInProgress
         } )
+
+        // Delete debounce doc
+        await db.collection( 'meta' ).doc( `scanned_codes_debounce_${ eventId }` ).set( { started: deleteField(), started_human: deleteField(), end: Date.now(), end_human: new Date().toString() }, { merge: true } )
 
         return { updated: codesToCheck.length, reset: codesToReset.length }
 
