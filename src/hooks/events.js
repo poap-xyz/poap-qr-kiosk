@@ -3,13 +3,27 @@ import { listenToEventMeta, listen_to_claim_challenge } from "../modules/firebas
 
 export const useEvent = ( eventId, do_nothing=false ) => {
 
-    const [ event, set_event ] = useState( 'loading' )
+    const [ event, set_event ] = useState( undefined )
 
     useEffect( () => {
         if( eventId && !do_nothing ) return listenToEventMeta( eventId, set_event )
     }, [ eventId, do_nothing ] )
 
     return event
+}
+
+export const useEventTemplate = eventId => {
+    
+    const [ template, set_template ] = useState( undefined )
+    
+    useEffect( () => {
+        if( !eventId ) return set_template( undefined )
+        if( eventId ) return listenToEventMeta( eventId, event => {
+            set_template( event?.template )
+        }, true )
+    }, [ eventId ] )
+    
+    return template
 }
 
 export const useEventOfChallenge = ( challenge_code ) => {
