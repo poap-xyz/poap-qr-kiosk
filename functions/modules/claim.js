@@ -98,6 +98,19 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
         // 307: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_redirection
         let redirect_link = `${ redirect_baseurl }/#/claim/${ challenge_auth.token }`
 
+        // If this is Naive mode overwrite directly to claim page
+        if( event.challenges.includes( 'naive' ) ) {
+
+            // custom base
+            let redirect_link = `${ redirect_baseurl }/#/claim/${ challenge_auth.token }`
+
+            // 1: get a POAP
+            
+
+            // Forward to redirect_link
+            return res.redirect( 307, redirect_link )
+        }
+
         // Tell fronted to force invalid appcheck, this is so that we can simulate this scenarion in cypress
         if( FORCE_INVALID_APPCHECK ) redirect_link += `/force_failed_appcheck`
 

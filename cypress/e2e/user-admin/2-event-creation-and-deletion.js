@@ -47,6 +47,48 @@ context( 'Organiser successful event creation', () => {
 
     } )
 
+    it( 'Shows hidden fields after specific click amount', () => {
+
+        cy.visit( '/create?debug=true' )
+
+        // Select file
+        cy.contains( 'label', 'Select .txt file that' )
+        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
+        cy.contains( 'Checking your mint links' )
+
+        // Relevant inputs appear
+        cy.contains( 'label', 'Kiosk title' )
+        cy.contains( 'label', 'Your email' )
+        cy.contains( 'label', 'Kiosk expiry date' )
+
+        // Click the body 20x to show hidden fields
+        for( let i = 0; i < 20; i++ ) {
+            cy.get( 'body' ).click()
+        }
+
+        // Relevant hidden inputs appear
+        cy.contains( 'label', 'Abuse protection level' )
+        cy.contains( 'label', 'Custom CSS overrides' )
+        cy.contains( 'label', 'Collect emails?' )
+
+        // Inputs are prefilled with expected values (generated based on backend testing defaults)
+        cy.get( 'input#event-create-name' ).should( input => {
+            const val = input.val()
+            expect( val ).to.include( 'Test Event' )
+        } )
+			
+        const tomorrow = new Date( Date.now() + 1000 * 60 * 60 * 24 )
+        let month = tomorrow.getUTCMonth() + 1
+        month = `${ month }`.length == 1 ? `0${ month }` : month
+        let day = tomorrow.getDate()
+        day = `${ day }`.length == 1 ? `0${ day }` : day
+        const YMD = `${ tomorrow.getFullYear() }-${ month }-${ day }`
+        cy.get( 'input#event-create-date' ).should( 'have.value', YMD )
+
+        cy.contains( 'Create Kiosk' )
+
+    } )
+
     it( 'Fails with missing data and succeeds when all data is provided', function() {
 
         let alerts = 0

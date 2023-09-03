@@ -157,7 +157,7 @@ exports.registerEvent = async function( data, context ) {
         throw_on_failed_app_check( context )
 
         // Validations
-        const { name='', email='', date='', codes=[], challenges=[], naive=false, game_config={ duration: 30, target_score: 5 }, css, collect_emails=false, claim_base_url } = data
+        const { name='', email='', date='', codes=[], challenges=[], game_config={ duration: 30, target_score: 5 }, css, collect_emails=false, claim_base_url } = data
         if( !codes.length ) throw new Error( 'Csv has 0 entries' )
         if( !name.length ) throw new Error( 'Please specify an event name' )
         if( !email.includes( '@' ) ) throw new Error( 'Please specify a valid email address' )
@@ -176,7 +176,6 @@ exports.registerEvent = async function( data, context ) {
             codesAvailable: codes.length, // This will be updated by the initial scan run in codes.js:updatePublicEventAvailableCodes
             authToken,
             challenges,
-            naive,
             game_config,
             ... css && { css } ,
             collect_emails,

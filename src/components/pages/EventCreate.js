@@ -32,6 +32,8 @@ export default function Admin( ) {
     // ///////////////////////////////
     // State handling
     // ///////////////////////////////
+
+    const [ event, setEvent ] = useState( {} )
     const [ email, setEmail ] = useState( dev ? 'mentor@poap.io' : '' )
     const [ date, setDate ] = useState( '' )
     const [ name, setName ] = useState( '' )
@@ -39,25 +41,28 @@ export default function Admin( ) {
     const [ css, setCss ] = useState(  )
     const [ customBaseurl, setCustomBaseurl ] = useState(  )
     const [ codes, setCodes ] = useState(  )
-    const [ gameEnabled, setGameEnabled ] = useState( false )
+    const [ abuseProtection, setAbuseProtection ] = useState( false )
     const [ gameDuration, setGameDuration ] = useState( 30 )
     const [ loading, setLoading ] = useState( false )
     const [ filename, setFilename ] = useState( 'codes.txt' )
     const [ isHealthy, setIsHealthy ] = useState( true )
     const [ backgroundTaps, setBackgroundTaps ] = useState( 0 )
     const [ collectEmails, setCollectEmails ] = useState( false )
-    const [ naiveMode, setNaiveMode ] = useState( false )
     const developer_mode = backgroundTaps >= 20
 
     const gameOptions = [
         {
-            label: 'No (recommended for physical events)',
-            value: 'no'
+            label: 'Automated background checks only',
+            value: 'background'
         },
         {
-            label: 'Yes (recommended for online drops)',
-            value: 'yes'
-        }
+            label: 'Automated checks & anti-farming game',
+            value: 'game'
+        },
+        ...developer_mode?[ {
+            label: 'None',
+            value: 'naive'
+        } ]: [],
     ]
 
     // ///////////////////////////////
@@ -147,6 +152,9 @@ export default function Admin( ) {
                 if( !event ) throw new Error( `${ t( 'eventCreate.event.eventExpired' ) }` )
 
                 // Set event details to state
+                setEvent( event )
+                log( `Computed event`, event )
+                if( event.name ) setName( event.name )
                 if( event.name ) setName( event.name )
                 if( event.expiry_date ) {
 
@@ -165,6 +173,7 @@ export default function Admin( ) {
                 if( !cancelled ) setCodes( undefined )
                 if( !cancelled ) setLoading( false )
                 if( !cancelled ) setCsv( undefined )
+                if( !cancelled ) setEvent( {} )
                 return alert( e.message )
 
             }
@@ -224,7 +233,7 @@ export default function Admin( ) {
                 date,
                 codes,
                 // If naiveMode is true skip game, else check if gameEnabled 
-                challenges: naiveMode ? [ 'naive' ] : gameEnabled ? [ 'game' ] : [],
+                challenges: [ abuseProtection ] ,
                 collect_emails: !!collectEmails,
                 // Custom base URLs may only be used is collectEmails is off, this is because collectEmails works by setting the base url in Claim.js
                 ... !collectEmails && customBaseurl && { claim_base_url: customBaseurl } ,
@@ -254,11 +263,6 @@ export default function Admin( ) {
     const clearEvent = () => {
         setCodes( undefined )
         setCsv( undefined )
-    }
-
-    // OptionSelect function
-    const handleOptionSelect = ( option ) => {
-        setGameEnabled( option.value.toLowerCase().includes( 'yes' ) )
     }
 
     // ///////////////////////////////
@@ -309,18 +313,11 @@ export default function Admin( ) {
                     <Input id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'eventCreate.form.dropName.placeholder' ) } label={ t( 'eventCreate.form.dropName.label' ) } toolTip={ t( 'eventCreate.form.dropName.info' ) } value={ name } optional />
                     <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'eventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'eventCreate.form.dropDate.info' ) }` } value={ date } />
                     <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'eventCreate.form.dropEmail.placeholder' ) } label={ t( 'eventCreate.form.dropEmail.label' ) } toolTip={ t( 'eventCreate.form.dropEmail.info' ) } value={ email } />
-                    <Dropdown id="event-create-game-enabled" label={ t( 'eventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` } options={ gameOptions } handleOptionSelect={ handleOptionSelect }/>
-                    { gameEnabled && <Dropdown id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) } /> }
+                    <Dropdown id="event-create-game-enabled" label={ t( 'eventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` } options={ gameOptions } handleOptionSelect={ ( { value } ) => setAbuseProtection( `${ value }` ) }/>
+                    { abuseProtection === 'game' && <Dropdown id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) } /> }
                     { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'eventCreate.form.dropCss.placeholder' ) } label={ t( 'eventCreate.form.dropCss.label' ) } toolTip={ t( 'eventCreate.form.dropCss.info' ) } value={ css || '' } /> }
                     { developer_mode && <Dropdown options={ t( 'eventCreate.form.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } value={ collectEmails } /> }
                     { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'eventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'eventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'eventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
-                    { developer_mode && <Toggle label='Naive mode' 
-                        name='naiveMode'
-                        options={ [ { label: 'Yes', value: true }, { label: 'No', value: false } ] }
-                        defaultValue="false"
-                        toolTip='Bypass all artificial delay and direct redirect the collector to the POAP claimpage'
-                        onChange={ ( { target } ) => setNaiveMode( target.value.includes( 'yes' ) ) }
-                    /> }
                 </Grid>
                 <FormFooter>
                     <Button onClick={ clearEvent } variation='white' tabIndex='0'>Cancel</Button>
