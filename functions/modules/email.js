@@ -1,11 +1,10 @@
 // Sendgrid email module
-const functions = require( 'firebase-functions' )
-const { sendgrid } = functions.config()
+const { SENDGRID_APIKEY, SENDGRID_FROMEMAIL } = process.env
 let configured_email_module = undefined
 const get_configured_mail_instance = () => {
     if( configured_email_module ) return configured_email_module
     const mail = require( '@sendgrid/mail' )
-    mail.setApiKey( sendgrid.apikey )
+    mail.setApiKey( SENDGRID_APIKEY )
     configured_email_module = mail
     return configured_email_module
 }
@@ -43,12 +42,12 @@ exports.sendEventAdminEmail = async ( { email, event } ) => {
     try {
 
         // API auth
-        get_configured_mail_instance().setApiKey( sendgrid.apikey )
+        get_configured_mail_instance().setApiKey( SENDGRID_APIKEY )
 
         // Build email
         const msg = {
             to: email,
-            from: sendgrid.fromemail,
+            from: SENDGRID_FROMEMAIL,
             subject: `POAP - Your QR kiosk for ${ event.name }`,
             text: ( await fs.readFile( `${ __dirname }/../templates/kiosk-created.email.txt`, 'utf8' ) ).replace( '%%eventlink%%', event.eventlink ).replace( '%%adminlink%%', event.adminlink ).replace( '%%eventname%%', event.name ),
             html: await compilePugToEmail( `${ __dirname }/../templates/kiosk-created.email.pug`, event ),
@@ -86,7 +85,7 @@ exports.sendCustomClaimEmail = async ( { email, event, claim_code, html } ) => {
         // Build email
         const msg = {
             to: email,
-            from: sendgrid.fromemail,
+            from: SENDGRID_FROMEMAIL,
             subject: `Claim your POAP for ${ event.name }`,
             html: substituted_html
         }

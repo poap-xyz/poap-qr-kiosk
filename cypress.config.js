@@ -36,7 +36,10 @@ module.exports = defineConfig( {
 
             // Environment variables to pass to cypress because we need them in tests
             const env_to_pass = [ 'REACT_APP_projectId', 'REACT_APP_useEmulator', 'REACT_APP_publicUrl' ]
-            env_to_pass.map( key => config.env[ key] = process.env[ key] )
+            env_to_pass.map( key => {
+                if( process.env[ key ] ) config.env[ key ] = process.env[ key ]
+                else console.log( `Missing ${ key } in env` )
+            } )
 
             return config
 

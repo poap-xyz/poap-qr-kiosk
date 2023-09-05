@@ -1,5 +1,6 @@
 // File upload test helper
 import 'cypress-file-upload'
+import { get_claim_function_url } from './e2e'
 
 // Timing helper
 const elapsed = ( start=0 ) => ( Date.now() - start ) / 1000
@@ -58,7 +59,7 @@ Cypress.Commands.add( 'get_challenge_from_qr_public_auth', ( public_auth_string,
     async function extract_challenge_from_url ( response ) {
 
         const { redirects } = response
-        if( !Array.isArray( redirects ) ) cy.log( redirects )
+        cy.log( `Redirects: `, redirects )
         const [ challenge_url ] = redirects
         const [ base, challenge_redirect ] = challenge_url.split( '/#/claim/' )
         const challenge = challenge_redirect.replace( '307: ' )
@@ -78,7 +79,7 @@ Cypress.Commands.add( 'get_challenge_from_qr_public_auth', ( public_auth_string,
 
     cy.log( `[ ${ elapsed( start ) } ] Simulating QR scan for ${ alias }` )
 
-    cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ public_auth_string }?CI=true` } )
+    cy.request( { ...request_options, url: `${ get_claim_function_url() }/${ public_auth_string }?CI=true` } )
         .then( extract_challenge_from_url )
         .then( challenge => cy.wrap( challenge ).as( alias ) )
 

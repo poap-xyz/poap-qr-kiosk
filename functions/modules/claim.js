@@ -8,15 +8,14 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
     // Function dependencies
     const { db, dataFromSnap } = require( './firebase' )
     const { generate_new_event_public_auth } = require( './events' )
-    const functions = require( 'firebase-functions' )
-    const { kiosk } = functions.config()
+    const { KIOSK_PUBLIC_URL } = process.env
 
     try {
 
 
         // Check whether this request came from a CI instance, set the relevant return URL based on that
         const { CI, FORCE_INVALID_APPCHECK } = req.query
-        const redirect_baseurl = CI ? `http://localhost:3000` : kiosk.public_url
+        const redirect_baseurl = CI ? `http://localhost:3000` : KIOSK_PUBLIC_URL
 
         // Get event id and authentication from request
         const { event_id, public_auth_token } = req.params

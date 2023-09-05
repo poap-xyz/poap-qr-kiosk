@@ -20,8 +20,7 @@ exports.validateCallerCaptcha = async ( captcha_response, context ) => {
     // Function dependencies
     const fetch = require( 'isomorphic-fetch' )
     const { db } = require( './firebase' )
-    const functions = require( 'firebase-functions' )
-    const { recaptcha } = functions.config()
+    const { RECAPTCHA_SECRET } = process.env
 
     try {
 
@@ -31,7 +30,7 @@ exports.validateCallerCaptcha = async ( captcha_response, context ) => {
         const options = {
             method: 'POST',
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `secret=${ recaptcha.secret }&response=${ captcha_response }`
+            body: `secret=${ RECAPTCHA_SECRET }&response=${ captcha_response }`
         }
         log( 'Checking captcha with', options )
         const { success, ...response } = await fetch( recaptcha_endpoint, options ).then( res => res.json() )

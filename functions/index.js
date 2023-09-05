@@ -53,7 +53,7 @@ exports.getUniqueOrganiserEmails = functions.https.onCall( getUniqueOrganiserEma
 // QR Middleware API
 // ///////////////////////////////
 const claimMiddleware = require( './modules/claim' )
-exports.claimMiddleware = onRequest( keepWarmRuntime, claimMiddleware )
+exports.claimMiddleware = onRequest( { cors: true, ...keepWarmRuntime }, claimMiddleware )
 
 /* ///////////////////////////////
 // Kiosk generator middleware API

@@ -19,8 +19,7 @@ app.post( '/generate/:event_id', async ( req, res ) => {
     const { v4: uuidv4 } = require( 'uuid' )
 
     // Configs
-    const functions = require( 'firebase-functions' )
-    const { kiosk } = functions.config()
+    const { KIOSK_PUBLIC_URL } = process.env
 
     try {
 
@@ -34,7 +33,7 @@ app.post( '/generate/:event_id', async ( req, res ) => {
         log( `Creating kiosk for event ${ event_id } with secret code: ${ secret_code } for ${ email }` )
 
         // Global config
-        const redirect_baseurl = CI ? `http://localhost:3000/` : kiosk.public_url
+        const redirect_baseurl = CI ? `http://localhost:3000/` : KIOSK_PUBLIC_URL
 
         // Validations
         // If data is missing, the email client probably does not support POST forms yet
