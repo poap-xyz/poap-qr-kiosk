@@ -2,9 +2,9 @@ const { log } = require( './helpers' )
 
 /* ///////////////////////////////
 // Appcheck validation */
-exports.validateCallerDevice = ( data, context ) => {
+exports.validateCallerDevice = request => {
 
-    if( context.app == undefined ) return false
+    if( request.app == undefined ) return false
 	
     return true
 

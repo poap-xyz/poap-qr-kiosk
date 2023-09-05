@@ -16,7 +16,7 @@ import Layout from '../molecules/Layout'
 import FormFooter from '../molecules/FormFooter'
 import { UploadButton } from '../molecules/UploadButton'
 
-import { Button, CardContainer, Container, H3, Input, Dropdown, Toggle } from '@poap/poap-components'
+import { Button, CardContainer, Container, H3, Input, Dropdown } from '@poap/poap-components'
 
 // ///////////////////////////////
 // Render component
@@ -33,7 +33,6 @@ export default function Admin( ) {
     // State handling
     // ///////////////////////////////
 
-    const [ event, setEvent ] = useState( {} )
     const [ email, setEmail ] = useState( dev ? 'mentor@poap.io' : '' )
     const [ date, setDate ] = useState( '' )
     const [ name, setName ] = useState( '' )
@@ -52,15 +51,15 @@ export default function Admin( ) {
 
     const gameOptions = [
         {
-            label: 'Automated background checks only',
+            label: 'Automated background checks only (physical events)',
             value: 'background'
         },
         {
-            label: 'Automated checks & anti-farming game',
+            label: 'Automated checks & anti-farming game (online events)',
             value: 'game'
         },
         ...developer_mode?[ {
-            label: 'None',
+            label: 'No anti-abuse protections (only in trusted environments)',
             value: 'naive'
         } ]: [],
     ]
@@ -152,7 +151,6 @@ export default function Admin( ) {
                 if( !event ) throw new Error( `${ t( 'eventCreate.event.eventExpired' ) }` )
 
                 // Set event details to state
-                setEvent( event )
                 log( `Computed event`, event )
                 if( event.name ) setName( event.name )
                 if( event.name ) setName( event.name )
@@ -173,7 +171,6 @@ export default function Admin( ) {
                 if( !cancelled ) setCodes( undefined )
                 if( !cancelled ) setLoading( false )
                 if( !cancelled ) setCsv( undefined )
-                if( !cancelled ) setEvent( {} )
                 return alert( e.message )
 
             }
@@ -311,7 +308,10 @@ export default function Admin( ) {
                         </Col>
                     </Row>
                     <Input id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'eventCreate.form.dropName.placeholder' ) } label={ t( 'eventCreate.form.dropName.label' ) } toolTip={ t( 'eventCreate.form.dropName.info' ) } value={ name } optional />
-                    <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'eventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'eventCreate.form.dropDate.info' ) }` } value={ date } />
+                    
+                    { /* Sam asked to remove the Kiosk expiry, for now I'm hiding it in the prod frontend but am keeping the backend logic in case we need to revert */ }
+                    { dev ? <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'eventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'eventCreate.form.dropDate.info' ) }` } value={ date } /> : null }
+                    
                     <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'eventCreate.form.dropEmail.placeholder' ) } label={ t( 'eventCreate.form.dropEmail.label' ) } toolTip={ t( 'eventCreate.form.dropEmail.info' ) } value={ email } />
                     <Dropdown id="event-create-game-enabled" label={ t( 'eventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` } options={ gameOptions } handleOptionSelect={ ( { value } ) => setAbuseProtection( `${ value }` ) }/>
                     { abuseProtection === 'game' && <Dropdown id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) } /> }

@@ -3,6 +3,7 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
+const { get_functions_url } = require( '../../support/e2e' )
 const oneCode = require( `../../fixtures/one-correct-code${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
 const request_options = {
 
@@ -80,7 +81,7 @@ context( 'Claimer can view valid events with game', () => {
 
         // Visit the public link with games
         const slow = 1000
-        cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
+        cy.request( { ...request_options, url: `${ get_functions_url( 'claim' ) }/${ this.event_1_public_auth_link }` } ).as( `request` )
             .then( extract_challenge_from_url )
             .then( event_1_first_challenge => {
 
@@ -179,7 +180,7 @@ context( 'Claimer can view valid events with game', () => {
     it( 'Event 1: Shows error if link was used after code ran out', function( ) {
 
         // Visit the public link to the second code as read by simulating a scan
-        cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
+        cy.request( { ...request_options, url: `${ get_functions_url( 'claim' ) }/${ this.event_1_public_auth_link }` } ).as( `request` )
             .then( extract_challenge_from_url )
             .then( event_1_second_challenge => {
 

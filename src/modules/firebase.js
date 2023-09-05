@@ -45,7 +45,7 @@ export const registerEvent = httpsCallable( functions, 'registerEvent' )
 export const deleteEvent = httpsCallable( functions, 'deleteEvent' )
 export const checkIfCodeHasBeenClaimed = httpsCallable( functions, 'checkIfCodeHasBeenClaimed' )
 export const requestManualCodeRefresh = httpsCallable( functions, 'requestManualCodeRefresh' )
-export const validateCallerDevice = httpsCallable( functions, 'validateCallerDevice' )
+export const validateCallerDevice = httpsCallable( functions, 'validatecallerdevice' )
 export const validateCallerCaptcha = httpsCallable( functions, 'validateCallerCaptcha' )
 export const refreshScannedCodesStatuses = httpsCallable( functions, 'refreshScannedCodesStatuses' )
 export const getEventDataFromCode = httpsCallable( functions, 'getEventDataFromCode' )
@@ -67,6 +67,8 @@ if( process.env.REACT_APP_useEmulator ) {
     // connectFirestoreEmulator( db, 'localhost', firestore_emulator_port )
     // log( `Using firebase firestore emulator on port ${ firestore_emulator_port }` )
 }
+
+export const get_emulator_function_call_url = name => `http://localhost:${ functions_emulator_port }/${ REACT_APP_projectId }/us-central1/${ name }`
 
 // ///////////////////////////////
 // Code actions

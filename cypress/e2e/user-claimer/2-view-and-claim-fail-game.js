@@ -3,6 +3,7 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
+const { get_functions_url } = require( '../../support/e2e' )
 const request_options = {
 
     headers: {
@@ -78,7 +79,7 @@ context( 'User can claim POAP after succeeding at challenge game', () => {
     it( 'Event 1: Succesfully redirects to challenge link and fail at game', function( ) {
 
         // Visit the public link with games
-        cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
+        cy.request( { ...request_options, url: `${ get_functions_url( 'claim' ) }/${ this.event_1_public_auth_link }` } ).as( `request` )
             .then( extract_challenge_from_url )
             .then( event_1_first_challenge => {
 
