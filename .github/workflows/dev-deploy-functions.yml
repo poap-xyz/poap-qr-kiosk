@@ -40,7 +40,8 @@ jobs:
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only=functions --project=development
+          # Adding --force since after adding minInstances functions every deploy needs a confirmation
+          args: deploy --only=functions --project=development --force
         env:
           GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
 
