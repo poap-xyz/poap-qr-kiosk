@@ -3,25 +3,6 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
-const fiveCodes = require( `../../fixtures/five-correct-codes${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
-const request_options = {
-    headers: {
-        Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host
-    },
-    failOnStatusCode: false
-}
-
-async function extract_challenge_from_url ( response ) {
-
-    const { redirects } = response
-    const [ challenge_url ] = redirects
-    cy.log( `Redirect: `, challenge_url )
-    const [ base, challenge_redirect ] = challenge_url.split( '/#/claim/' )
-    const challenge = challenge_redirect.replace( '307: ' )
-    cy.log( `Challenge extracted: ${ challenge }` )
-    return challenge
-
-}
 
 context( 'Claimer can view valid events', () => {
 

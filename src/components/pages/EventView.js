@@ -5,7 +5,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import useInterval from 'use-interval'
 import { useTranslation } from 'react-i18next'
 
-import { requestManualCodeRefresh, refreshScannedCodesStatuses, trackEvent } from '../../modules/firebase'
+import { requestManualCodeRefresh, refreshScannedCodesStatuses, trackEvent, get_emulator_function_call_url } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 log( `Frontend using live url ${ REACT_APP_publicUrl } with ${ REACT_APP_useEmulator ? 'emulator' : 'live backend' }` )
 
@@ -144,7 +144,7 @@ export default function ViewQR( ) {
     useEffect( f => {
 
         if( !event ) return
-        log( `For manual testing: \n${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }?CI=true` )
+        log( `For manual testing: \n${ dev ? get_emulator_function_call_url( 'claimmiddleware' ) : REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }?CI=true` )
 
     },  [ event?.public_auth?.token ] )
 

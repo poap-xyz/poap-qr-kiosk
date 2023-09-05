@@ -68,6 +68,8 @@ if( process.env.REACT_APP_useEmulator ) {
     // log( `Using firebase firestore emulator on port ${ firestore_emulator_port }` )
 }
 
+export const get_emulator_function_call_url = name => `http://localhost:${ functions_emulator_port }/${ REACT_APP_projectId }/us-central1/${ name }`
+
 // ///////////////////////////////
 // Code actions
 // ///////////////////////////////
