@@ -52,8 +52,8 @@ exports.getUniqueOrganiserEmails = functions.https.onCall( getUniqueOrganiserEma
 // ///////////////////////////////
 // QR Middleware API
 // ///////////////////////////////
-const claim_middleware = require( './modules/claim' )
-exports.claimmiddleware = onRequest( keepWarmRuntime, claim_middleware )
+const claimMiddleware = require( './modules/claim' )
+exports.claimMiddleware = onRequest( keepWarmRuntime, claimMiddleware )
 
 /* ///////////////////////////////
 // Kiosk generator middleware API
@@ -82,7 +82,7 @@ exports.updateEventAvailableCodes = functions.firestore.document( `codes/{codeId
 // Security
 // /////////////////////////////*/
 const { validateCallerDevice, validateCallerCaptcha } = require( './modules/security' )
-exports.validatecallerdevice = onCall( { ...protected_runtime, ...keepWarmRuntime,  }, validateCallerDevice )
+exports.validateCallerDevice = onCall( { ...protected_runtime, ...keepWarmRuntime,  }, validateCallerDevice )
 exports.validateCallerCaptcha = functions.https.onCall( validateCallerCaptcha )
 
 /* ///////////////////////////////

@@ -17,14 +17,16 @@
 import './commands'
 
 // Get the url of functions, to be used to call emulator or live url
-export const get_functions_url = ( name ) => {
+export const get_claim_function_url = env => {
+
+    cy.log( `Generating link based on: `, Cypress.env() )
 
     const functions_emulator_port = 5001
-    const { REACT_APP_projectId, REACT_APP_useEmulator, REACT_APP_publicUrl } = Cypress.env()
+    const { REACT_APP_projectId, REACT_APP_useEmulator, REACT_APP_publicUrl } = env
 
     let url = ''
-    if( !REACT_APP_useEmulator ) url = `${ REACT_APP_publicUrl }/${ name }`
-    else url = `http://localhost:${ functions_emulator_port }/${ REACT_APP_projectId }/us-central1/${ name }`
+    if( REACT_APP_useEmulator !== 'true' ) url = `${ REACT_APP_publicUrl }/claim`
+    else url = `http://localhost:${ functions_emulator_port }/${ REACT_APP_projectId }/us-central1/claimMiddleware/claim`
     cy.log( `Generated functions URL: ${ url }` )
     return url
 

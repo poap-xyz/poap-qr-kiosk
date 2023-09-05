@@ -8,7 +8,7 @@
     "rewrites": [
       {
         "source": "/claim/**",
-        "function": "claimmiddleware"
+        "function": "claimMiddleware"
       },
       {
         "source": "/health/",
