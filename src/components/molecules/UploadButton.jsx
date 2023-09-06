@@ -53,7 +53,7 @@ export const UploadButton = ( { accept = 'text/csv, text/plain', id, label, requ
             { label && <Label color='var(--primary-600)' htmlFor={ id } labelType={ required && 'required' || optional && 'optional' } toolTip={ toolTip }>{ label }</Label> }
             <UploadBorderContainer { ...getRootProps() }>
                 <input id={ id } { ...getInputProps() } />
-                <Button  leftIcon={ <HeroIcon icon='ArrowUpTrayIcon' color='#fff' /> }>
+                <Button onClick={ f => f } leftIcon={ <HeroIcon icon='ArrowUpTrayIcon' color='#fff' /> }>
                     { isDragActive ? `${ t( 'messaging.upload.dragndrop' )  }` : `${ t( 'messaging.upload.standard' )  }` }
                 </Button>
                 { files.map( ( file ) =>

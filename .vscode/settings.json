@@ -16,5 +16,12 @@
 	"editor.formatOnSave": true,
 	"eslint.format.enable": true,
 	"eslint.run": "onType",
-	"i18next.i18nPaths": "/public/locales"
+	"i18next.i18nPaths": "/public/locales",
+	"explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.patterns": {
+		"vite.config.js": "*.js,.babelrc,.nvmrc,index.html,.gitignore",
+		".env.example": ".env*,.*.json",
+		"firebase.json": "fire*,.fire*",
+		"package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml"
+	}
 }

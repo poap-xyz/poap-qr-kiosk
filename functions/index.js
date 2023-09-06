@@ -1,4 +1,15 @@
+// V1 Dependencies
 const functions = require( "firebase-functions" )
+
+// V2 Dependencies
+const { onRequest, onCall } = require( "firebase-functions/v2/https" )
+
+// V2 Runtime config
+const protected_runtime = {
+    enforceAdmins: true,
+}
+
+// V1 Runtime config
 const generousRuntime = {
     timeoutSeconds: 540,
     memory: '4GB'
@@ -42,7 +53,7 @@ exports.getUniqueOrganiserEmails = functions.https.onCall( getUniqueOrganiserEma
 // QR Middleware API
 // ///////////////////////////////
 const claimMiddleware = require( './modules/claim' )
-exports.claimMiddleware = functions.runWith( keepWarmRuntime ).https.onRequest( claimMiddleware )
+exports.claimMiddleware = onRequest( { cors: true, ...keepWarmRuntime }, claimMiddleware )
 
 /* ///////////////////////////////
 // Kiosk generator middleware API
@@ -71,7 +82,7 @@ exports.updateEventAvailableCodes = functions.firestore.document( `codes/{codeId
 // Security
 // /////////////////////////////*/
 const { validateCallerDevice, validateCallerCaptcha } = require( './modules/security' )
-exports.validateCallerDevice = functions.runWith( keepWarmRuntime ).https.onCall( validateCallerDevice )
+exports.validateCallerDevice = onCall( { ...protected_runtime, ...keepWarmRuntime,  }, validateCallerDevice )
 exports.validateCallerCaptcha = functions.https.onCall( validateCallerCaptcha )
 
 /* ///////////////////////////////

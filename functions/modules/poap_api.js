@@ -1,10 +1,9 @@
 // Firebase interactors
-const functions = require( 'firebase-functions' )
 const { db, dataFromSnap } = require( './firebase' )
 const { log, dev } = require( './helpers' )
 
 // Secrets
-const { auth0, poap } = functions.config()
+const { POAP_API_KEY, AUTH0_CLIENT_ID, AUTH0_ENDPOINT, AUTH0_CLIENT_SECRET, AUTH0_AUDIENCE } = process.env
 
 // Libraries
 const fetch = require( 'isomorphic-fetch' )
@@ -14,7 +13,6 @@ async function getAccessToken() {
 
     // Get API secrets
     const { access_token, expires } = await db.collection( 'secrets' ).doc( 'poap-api' ).get().then( dataFromSnap )
-    const { client_id, client_secret, endpoint } = auth0
 
     // If token is valid for another hour, keep it
     if( expires >  Date.now() + 1000 * 60 * 10  ) return access_token
@@ -24,14 +22,14 @@ async function getAccessToken() {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify( {
-            audience: auth0.audience,
+            audience: AUTH0_AUDIENCE,
             grant_type: 'client_credentials',
-            client_id: client_id,
-            client_secret: client_secret
+            client_id: AUTH0_CLIENT_ID,
+            client_secret: AUTH0_CLIENT_SECRET
         } )
     }
-    log( `Getting access token at ${ endpoint } with `, options )
-    const { access_token: new_access_token, expires_in, ...rest } = await fetch( endpoint, options ).then( res => res.json() )
+    log( `Getting access token at ${ AUTH0_ENDPOINT } with `, options )
+    const { access_token: new_access_token, expires_in, ...rest } = await fetch( AUTH0_ENDPOINT, options ).then( res => res.json() )
     log( `New token: `, new_access_token, ' unexpected output: ', rest )
 
     // If no access token, error
@@ -105,7 +103,7 @@ exports.call_poap_endpoint = async ( endpoint='', data, method='GET', format='js
     let headers = {
 			
         // authorization for cloudflare */
-        'X-API-Key': `${ poap?.api_key }`,
+        'X-API-Key': `${ POAP_API_KEY }`,
 
         // Authorize with Bearer access token
         Authorization: `Bearer ${ access_token }`,

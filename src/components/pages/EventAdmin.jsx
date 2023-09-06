@@ -1,4 +1,4 @@
-const { REACT_APP_publicUrl } = process.env
+const { VITE_publicUrl } = import.meta.env
 
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -30,8 +30,8 @@ export default function EventAdmin( ) {
     // State handling
     const { eventId, authToken } = useParams( )
     const [ event, setEvent ] = useState( { loading: true } )
-    const eventLink = `${ dev ? 'http://localhost:3000' : REACT_APP_publicUrl }/#/event/${ eventId }`
-    const adminLink = `${ dev ? 'http://localhost:3000' : REACT_APP_publicUrl }/#/event/admin/${ eventId }/${ authToken }`
+    const eventLink = `${ dev ? 'http://localhost:3000' : VITE_publicUrl }/#/event/${ eventId }`
+    const adminLink = `${ dev ? 'http://localhost:3000' : VITE_publicUrl }/#/event/admin/${ eventId }/${ authToken }`
     const clipboardAPI = !!navigator.clipboard
 
     // Health check

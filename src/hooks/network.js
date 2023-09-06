@@ -56,12 +56,15 @@ export function useIsOnline() {
             try {
     
                 const start = Date.now()
+                let end = undefined
                 await Promise.race( [
                     remote_ping(),
-                    wait( max_ping_ms ).then( f => log( `🔔 Ping timed out at ${ max_ping_ms }ms` ) )
+                    wait( max_ping_ms ).then( f => {
+                        if( !end && !cancelled ) log( `🔔 Ping timed out at ${ max_ping_ms }ms` )
+                    } )
                 ] )
-                const end = Date.now()
-                log( `🔔 Ping concluded at ${ end }, total: ${ end - start } ` )
+                end = Date.now()
+                log( `🔔 Ping latency: ${ end - start }ms` )
                 if( !cancelled ) set_ping( end - start )
     
             } catch ( e ) {

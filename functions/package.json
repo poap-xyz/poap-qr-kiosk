@@ -10,7 +10,8 @@
     "start:production": "development=true && firebase use production && npm run runtime:production && npm run shell",
     "deploy:development": "firebase use development && firebase deploy --only functions",
     "deploy:production": "firebase use production && firebase deploy --only functions; firebase use development",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "version": "firebase --version"
   },
   "engines": {
     "node": "16"
@@ -32,5 +33,8 @@
     "pug": "^3.0.2",
     "uuid": "^9.0.0"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "firebase-tools": "^12.5.2"
+  }
 }

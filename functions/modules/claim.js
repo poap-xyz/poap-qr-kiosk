@@ -1,3 +1,6 @@
+const { get_code_by_challenge } = require( './codes' )
+const { log } = require( './helpers' )
+
 const app = require( './express' )()
 
 app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
@@ -5,17 +8,19 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
     // Function dependencies
     const { db, dataFromSnap } = require( './firebase' )
     const { generate_new_event_public_auth } = require( './events' )
-    const functions = require( 'firebase-functions' )
-    const { kiosk } = functions.config()
+    const { KIOSK_PUBLIC_URL } = process.env
 
     try {
 
+
         // Check whether this request came from a CI instance, set the relevant return URL based on that
         const { CI, FORCE_INVALID_APPCHECK } = req.query
-        const redirect_baseurl = CI ? `http://localhost:3000/` : kiosk.public_url
+        const redirect_baseurl = CI ? `http://localhost:3000` : KIOSK_PUBLIC_URL
 
         // Get event id and authentication from request
         const { event_id, public_auth_token } = req.params
+
+        log( `Request for ${ event_id }/${ public_auth_token }` )
 
         // If missing data, send to robot stall page
         if( !event_id || !public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot/syntax_error` )
@@ -97,6 +102,28 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
         // Return a redirect to the QR POAP app
         // 307: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_redirection
         let redirect_link = `${ redirect_baseurl }/#/claim/${ challenge_auth.token }`
+
+        // If this is Naive mode overwrite directly to claim page
+        if( event.challenges.includes( 'naive' ) ) {
+
+            // Get a POAP if the challenge is valid, this bypasses the frontend device-validations
+            const claim_code = await get_code_by_challenge( { challenge_code: challenge_auth.token }, { app: 'override captcha checks, string content irrelevant' } )
+
+            // If there was an error getting the code, redirect to error state
+            if( claim_code.error ) throw new Error( `Error getting claim code: ${ claim_code.error }` )
+
+            // Check if this event has a custom base url, if so, set it as the redirect base
+            if( event?.claim_base_url ) redirect_link = event.claim_base_url
+            else redirect_link = `https://app.poap.xyz/claim`
+
+            // Add the POAP claim code to the url
+            redirect_link += `/${ claim_code }`
+
+            log( `Naive mode, redirecting to ${ redirect_link }` )
+
+            // Forward to redirect_link
+            return res.redirect( 307, redirect_link )
+        }
 
         // Tell fronted to force invalid appcheck, this is so that we can simulate this scenarion in cypress
         if( FORCE_INVALID_APPCHECK ) redirect_link += `/force_failed_appcheck`

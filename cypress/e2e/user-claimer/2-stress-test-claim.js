@@ -3,25 +3,6 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
-const fiveCodes = require( `../../fixtures/five-correct-codes${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
-const request_options = {
-    headers: {
-        Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host
-    },
-    failOnStatusCode: false
-}
-
-async function extract_challenge_from_url ( response ) {
-
-    const { redirects } = response
-    const [ challenge_url ] = redirects
-    cy.log( `Redirect: `, challenge_url )
-    const [ base, challenge_redirect ] = challenge_url.split( '/#/claim/' )
-    const challenge = challenge_redirect.replace( '307: ' )
-    cy.log( `Challenge extracted: ${ challenge }` )
-    return challenge
-
-}
 
 context( 'Claimer can view valid events', () => {
 
@@ -33,24 +14,7 @@ context( 'Claimer can view valid events', () => {
 
     it( 'Large event: Creates event', function() {
 
-        // Visit creation interface
-        cy.visit( '/create?debug=true' )
-
-        // Input the event data
-        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `five-correct-codes.txt` : `five-correct-codes-ci.txt` )
-        cy.get( '#event-create-name' ).clear().type( admin.events[1].name )
-        cy.get( '#event-create-email' ).clear().type( admin.email )
-        cy.get( '#event-create-date' ).clear().type( admin.events[1].end )
-
-        // Select no anti-farming
-        cy.get( '#event-create-game-enabled' ).click( { force: true } )
-        cy.get( '#event-create-game-enabled-0' ).click( { force: true } )
-
-        // Create event
-        cy.get( '#event-create-submit' ).click()
-
-        // Verify that the new url is the admin interface
-        cy.url().should( 'include', '/event/admin' )
+        cy.create_kiosk( 'five' )
 
         // Save the event and admin links for further use
         cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'publiclink' ).then( f => cy.log( this.publiclink ) )

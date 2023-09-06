@@ -3,11 +3,12 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
+const { get_claim_function_url } = require( '../../support/e2e' )
 const oneCode = require( `../../fixtures/one-correct-code${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
 const request_options = {
 
     headers: {
-        Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host
+        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
     },
     failOnStatusCode: false
 
@@ -33,26 +34,8 @@ context( 'Claimer can view valid events with game', () => {
 
     it( 'Event 1: Creates event', function() {
 
-        // Visit creation interface
-        cy.visit( '/create?debug=true' )
+        cy.create_kiosk( 'one', 'game' )
 
-        // Input the event data
-        cy.get( 'input[type=file]' ).attachFile( Cypress.env( 'LOCAL' ) ? `one-correct-code.txt` : `one-correct-code-ci.txt` )
-        cy.get( '#event-create-name' ).clear().type( admin.events[0].name )
-        cy.get( '#event-create-email' ).clear().type( admin.email )
-        cy.get( '#event-create-date' ).clear().type( admin.events[0].end )
-
-        // Select YES to anti-farming
-        cy.get( '#event-create-game-enabled' ).click( { force: true } )
-        cy.get( '#event-create-game-enabled-1' ).click( { force: true } )
-
-        // Select anti-farming timing (10s)
-        cy.get( '#event-create-game-duration' ).click( { force: true } )
-        cy.get( '#event-create-game-duration-1' ).click( { force: true } )
-        cy.log( 'Game time selected: 20s AKA 4 game turns' )
-
-        // Create event
-        cy.get( '#event-create-submit' ).click()
 
         // Verify that the new url is the admin interface
         cy.url().should( 'include', '/event/admin' )
@@ -80,7 +63,7 @@ context( 'Claimer can view valid events with game', () => {
 
         // Visit the public link with games
         const slow = 1000
-        cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
+        cy.request( { ...request_options, url: `${ get_claim_function_url(  ) }/${ this.event_1_public_auth_link }` } ).as( `request` )
             .then( extract_challenge_from_url )
             .then( event_1_first_challenge => {
 
@@ -179,7 +162,7 @@ context( 'Claimer can view valid events with game', () => {
     it( 'Event 1: Shows error if link was used after code ran out', function( ) {
 
         // Visit the public link to the second code as read by simulating a scan
-        cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
+        cy.request( { ...request_options, url: `${ get_claim_function_url(  ) }/${ this.event_1_public_auth_link }` } ).as( `request` )
             .then( extract_challenge_from_url )
             .then( event_1_second_challenge => {
 

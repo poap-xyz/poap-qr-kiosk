@@ -1,13 +1,13 @@
-let { REACT_APP_publicUrl, REACT_APP_useEmulator } = process.env
+let { VITE_publicUrl, VITE_useEmulator } = import.meta.env
 
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import useInterval from 'use-interval'
 import { useTranslation } from 'react-i18next'
 
-import { requestManualCodeRefresh, listenToEventMeta, refreshScannedCodesStatuses, trackEvent, health_check } from '../../modules/firebase'
+import { requestManualCodeRefresh, refreshScannedCodesStatuses, trackEvent, get_emulator_function_call_url } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
-log( `Frontend using live url ${ REACT_APP_publicUrl } with ${ REACT_APP_useEmulator ? 'emulator' : 'live backend' }` )
+log( `Frontend using live url ${ VITE_publicUrl } with ${ VITE_useEmulator ? 'emulator' : 'live backend' }` )
 
 import Section from '../atoms/Section'
 import AnnotatedQR from '../molecules/AnnotatedQR'
@@ -20,6 +20,9 @@ import { H1, H2, H3, Text, Sidenote, Button, Container, CardContainer, Divider }
 import { ReactComponent as UserConnected } from '../../assets/illustrations/user_connected.svg'
 import { ReactComponent as ManMoon } from '../../assets/illustrations/man_to_the_moon.svg'
 import { ReactComponent as NoCodes } from '../../assets/illustrations/no_more_codes.svg'
+import ExpiredQR from '../molecules/AnExpiredQR'
+import { useHealthCheck } from '../../hooks/health_check'
+import { useEvent, useEventTemplate } from '../../hooks/events'
 
 // ///////////////////////////////
 // Render component
@@ -33,6 +36,7 @@ export default function ViewQR( ) {
 
     // Event ID form url
     const { eventId, viewMode } = useParams()
+    const event_id_is_cached = eventId === 'cached'
 
     // Event ID from pushed state
     const { eventId: stateEventId } = location
@@ -42,13 +46,11 @@ export default function ViewQR( ) {
     // ///////////////////////////////
     // State handling
     // ///////////////////////////////
-    const scanInterval = 2 * 60 * 1000
-    const [ loading, setLoading ] = useState( `${ t( 'eventView.setKiosk' ) }` )
-    const [ event, setEvent ] = useState(  )
-    const [ template, setTemplate ] = useState( {} )
-    const [ internalEventId, setInternalEventId ] = useState( eventId || stateEventId )
+    const [ internalEventId, setInternalEventId ] = useState( stateEventId || eventId )
     const [ acceptedTerms, setAcceptedTerms ] = useState( viewMode == 'silent' )
     const [ iframeMode, setIframeMode ] = useState( false )
+    const event = useEvent( internalEventId )
+    const template = useEventTemplate( internalEventId )
 
     // ///////////////////////////////
     // Lifecycle handling
@@ -61,34 +63,10 @@ export default function ViewQR( ) {
         if( viewMode == 'silent' ) setAcceptedTerms( true )
         if( viewMode == 'iframe' ) setIframeMode( true )
 
-    }, [ viewMode  ] )
+    }, [ viewMode ] )
 
-    // Health check
-    useEffect( (  ) => {
-
-        let cancelled = false;
-
-        ( async () => {
-
-            try {
-
-                const { data: health } = await health_check()
-                log( `Systems health: `, health )
-                if( cancelled ) return log( `Health effect cancelled` )
-                if( !dev && !health.healthy ) {
-                    trackEvent( `event_view_event_system_down` )
-                    return alert( `${ t( 'messaging.health.maintenance' ) }` )
-                }
-
-            } catch ( e ) {
-                log( `Error getting system health: `, e )
-            }
-
-        } )( )
-
-        return () => cancelled = true
-
-    }, [] )
+    // Health check, alerts internally
+    const is_healthy = useHealthCheck()
 
 
     // Set url event ID to localstorage and remove it from the URL
@@ -97,13 +75,16 @@ export default function ViewQR( ) {
         // if no event id in URL, exit
         if( !eventId ) return log( 'No event ID in url, leaving localStorage as is' )
 
+        // if no event id in URL, exit
+        if( event_id_is_cached ) return log( 'URL indicates cached eventId, leaving localStorage as is' )
+
         // Set event ID to localstorage and internal state
         log( `Event ID changed to `, eventId )
         localStorage.setItem( 'cached_event_id', eventId )
         setInternalEventId( eventId )
 
         // Remove eventId from url by pushing with state
-        navigate( '/event/', {
+        navigate( viewMode == 'iframe' ? '/event/cached/iframe' : '/event/', {
             eventId
         } )
 
@@ -115,13 +96,13 @@ export default function ViewQR( ) {
 
         try {
 
-            if( eventId ) return log( `Event ID present in url, ignoring localstorage` )
-            log( `No event ID in url, loading event ID from localstorage` )
+            if( eventId && !event_id_is_cached ) return log( `Event ID present in url, ignoring localstorage` )
+            
+            log( `${ event_id_is_cached ? `Event ID is cached`: `No event ID in url` } loading event ID from localstorage` )
             const cached_event_id = localStorage.getItem( 'cached_event_id' )
             if( !cached_event_id ) throw new Error( `${ t( 'eventView.eventNoCache' ) }` )
             trackEvent( `event_view_event_id_from_cache` )
             setInternalEventId( cached_event_id )
-            setLoading( `${ t( 'eventView.eventLoading' ) }` )
 
         } catch ( e ) {
 
@@ -135,23 +116,10 @@ export default function ViewQR( ) {
 
     }, [ eventId ] )
 
-
-    // Listen to event details on event ID change
+    // On mount, do single code force-refresh
     useEffect( () => {
 
-        log( `New event ID ${ internalEventId } detected, listening to event meta` )
-        if( internalEventId ) return listenToEventMeta( internalEventId, event => {
-            setEvent( event )
-            if( event?.template?.id ) setTemplate( event.template )
-            setLoading( false )
-        } )
-
-    }, [ internalEventId ] )
-
-    // On mount, do single force-refresh
-    useEffect( () => {
-
-        if( !internalEventId ) return log( `No internal event ID, cancelling manual code refresh` )
+        if( !internalEventId || internalEventId == 'cached' ) return log( `No internal event ID, cancelling manual code refresh` )
 
         log( `Triggering remote refresh of unknown and unscanned codes` )
         requestManualCodeRefresh( internalEventId )
@@ -161,9 +129,10 @@ export default function ViewQR( ) {
     }, [ internalEventId ] )
 
     // Update the state of scanned codes periodically
+    const scanInterval = 2 * 60 * 1000
     useInterval( () => {
 
-        if( !internalEventId ) return log( `No internal event ID, cancelling scanned code refresh` )
+        if( !internalEventId || internalEventId == 'cached' ) return log( `No internal event ID, cancelling scanned code refresh` )
 
         refreshScannedCodesStatuses( internalEventId )
             .then( ( { data } ) => log( `Remote code update response : `, data ) )
@@ -174,17 +143,84 @@ export default function ViewQR( ) {
     // Debugging helper
     useEffect( f => {
 
-        log( `For manual testing: ${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }?CI=true` )
+        if( !event ) return
+        log( `For manual testing: \n${ dev ? get_emulator_function_call_url( 'claimmiddleware' ) : VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }?CI=true` )
 
-    },  [ internalEventId, event ] )
+    },  [ event?.public_auth?.token ] )
+
+    /* ///////////////////////////////
+    // Loading states
+    // /////////////////////////////*/
+
+    // Iframe renderer should remain empty until event data arrives
+    if( iframeMode && !event ) return null
+
+    // Loading state
+    if( !iframeMode && !event ) return <Loading message={ t( 'eventView.eventLoading' ) } />
 
 
     // ///////////////////////////////
-    // Render component
+    // Render iframe component
     // ///////////////////////////////
+
+    // Expired event qr error
+    if( iframeMode && event?.expires && event.expires < Date.now() ) return <ExpiredQR status='expired'/>
+
+    // // No code qr error
+    if( iframeMode && !event?.public_auth?.expires ) return  <ExpiredQR status='noCodes'/>
 
     // If iframe mode, render only QR
-    if( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+    if( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+
+    // ///////////////////////////////
+    // Error states
+    // ///////////////////////////////
+
+    // Expired event error
+    if( event?.expires && event.expires < Date.now() ) return <ViewWrapper center show_bookmark>
+
+        <Section>
+            <Container>
+                <CardContainer width='400px'>
+
+                    <ManMoon />
+                    <br />
+                    <H3>{ t( 'eventView.expired.title' ) }</H3>
+                    <Divider />
+                    <br />
+                    <Text align='center'>{ t( 'eventView.expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Text>
+
+                </CardContainer>
+            </Container>
+        </Section>
+
+    </ViewWrapper>
+
+    // No code error
+    if( !event?.public_auth?.expires ) return <ViewWrapper center show_bookmark>
+
+        <Section>
+            <Container>
+                <CardContainer width='400px'>
+
+                    <NoCodes />
+                    <br />
+                    <H3>{ t( 'eventView.codes.title' ) }</H3>
+                    <Divider />
+                    <br />
+                    { /* TODO discuss link */ }
+                    <Text align='center'>{ t( 'eventView.codes.description' ) }</Text>
+                    { /* <Text onClick={ f => navigate( '/event/admin' ) } align='center'>{ t( 'eventView.codes.description' ) }</Text> */ }
+
+                </CardContainer>
+            </Container>
+        </Section>
+
+    </ViewWrapper>
+
+    /* ///////////////////////////////
+    // Render default component
+    // /////////////////////////////*/
 
     // Show welcome screen
     if( !acceptedTerms ) return <ViewWrapper center show_bookmark>
@@ -208,51 +244,6 @@ export default function ViewQR( ) {
 
     </ViewWrapper>
 
-    // loading screen
-    if( loading ) return <Loading message={ loading } />
-
-    // Expired event error
-    if( event?.expires && event.expires < Date.now() ) return <ViewWrapper center show_bookmark>
-
-        <Section>
-            <Container>
-                <CardContainer width='400px'>
-
-                    <ManMoon />
-                    <br />
-                    <h3>{ t( 'eventView.expired.title' ) }</h3>
-                    <Divider />
-                    <br />
-                    <Text align='center'>{ t( 'eventView.expired.description', { expireDate: new Date( event.expires ).toString(  ) } ) }</Text>
-
-                </CardContainer>
-            </Container>
-        </Section>
-
-    </ViewWrapper>
-
-    // No code error
-    if( !event?.public_auth?.expires ) return <ViewWrapper center show_bookmark>
-
-        <Section>
-            <Container>
-                <CardContainer width='400px'>
-
-                    <NoCodes />
-                    <br />
-                    <h3>{ t( 'eventView.codes.title' ) }</h3>
-                    <Divider />
-                    <br />
-                    { /* TODO discuss link */ }
-                    <Text align='center'>{ t( 'eventView.codes.description' ) }</Text>
-                    { /* <Text onClick={ f => navigate( '/event/admin' ) } align='center'>{ t( 'eventView.codes.description' ) }</Text> */ }
-
-                </CardContainer>
-            </Container>
-        </Section>
-
-    </ViewWrapper>
-
     // Display QR
     return <ViewWrapper hide_header hide_footer center background={ template?.footer_icon } show_bookmark>
 
@@ -261,7 +252,7 @@ export default function ViewQR( ) {
         <H2 color={ template?.header_link_color || 'var(--primary-600)' } align="center">{ t( 'eventView.display.subheading' ) }</H2>
 
         {  /* QR showing code */ }
-        <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+        <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
         { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
         { event && <Sidenote margin='0'>{ t( 'eventView.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }

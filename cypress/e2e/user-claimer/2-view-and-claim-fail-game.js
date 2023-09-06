@@ -3,10 +3,11 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
+const { get_claim_function_url } = require( '../../support/e2e' )
 const request_options = {
 
     headers: {
-        Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host
+        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
     },
     failOnStatusCode: false
 
@@ -32,29 +33,7 @@ context( 'User can claim POAP after succeeding at challenge game', () => {
 
     it( 'Event 1: Creates event', function() {
 
-        // Visit creation interface
-        cy.visit( '/create?debug=true' )
-
-        // Input the event data
-        cy.get( 'input[type=file]' ).attachFile( Cypress.env( 'LOCAL' ) ? `one-correct-code.txt` : `one-correct-code-ci.txt` )
-        cy.get( '#event-create-name' ).clear().type( admin.events[0].name )
-        cy.get( '#event-create-email' ).clear().type( admin.email )
-        cy.get( '#event-create-date' ).clear().type( admin.events[0].end )
-
-        // Select YES to anti-farming
-        cy.get( '#event-create-game-enabled' ).click( { force: true } )
-        cy.get( '#event-create-game-enabled-1' ).click( { force: true } )
-
-        // Select anti-farming timing (10s)
-        cy.get( '#event-create-game-duration' ).click( { force: true } )
-        cy.get( '#event-create-game-duration-1' ).click( { force: true } )
-        cy.log( 'Game time selected: 10s AKA 2 game turns' )
-
-        // Create event
-        cy.get( '#event-create-submit' ).click()
-
-        // Verify that the new url is the admin interface
-        cy.url().should( 'include', '/event/admin' )
+        cy.create_kiosk( 'one', 'game' )
 
         // Save the event and admin links for further use
         cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
@@ -78,7 +57,7 @@ context( 'User can claim POAP after succeeding at challenge game', () => {
     it( 'Event 1: Succesfully redirects to challenge link and fail at game', function( ) {
 
         // Visit the public link with games
-        cy.request( { ...request_options, url: `${ Cypress.env( 'REACT_APP_publicUrl' ) }/claim/${ this.event_1_public_auth_link }` } ).as( `request` )
+        cy.request( { ...request_options, url: `${ get_claim_function_url(  ) }/${ this.event_1_public_auth_link }` } ).as( `request` )
             .then( extract_challenge_from_url )
             .then( event_1_first_challenge => {
 

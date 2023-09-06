@@ -4,8 +4,7 @@ const { log, email_pseudo_anonymous } = require( './helpers' )
 const { throw_on_failed_app_check } = require( './security' )
 
 // Configs
-const functions = require( 'firebase-functions' )
-const { kiosk } = functions.config()
+const { KIOSK_PUBLIC_URL } = process.env
 
 // Public auth helper, used here and in the claimcode handler
 const generate_new_event_public_auth = ( expires_in_minutes=2, is_test_event=false ) => ( {
@@ -199,8 +198,8 @@ exports.registerEvent = async function( data, context ) {
             email: email,
             event: {
                 name,
-                eventlink: `${ kiosk.public_url }/#/event/${ id }`,
-                adminlink: `${ kiosk.public_url }/#/event/admin/${ id }/${ authToken }`
+                eventlink: `${ KIOSK_PUBLIC_URL }/#/event/${ id }`,
+                adminlink: `${ KIOSK_PUBLIC_URL }/#/event/admin/${ id }/${ authToken }`
             }
         } )
 
