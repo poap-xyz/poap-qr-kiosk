@@ -50,20 +50,20 @@ Cypress.on( 'before:browser:launch', ( browser = {}, launchOptions ) => {
 
     console.log( 'setting the browser window size to %d x %d', width, height )
 
-    if ( browser.name === 'chrome' && browser.isHeadless ) {
+    if( browser.name === 'chrome' && browser.isHeadless ) {
         launchOptions.args.push( `--window-size=${ width },${ height }` )
 
         // force screen to be non-retina and just use our given resolution
         launchOptions.args.push( '--force-device-scale-factor=1' )
     }
 
-    if ( browser.name === 'electron' && browser.isHeadless ) {
+    if( browser.name === 'electron' && browser.isHeadless ) {
     // might not work on CI for some reason
         launchOptions.preferences.width = width
         launchOptions.preferences.height = height
     }
 
-    if ( browser.name === 'firefox' && browser.isHeadless ) {
+    if( browser.name === 'firefox' && browser.isHeadless ) {
         launchOptions.args.push( `--width=${ width }` )
         launchOptions.args.push( `--height=${ height }` )
     }

@@ -114,7 +114,10 @@ context( 'Claimer can view valid events with game', () => {
                 cy.contains( 'a', 'Collect your' ).click()
 
                 // Wait for code retrieval
-                cy.url().should( 'include', 'app.poap.xyz' )
+                cy.url().should( 'satisfy', url => {
+                    const claim_frontends = [ 'collectors.poap.xyz', 'app.poap.xyz' ]
+                    return claim_frontends.some( claim_url => url.includes( claim_url ) )
+                } )
 
                 // Check if POAP link supplies one of the test codes
                 cy.url().should( 'include', oneCode )
