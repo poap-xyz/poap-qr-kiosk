@@ -14,7 +14,7 @@ import { Grid, Row, Col } from '../atoms/Grid'
 import Loading from '../molecules/Loading'
 import Layout from '../molecules/Layout'
 
-import { CardContainer, Container, Text, H1, H2, Input, Button } from '@poap/poap-components'
+import { CardContainer, Container, Text, H1, H2, H3,  Input, Button, Dropdown, CardDashboard, Divider } from '@poap/poap-components'
 
 // ///////////////////////////////
 // Render component
@@ -141,9 +141,16 @@ export default function EventAdmin( ) {
 
         <Section>
             <Container>
+
+                <Grid width='760px' margin='0 auto'>
+                    <H1 align='center'>{ t( 'eventAdmin.title' ) }</H1>
+
+                    { /* Dashboard overview */ }
+                    { /* <CardDashboard event={ event } codes={ event.codes.length }/> */ }
+                </Grid>
                 
                 <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
-                    <H1 align='center'>{ t( 'eventAdmin.title' ) }</H1>
+
                     <Grid>
 
                         { /* Event meta loaded, codes available */ }

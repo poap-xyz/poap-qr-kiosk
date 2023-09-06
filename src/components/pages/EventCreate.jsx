@@ -16,7 +16,7 @@ import Layout from '../molecules/Layout'
 import FormFooter from '../molecules/FormFooter'
 import { UploadButton } from '../molecules/UploadButton'
 
-import { Button, CardContainer, Container, H3, Input, Dropdown } from '@poap/poap-components'
+import { CardContainer, Container, Text, H1, H2, H3,  Input, Button, Dropdown, CardDashboard, Divider } from '@poap/poap-components'
 
 // ///////////////////////////////
 // Render component
@@ -304,7 +304,7 @@ export default function Admin( ) {
     // Main render
     return <Layout id="event-create-layout-container" hide_background={ codes } hide_footer onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 
-        <Section padding='var(--spacing-4) 0 var(--spacing-4) 0'>
+        <Section padding='var(--spacing-4) 0 var(--spacing-12) 0'>
             <Container width='750px'>
                 <br/>
                 <H3 align='center' size=''>{ t( 'eventCreate.title' ) }</H3>
