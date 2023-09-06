@@ -8,7 +8,7 @@ const oneCode = require( `../../fixtures/one-correct-code${ Cypress.env( 'LOCAL'
 const request_options = {
 
     headers: {
-        Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host
+        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
     },
     failOnStatusCode: false
 

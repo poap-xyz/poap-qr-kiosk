@@ -8,7 +8,7 @@ const twoCodes = require( `../../fixtures/two-correct-codes${ Cypress.env( 'LOCA
 const fiveCodes = require( `../../fixtures/five-correct-codes${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
 const request_options = {
     headers: {
-        Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host
+        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
     },
     failOnStatusCode: false
 }

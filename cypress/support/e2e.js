@@ -22,11 +22,11 @@ export const get_claim_function_url = () => {
     cy.log( `Generating link based on: `, JSON.stringify( Cypress.env() ) )
 
     const functions_emulator_port = 5001
-    const { REACT_APP_projectId, REACT_APP_useEmulator, REACT_APP_publicUrl } = Cypress.env()
+    const { VITE_projectId, VITE_useEmulator, VITE_publicUrl } = Cypress.env()
 
     let url = ''
-    if( REACT_APP_useEmulator !== 'true' ) url = `${ REACT_APP_publicUrl }/claim`
-    else url = `http://localhost:${ functions_emulator_port }/${ REACT_APP_projectId }/us-central1/claimMiddleware/claim`
+    if( VITE_useEmulator !== 'true' ) url = `${ VITE_publicUrl }/claim`
+    else url = `http://localhost:${ functions_emulator_port }/${ VITE_projectId }/us-central1/claimMiddleware/claim`
     cy.log( `Generated functions URL: ${ url }` )
     return url
 

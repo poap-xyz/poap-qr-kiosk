@@ -7,7 +7,7 @@ const { get_claim_function_url } = require( '../../support/e2e' )
 const request_options = {
 
     headers: {
-        Host: new URL( Cypress.env( 'REACT_APP_publicUrl' ) ).host
+        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
     },
     failOnStatusCode: false
 

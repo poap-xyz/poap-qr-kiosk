@@ -1,4 +1,4 @@
-let { REACT_APP_publicUrl, REACT_APP_useEmulator } = process.env
+let { VITE_publicUrl, VITE_useEmulator } = import.meta.env
 
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 
 import { requestManualCodeRefresh, refreshScannedCodesStatuses, trackEvent, get_emulator_function_call_url } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
-log( `Frontend using live url ${ REACT_APP_publicUrl } with ${ REACT_APP_useEmulator ? 'emulator' : 'live backend' }` )
+log( `Frontend using live url ${ VITE_publicUrl } with ${ VITE_useEmulator ? 'emulator' : 'live backend' }` )
 
 import Section from '../atoms/Section'
 import AnnotatedQR from '../molecules/AnnotatedQR'
@@ -144,7 +144,7 @@ export default function ViewQR( ) {
     useEffect( f => {
 
         if( !event ) return
-        log( `For manual testing: \n${ dev ? get_emulator_function_call_url( 'claimmiddleware' ) : REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }?CI=true` )
+        log( `For manual testing: \n${ dev ? get_emulator_function_call_url( 'claimmiddleware' ) : VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }?CI=true` )
 
     },  [ event?.public_auth?.token ] )
 
@@ -170,7 +170,7 @@ export default function ViewQR( ) {
     if( iframeMode && !event?.public_auth?.expires ) return  <ExpiredQR status='noCodes'/>
 
     // If iframe mode, render only QR
-    if( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+    if( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
 
     // ///////////////////////////////
     // Error states
@@ -252,7 +252,7 @@ export default function ViewQR( ) {
         <H2 color={ template?.header_link_color || 'var(--primary-600)' } align="center">{ t( 'eventView.display.subheading' ) }</H2>
 
         {  /* QR showing code */ }
-        <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ REACT_APP_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+        <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
         { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
         { event && <Sidenote margin='0'>{ t( 'eventView.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
