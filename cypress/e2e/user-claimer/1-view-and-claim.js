@@ -3,7 +3,7 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
-const { get_claim_function_url } = require( '../../support/e2e' )
+const { get_claim_function_url, check_if_code_is_expected } = require( '../../support/e2e' )
 const twoCodes = require( `../../fixtures/two-correct-codes${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
 const fiveCodes = require( `../../fixtures/five-correct-codes${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
 const request_options = {
@@ -34,24 +34,7 @@ context( 'Claimer can view valid events', () => {
 
     it( 'Event 1: Creates event', function() {
 
-        // Visit creation interface
-        cy.visit( '/create?debug=true' )
-
-        // Input the event data
-        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
-        cy.get( '#event-create-name' ).clear().type( admin.events[0].name )
-        cy.get( '#event-create-email' ).clear().type( admin.email )
-        cy.get( '#event-create-date' ).clear().type( admin.events[0].end )
-
-        // Select no anti-farming
-        cy.get( '#event-create-game-enabled' ).click( { force: true } )
-        cy.get( '#event-create-game-enabled-0' ).click( { force: true } )
-
-        // Create event
-        cy.get( '#event-create-submit' ).click()
-
-        // Verify that the new url is the admin interface
-        cy.url().should( 'include', '/event/admin' )
+        cy.create_kiosk( 'two' )
 
         // Save the event and admin links for further use
         cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
@@ -98,7 +81,7 @@ context( 'Claimer can view valid events', () => {
                 // Check if POAP link supplies one of the test codes
                 cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
                     const [ base, code ] = text.split( '/claim/' )
-                    expect( code ).to.be.oneOf( twoCodes )
+                    expect( code ).to.satisfy( code => check_if_code_is_expected( code, twoCodes ) )
                 } )
 
             } )
@@ -146,7 +129,7 @@ context( 'Claimer can view valid events', () => {
                 // Check if POAP link supplies one of the test codes
                 cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
                     const [ base, code ] = text.split( '/claim/' )
-                    expect( code ).to.be.oneOf( twoCodes )
+                    expect( code ).to.satisfy( coed => check_if_code_is_expected( code, twoCodes ) )
                 } )
 
             } )
@@ -184,24 +167,7 @@ context( 'Claimer can view valid events', () => {
 
     it( 'Event 2: Creates event', function() {
 
-        // Visit creation interface
-        cy.visit( '/create?debug=true' )
-
-        // Input the event data
-        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `five-correct-codes.txt` : `five-correct-codes-ci.txt` )
-        cy.get( '#event-create-name' ).clear().type( admin.events[1].name )
-        cy.get( '#event-create-email' ).clear().type( admin.email )
-        cy.get( '#event-create-date' ).clear().type( admin.events[1].end )
-
-        // Select no anti-farming
-        cy.get( '#event-create-game-enabled' ).click( { force: true } )
-        cy.get( '#event-create-game-enabled-0' ).click( { force: true } )
-
-        // Create event
-        cy.get( '#event-create-submit' ).click()
-
-        // Verify that the new url is the admin interface
-        cy.url().should( 'include', '/event/admin' )
+        cy.create_kiosk( 'five' )
 
         // Save the event and admin links for further use
         cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_2_publiclink' ).then( f => cy.log( this.event_2_publiclink ) )
@@ -250,7 +216,7 @@ context( 'Claimer can view valid events', () => {
                 // Check if POAP link supplies one of the test codes
                 cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
                     const [ base, code ] = text.split( '/claim/' )
-                    expect( code ).to.be.oneOf( fiveCodes )
+                    expect( code ).to.satisfy( code => check_if_code_is_expected( code, fiveCodes ) )
                 } )
 
             } )

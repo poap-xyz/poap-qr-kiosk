@@ -32,6 +32,57 @@ beforeEach( () => {
 
 } )
 
+/**
+ * * Create a new kiosk with a number of codes
+ * @param {'one'|'two'|'five'} code_amount - The number of codes to create, defaults to one
+ * @param {'background'|'game'|'naive'} anti_farming_mode - The anti-farming mode to use, defaults to background
+ * @returns {} 
+ */
+
+Cypress.Commands.add( 'create_kiosk', ( code_amount='one', anti_farming_mode='background' ) => {
+
+    const admin = require( '../fixtures/admin-user' )
+    const codes = require( `../fixtures/${ code_amount }-correct-${ code_amount == 'one' ? 'code' : 'codes' }${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }.js` )
+    const uniquified_codes_as_string = codes.map( code => `${ code }-${ Date.now() }` ).join( '\n' )
+
+    // Visit creation interface
+    cy.visit( '/create?debug=true' )
+
+    // Input the event data
+    // cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
+    cy.get( '#event-create-file' ).selectFile( {
+        contents: Cypress.Buffer.from( uniquified_codes_as_string ),
+        fileName: 'mintlinks.csv',
+        mimeType: 'text/csv',
+        lastModified: Date.now(),
+    }, { force: true } )
+    cy.get( '#event-create-name' ).clear().type( admin.events[0].name )
+    cy.get( '#event-create-email' ).clear().type( admin.email )
+
+    // Select no anti-farming
+    if( anti_farming_mode == 'background' ) {
+        cy.get( '#event-create-game-enabled' ).click( { force: true } )
+        cy.get( '#event-create-game-enabled-0' ).click( { force: true } )
+    }
+
+    if( anti_farming_mode == 'game' ) {
+        // Select YES to anti-farming
+        cy.get( '#event-create-game-enabled' ).click( { force: true } )
+        cy.get( '#event-create-game-enabled-1' ).click( { force: true } )
+        // Select anti-farming timing (10s)
+        cy.get( '#event-create-game-duration' ).click( { force: true } )
+        cy.get( '#event-create-game-duration-1' ).click( { force: true } )
+        cy.log( 'Game time selected: 10s AKA 2 game turns' )
+    }
+
+    // Create event
+    cy.get( '#event-create-submit' ).click()
+
+    // Verify that the new url is the admin interface
+    cy.url().should( 'include', '/event/admin' )
+
+} )
+
 // Scan a QR and claim the challenge
 Cypress.Commands.add( 'claim_challenge', ( challenge_string, alias, start ) => {
 
