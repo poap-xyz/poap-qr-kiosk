@@ -49,6 +49,19 @@ export default function Admin( ) {
     const [ collectEmails, setCollectEmails ] = useState( false )
     const developer_mode = backgroundTaps >= 20
 
+    // Email collection options
+    const email_collect_options = [
+        {
+            label: t( 'eventCreate.form.dropCollectEmails.options', { returnObjects: true } )?.[0]?.label,
+            value: 'no'
+        },
+        {
+            label: t( 'eventCreate.form.dropCollectEmails.options', { returnObjects: true } )?.[1]?.label,
+            value: 'yes'    
+        }
+    ]
+    log( email_collect_options )
+
     const gameOptions = [
         {
             label: 'Automated background checks only (physical events)',
@@ -289,7 +302,7 @@ export default function Admin( ) {
     </Layout>
     
     // Main render
-    return <Layout hide_background={ codes } hide_footer onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
+    return <Layout id="event-create-layout-container" hide_background={ codes } hide_footer onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 
         <Section padding='var(--spacing-4) 0 var(--spacing-4) 0'>
             <Container width='750px'>
@@ -310,13 +323,13 @@ export default function Admin( ) {
                     <Input id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'eventCreate.form.dropName.placeholder' ) } label={ t( 'eventCreate.form.dropName.label' ) } toolTip={ t( 'eventCreate.form.dropName.info' ) } value={ name } optional />
                     
                     { /* Sam asked to remove the Kiosk expiry, for now I'm hiding it in the prod frontend but am keeping the backend logic in case we need to revert */ }
-                    { dev ? <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'eventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'eventCreate.form.dropDate.info' ) }` } value={ date } /> : null }
+                    { dev || developer_mode ? <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'eventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'eventCreate.form.dropDate.info' ) }` } value={ date } /> : null }
                     
                     <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'eventCreate.form.dropEmail.placeholder' ) } label={ t( 'eventCreate.form.dropEmail.label' ) } toolTip={ t( 'eventCreate.form.dropEmail.info' ) } value={ email } />
                     <Dropdown id="event-create-game-enabled" label={ t( 'eventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` } options={ gameOptions } handleOptionSelect={ ( { value } ) => setAbuseProtection( `${ value }` ) }/>
                     { abuseProtection === 'game' && <Dropdown id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) } /> }
                     { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'eventCreate.form.dropCss.placeholder' ) } label={ t( 'eventCreate.form.dropCss.label' ) } toolTip={ t( 'eventCreate.form.dropCss.info' ) } value={ css || '' } /> }
-                    { developer_mode && <Dropdown options={ t( 'eventCreate.form.dropCollectEmails.options', { returnObjects: true } ) } id="event-create-collect-emails" onChange={ ( { target } ) => setCollectEmails( target.value.includes( 'yes' ) ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } value={ collectEmails } /> }
+                    { developer_mode && <Dropdown options={ email_collect_options } id="event-create-collect-emails" handleOptionSelect={ ( { value } ) => setCollectEmails( value.includes( 'yes' ) ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } value={ collectEmails ? 'yes' : 'no' }/> }
                     { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'eventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'eventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'eventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
                 </Grid>
                 <FormFooter>

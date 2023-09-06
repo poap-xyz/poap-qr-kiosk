@@ -16,6 +16,6 @@ export default ( { styles } ) => {
     
     if( !sane_styles ) return
 
-    return <style dangerouslySetInnerHTML={ { __html: sane_styles } } />
+    return <style id="custom-added-css-overrides" dangerouslySetInnerHTML={ { __html: sane_styles } } />
 
 }
