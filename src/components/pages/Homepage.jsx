@@ -18,7 +18,7 @@ import { H2, H3, Text, Button, Container, LayeredText, DynamicTag, Divider, useV
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
-export default function ComponentName( ) {
+export default function Homepage( ) {
 
     // Navigation hooks
     const navigate = useNavigate()
