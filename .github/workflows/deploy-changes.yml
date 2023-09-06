@@ -1,322 +1,322 @@
 name: Deploy on changes
 
 on:
-	push:
-		branches:
-			- development
-			- main
+  push:
+    branches:
+      - development
+      - main
 
 jobs:
-	## ###############
-	## 1️⃣ Deploy firebase meta changes
-	## ###############
-	deploy-firebase-settings:
-		name: Deploy changes to meta
-		runs-on: buildjet-4vcpu-ubuntu-2204
-		steps:
-			# Clones repo to the commit that triggered the event
-			- name: Cloning repository
-				uses: actions/checkout@v3
-			- name: Get changed files in meta file changes
-				id: changed-firebase-files
-				uses: tj-actions/changed-files@v35
-				with:
-					files: fire{base,store}*
-			- name: List all changed files
-				run: |
-					echo "Any changed: ${{ steps.changed-firebase-files.outputs.any_changed }}, base ref: ${{ github.ref }}"
-					for file in ${{ steps.changed-firebase-files.outputs.all_changed_files }}; do
-						echo "change: $file"
-					done
+  ## ###############
+  ## 1️⃣ Deploy firebase meta changes
+  ## ###############
+  deploy-firebase-settings:
+    name: Deploy changes to meta
+    runs-on: buildjet-4vcpu-ubuntu-2204
+    steps:
+      # Clones repo to the commit that triggered the event
+      - name: Cloning repository
+        uses: actions/checkout@v3
+      - name: Get changed files in meta file changes
+        id: changed-firebase-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files: fire{base,store}*
+      - name: List all changed files
+        run: |
+          echo "Any changed: ${{ steps.changed-firebase-files.outputs.any_changed }}, base ref: ${{ github.ref }}"
+          for file in ${{ steps.changed-firebase-files.outputs.all_changed_files }}; do
+            echo "change: $file"
+          done
 
-			# Set up node and install frontend dependencies
-			- name: Set up Node.js (.nvmrc)
-				uses: actions/setup-node@v3
-				if: steps.changed-firebase-files.outputs.any_changed == 'true'
-				with:
-					node-version-file: ".nvmrc"
-					cache: "npm"
-			- name: Install dependencies
-				if: steps.changed-firebase-files.outputs.any_changed == 'true'
-				run: npm i
+      # Set up node and install frontend dependencies
+      - name: Set up Node.js (.nvmrc)
+        uses: actions/setup-node@v3
+        if: steps.changed-firebase-files.outputs.any_changed == 'true'
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+      - name: Install dependencies
+        if: steps.changed-firebase-files.outputs.any_changed == 'true'
+        run: npm i
 
-			#########
-			# Deploy
-			- name: Deploy DEV meta to Firebase
-				uses: w9jds/firebase-action@master
-				if: |
-					github.ref == 'refs/heads/development' &&
-					steps.changed-firebase-files.outputs.any_changed == 'true'
-				with:
-					args: deploy --only=firestore --project=development
-				env:
-					GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
-			- name: Deploy PROD meta to Firebase
-				uses: w9jds/firebase-action@master
-				if: |
-					github.ref == 'refs/heads/main' && 
-					steps.changed-firebase-files.outputs.any_changed == 'true'
-				with:
-					args: deploy --only=firestore --project=production
-				env:
-					GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
+      #########
+      # Deploy
+      - name: Deploy DEV meta to Firebase
+        uses: w9jds/firebase-action@master
+        if: |
+          github.ref == 'refs/heads/development' &&
+          steps.changed-firebase-files.outputs.any_changed == 'true'
+        with:
+          args: deploy --only=firestore --project=development
+        env:
+          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
+      - name: Deploy PROD meta to Firebase
+        uses: w9jds/firebase-action@master
+        if: |
+          github.ref == 'refs/heads/main' && 
+          steps.changed-firebase-files.outputs.any_changed == 'true'
+        with:
+          args: deploy --only=firestore --project=production
+        env:
+          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
 
-	## ###############
-	## 2️⃣ Deploy functions
-	## ###############
-	deploy-functions:
-		name: Deploy changes to functions
-		needs: deploy-firebase-settings
-		runs-on: buildjet-4vcpu-ubuntu-2204
-		steps:
-			# Clones repo to the commit that triggered the event
-			- name: Cloning repository
-				uses: actions/checkout@v3
-			- name: Get changed files in functions folder
-				id: changed-functions-files
-				uses: tj-actions/changed-files@v35
-				with:
-					files: functions/**
-			- name: List all changed files
-				run: |
-					echo "Any changed: ${{ steps.changed-functions-files.outputs.any_changed }}, base ref: ${{ github.ref }}"
-					for file in ${{ steps.changed-functions-files.outputs.all_changed_files }}; do
-						echo "change: $file"
-					done
+  ## ###############
+  ## 2️⃣ Deploy functions
+  ## ###############
+  deploy-functions:
+    name: Deploy changes to functions
+    needs: deploy-firebase-settings
+    runs-on: buildjet-4vcpu-ubuntu-2204
+    steps:
+      # Clones repo to the commit that triggered the event
+      - name: Cloning repository
+        uses: actions/checkout@v3
+      - name: Get changed files in functions folder
+        id: changed-functions-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files: functions/**
+      - name: List all changed files
+        run: |
+          echo "Any changed: ${{ steps.changed-functions-files.outputs.any_changed }}, base ref: ${{ github.ref }}"
+          for file in ${{ steps.changed-functions-files.outputs.all_changed_files }}; do
+            echo "change: $file"
+          done
 
-			# Set up node and install frontend dependencies
-			- name: Set up Node.js (.nvmrc)
-				uses: actions/setup-node@v3
-				if: steps.changed-functions-files.outputs.any_changed == 'true'
-				with:
-					node-version-file: "functions/.nvmrc"
-					cache: "npm"
-			- name: Install functions dependencies
-				if: steps.changed-functions-files.outputs.any_changed == 'true'
-				run: npm i
-				working-directory: functions
+      # Set up node and install frontend dependencies
+      - name: Set up Node.js (.nvmrc)
+        uses: actions/setup-node@v3
+        if: steps.changed-functions-files.outputs.any_changed == 'true'
+        with:
+          node-version-file: "functions/.nvmrc"
+          cache: "npm"
+      - name: Install functions dependencies
+        if: steps.changed-functions-files.outputs.any_changed == 'true'
+        run: npm i
+        working-directory: functions
 
-			#####################
-			# Set up environment
-			- name: Create DEV environment files
-				if: |
-					github.ref == 'refs/heads/development' &&
-					steps.changed-functions-files.outputs.any_changed == 'true'
-				working-directory: functions
-				run: |
-					echo -e "${{ secrets.FUNCTIONS_DOTENV_DEVELOPMENT }}" > .env.development
-			- name: Create PROD environment files
-				if: |
-					github.ref == 'refs/heads/main' &&
-					steps.changed-functions-files.outputs.any_changed == 'true'
-				working-directory: functions
-				run: |
-					echo -e "${{ secrets.FUNCTIONS_DOTENV_PRODUCTION }}" > .env.production
+      #####################
+      # Set up environment
+      - name: Create DEV environment files
+        if: |
+          github.ref == 'refs/heads/development' &&
+          steps.changed-functions-files.outputs.any_changed == 'true'
+        working-directory: functions
+        run: |
+          echo -e "${{ secrets.FUNCTIONS_DOTENV_DEVELOPMENT }}" > .env.development
+      - name: Create PROD environment files
+        if: |
+          github.ref == 'refs/heads/main' &&
+          steps.changed-functions-files.outputs.any_changed == 'true'
+        working-directory: functions
+        run: |
+          echo -e "${{ secrets.FUNCTIONS_DOTENV_PRODUCTION }}" > .env.production
 
-			#########
-			# Deploy
-			- name: Deploy DEV functions to Firebase
-				uses: w9jds/firebase-action@master
-				if: |
-					github.ref == 'refs/heads/development' &&
-					steps.changed-functions-files.outputs.any_changed == 'true'
-				with:
-					args: deploy --only=functions --project=development --force
-				env:
-					GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
-			- name: Deploy PROD functions to Firebase
-				uses: w9jds/firebase-action@master
-				if: |
-					github.ref == 'refs/heads/main' &&
-					steps.changed-functions-files.outputs.any_changed == 'true'
-				with:
-					args: deploy --only=functions --project=production --force
-				env:
-					GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
+      #########
+      # Deploy
+      - name: Deploy DEV functions to Firebase
+        uses: w9jds/firebase-action@master
+        if: |
+          github.ref == 'refs/heads/development' &&
+          steps.changed-functions-files.outputs.any_changed == 'true'
+        with:
+          args: deploy --only=functions --project=development --force
+        env:
+          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
+      - name: Deploy PROD functions to Firebase
+        uses: w9jds/firebase-action@master
+        if: |
+          github.ref == 'refs/heads/main' &&
+          steps.changed-functions-files.outputs.any_changed == 'true'
+        with:
+          args: deploy --only=functions --project=production --force
+        env:
+          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
 
-	## ###############
-	## 3️⃣ Frontend testing
-	## ###############
-	test-frontend:
-		name: Do frontend testing
-		runs-on: buildjet-8vcpu-ubuntu-2204
-		# strategy:
-		#	 fail-fast: false
-		#	 matrix:
-		#		 # run 3 copies of the current job in	parallel
-		#		 containers: [ 1, 2, 3, 4, 5, 6, 7 ]
-		needs: [deploy-functions, deploy-firebase-settings]
+  ## ###############
+  ## 3️⃣ Frontend testing
+  ## ###############
+  test-frontend:
+    name: Do frontend testing
+    runs-on: buildjet-8vcpu-ubuntu-2204
+    # strategy:
+    #   fail-fast: false
+    #   matrix:
+    #     # run 3 copies of the current job in  parallel
+    #     containers: [ 1, 2, 3, 4, 5, 6, 7 ]
+    needs: [deploy-functions, deploy-firebase-settings]
 
-		steps:
-			# Clones repo to the commit that triggered the event
-			- name: Cloning repository
-				uses: actions/checkout@v3
-			- name: Get changed files
-				id: changed-frontend-files
-				uses: tj-actions/changed-files@v35
-				with:
-					files_ignore: functions/**;fire{base,store}*;.*/**
-					files_ignore_separator: ";"
-			- name: List all changed files
-				run: |
-					echo "Any changed: ${{ steps.changed-frontend-files.outputs.any_changed }}, base ref: ${{ github.base_ref }}"
-					for file in ${{ steps.changed-frontend-files.outputs.all_changed_files }}; do
-						echo "change: $file"
-					done
+    steps:
+      # Clones repo to the commit that triggered the event
+      - name: Cloning repository
+        uses: actions/checkout@v3
+      - name: Get changed files
+        id: changed-frontend-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files_ignore: functions/**;fire{base,store}*;.*/**
+          files_ignore_separator: ";"
+      - name: List all changed files
+        run: |
+          echo "Any changed: ${{ steps.changed-frontend-files.outputs.any_changed }}, base ref: ${{ github.base_ref }}"
+          for file in ${{ steps.changed-frontend-files.outputs.all_changed_files }}; do
+            echo "change: $file"
+          done
 
-			# Set up node and install frontend dependencies
-			- name: Set up Node.js (.nvmrc)
-				uses: actions/setup-node@v3
-				if: steps.changed-frontend-files.outputs.any_changed == 'true'
-				with:
-					node-version-file: ".nvmrc"
-					cache: "npm"
-			- name: Install dependencies
-				if: steps.changed-frontend-files.outputs.any_changed == 'true'
-				run: npm i
+      # Set up node and install frontend dependencies
+      - name: Set up Node.js (.nvmrc)
+        uses: actions/setup-node@v3
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+      - name: Install dependencies
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: npm i
 
-			# Set up environment
-			- name: Create DEV environment files
-				if: |
-					github.ref == 'refs/heads/development' &&
-					steps.changed-frontend-files.outputs.any_changed == 'true'
-				run: |
-					echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
-				#	 sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
+      # Set up environment
+      - name: Create DEV environment files
+        if: |
+          github.ref == 'refs/heads/development' &&
+          steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: |
+          echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
+        #   sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
 
-			- name: Create PROD environment files
-				if: |
-					github.ref == 'refs/heads/main' &&
-					steps.changed-frontend-files.outputs.any_changed == 'true'
-				run: |
-					echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
-				#	 sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
+      - name: Create PROD environment files
+        if: |
+          github.ref == 'refs/heads/main' &&
+          steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: |
+          echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
+        #   sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
 
-			# Check linting
-			- name: Check for linting errors
-				if: steps.changed-frontend-files.outputs.any_changed == 'true'
-				run: npm run lint
+      # Check linting
+      - name: Check for linting errors
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: npm run lint
 
-			# Check CI
-			- name: Run cypress tests
-				if: steps.changed-frontend-files.outputs.any_changed == 'true'
-				run: npm run test:ci
+      # Check CI
+      - name: Run cypress tests
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: npm run test:ci
 
-			# If CI failed, upload the videos for debugging
-			- name: Upload cypress video files
-				if: always()
-				uses: actions/upload-artifact@v3
-				with:
-				#	 name: cypress-videos ${{ matrix.containers }}
-					name: cypress-videos
-					path: |
-						cypress/videos
-						cypress/screenshots
+      # If CI failed, upload the videos for debugging
+      - name: Upload cypress video files
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+        #   name: cypress-videos ${{ matrix.containers }}
+          name: cypress-videos
+          path: |
+            cypress/videos
+            cypress/screenshots
 
-			# Upload log files of this fun
-			- name: Upload all log files
-				if: always()
-				uses: actions/upload-artifact@v3
-				with:
-				#	 name: logfiles ${{ matrix.containers }}
-						name: logfiles	
-						path: |
-								*.log
-								functions/*.log
+      # Upload log files of this fun
+      - name: Upload all log files
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+        #   name: logfiles ${{ matrix.containers }}
+            name: logfiles  
+            path: |
+                *.log
+                functions/*.log
 
-	## ###############
-	## 4️⃣ Deploy frontend changes
-	## ###############
-	deploy-frontend:
-		name: Deploy frontend changes
-		runs-on: buildjet-4vcpu-ubuntu-2204
-		needs: [ deploy-functions, deploy-firebase-settings, test-frontend ]
+  ## ###############
+  ## 4️⃣ Deploy frontend changes
+  ## ###############
+  deploy-frontend:
+    name: Deploy frontend changes
+    runs-on: buildjet-4vcpu-ubuntu-2204
+    needs: [ deploy-functions, deploy-firebase-settings, test-frontend ]
 
-		steps:
-			# Clones repo to the commit that triggered the event
-			- name: Cloning repository
-				uses: actions/checkout@v3
-			- name: Get changed files
-				id: changed-frontend-files
-				uses: tj-actions/changed-files@v35
-				with:
-					files_ignore: functions/**;fire{base,store}*;.*/**
-					files_ignore_separator: ";"
-			- name: List all changed files
-				run: |
-					echo "Any changed: ${{ steps.changed-frontend-files.outputs.any_changed }}, base ref: ${{ github.base_ref }}"
-					for file in ${{ steps.changed-frontend-files.outputs.all_changed_files }}; do
-						echo "change: $file"
-					done
+    steps:
+      # Clones repo to the commit that triggered the event
+      - name: Cloning repository
+        uses: actions/checkout@v3
+      - name: Get changed files
+        id: changed-frontend-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files_ignore: functions/**;fire{base,store}*;.*/**
+          files_ignore_separator: ";"
+      - name: List all changed files
+        run: |
+          echo "Any changed: ${{ steps.changed-frontend-files.outputs.any_changed }}, base ref: ${{ github.base_ref }}"
+          for file in ${{ steps.changed-frontend-files.outputs.all_changed_files }}; do
+            echo "change: $file"
+          done
 
-			# Set up node and install frontend dependencies
-			- name: Set up Node.js (.nvmrc)
-				uses: actions/setup-node@v3
-				if: steps.changed-frontend-files.outputs.any_changed == 'true'
-				with:
-					node-version-file: ".nvmrc"
-					cache: "npm"
-			- name: Install dependencies
-				if: steps.changed-frontend-files.outputs.any_changed == 'true'
-				run: npm i
+      # Set up node and install frontend dependencies
+      - name: Set up Node.js (.nvmrc)
+        uses: actions/setup-node@v3
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+      - name: Install dependencies
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: npm i
 
-			# Set up environment
-			- name: Create DEV environment files
-				if: |
-					github.ref == 'refs/heads/development' &&
-					steps.changed-frontend-files.outputs.any_changed == 'true'
-				run: |
-					echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
+      # Set up environment
+      - name: Create DEV environment files
+        if: |
+          github.ref == 'refs/heads/development' &&
+          steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: |
+          echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
 
-			- name: Create PROD environment files
-				if: |
-					github.ref == 'refs/heads/main' &&
-					steps.changed-frontend-files.outputs.any_changed == 'true'
-				run: |
-					echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
+      - name: Create PROD environment files
+        if: |
+          github.ref == 'refs/heads/main' &&
+          steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: |
+          echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
 
-			# Prep env for deployment
-			- name: Remove debug token from build
-				if: steps.changed-frontend-files.outputs.any_changed == 'true'
-				run: |
-					sed -i 's/^REACT_APP_useEmulator=.*$//g' .env
-					sed -i 's/^REACT_APP_APPCHECK_DEBUG_TOKEN=.*$//g' .env
-					sed -i 's/^VITE_APPCHECK_DEBUG_TOKEN=.*$//g' .env
-					sed -i 's/^VITE_useEmulator=.*$//g' .env
+      # Prep env for deployment
+      - name: Remove debug token from build
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: |
+          sed -i 's/^REACT_APP_useEmulator=.*$//g' .env
+          sed -i 's/^REACT_APP_APPCHECK_DEBUG_TOKEN=.*$//g' .env
+          sed -i 's/^VITE_APPCHECK_DEBUG_TOKEN=.*$//g' .env
+          sed -i 's/^VITE_useEmulator=.*$//g' .env
 
-			# Build frontend files
-			- name: Build website files
-				if: steps.changed-frontend-files.outputs.any_changed == 'true'
-				env:
-					NODE_ENV: production
-					CI: false
-				run: npm run build
+      # Build frontend files
+      - name: Build website files
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        env:
+          NODE_ENV: production
+          CI: false
+        run: npm run build
 
-			# Deploy frontend
-			- name: Deploy to PROD Firebase
-				uses: w9jds/firebase-action@master
-				if: |
-					github.ref == 'refs/heads/main' &&
-					steps.changed-frontend-files.outputs.any_changed == 'true'
-				with:
-					args: deploy --only hosting,firestore --project=production
-				env:
-					GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
+      # Deploy frontend
+      - name: Deploy to PROD Firebase
+        uses: w9jds/firebase-action@master
+        if: |
+          github.ref == 'refs/heads/main' &&
+          steps.changed-frontend-files.outputs.any_changed == 'true'
+        with:
+          args: deploy --only hosting,firestore --project=production
+        env:
+          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
 
-			- name: Deploy to DEV Firebase
-				uses: w9jds/firebase-action@master
-				if: |
-					github.ref == 'refs/heads/development' &&
-					steps.changed-frontend-files.outputs.any_changed == 'true'
-				with:
-					args: deploy --only hosting,firestore --project=development
-				env:
-					GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
+      - name: Deploy to DEV Firebase
+        uses: w9jds/firebase-action@master
+        if: |
+          github.ref == 'refs/heads/development' &&
+          steps.changed-frontend-files.outputs.any_changed == 'true'
+        with:
+          args: deploy --only hosting,firestore --project=development
+        env:
+          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
 
-			- name: Purge the index.html cache in firestore
-				if: steps.changed-frontend-files.outputs.any_changed == 'true'
-				run: |
-					source .env
-					INVALIDATION_URL="$REACT_APP_public_url/purge_cache"
-					echo "Invalidating cache at $INVALIDATION_URL"
-					curl -Ls "$INVALIDATION_URL" | grep -q "Cache invalidated"
+      - name: Purge the index.html cache in firestore
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: |
+          source .env
+          INVALIDATION_URL="$REACT_APP_public_url/purge_cache"
+          echo "Invalidating cache at $INVALIDATION_URL"
+          curl -Ls "$INVALIDATION_URL" | grep -q "Cache invalidated"
