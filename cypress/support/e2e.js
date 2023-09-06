@@ -19,18 +19,32 @@ import './commands'
 // Get the url of functions, to be used to call emulator or live url
 export const get_claim_function_url = () => {
 
-    cy.log( `Generating link based on: `, JSON.parse( JSON.stringify( Cypress.env() ) ) )
+    cy.log( `Generating link based on: `, JSON.stringify( Cypress.env() ) )
 
     const functions_emulator_port = 5001
-    const { REACT_APP_projectId, REACT_APP_useEmulator, REACT_APP_publicUrl } = Cypress.env()
+    const { VITE_projectId, VITE_useEmulator, VITE_publicUrl } = Cypress.env()
 
     let url = ''
-    if( REACT_APP_useEmulator !== 'true' ) url = `${ REACT_APP_publicUrl }/claim`
-    else url = `http://localhost:${ functions_emulator_port }/${ REACT_APP_projectId }/us-central1/claimMiddleware/claim`
+    if( VITE_useEmulator !== 'true' ) url = `${ VITE_publicUrl }/claim`
+    else url = `http://localhost:${ functions_emulator_port }/${ VITE_projectId }/us-central1/claimMiddleware/claim`
     cy.log( `Generated functions URL: ${ url }` )
     return url
 
 }
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+// Helper function to see if a code matches any of the codes in an array of expected codes
+export const check_if_code_is_expected = ( code_to_check, expected_codes ) => {
+
+    cy.log( `Checking if code ${ code_to_check } is in`, JSON.stringify( expected_codes ) )
+    const code_is_expected = expected_codes.some( expected_code => {
+        // The expected codes are literal codes like testing1, the code is a literal code plus a random string
+        // so for example we are checking if testing1-498743798.includes( testing1 )
+        const matches = code_to_check.includes( expected_code )
+        if( matches ) cy.log( `Code ${ code_to_check } is in ${ expected_code }` )
+        return matches
+    } )
+
+    if( !code_is_expected ) cy.log( `Code ${ code_to_check } is not in ${ expected_codes }` )
+    return code_is_expected
+
+}

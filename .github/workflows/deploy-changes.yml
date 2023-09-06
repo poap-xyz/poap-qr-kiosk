@@ -312,11 +312,4 @@ jobs:
           args: deploy --only hosting,firestore --project=development
         env:
           GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
-
-      - name: Purge the index.html cache in firestore
-        if: steps.changed-frontend-files.outputs.any_changed == 'true'
-        run: |
-          source .env
-          INVALIDATION_URL="$REACT_APP_public_url/purge_cache"
-          echo "Invalidating cache at $INVALIDATION_URL"
-          curl -Ls "$INVALIDATION_URL" | grep -q "Cache invalidated"
+          

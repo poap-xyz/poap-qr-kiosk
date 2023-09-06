@@ -12,15 +12,15 @@ import { log } from './helpers'
 // ///////////////////////////////
 
 // Firebase config
-const { REACT_APP_apiKey, REACT_APP_authDomain, REACT_APP_projectId, REACT_APP_storageBucket, REACT_APP_messagingSenderId, REACT_APP_appId, REACT_APP_measurementId, REACT_APP_recaptcha_site_key, REACT_APP_APPCHECK_DEBUG_TOKEN } = process.env
+const { VITE_apiKey, VITE_authDomain, VITE_projectId, VITE_storageBucket, VITE_messagingSenderId, VITE_appId, VITE_measurementId, VITE_recaptcha_site_key, VITE_APPCHECK_DEBUG_TOKEN } = import.meta.env
 const config = {
-    apiKey: REACT_APP_apiKey,
-    authDomain: REACT_APP_authDomain,
-    projectId: REACT_APP_projectId,
-    storageBucket: REACT_APP_storageBucket,
-    messagingSenderId: REACT_APP_messagingSenderId,
-    appId: REACT_APP_appId,
-    measurementId: REACT_APP_measurementId
+    apiKey: VITE_apiKey,
+    authDomain: VITE_authDomain,
+    projectId: VITE_projectId,
+    storageBucket: VITE_storageBucket,
+    messagingSenderId: VITE_messagingSenderId,
+    appId: VITE_appId,
+    measurementId: VITE_measurementId
 }
 
 log( 'Init firebase with ', config )
@@ -32,10 +32,12 @@ const db = getFirestore( app )
 const functions = getFunctions( app )
 
 // App check config
-if( process.env.NODE_ENV === 'development' || REACT_APP_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = REACT_APP_APPCHECK_DEBUG_TOKEN || true
-log( 'Initialising app check with ', REACT_APP_APPCHECK_DEBUG_TOKEN )
+if( VITE_APPCHECK_DEBUG_TOKEN ) {
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = VITE_APPCHECK_DEBUG_TOKEN || true
+    log( 'Initialising app check with ', VITE_APPCHECK_DEBUG_TOKEN )
+}
 initializeAppCheck( app, {
-    provider: new ReCaptchaV3Provider( REACT_APP_recaptcha_site_key ),
+    provider: new ReCaptchaV3Provider( VITE_recaptcha_site_key ),
     isTokenAutoRefreshEnabled: true
 } )
 
@@ -60,15 +62,15 @@ export const create_static_drop = httpsCallable( functions, 'create_static_drop'
 
 // Offline functions emulator
 const functions_emulator_port = 5001
-const firestore_emulator_port = 8080
-if( process.env.REACT_APP_useEmulator ) {
+// const firestore_emulator_port = 8080
+if( import.meta.env.VITE_useEmulator ) {
     connectFunctionsEmulator( functions, 'localhost', functions_emulator_port )
     log( `Using firebase functions emulator on port ${ functions_emulator_port }` )
     // connectFirestoreEmulator( db, 'localhost', firestore_emulator_port )
     // log( `Using firebase firestore emulator on port ${ firestore_emulator_port }` )
 }
 
-export const get_emulator_function_call_url = name => `http://localhost:${ functions_emulator_port }/${ REACT_APP_projectId }/us-central1/${ name }`
+export const get_emulator_function_call_url = name => `http://localhost:${ functions_emulator_port }/${ VITE_projectId }/us-central1/${ name }`
 
 // ///////////////////////////////
 // Code actions
@@ -159,6 +161,6 @@ export function listen_to_document( collection, document, cb ) {
 // ///////////////////////////////
 export function trackEvent( name ) {
     if( !name ) return
-    if( process.env.NODE_ENV == 'development' ) return log( 'Dummy analytics event: ', name )
+    if( import.meta.env.NODE_ENV == 'development' ) return log( 'Dummy analytics event: ', name )
     logEvent( analytics, name )
 }
