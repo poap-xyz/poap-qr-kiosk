@@ -107,7 +107,7 @@ export function listenToEventMeta( eventId, cb ) {
     return onSnapshot( d, snap => {
 
         const data = snap.data()
-        log( `Retreived event metadata: `, data )
+        log( `Retrieved event metadata: `, data )
         if( cb ) cb( data )
         else console.error( `Missing callback` )
 
