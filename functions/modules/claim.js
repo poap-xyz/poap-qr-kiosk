@@ -114,10 +114,10 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
             // Check if this event has a custom base url, if so, set it as the redirect base
             if( event?.claim_base_url ) redirect_link = event.claim_base_url
-            else redirect_link = `https://app.poap.xyz/claim`
+            else redirect_link = `https://app.poap.xyz/claim/`
 
             // Add the POAP claim code to the url
-            redirect_link += `/${ claim_code }`
+            redirect_link += `${ claim_code }`
 
             log( `Naive mode, redirecting to ${ redirect_link }` )
 
