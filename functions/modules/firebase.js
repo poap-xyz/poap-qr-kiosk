@@ -58,7 +58,7 @@ const get_ip_from_request = firebase_request => {
     let ip = request_ip || ips?.[0] || req.get( 'x-forwarded-for' ) || req.get( 'fastly-client-ip' )
 
     // If headers contained a comma separated ip list, take the first one
-    if( ip?.contains( ',' ) ) ip = ip?.split( ',' )?.[0]?.trim()
+    if( `${ ip }`.contains( ',' ) ) ip = ip?.split( ',' )?.[0]?.trim()
 
     // If ip is still an array, take the first one
     if( Array.isArray( ip ) ) [ ip ] = ip
