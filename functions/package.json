@@ -6,7 +6,7 @@
     "runtime:production": "firebase functions:config:get > .runtimeconfig.prod.json",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
-    "start": "development=true && firebase use development && npm run runtime && npm run shell",
+    "start": "firebase use development && npm run runtime && npm run shell",
     "start:production": "development=true && firebase use production && npm run runtime:production && npm run shell",
     "deploy:development": "firebase use development && firebase deploy --only functions",
     "deploy:production": "firebase use production && firebase deploy --only functions; firebase use development",
@@ -35,6 +35,7 @@
   },
   "private": true,
   "devDependencies": {
-    "firebase-tools": "^12.5.2"
+    "firebase-tools": "^12.5.2",
+    "geoip-lite": "^1.4.7"
   }
 }

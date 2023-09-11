@@ -3,6 +3,21 @@ const { log } = require( './helpers' )
 
 const app = require( './express' )()
 
+// Log this scan for farmer analysis
+const log_scan = async ( req, data ) => {
+
+    // Function dependencies
+    const { db } = require( './firebase' )
+    
+    // Create metadata object
+    const { generate_metadata_from_request } = require( './security' )
+    let request_metadata = generate_metadata_from_request( req )
+
+    // Log this scan for farmer analysis
+    await db.collection( 'scans' ).add( { ...data, ...request_metadata } )
+
+}
+
 app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
     // Function dependencies
@@ -119,9 +134,11 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
             // Add the POAP claim code to the url
             redirect_link += `${ claim_code }`
 
-            log( `Naive mode, redirecting to ${ redirect_link }` )
+            // Log this scan for farmer analysis
+            await log_scan( req, { event_id, public_auth_token, challenge_auth, redirect_link } )
 
             // Forward to redirect_link
+            log( `Naive mode, redirecting to ${ redirect_link }` )
             return res.redirect( 307, redirect_link )
         }
 
@@ -137,6 +154,9 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
             redirect_link += previous_auth_is_valid ? 'valprev_' : 'nvalprev_'
             redirect_link += previous_auth_within_grace_period ? 'previngr_' : 'nprevingr_'
         }
+
+        // Log this scan for farmer analysis
+        await log_scan( req, { event_id, public_auth_token, challenge_auth, redirect_link } )
 
         // Send redurect request to browser
         return res.redirect( 307, redirect_link )

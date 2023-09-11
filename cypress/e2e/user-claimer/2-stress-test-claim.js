@@ -44,8 +44,6 @@ context( 'Claimer can view valid events', () => {
         cy.get_challenge_from_qr_public_auth( this.public_auth_link, `challenge_one`, start ).as( `challenge_one` )
         cy.get_challenge_from_qr_public_auth( this.public_auth_link, `challenge_two`, start ).as( `challenge_two` )
         cy.get_challenge_from_qr_public_auth( this.public_auth_link, `challenge_three`, start ).as( `challenge_three` )
-        // cy.get_challenge_from_qr_public_auth( this.public_auth_link, `challenge_four`, start ).as( `challenge_four` )
-        // cy.get_challenge_from_qr_public_auth( this.public_auth_link, `challenge_five`, start ).as( `challenge_five` )
 
 
     } )
@@ -56,8 +54,6 @@ context( 'Claimer can view valid events', () => {
         cy.claim_challenge( this.challenge_one, `challenge_one`, start )
         cy.claim_challenge( this.challenge_two, `challenge_two`, start )
         cy.claim_challenge( this.challenge_three, `challenge_three`, start )
-        // cy.claim_challenge( this.challenge_four, `challenge_four`, start )
-        // cy.claim_challenge( this.challenge_five, `challenge_five`, start )
 
 
     } )

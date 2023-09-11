@@ -1,5 +1,5 @@
 const { ENV_VERBOSE } = process.env
-const dev = !!process.env.development
+const dev = !!process.env.development || !!process.env.DEVELOPMENT
 
 // Dev Logger
 const log = ( ...comments ) => {

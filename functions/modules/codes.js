@@ -375,10 +375,12 @@ exports.updateEventAvailableCodes = async function( change, context ) {
     // true > false = +1
     // unknown > false = +1
 
+    // If code was unclaimed, and it is now claimed or possibly claimed (unknown status), increment the counter up
     if( prevClaimed === false && [ 'unknown', true ].includes( claimed ) ) {
         return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now(), updated_by: 'updateEventsAvailableCodes decrement' }, { merge: true } )
     }
 	
+    // If the code was thought to be (possibly) claimed previously, but we now know it is unclaimed for sure, add an extra code to the event counter
     if( [ true, 'unknown' ].includes( prevClaimed ) && claimed === false ) {
         return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now(), updated_by: 'updateEventsAvailableCodes increment' }, { merge: true } )
     }	

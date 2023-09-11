@@ -5,7 +5,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import useInterval from 'use-interval'
 import { useTranslation } from 'react-i18next'
 
-import { requestManualCodeRefresh, refreshScannedCodesStatuses, trackEvent, get_emulator_function_call_url } from '../../modules/firebase'
+import { requestManualCodeRefresh, refreshScannedCodesStatuses, trackEvent, get_emulator_function_call_url, log_kiosk_open } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
 log( `Frontend using live url ${ VITE_publicUrl } with ${ VITE_useEmulator ? 'emulator' : 'live backend' }` )
 
@@ -68,6 +68,19 @@ export default function ViewQR( ) {
     // Health check, alerts internally
     const is_healthy = useHealthCheck()
 
+    // Once the event data is loaded, mark this kiosk open
+    useEffect( (  ) => {
+
+        // If no event data, exit
+        if( !event?.name || !internalEventId ) return
+        
+
+        // Once the event was loaded, register this open with the backend
+        // note: this is an async function
+        log_kiosk_open( internalEventId )
+
+
+    }, [ internalEventId, event?.name ] )
 
     // Set url event ID to localstorage and remove it from the URL
     useEffect( (  ) => {

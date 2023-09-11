@@ -59,6 +59,7 @@ export const claim_code_by_email = httpsCallable( functions, 'claim_code_by_emai
 export const export_emails_of_static_drop = httpsCallable( functions, 'export_emails_of_static_drop' )
 export const delete_emails_of_static_drop = httpsCallable( functions, 'delete_emails_of_static_drop' )
 export const create_static_drop = httpsCallable( functions, 'create_static_drop' )
+export const log_kiosk_open = httpsCallable( functions, 'log_kiosk_open' )
 
 // Offline functions emulator
 const functions_emulator_port = 5001
