@@ -6,7 +6,7 @@ const { onRequest, onCall } = require( "firebase-functions/v2/https" )
 
 // V2 Runtime config
 const protected_runtime = {
-    enforceAdmins: true,
+    enforceAppCheck: true,
 }
 
 // V1 Runtime config
@@ -84,6 +84,10 @@ exports.updateEventAvailableCodes = functions.firestore.document( `codes/{codeId
 const { validateCallerDevice, validateCallerCaptcha } = require( './modules/security' )
 exports.validateCallerDevice = onCall( { ...protected_runtime, ...keepWarmRuntime,  }, validateCallerDevice )
 exports.validateCallerCaptcha = functions.https.onCall( validateCallerCaptcha )
+
+// Log kiosk opens
+const { log_kiosk_open } = require( './modules/security' )
+exports.log_kiosk_open = onCall( protected_runtime, log_kiosk_open )
 
 /* ///////////////////////////////
 // Code claiming

@@ -162,6 +162,10 @@ exports.registerEvent = async function( data, context ) {
         if( !email.includes( '@' ) ) throw new Error( 'Please specify a valid email address' )
         if( !date.match( /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/ ) ) throw new Error( 'Please specify the date in YYYY-MM-DD, for example 2021-11-25' )
 
+        // Get the ip this request came from
+        const { get_ip_from_request } = require( './firebase' )
+        const created_from_ip = get_ip_from_request( context ) || 'unknown'
+
         // Create event document
         const authToken = uuidv4()
         const is_test_event = codes.find( code => code.includes( 'testing' ) )
@@ -183,7 +187,8 @@ exports.registerEvent = async function( data, context ) {
             public_auth: generate_new_event_public_auth( public_auth_expiry_interval_minutes, is_test_event ),
             created: Date.now(),
             updated: Date.now(),
-            updated_by: 'registerEvent'
+            updated_by: 'registerEvent',
+            created_from_ip
         } )
 
         // Format codes to the helpers understand the format

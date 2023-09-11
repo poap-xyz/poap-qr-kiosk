@@ -55,3 +55,64 @@ exports.validateCallerCaptcha = async ( captcha_response, context ) => {
     }
 
 }
+
+/**
+ * * Function that generates geolocation metadata from a request object
+ * @param {Object} request - a express.js compatible request object as provided by firebase functions 
+* @returns {Object} request_metadata - an object containing geolocation metadata
+* @returns {String} request_metadata.request_ip - the ip address of the caller
+* @returns {String} request_metadata.city - the city of the caller
+* @returns {String} request_metadata.country - the country of the caller
+ */
+const generate_metadata_from_request = request => {
+
+    const { get_ip_from_request } = require( './firebase' )
+    const request_ip = get_ip_from_request( request )
+
+    // Create metadata object
+    let request_metadata = { request_ip, updated: Date.now(), updated_human: new Date().toString() }
+
+    // If there is no request ip, return an empry object because we cannot proceed
+    if( !request_ip ) return {}
+
+    // Get location from IP
+    const geoip = require( 'geoip-lite' )
+    const { city='unknown', country='unknown' } = geoip.lookup( request_ip ) || {}
+    request_metadata = { ...request_metadata, city, country }
+
+    return request_metadata
+
+}
+exports.generate_metadata_from_request = generate_metadata_from_request
+
+/* ///////////////////////////////
+// Log opens of the kiosk */
+exports.log_kiosk_open = async request => {
+
+    // Function dependencies
+    const { db, increment } = require( './firebase' )
+
+    try {
+
+        // Get the kiosk id from the request
+        const { data: kiosk_id } = request
+        log( `Logging kiosk open for ${ kiosk_id }` )
+
+        // Get ip address of caller
+        const { request_ip='unknown', ...metadata } = generate_metadata_from_request( request )
+        log( `Request metadata: `, request_ip, metadata )
+
+        // Log this scan for farmer analysis
+        await db.collection( 'kiosk_opens' ).doc( kiosk_id ).set( {
+            [request_ip]: {
+                opens: increment( 1 ),
+                ...metadata
+            }
+        }, { merge: true } )
+
+    } catch ( e ) {
+        log( 'Error logging kiosk open: ', e )
+    }
+
+
+}
