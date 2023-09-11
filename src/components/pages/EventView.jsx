@@ -72,7 +72,10 @@ export default function ViewQR( ) {
     useEffect( (  ) => {
 
         // If no event data, exit
-        if( !event?.name || !internalEventId ) return
+        if( !event?.name || !internalEventId ) {
+            log( `No event data, not registering kiosk open: `, internalEventId, event )
+            return
+        }
         
 
         // Once the event was loaded, register this open with the backend

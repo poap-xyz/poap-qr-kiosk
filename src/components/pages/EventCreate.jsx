@@ -158,6 +158,7 @@ export default function Admin( ) {
 
                 // Load event data based on codes
                 const formatedCode = data[0]?.trim()
+                log( `Getting data based on code:`, formatedCode )
                 const { data: { event, error } } = await getEventDataFromCode( formatedCode )
                 log( 'Code data received ', event, error )
                 if( error ) throw new Error( error )
