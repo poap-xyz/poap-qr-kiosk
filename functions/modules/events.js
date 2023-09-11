@@ -242,8 +242,11 @@ exports.updatePublicEventData = async function( change, context ) {
     // Function dependencies
     const { db } = require( './firebase' )
 
-    // If this was a deletion, delete public data
-    if( !after.exists ) return db.collection( 'publicEventData' ).doc( eventId ).delete()
+    // If this was a deletion, delete public data and kiosk scan data
+    if( !after.exists ) return Promise.all( [ 
+        db.collection( 'publicEventData' ).doc( eventId ).delete(),
+        db.collection( 'kiosk_scans' ).doc( eventId ).delete()
+    ] )
 
     // If this was an update, grab the public properties and set them
     const { name, codes, codesAvailable, expires, public_auth, challenges, game_config, template, css, collect_emails=false, claim_base_url } = after.data()
@@ -317,11 +320,13 @@ exports.delete_data_of_deleted_event = async function( snap, context ) {
         /* ///////////////////////////////
 		// Delete obsolete codes & challenges */
 
-        // Grab codes and challenges of deleted event
+        // Grab data belonging to the deleted event
         const { docs: codes_snap } = await db.collection( 'codes' ).where( 'event', '==', eventId ).get()
         const { docs: challenges_snap } = await db.collection( 'claim_challenges' ).where( 'eventId', '==', eventId ).get()
+        const { docs: kiosk_scans } = await db.collection( 'scans' ).where( 'event_id', '==', eventId ).get()
+        
 
-        const deletion_queue = [ ...codes_snap, ...challenges_snap ].map( doc => () => doc.ref.delete() )
+        const deletion_queue = [ ...codes_snap, ...challenges_snap, ...kiosk_scans ].map( doc => () => doc.ref.delete() )
         await throttle_and_retry( deletion_queue, maxInProgress, `delete data of deleted event`, 5, 5 )
 
     } catch ( e ) {
