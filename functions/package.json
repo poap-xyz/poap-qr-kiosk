@@ -36,6 +36,6 @@
   },
   "private": true,
   "devDependencies": {
-    "firebase-tools": "^12.5.2"
+    "firebase-tools": "^12.5.3"
   }
 }
