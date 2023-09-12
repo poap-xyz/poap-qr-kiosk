@@ -2,6 +2,7 @@
 const { v4: uuidv4 } = require( 'uuid' )
 const { log, email_pseudo_anonymous } = require( './helpers' )
 const { throw_on_failed_app_check } = require( './security' )
+const { mock_event } = require( './mock_data' )
 
 // Configs
 const { KIOSK_PUBLIC_URL } = process.env
@@ -114,6 +115,7 @@ async function get_event_template_by_code( an_event_qr_hash ) {
 
     try {
 
+        // 🤡 If this is a mock code, return empty
         if( an_event_qr_hash.includes( 'testing'  ) ) return {}
 
         // Function dependencies
@@ -142,6 +144,83 @@ async function get_event_template_by_code( an_event_qr_hash ) {
 }
 exports.get_event_template_by_code = get_event_template_by_code
 
+/**
+* * Update the kiosk name, description, and image using POAP API backing data
+* @param {String} kiosk_id The id of the kiosk to update, also referred to sometimes as the eventId, but does NOT mean drop id
+* @param {Object} [public_kiosk_data] The public kiosk data if available, we use the .event property to calculate the debounce window
+* @returns {Promise<boolean>} specifies whether update was applied
+*/
+const update_event_data_of_kiosk = async ( kiosk_id, public_kiosk_data ) => {
+
+    // Configs
+    const max_age_of_event_data_in_ms = 1000 * 60 * 5
+
+    try {
+
+        // Function dependencies
+        const { db, dataFromSnap } = require( './firebase' )
+        const { call_poap_endpoint } = require( './poap_api' )
+
+        log( `Updating event data of kiosk ${ kiosk_id }` )
+
+        // If we did not get public kiosk data, retreive it
+        if( !public_kiosk_data ) public_kiosk_data = await db.collection( 'publicEventData' ).doc( kiosk_id ).get().then( dataFromSnap )
+
+        // Check if the event data was updated recently
+        const event_last_updated = public_kiosk_data?.event?.updated || 0
+        const age_of_event_data = Date.now() - event_last_updated
+        if( age_of_event_data < max_age_of_event_data_in_ms ) {
+            log( `Event is only ${ age_of_event_data / 1000 }s old, not updating` )
+            return false
+        }
+
+        // Get the most recent event data based on the drop id
+        let { dropId, is_mock } = public_kiosk_data
+        let event = {}
+
+        // 🤡 Get the most recent event data based on the drop id, or mock if needed
+        if( dropId ) event = is_mock ? mock_event() : await call_poap_endpoint( `/events/id/${ dropId }` )
+        
+        // If we have no drop id, then this is a legacy format event and we cannot get data based on the eventid, instead we need to get it based on the codes
+        if( !dropId ) {
+            
+            // Get a single code of this event
+            const [ code ] = await db.collection( 'codes' ).where( 'event', '==', kiosk_id ).limit( 1 ).get().then( dataFromSnap )
+            log( `Using code ${ code?.uid } to get event data` )
+
+            // 🤡 Check if this is a mock code
+            const is_mock_code = code?.uid.includes( 'testing' )
+
+            // Get event data based on the code
+            const { event: event_of_code } = is_mock_code ? { event: mock_event() } : await call_poap_endpoint( `/actions/claim-qr`, { qr_hash: code?.uid } )
+
+            // Set the event of the code to the event
+            event = event_of_code
+
+        }
+
+        // Grab the parts of the event we want to display publicly and filter out the rest
+        const { name, description, image_url } = event
+        event = { name, description, image_url }
+
+        log( `Updating kiosk ${ kiosk_id } event data: `, event )
+
+        // Update the event data
+        await db.collection( 'publicEventData' ).doc( kiosk_id ).set( { event }, { merge: true } )
+
+        return true
+
+    } catch ( e ) {
+
+        log( `update_event_data_of_kiosk error: `, e )
+        return false
+
+    }
+
+}
+
+exports.update_event_data_of_kiosk = update_event_data_of_kiosk
+
 exports.registerEvent = async function( data, context ) {
 
     try {
@@ -156,7 +235,7 @@ exports.registerEvent = async function( data, context ) {
         throw_on_failed_app_check( context )
 
         // Validations
-        const { name='', email='', date='', codes=[], challenges=[], game_config={ duration: 30, target_score: 5 }, css, collect_emails=false, claim_base_url } = data
+        const { name='', email='', date='', dropId, codes=[], challenges=[], game_config={ duration: 30, target_score: 5 }, css, collect_emails=false, claim_base_url } = data
         if( !codes.length ) throw new Error( 'Csv has 0 entries' )
         if( !name.length ) throw new Error( 'Please specify an event name' )
         if( !email.includes( '@' ) ) throw new Error( 'Please specify a valid email address' )
@@ -168,9 +247,11 @@ exports.registerEvent = async function( data, context ) {
 
         // Create event document
         const authToken = uuidv4()
-        const is_test_event = codes.find( code => code.includes( 'testing' ) )
-        const public_auth_expiry_interval_minutes = is_test_event ? .5 : 2
+        // 🤡 Check if this is a mock event
+        const is_mock = codes.find( code => code.includes( 'testing' ) )
+        const public_auth_expiry_interval_minutes = is_mock ? .5 : 2
         const { id } = await db.collection( 'events' ).add( {
+            dropId,
             name,
             email,
             expires: new Date( date ).getTime() + weekInMs, // Event expiration plus a week
@@ -180,11 +261,12 @@ exports.registerEvent = async function( data, context ) {
             authToken,
             challenges,
             game_config,
+            is_mock,
             ... css && { css } ,
             collect_emails,
             ... claim_base_url && { claim_base_url },
             template: await get_event_template_by_code( codes[0] ),
-            public_auth: generate_new_event_public_auth( public_auth_expiry_interval_minutes, is_test_event ),
+            public_auth: generate_new_event_public_auth( public_auth_expiry_interval_minutes, is_mock ),
             created: Date.now(),
             updated: Date.now(),
             updated_by: 'registerEvent',
@@ -215,6 +297,9 @@ exports.registerEvent = async function( data, context ) {
             updated: Date.now(),
             updated_human: new Date().toString()
         }, { merge: true } )
+
+        // Grab the latest drop data
+        await update_event_data_of_kiosk( id )
 
         // Return event data
         return {
@@ -265,6 +350,11 @@ exports.updatePublicEventData = async function( change, context ) {
         updated: Date.now(),
         updated_by: 'updatePublicEventData'
     }
+
+    // Sync the event data with the POAP central systems if needed
+    await update_event_data_of_kiosk( eventId )
+
+
     return db.collection( 'publicEventData' ).doc( eventId ).set( public_data_object, { merge: true } )
 
 }

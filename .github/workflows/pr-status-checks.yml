@@ -1,0 +1,216 @@
+name: Pull request status checks
+
+on:
+  pull_request:
+    branches:
+      - development
+      - main
+
+jobs:
+
+  ## ###############
+  ## 💚 Automated testing
+  ## ###############
+  automated-testing:
+
+    name: Pull request automated testing
+    runs-on: buildjet-8vcpu-ubuntu-2204
+    strategy:
+      fail-fast: false
+      matrix:
+        # run 3 copies of the current job in  parallel
+        containers: [ 1, 2, 3, 4, 5, 6, 7 ]
+    steps:
+
+      # Clones repo to the commit that triggered the event
+      - name: Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files_ignore: .*/**
+
+      # Set up node
+      - name: Set up frontend Node.js (.nvmrc)
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+      - name: Install frontend dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: npm i
+      - name: Set up functions Node.js (.nvmrc)
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: "functions/.nvmrc"
+          cache: "npm"
+      - name: Install functions dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: npm i
+        working-directory: functions
+
+      # Set up gcloud projects for functions
+      - name: "Gcloud auth for DEV firebase"
+        uses: "google-github-actions/auth@v1"
+        if: |
+          github.base_ref == 'development' &&
+          steps.changed-files.outputs.any_changed == 'true'
+        with:
+          credentials_json: "${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}"
+      - name: "Gcloud auth for PROD firebase"
+        uses: "google-github-actions/auth@v1"
+        if: |
+          github.base_ref == 'main' &&
+          steps.changed-files.outputs.any_changed == 'true'
+        with:
+          credentials_json: "${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}"
+
+      # Set up environment
+      - name: Create DEV environment files
+        if: |
+          github.base_ref == 'development' &&
+          steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
+          echo -e "\nREACT_APP_useEmulator=true" >> .env
+          echo -e "${{ secrets.FUNCTIONS_DOTENV_DEVELOPMENT }}" > functions/.env.development
+          sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
+          cd functions && npm run use:dev
+
+      - name: Create PROD environment files
+        if: |
+          github.base_ref == 'main' &&
+          steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
+          echo -e "\nREACT_APP_useEmulator=true" >> .env
+          echo -e "${{ secrets.FUNCTIONS_DOTENV_PRODUCTION }}" > functions/.env.production
+          sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
+          cd functions && npm run use:prod
+
+      # Check linting
+      - name: Check for linting errors
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: npm run lint
+
+      # Check CI
+      - name: Run cypress tests
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: npm run test:ci:with_emulator
+
+      # If CI failed, upload the videos for debugging
+      - name: If testing failed, upload video files
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-videos ${{ matrix.containers }}
+          path: |
+            cypress/videos
+            cypress/screenshots
+
+      # Upload log files of this fun
+      - name: Upload all log files
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: logfiles ${{ matrix.containers }}
+          path: |
+            *.log
+            **/*.log
+
+  ## ###############
+  ## 🚀 Deploy
+  ## ###############
+  deploy-preview:
+    needs: automated-testing
+    runs-on: buildjet-4vcpu-ubuntu-2204
+    steps:
+
+      # Clones repo to the commit that triggered the event
+      - name: Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files_ignore: .*/**
+
+      # Set up node
+      - name: Set up frontend Node.js (.nvmrc)
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+      - name: Install frontend dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: npm i
+      - name: Install functions dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: npm i
+        working-directory: functions
+
+      # Set up environment
+      - name: Create DEV environment files
+        if: |
+          github.base_ref == 'development' &&
+          steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
+          echo -e "\nVITE_useEmulator=true" >> .env
+          echo -e "${{ secrets.FUNCTIONS_DOTENV_DEVELOPMENT }}" > functions/.env.development
+          # cd functions && npm run use:dev # no need to run this, since we're not deploying functions
+
+      - name: Create PROD environment files
+        if: |
+          github.base_ref == 'main' &&
+          steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
+          echo -e "\nVITE_useEmulator=true" >> .env
+          echo -e "${{ secrets.FUNCTIONS_DOTENV_PRODUCTION }}" > functions/.env.production
+          # cd functions && npm run use:prod # no need to run this, since we're not deploying functions
+
+      # Prep env for deployment
+      - name: Remove dev variables pre build
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          sed -i 's/^REACT_APP_useEmulator=.*$//g' .env
+          sed -i 's/^REACT_APP_APPCHECK_DEBUG_TOKEN=.*$//g' .env
+          sed -i 's/^VITE_APPCHECK_DEBUG_TOKEN=.*$//g' .env
+          sed -i 's/^VITE_useEmulator=.*$//g' .env
+
+      # If all went well, build and generate a preview link
+      - name: Build website files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        env:
+          NODE_ENV: production
+          CI: false
+        run: npm run build
+
+      - name: Deploy frontend to DEV preview channel
+        if: |
+          github.base_ref == 'development' &&
+          steps.changed-files.outputs.any_changed == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}"
+          expires: 30d
+          projectId: development
+
+      - name: Deploy frontend to PROD preview channel
+        if: |
+          github.base_ref == 'main' &&
+          steps.changed-files.outputs.any_changed == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}"
+          expires: 30d
+          projectId: production
