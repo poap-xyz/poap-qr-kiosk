@@ -15,7 +15,6 @@ module.exports = defineConfig( {
 
     // Video recording options
     video: true,
-    videoUploadOnPasses: false,
     videoCompression: false,
     screenscreenshotOnRunFailureshots: true,
     chromeWebSecurity: false,
