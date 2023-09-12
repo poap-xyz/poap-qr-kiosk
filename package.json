@@ -1,5 +1,5 @@
 {
-  "name": "qr-displayer-poap",
+  "name": "qr-kiosk-poap",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

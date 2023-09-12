@@ -207,8 +207,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-        #   name: cypress-videos ${{ matrix.containers }}
-          name: cypress-videos
+          name: cypress-videos ${{ matrix.containers }}
+          # name: cypress-videos
           path: |
             cypress/videos
             cypress/screenshots
@@ -218,11 +218,11 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-        #   name: logfiles ${{ matrix.containers }}
-            name: logfiles  
-            path: |
-                *.log
-                functions/*.log
+          name: logfiles ${{ matrix.containers }}
+          # name: logfiles  
+          path: |
+              *.log
+              functions/*.log
 
   ## ###############
   ## 4️⃣ Deploy frontend changes
