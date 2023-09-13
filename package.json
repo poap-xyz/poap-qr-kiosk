@@ -37,6 +37,7 @@
     "test:production": "npm run build && NODE_ENV=production start-server-and-test --expect 200 'serve build' 3000 \"cypress open --browser chrome\"",
     "test:ci": "NODE_ENV=production CI=true start-server-and-test --expect 200 start 3000 \"cypress run --browser chrome --config 60000\"",
     "test:parallel": "cypress-cloud run --browser chrome --parallel --record",
+    "test:ci:with_emulator": "NODE_ENV=production CI=true start-server-and-test 'npm start' 3000 'cd functions && npm run serve' 4000 'npm run test:parallel'",
     "lint": "eslint --fix src ",
     "prepare": "husky install"
   },
