@@ -10,12 +10,11 @@ import { log, dev } from '../../modules/helpers'
 log( `Frontend using live url ${ VITE_publicUrl } with ${ VITE_useEmulator ? 'emulator' : 'live backend' }` )
 
 import Section from '../atoms/Section'
-import AnnotatedQR from '../molecules/AnnotatedQR'
 import Loading from '../molecules/Loading'
 import Network from '../molecules/NetworkStatusBar'
 import ViewWrapper from '../molecules/ViewWrapper'
 
-import { H1, H2, H3, Text, Sidenote, Button, Container, CardContainer, Divider } from '@poap/poap-components'
+import { H1, H2, H3, Text, Button, Container, CardContainer, Divider } from '@poap/poap-components'
 
 import { ReactComponent as UserConnected } from '../../assets/illustrations/user_connected.svg'
 import { ReactComponent as ManMoon } from '../../assets/illustrations/man_to_the_moon.svg'
@@ -23,6 +22,8 @@ import { ReactComponent as NoCodes } from '../../assets/illustrations/no_more_co
 import ExpiredQR from '../molecules/AnExpiredQR'
 import { useHealthCheck } from '../../hooks/health_check'
 import { useEvent, useEventTemplate } from '../../hooks/events'
+import ScannablePreview from '../organisms/ScannablePreview'
+import EventQR from '../organisms/EventQR'
 
 // ///////////////////////////////
 // Render component
@@ -40,8 +41,6 @@ export default function ViewQR( ) {
 
     // Event ID from pushed state
     const { eventId: stateEventId } = location
-
-    const force_appcheck_fail = window?.location?.href?.includes( 'FORCE_INVALID_APPCHECK' )
 
     // ///////////////////////////////
     // State handling
@@ -186,7 +185,7 @@ export default function ViewQR( ) {
     if( iframeMode && !event?.public_auth?.expires ) return  <ExpiredQR status='noCodes'/>
 
     // If iframe mode, render only QR
-    if( iframeMode ) return <AnnotatedQR key={ internalEventId + event?.public_auth?.token } margin='0' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
+    if( iframeMode ) return <EventQR event_id={ internalEventId } />
 
     // ///////////////////////////////
     // Error states
@@ -267,11 +266,12 @@ export default function ViewQR( ) {
         { event && <H1 color={ template?.main_color } align="center">{ event.name }</H1> }
         <H2 color={ template?.header_link_color || 'var(--primary-600)' } align="center">{ t( 'eventView.display.subheading' ) }</H2>
 
-        {  /* QR showing code */ }
-        <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } />
-        { /* <Button onClick={ nextCode }>Next code</Button> */ }
 
-        { event && <Sidenote margin='0'>{ t( 'eventView.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
+        {  /* QR showing code */ }
+        <ScannablePreview event_id={ internalEventId } />
+        
+        { /* <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } /> */ }
+        { /* event && <Sidenote margin='0'>{ t( 'eventView.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> */ }
     
         <Network />
 

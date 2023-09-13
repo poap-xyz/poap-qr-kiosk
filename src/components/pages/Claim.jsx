@@ -18,7 +18,7 @@ import { useClaimcodeForChallenge } from '../../hooks/claim_codes'
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
-export default function ViewQR( ) {
+export default function ClaimPOAP() {
 
     // State handling
     const { challenge_code } = useParams( )
@@ -26,7 +26,7 @@ export default function ViewQR( ) {
     const [ captchaResponse, setCaptchaResponse ] = useState(  )
     const { message: user_validation_status_message, user_valid } = useValidateUser( captchaResponse )
 
-    // Challenge state management]
+    // Challenge state management
     const has_game_challenge = challenge?.challenges?.includes( 'game' )
 
     // If this challenge includes a game, set the default gameDone to false (and the reverse too)

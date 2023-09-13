@@ -128,7 +128,7 @@ exports.call_poap_endpoint = async ( endpoint='', data, method='GET', format='js
         headers: headers,
         ...request_data
     }
-    log( `Calling ${ url } with `, options )
+    log( `Calling ${ url } with `, { method, ...request_data } )
     const res = await fetch( url, options )
     const backup_res = res.clone()
 
