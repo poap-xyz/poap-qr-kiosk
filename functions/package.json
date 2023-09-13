@@ -2,14 +2,14 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
-    "runtime": "firebase functions:config:get > .runtimeconfig.json",
-    "runtime:production": "firebase functions:config:get > .runtimeconfig.prod.json",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "firebase use development && npm run runtime && npm run shell",
     "start:production": "development=true && firebase use production && npm run runtime:production && npm run shell",
     "deploy:development": "firebase use development && firebase deploy --only functions",
     "deploy:production": "firebase use production && firebase deploy --only functions; firebase use development",
+    "use:dev": "firebase use development",
+    "use:prod": "firebase use production",
     "logs": "firebase functions:log",
     "version": "firebase --version"
   },

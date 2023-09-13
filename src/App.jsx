@@ -10,7 +10,8 @@ import Homepage from './components/pages/Homepage'
 import ViewQR from './components/pages/EventView'
 import CreateEvent from './components/pages/EventCreate'
 import EventAdmin from './components/pages/EventAdmin'
-import Claim from './components/organisms/Claim'
+import Claim from './components/pages/Claim'
+import MintPOAP from './components/pages/MintPOAP'
 import StaticClaim from './components/pages/StaticClaim'
 import StaticAdmin from './components/pages/StaticAdmin'
 import StaticCreate from './components/pages/StaticCreate'
@@ -48,6 +49,8 @@ export default function App( ) {
                         <Route path=':challenge_code' element={ <Claim /> } />
 
                     </Route>
+
+                    <Route path='/mint/:claim_code' element={ <MintPOAP /> } />
 
                     <Route path='/static/'>
 

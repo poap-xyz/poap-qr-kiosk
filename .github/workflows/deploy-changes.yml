@@ -142,9 +142,9 @@ jobs:
     runs-on: buildjet-8vcpu-ubuntu-2204
     strategy:
       fail-fast: false
-      # matrix:
-      #   # run multiple copies of the current job in  parallel
-      #   containers: [ 1, 2, 3, 4 ]
+      matrix:
+        # run multiple copies of the current job in  parallel
+        containers: [ 1, 2, 3, 4 ]
     needs: [deploy-functions, deploy-firebase-settings]
 
     steps:
@@ -207,8 +207,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          # name: cypress-videos ${{ matrix.containers }}
-          name: cypress-videos
+          name: cypress-videos ${{ matrix.containers }}
+          # name: cypress-videos
           path: |
             cypress/videos
             cypress/screenshots
@@ -218,8 +218,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          # name: logfiles ${{ matrix.containers }}
-          name: logfiles  
+          name: logfiles ${{ matrix.containers }}
+          # name: logfiles  
           path: |
               *.log
               functions/*.log

@@ -17,9 +17,10 @@ export const Row = styled.div`
     display: flex;
     flex-direction: ${ ( { reverse } ) => reverse ? 'column-reverse' : 'column' };
     flex-wrap: wrap;
-    gap: 0;
+    gap: ${ ( { gap=0 } ) => gap };
     justify-content: ${ ( { justify } ) => justify || '' };
     align-items: ${ ( { align } ) => align || '' };
+    width: ${ ( { width } ) => width };
 
     ${ mixin.sm_up`
 		flex-direction: row;
@@ -35,5 +36,6 @@ export const Col = styled.div`
 	align-items: ${ ( { align } ) => align || '' };
 	justify-content: ${ ( { justify } ) => justify || '' };
     padding: ${ ( { padding = '0' } ) => padding };
-    max-width: ${ ( { width } ) => width };
+    width: ${ ( { width } ) => width };
+    max-width: 100%;
 `
