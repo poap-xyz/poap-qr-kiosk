@@ -199,10 +199,6 @@ const update_event_data_of_kiosk = async ( kiosk_id, public_kiosk_data ) => {
 
         }
 
-        // Grab the parts of the event we want to display publicly and filter out the rest
-        const { name, description, image_url } = event
-        event = { name, description, image_url }
-
         log( `Updating kiosk ${ kiosk_id } event data: `, event )
 
         // Update the event data
