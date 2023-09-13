@@ -136,7 +136,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
             // If this request included ?user_address=0x... add it to the redirect link, this is the behaviour of the POAP app
             const { user_address } = req.query || {}
-            if( user_address ) redirect_link += `&user_address=${ user_address }`
+            if( user_address ) redirect_link += `?user_address=${ user_address }`
 
             // Log this scan for farmer analysis
             await log_scan( req, { event_id, public_auth_token, challenge_auth, redirect_link } )
@@ -151,7 +151,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
         // Debugging info in the URL
         if( is_test_event || CI ) {
-            redirect_link += `event_expires=${ new_auth_expires_in_m * 60 }s&chal_expires=${ new_challenge_expires_in_mins * 60 }s&grace=${ old_auth_grace_period_in_ms / 1000 }s&trail=`
+            redirect_link += `?event_expires=${ new_auth_expires_in_m * 60 }s&chal_expires=${ new_challenge_expires_in_mins * 60 }s&grace=${ old_auth_grace_period_in_ms / 1000 }s&trail=`
             redirect_link += completely_invalid ? 'compinv_' : 'ncompinv_'
             redirect_link += outside_grace_period ? 'outgr_' : 'noutgr_'
             redirect_link += current_auth_is_valid ? 'valpub_' : 'nvalpub_'
