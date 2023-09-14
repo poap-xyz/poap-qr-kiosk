@@ -160,7 +160,10 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
         }
         // If this request included ?user_address=0x... add it to the redirect link, this is the behaviour of the POAP app
         const { user_address } = req.query || {}
-        if( user_address ) redirect_link += `&user_address=${ user_address }`
+        if( user_address ) {
+            redirect_link += redirect_link.includes( '?' ) ? '&' : '?'
+            redirect_link += `user_address=${ user_address }`
+        }
 
         // Log this scan for farmer analysis
         await log_scan( req, { event_id, public_auth_token, challenge_auth, redirect_link } )
