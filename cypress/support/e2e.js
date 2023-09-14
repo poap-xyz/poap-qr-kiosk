@@ -48,3 +48,24 @@ export const check_if_code_is_expected = ( code_to_check, expected_codes ) => {
     return code_is_expected
 
 }
+
+export async function extract_redirect_url ( response ) {
+
+    cy.log( `Url from which to extract challenge: `, response )
+    const { redirects } = response
+    const [ redirect_url ] = redirects
+    cy.log( `Redirect: `, redirect_url )
+    return redirect_url
+
+}
+
+export async function extract_challenge_from_url ( response ) {
+
+    const challenge_url = await extract_redirect_url( response )
+    const [ base, challenge_redirect ] = challenge_url.split( '/#/claim/' )
+    const challenge = challenge_redirect.replace( '307: ' )
+    cy.log( `Challenge extracted: ${ challenge }` )
+    return challenge
+
+}
+

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { useValidateUser } from "./user_validation"
 import { useEventOfChallenge } from "./events"
 import { useTranslation } from "react-i18next"
+import { useProbableMintAddress } from "./minter"
 const { VITE_publicUrl } = import.meta.env
 
 export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) => {
@@ -20,6 +21,9 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
     const [ claim_link, set_claim_link ] = useState(  )
     const [ error, set_error ] = useState(  )
     const event = useEventOfChallenge( challenge_code )
+
+    // Get the probable user address based on query andor local storage
+    const probable_user_address = useProbableMintAddress(  )
 
     // Get claim code
     async function get_poap_link() {
@@ -46,6 +50,10 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
         let link = `https://poap.xyz/claim/${ claim_code }`
         if( event?.collect_emails ) link = `${ VITE_publicUrl }/#/static/claim/${ claim_code }`
         if( event?.claim_base_url ) link = `${ event?.claim_base_url }${ claim_code }`
+
+        // If we have a probable user address, append it
+        if( probable_user_address ) link += `?user_address=${ probable_user_address }`
+
         log( `${ t( 'claim.formulateRedirect' ) }`, link )
 
         return link

@@ -2,29 +2,18 @@
 // Event creation page
 // /////////////////////////////*/
 
-const { get_claim_function_url } = require( '../../support/e2e' )
+const { eth_address, custom_base_url } = require( '../../fixtures/mock-data' )
+const { get_claim_function_url, extract_challenge_from_url, extract_redirect_url } = require( '../../support/e2e' )
 const request_options = {
     headers: {
         Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
     },
     failOnStatusCode: false
 }
-async function extract_challenge_url ( response ) {
 
-    cy.log( `Url from which to extract challenge: `, response )
-    const { redirects } = response
-    const [ challenge_url ] = redirects
-    cy.log( `Redirect: `, challenge_url )
-    return challenge_url
+context( 'Advanced functionality works', () => {
 
-}
-context( 'Claimer can view valid events', () => {
-
-    /* ///////////////////////////////
-	// First event
-	// /////////////////////////////*/
-
-    it( 'Creates event with custom base url and css', function() {
+    it( 'Creates naive event with custom base url and css', function() {
 
         cy.create_kiosk( 'two', 'naive' )
 
@@ -34,6 +23,9 @@ context( 'Claimer can view valid events', () => {
 
     } )
 
+    /* ///////////////////////////////
+    // Custom css
+    // /////////////////////////////*/
     it( 'Event loads custom css', function() {
 
         // Visit the public interface
@@ -44,6 +36,16 @@ context( 'Claimer can view valid events', () => {
 
         // This is custom css set in ../support/commands.js
         cy.get( 'body' ).should( 'have.css', 'opacity', '0.99' )
+
+    } )
+
+    /* ///////////////////////////////
+    // Custom base urls
+    // /////////////////////////////*/
+    it( 'Mocks qr scan to get public auth link', function() {
+
+        // Visit the public interface
+        cy.visit( this.event_1_publiclink )
 
         // Accept disclaimer
         cy.get( '#event-view-accept-disclaimer' ).click()
@@ -58,11 +60,43 @@ context( 'Claimer can view valid events', () => {
 
         // Visit the public link
         cy.request( { ...request_options, url: `${ get_claim_function_url(  ) }/${ this.event_1_public_auth_link }` } ).as( `request` )
-            .then( extract_challenge_url )
-            .then( challenge_url => {
+            .then( extract_redirect_url )
+            .then( redirect_url => {
 
-                // This is a custom url set in ../support/commands.js
-                expect( challenge_url ).to.contain( 'https://kiosk.poap.xyz/#/404/' )
+                expect( redirect_url ).to.contain( custom_base_url )
+
+            } )
+		
+
+    } )
+
+    it( 'Mocks qr rescan to get public auth link', function() {
+
+        // Visit the public interface
+        cy.visit( this.event_1_publiclink )
+        
+        // Accept disclaimer
+        cy.get( '#event-view-accept-disclaimer' ).click()
+
+        // Save the first public auth link shown
+        cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_1_public_auth_link' ).then( f => cy.log( `Event 1 public auth link: ${ this.event_1_public_auth_link }` ) )
+
+    } )
+
+    /* ///////////////////////////////
+    // Passing user addresses with naive custom base
+    // /////////////////////////////*/
+    it( '?user_address provided by scan ends up in claim link', function( ) {
+
+
+        // Mock the scanning of the QR code, but add a user address in the query string
+        cy.request( { ...request_options, url: `${ get_claim_function_url(  ) }/${ this.event_1_public_auth_link }?user_address=${ eth_address }` } ).as( `request` )
+            .then( extract_redirect_url )
+            .then( redirect_url => {
+                    
+                // Check that both the custom base url and the user address are present
+                expect( redirect_url ).to.contain( custom_base_url )
+                expect( redirect_url ).to.contain( eth_address )
 
             } )
 		
@@ -85,5 +119,60 @@ context( 'Claimer can view valid events', () => {
 
         cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
     } )
+
+    /* ///////////////////////////////
+    // Address passing in non-naive custom base mode
+    // /////////////////////////////*/
+    it( 'Creates event', function() {
+
+        cy.create_kiosk( 'five', 'custombase' )
+
+        // Save the event and admin links for further use
+        cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
+        cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+
+    } )
+
+    it( 'Mocks QR scan to get the public auth link', function() {
+
+        // Visit the public interface
+        cy.visit( this.event_1_publiclink )
+
+        // Accept disclaimer
+        cy.get( '#event-view-accept-disclaimer' ).click()
+
+        // Save the first public auth link shown
+        cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_1_public_auth_link' ).then( f => cy.log( `Event 1 public auth link: ${ this.event_1_public_auth_link }` ) )
+
+    } )
+
+    it( '?user_address provided by scan ends up in claim link', function( ) {
+
+
+        // Mock the scanning of the QR code, but add a user address in the query string
+        cy.request( { ...request_options, url: `${ get_claim_function_url(  ) }/${ this.event_1_public_auth_link }?user_address=${ eth_address }` } ).as( `request` )
+            .then( extract_challenge_from_url )
+            .then( challenge => {
+
+
+                // Visit the challenge link
+                cy.visit( `/claim/${ challenge }` )
+
+                // Check that backend redirected us to the claim page
+                cy.url().should( 'include', '/#/claim' )
+
+                // Check if POAP link supplies the expected user_address and base url
+                cy.contains( 'POAP link' ).invoke( 'text' ).then( text => {
+                    expect( text ).to.satisfy( base => base.includes( eth_address ) )
+                    expect( text ).to.satisfy( base => base.includes( custom_base_url ) )
+                } )
+            
+
+            } )
+		
+
+    } )
+
+
 
 } )
