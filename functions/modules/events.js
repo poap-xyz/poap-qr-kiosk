@@ -244,7 +244,7 @@ exports.registerEvent = async function( data, context ) {
         // Create event document
         const authToken = uuidv4()
         // 🤡 Check if this is a mock event
-        const is_mock = codes.find( code => code.includes( 'testing' ) )
+        const is_mock = !!codes.find( code => code.includes( 'testing' ) )
         const public_auth_expiry_interval_minutes = is_mock ? .5 : 2
         const { id } = await db.collection( 'events' ).add( {
             dropId,
