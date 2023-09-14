@@ -2,20 +2,21 @@
 // Event creation page
 // /////////////////////////////*/
 
-const { get_claim_function_url } = require( '../../support/e2e' )
+const { eth_address, custom_base_url } = require( '../../fixtures/mock-data' )
+const { get_claim_function_url, extract_challenge_from_url } = require( '../../support/e2e' )
 const request_options = {
     headers: {
         Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
     },
     failOnStatusCode: false
 }
-async function extract_challenge_url ( response ) {
+async function extract_redirect_url ( response ) {
 
     cy.log( `Url from which to extract challenge: `, response )
     const { redirects } = response
-    const [ challenge_url ] = redirects
-    cy.log( `Redirect: `, challenge_url )
-    return challenge_url
+    const [ redirect_url ] = redirects
+    cy.log( `Redirect: `, redirect_url )
+    return redirect_url
 
 }
 context( 'Claimer can view valid events', () => {
@@ -45,6 +46,13 @@ context( 'Claimer can view valid events', () => {
         // This is custom css set in ../support/commands.js
         cy.get( 'body' ).should( 'have.css', 'opacity', '0.99' )
 
+    } )
+
+    it( 'Mocks qr scan to get public auth link', function() {
+
+        // Visit the public interface
+        cy.visit( this.event_1_publiclink )
+
         // Accept disclaimer
         cy.get( '#event-view-accept-disclaimer' ).click()
 
@@ -58,11 +66,41 @@ context( 'Claimer can view valid events', () => {
 
         // Visit the public link
         cy.request( { ...request_options, url: `${ get_claim_function_url(  ) }/${ this.event_1_public_auth_link }` } ).as( `request` )
-            .then( extract_challenge_url )
-            .then( challenge_url => {
+            .then( extract_redirect_url )
+            .then( redirect_url => {
 
                 // This is a custom url set in ../support/commands.js
-                expect( challenge_url ).to.contain( 'https://kiosk.poap.xyz/#/404/' )
+                expect( redirect_url ).to.contain( custom_base_url )
+
+            } )
+		
+
+    } )
+
+    it( 'Mocks qr rescan to get public auth link', function() {
+
+        // Visit the public interface
+        cy.visit( this.event_1_publiclink )
+        
+        // Accept disclaimer
+        cy.get( '#event-view-accept-disclaimer' ).click()
+
+        // Save the first public auth link shown
+        cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_1_public_auth_link' ).then( f => cy.log( `Event 1 public auth link: ${ this.event_1_public_auth_link }` ) )
+
+    } )
+
+    it( '?user_address provided by scan ends up in claim link', function( ) {
+
+
+        // Mock the scanning of the QR code, but add a user address in the query string
+        cy.request( { ...request_options, url: `${ get_claim_function_url(  ) }/${ this.event_1_public_auth_link }?user_address=${ eth_address }` } ).as( `request` )
+            .then( extract_redirect_url )
+            .then( redirect_url => {
+                    
+                // Check that both the custom base url and the user address are present
+                expect( redirect_url ).to.contain( custom_base_url )
+                expect( redirect_url ).to.contain( eth_address )
 
             } )
 		

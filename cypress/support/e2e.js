@@ -48,3 +48,17 @@ export const check_if_code_is_expected = ( code_to_check, expected_codes ) => {
     return code_is_expected
 
 }
+
+// Note to self: cypress requires functions in their .then to be async
+export async function extract_challenge_from_url ( response ) {
+
+    cy.log( `Url from which to extract challenge: `, response )
+    const { redirects } = response
+    const [ challenge_url ] = redirects
+    cy.log( `Redirect: `, challenge_url )
+    const [ base, challenge_redirect ] = challenge_url.split( '/#/claim/' )
+    const challenge = challenge_redirect.replace( '307: ' )
+    cy.log( `Challenge extracted: ${ challenge }` )
+    return challenge
+
+}
