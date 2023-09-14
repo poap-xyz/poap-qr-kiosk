@@ -11,7 +11,9 @@ const log_scan = async ( req, data ) => {
     
     // Create metadata object
     const { generate_metadata_from_request } = require( './security' )
-    let request_metadata = generate_metadata_from_request( req )
+
+    // This helperfunction expects a firebase request, because this is an express request, we must mock that using the rawRequest property
+    let request_metadata = generate_metadata_from_request( { rawRequest: req } )
 
     // Log this scan for farmer analysis
     await db.collection( 'scans' ).add( { ...data, ...request_metadata } )
