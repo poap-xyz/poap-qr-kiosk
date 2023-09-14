@@ -42,29 +42,42 @@ const dataFromSnap = ( snapOfDocOrDocs, withDocId=true ) => {
 const get_ip_from_request = firebase_request => {
 
 
-    // If we are in a dev environment, mock the ip
-    if( dev ) {
-        log( `🤡 mocking ip output in dev` )
-        return `mock.mock.mock.mock`
+    try {
+
+        // If we are in a dev environment, mock the ip
+        if( dev ) {
+            log( `🤡 mocking ip output in dev` )
+            return `mock.mock.mock.mock`
+        }
+
+        // Get the express request
+        const { rawRequest: req } = firebase_request
+
+        // If no rawRequest is available, log out firebase request properties
+        if( !req ) {
+            log( `No rawRequest found, logging request properties: `, Object.keys( firebase_request ) )
+            return undefined
+        }
+
+        // Get relevant request subsections
+        let { ip: request_ip, ips } = req
+
+        // Try to get ip from headers
+        let ip = request_ip || ips?.[0] || req.get( 'x-forwarded-for' ) || req.get( 'fastly-client-ip' )
+
+        // If headers contained a comma separated ip list, take the first one
+        if( `${ ip }`.includes( ',' ) ) ip = ip?.split( ',' )?.[0]?.trim()
+
+        // If ip is still an array, take the first one
+        if( Array.isArray( ip ) ) [ ip ] = ip
+
+        // Return the ip
+        return ip
+
+    } catch ( e ) {
+        log( `Error getting ip from request: `, e )
+        return undefined
     }
-
-    // Get the express request
-    const { rawRequest: req } = firebase_request
-
-    // Get relevant request subsections
-    let { ip: request_ip, ips } = req
-
-    // Try to get ip from headers
-    let ip = request_ip || ips?.[0] || req.get( 'x-forwarded-for' ) || req.get( 'fastly-client-ip' )
-
-    // If headers contained a comma separated ip list, take the first one
-    if( `${ ip }`.includes( ',' ) ) ip = ip?.split( ',' )?.[0]?.trim()
-
-    // If ip is still an array, take the first one
-    if( Array.isArray( ip ) ) [ ip ] = ip
-
-    // Return the ip
-    return ip
 
 }
 
