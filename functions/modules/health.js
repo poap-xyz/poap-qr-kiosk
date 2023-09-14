@@ -61,7 +61,7 @@ exports.clean_up_expired_items = async () => {
 
     const maxInProgress = 500
     const day_in_ms = 1000 * 60 * 60 * 24
-    const time_to_keep_after_expiry = day_in_ms * 30
+    const time_to_keep_after_expiry = day_in_ms * 90
 
     // Function dependencies
     const { throttle_and_retry } = require( './helpers' )

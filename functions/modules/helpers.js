@@ -1,5 +1,5 @@
 const { ENV_VERBOSE } = process.env
-const dev = !!process.env.development
+const dev = !!process.env.development || !!process.env.DEVELOPMENT
 
 // Dev Logger
 const log = ( ...comments ) => {
@@ -47,6 +47,16 @@ const wallet_regex = /^0x[a-z0-9]{40}$/ig
 const wallet_or_ens_regex = /^0x[a-z0-9]{40}|.*\.eth$/ig
 const isWalletOrENS = string => !!string.match( wallet_or_ens_regex )
 const isWallet = string => !!string.match( wallet_regex )
+
+/* ///////////////////////////////
+// Time helpers
+// /////////////////////////////*/
+const ms_to_dd_month_yyyy = ms => {
+    const date = new Date( ms )
+    const [ dd, mm, yyyy ] = date.toLocaleDateString( 'en-UK', { day: 'numeric', month: 'long', year: 'numeric' } ).split( ' ' )
+    const capitalised_month_slug = `${ mm.slice( 0, 1 ).toUpperCase() }${ mm.slice( 1, 3 ) }`
+    return `${ dd }-${ capitalised_month_slug }-${ yyyy }`
+}
 
 /* ///////////////////////////////
 // Retryable & throttled async
@@ -135,5 +145,6 @@ module.exports = {
     isEmail,
     isWalletOrENS,
     isWallet,
-    email_pseudo_anonymous
+    email_pseudo_anonymous,
+    ms_to_dd_month_yyyy
 }

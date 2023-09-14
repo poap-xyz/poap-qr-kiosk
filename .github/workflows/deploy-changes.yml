@@ -140,11 +140,11 @@ jobs:
   test-frontend:
     name: Do frontend testing
     runs-on: buildjet-8vcpu-ubuntu-2204
-    # strategy:
-    #   fail-fast: false
-    #   matrix:
-    #     # run 3 copies of the current job in  parallel
-    #     containers: [ 1, 2, 3, 4, 5, 6, 7 ]
+    strategy:
+      fail-fast: false
+      matrix:
+        # run multiple copies of the current job in  parallel
+        containers: [ 1, 2, 3, 4 ]
     needs: [deploy-functions, deploy-firebase-settings]
 
     steps:
@@ -182,7 +182,7 @@ jobs:
           steps.changed-frontend-files.outputs.any_changed == 'true'
         run: |
           echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
-        #   sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
+          sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
 
       - name: Create PROD environment files
         if: |
@@ -190,7 +190,7 @@ jobs:
           steps.changed-frontend-files.outputs.any_changed == 'true'
         run: |
           echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
-        #   sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
+          sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
 
       # Check linting
       - name: Check for linting errors
@@ -207,8 +207,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-        #   name: cypress-videos ${{ matrix.containers }}
-          name: cypress-videos
+          name: cypress-videos ${{ matrix.containers }}
+          # name: cypress-videos
           path: |
             cypress/videos
             cypress/screenshots
@@ -218,11 +218,11 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-        #   name: logfiles ${{ matrix.containers }}
-            name: logfiles  
-            path: |
-                *.log
-                functions/*.log
+          name: logfiles ${{ matrix.containers }}
+          # name: logfiles  
+          path: |
+              *.log
+              functions/*.log
 
   ## ###############
   ## 4️⃣ Deploy frontend changes

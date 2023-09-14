@@ -16,6 +16,7 @@ const glow = color => keyframes`
 export default styled( QRCode )`
 	margin: ${ ( { margin='2rem 0' } ) => margin };
 	opacity: 1;
+	max-width: 100%;
 	&.glow {
 		animation: ${ ( { theme } ) => glow( theme.colors.primary  ) } 1.5s ease-in-out 1;
 	}

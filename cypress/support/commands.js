@@ -1,6 +1,7 @@
 // File upload test helper
 import 'cypress-file-upload'
 import { get_claim_function_url } from './e2e'
+import { custom_base_url } from '../fixtures/mock-data'
 
 // Timing helper
 const elapsed = ( start = 0 ) => ( Date.now() - start ) / 1000
@@ -92,7 +93,20 @@ Cypress.Commands.add( 'create_kiosk', ( code_amount = 'one', anti_farming_mode =
         cy.get( "#event-create-css" ).clear().type( `body { opacity: 0.99; }`, { parseSpecialCharSequences: false } )
 
         // Override the baseurl
-        cy.get( '#event-create-custom-baseurl' ).clear().type( 'https://kiosk.poap.xyz/#/404/' )
+        cy.get( '#event-create-custom-baseurl' ).clear().type( custom_base_url )
+
+    }
+
+    // Naive anti-farming, uses all custom features
+    if( anti_farming_mode == 'custombase' ) {
+
+        // Enable developer mode by clicking background 20 times
+        for( let i = 0; i < 20; i++ ) {
+            cy.get( '#event-create-layout-container' ).click( { force: true } )
+        }
+
+        // Override the baseurl
+        cy.get( '#event-create-custom-baseurl' ).clear().type( custom_base_url )
 
     }
 

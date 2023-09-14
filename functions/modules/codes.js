@@ -21,8 +21,9 @@ const checkCodeStatus = async code => {
 
         // Get cached CI claim data
         const [ claimed_code ] = await db.collection( `static_drop_claims` ).where( 'claim_code', '==', code ).get().then( dataFromSnap )
-        log( `Code claim match: `, claimed_code )
-        return {
+        
+        // Claim data
+        const mock_code_data = {
             claimed: !!claimed_code,
             secret: `mock_secret`,
             event: { 
@@ -32,6 +33,8 @@ const checkCodeStatus = async code => {
                 name: `Test Event ${ Math.random() }`
             }
         }
+        log( `🤡 Mock code status data: `, mock_code_data )
+        return mock_code_data
 
     }
 
@@ -375,10 +378,12 @@ exports.updateEventAvailableCodes = async function( change, context ) {
     // true > false = +1
     // unknown > false = +1
 
+    // If code was unclaimed, and it is now claimed or possibly claimed (unknown status), increment the counter up
     if( prevClaimed === false && [ 'unknown', true ].includes( claimed ) ) {
         return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now(), updated_by: 'updateEventsAvailableCodes decrement' }, { merge: true } )
     }
 	
+    // If the code was thought to be (possibly) claimed previously, but we now know it is unclaimed for sure, add an extra code to the event counter
     if( [ true, 'unknown' ].includes( prevClaimed ) && claimed === false ) {
         return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now(), updated_by: 'updateEventsAvailableCodes increment' }, { merge: true } )
     }	
@@ -449,7 +454,7 @@ exports.get_code_by_challenge = async ( data, context ) => {
                 .orderBy( 'updated', 'asc' )
                 .limit( 1 ).get().then( dataFromSnap )
 
-            if( !oldestCode || !oldestCode.uid ) throw new Error( `No more POAPs available for this event!` )
+            if( !oldestCode || !oldestCode.uid ) throw new Error( `No more POAPs available for event ${ challenge.eventId }!` )
 
             // Mark oldest code as unknown status so other users don't get it suggested
             log( `Marking code ${ oldestCode.uid } claimed status as ${ oldestCode.uid.includes( 'testing' ) ? true : 'unknown' }: `, oldestCode )

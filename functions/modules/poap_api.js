@@ -75,8 +75,9 @@ exports.call_poap_endpoint = async ( endpoint='', data, method='GET', format='js
     if( has_non_json_data ) throw new Error( `API data must be formatted as json` )
 
     /* ///////////////////////////////
-		// Generate API url */
-    let apiUrl = dev ? 'https://dev-api.poap.tech' : 'https://api.poap.tech'
+    // Generate API url */
+    // let apiUrl = dev ? 'https://dev-api.poap.tech' : 'https://api.poap.tech' // The new tokens we use are all for the live api
+    let apiUrl = 'https://api.poap.tech'
     if( has_get_data ) {
 
         const queryString = Object.keys( data ).reduce( ( acc, key ) => {
@@ -127,7 +128,7 @@ exports.call_poap_endpoint = async ( endpoint='', data, method='GET', format='js
         headers: headers,
         ...request_data
     }
-    log( `Calling ${ url } with `, options )
+    log( `Calling ${ url } with `, { method, ...request_data } )
     const res = await fetch( url, options )
     const backup_res = res.clone()
 

@@ -20,8 +20,15 @@ context( 'Organiser successful event creation', () => {
         cy.visit( '/create?debug=true' )
 
         // Select file
+        const codes = require( `../../fixtures/two-correct-codes${ Cypress.env( 'LOCAL' ) ? '-ci' : '' }.js` )
+        const uniquified_codes_as_string = codes.map( code => `${ code }-${ Date.now() }` ).join( '\n' )
         cy.contains( 'label', 'Select .txt file that' )
-        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
+        cy.get( '#event-create-file' ).selectFile( {
+            contents: Cypress.Buffer.from( uniquified_codes_as_string ),
+            fileName: 'mintlinks.csv',
+            mimeType: 'text/csv',
+            lastModified: Date.now(),
+        }, { force: true } )
         cy.contains( 'Checking your mint links' )
 
         // Relevant inputs appear
@@ -52,8 +59,15 @@ context( 'Organiser successful event creation', () => {
         cy.visit( '/create?debug=true' )
 
         // Select file
+        const codes = require( `../../fixtures/two-correct-codes${ Cypress.env( 'LOCAL' ) ? '-ci' : '' }.js` )
+        const uniquified_codes_as_string = codes.map( code => `${ code }-${ Date.now() }` ).join( '\n' )
         cy.contains( 'label', 'Select .txt file that' )
-        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
+        cy.get( '#event-create-file' ).selectFile( {
+            contents: Cypress.Buffer.from( uniquified_codes_as_string ),
+            fileName: 'mintlinks.csv',
+            mimeType: 'text/csv',
+            lastModified: Date.now(),
+        }, { force: true } )
         cy.contains( 'Checking your mint links' )
 
         // Relevant inputs appear
@@ -101,8 +115,16 @@ context( 'Organiser successful event creation', () => {
 
         cy.visit( '/create?debug=true' )
 
-        // Select codes file
-        cy.get( '#event-create-file' ).attachFile( Cypress.env( 'LOCAL' ) ? `two-correct-codes.txt` : `two-correct-codes-ci.txt` )
+        // Select file
+        const codes = require( `../../fixtures/two-correct-codes${ Cypress.env( 'LOCAL' ) ? '-ci' : '' }.js` )
+        const uniquified_codes_as_string = codes.map( code => `${ code }-${ Date.now() }` ).join( '\n' )
+        cy.contains( 'label', 'Select .txt file that' )
+        cy.get( '#event-create-file' ).selectFile( {
+            contents: Cypress.Buffer.from( uniquified_codes_as_string ),
+            fileName: 'mintlinks.csv',
+            mimeType: 'text/csv',
+            lastModified: Date.now(),
+        }, { force: true } )
 
         // Clear inputs
         cy.get( '#event-create-name' ).clear()

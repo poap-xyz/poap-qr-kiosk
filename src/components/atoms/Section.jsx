@@ -27,7 +27,7 @@ export default styled.section`
     z-index: 1;
     min-height: ${ ( { height } ) => height || 'initial' };
     max-height: 100%;
-    max-width: ${ ( { maxWidth } ) => maxWidth || '' };
+    max-width: ${ ( { maxWidth } ) => maxWidth || '100%' };
     padding: ${ ( { padding } ) => padding || 'var(--spacing-4) 0 var(--spacing-4) 0' };
     margin: ${ ( { margin } ) => margin || '' };
 

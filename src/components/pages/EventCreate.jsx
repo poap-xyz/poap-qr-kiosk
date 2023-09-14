@@ -36,6 +36,7 @@ export default function Admin( ) {
     const [ email, setEmail ] = useState( dev ? 'mentor@poap.io' : '' )
     const [ date, setDate ] = useState( '' )
     const [ name, setName ] = useState( '' )
+    const [ dropId, setDropId ] = useState( '' )
     const [ csv, setCsv ] = useState(  )
     const [ css, setCss ] = useState(  )
     const [ customBaseurl, setCustomBaseurl ] = useState(  )
@@ -158,6 +159,7 @@ export default function Admin( ) {
 
                 // Load event data based on codes
                 const formatedCode = data[0]?.trim()
+                log( `Getting data based on code:`, formatedCode )
                 const { data: { event, error } } = await getEventDataFromCode( formatedCode )
                 log( 'Code data received ', event, error )
                 if( error ) throw new Error( error )
@@ -165,8 +167,8 @@ export default function Admin( ) {
 
                 // Set event details to state
                 log( `Computed event`, event )
-                if( event.name ) setName( event.name )
-                if( event.name ) setName( event.name )
+                setName( event.name )
+                setDropId( event.id )
                 if( event.expiry_date ) {
 
                     const [ day, monthName, year ] = event.expiry_date.split( '-' )
@@ -242,6 +244,7 @@ export default function Admin( ) {
                 email,
                 date,
                 codes,
+                dropId,
                 // If naiveMode is true skip game, else check if gameEnabled 
                 challenges: [ abuseProtection ] ,
                 collect_emails: !!collectEmails,

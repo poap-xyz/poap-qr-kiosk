@@ -2,14 +2,14 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
-    "runtime": "firebase functions:config:get > .runtimeconfig.json",
-    "runtime:production": "firebase functions:config:get > .runtimeconfig.prod.json",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
-    "start": "development=true && firebase use development && npm run runtime && npm run shell",
+    "start": "firebase use development && npm run runtime && npm run shell",
     "start:production": "development=true && firebase use production && npm run runtime:production && npm run shell",
     "deploy:development": "firebase use development && firebase deploy --only functions",
     "deploy:production": "firebase use production && firebase deploy --only functions; firebase use development",
+    "use:dev": "firebase use development",
+    "use:prod": "firebase use production",
     "logs": "firebase functions:log",
     "version": "firebase --version"
   },
@@ -25,6 +25,7 @@
     "express": "^4.18.2",
     "firebase-admin": "^11.10.1",
     "firebase-functions": "^4.4.1",
+    "geoip-lite": "^1.4.7",
     "isomorphic-fetch": "^3.0.0",
     "juice": "^8.1.0",
     "papaparse": "^5.4.1",
@@ -35,6 +36,6 @@
   },
   "private": true,
   "devDependencies": {
-    "firebase-tools": "^12.5.2"
+    "firebase-tools": "^12.5.3"
   }
 }
