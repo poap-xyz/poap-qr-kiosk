@@ -97,6 +97,19 @@ Cypress.Commands.add( 'create_kiosk', ( code_amount = 'one', anti_farming_mode =
 
     }
 
+    // Naive anti-farming, uses all custom features
+    if( anti_farming_mode == 'custombase' ) {
+
+        // Enable developer mode by clicking background 20 times
+        for( let i = 0; i < 20; i++ ) {
+            cy.get( '#event-create-layout-container' ).click( { force: true } )
+        }
+
+        // Override the baseurl
+        cy.get( '#event-create-custom-baseurl' ).clear().type( custom_base_url )
+
+    }
+
     // Leadgen static printing mode
     if( anti_farming_mode == 'leadgen' ) {
 
