@@ -29,20 +29,32 @@ async function getAccessToken() {
         } )
     }
     log( `Getting access token at ${ AUTH0_ENDPOINT } with `, options )
-    const { access_token: new_access_token, expires_in, ...rest } = await fetch( AUTH0_ENDPOINT, options ).then( res => res.json() )
-    log( `New token: `, new_access_token, ' unexpected output: ', rest )
+    const auth_response = await fetch( AUTH0_ENDPOINT, options )
+    const backup_res = auth_response.clone()
+    
+    // Parse the response
+    try {
 
-    // If no access token, error
-    if( !new_access_token ) throw new Error( JSON.stringify( rest ) )
+        const { access_token: new_access_token, expires_in, ...rest } = await auth_response.json()
+        log( `New token: `, new_access_token, ' unexpected output: ', rest )
 
-    // Set new token to firestore cache
-    await db.collection( 'secrets' ).doc( 'poap-api' ).set( {
-        access_token: new_access_token,
-        expires: Date.now() +  expires_in * 1000 ,
-        updated: Date.now()
-    }, { merge: true } )
+        // If no access token, error
+        if( !new_access_token ) throw new Error( JSON.stringify( rest ) )
 
-    return new_access_token
+        // Set new token to firestore cache
+        await db.collection( 'secrets' ).doc( 'poap-api' ).set( {
+            access_token: new_access_token,
+            expires: Date.now() +  expires_in * 1000 ,
+            updated: Date.now()
+        }, { merge: true } )
+
+        return new_access_token
+    } catch ( e ) {
+        log( 'Error getting access token: ', e )
+        const text = await backup_res.text().catch( e => e.message )
+        log( 'API text response: ', text )
+        return null
+    }
 
 }
 

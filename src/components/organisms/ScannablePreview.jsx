@@ -20,7 +20,7 @@ export default function ScannablePreview( { event_id } ) {
                 <Row gap="2rem" width="100%" align="center" justify="center">
 
                     <Col size='3' align='center'>
-                        <EventQR size={ 200 } event_id={ event_id } />
+                        <EventQR margin="2rem 0" size={ 200 } event_id={ event_id } />
                     </Col>
 
                     <Col align="center" justify="center" size='3'>

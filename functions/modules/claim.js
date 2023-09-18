@@ -134,7 +134,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
             else redirect_link = `https://app.poap.xyz/claim/`
 
             // Add the POAP claim code to the url
-            redirect_link += `${ claim_code }?`
+            redirect_link += `${ claim_code }`
 
             // If this request included ?user_address=0x... add it to the redirect link, this is the behaviour of the POAP app
             const { user_address } = req.query || {}
