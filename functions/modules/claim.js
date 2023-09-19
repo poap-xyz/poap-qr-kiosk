@@ -7,7 +7,7 @@ const app = require( './express' )()
 const log_scan = async ( req, data ) => {
 
     // Function dependencies
-    const { db } = require( './firebase' )
+    const { db, increment } = require( './firebase' )
     
     // Create metadata object
     const { generate_metadata_from_request } = require( './security' )
@@ -15,8 +15,11 @@ const log_scan = async ( req, data ) => {
     // This helperfunction expects a firebase request, because this is an express request, we must mock that using the rawRequest property
     let request_metadata = generate_metadata_from_request( { rawRequest: req } )
 
-    // Log this scan for farmer analysis
-    await db.collection( 'scans' ).add( { ...data, ...request_metadata } )
+    // Log this scan for farmer analysis and add it to event for scan metrics
+    await Promise.all( [
+        db.collection( 'scans' ).add( { ...data, ...request_metadata } ),
+        db.collection( 'events' ).doc( data.event_id ).set( { scans: increment( 1 ) }, { merge: true } )
+    ] )
 
 }
 

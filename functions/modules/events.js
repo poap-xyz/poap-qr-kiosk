@@ -323,26 +323,39 @@ exports.updatePublicEventData = async function( change, context ) {
     // Function dependencies
     const { db } = require( './firebase' )
 
-    // If this was a deletion, delete public data and kiosk scan data
-    if( !after.exists ) return Promise.all( [ 
-        db.collection( 'publicEventData' ).doc( eventId ).delete(),
-        db.collection( 'kiosk_scans' ).doc( eventId ).delete()
-    ] )
+    // Define which keys should be shown publicly
+    const public_keys = [ 'name', 'codes', 'codesAvailable', 'expires', 'public_auth', 'challenges', 'game_config', 'template', 'css', 'collect_emails', 'claim_base_url' ]
+
+    // Check if any of the public keys changed between the before and after
+    const after_data = after.data()
+    const before_data = before.data()
+    const changed_keys = public_keys.some( key => JSON.stringify( after_data[ key ] ) != JSON.stringify( before_data[ key ] ) )
+
+    // If no keys changed, return
+    if( !changed_keys ) return
+
+    // Generate an object with the changed keys
+    const changed_keys_object = public_keys.reduce( ( acc, key ) => {
+
+        // If the key was not in the previous object, add it
+        if( !before_data[ key ] ) acc[ key ] = after_data[ key ]
+
+        // If the key was in the previous object, but the value changed, update
+        // we're using a naive JSON.stringify comparison here, but it's good enough for our purposes
+        const old_value = before_data[ key ]
+        const new_value = after_data[ key ]
+        if( JSON.stringify( old_value ) != JSON.stringify( new_value ) ) acc[ key ] = new_value
+        return acc
+
+    } , {} )
+
+    // Set default values for keys that are not explicitly set but need a value
+    if( !changed_keys.collect_emails ) changed_keys_object.collect_emails = false
+    if( !changed_keys.codesAvailable ) changed_keys_object.codesAvailable = 0
 
     // If this was an update, grab the public properties and set them
-    const { name, codes, codesAvailable, expires, public_auth, challenges, game_config, template, css, collect_emails=false, claim_base_url } = after.data()
     const public_data_object = {
-        name,
-        public_auth,
-        codes,
-        expires,
-        challenges,
-        game_config,
-        collect_emails,
-        ... claim_base_url && { claim_base_url },
-        ... template && { template } ,
-        ... css && { css } ,
-        codesAvailable: codesAvailable || 0,
+        ...changed_keys_object,
         updated: Date.now(),
         updated_by: 'updatePublicEventData'
     }
@@ -411,6 +424,9 @@ exports.delete_data_of_deleted_event = async function( snap, context ) {
         const { docs: challenges_snap } = await db.collection( 'claim_challenges' ).where( 'eventId', '==', eventId ).get()
         const { docs: kiosk_scans } = await db.collection( 'scans' ).where( 'event_id', '==', eventId ).get()
         
+        // Delete obsolete data
+        await db.collection( 'publicEventData' ).doc( eventId ).delete()
+        await db.collection( 'kiosk_scans' ).doc( eventId ).delete()
 
         const deletion_queue = [ ...codes_snap, ...challenges_snap, ...kiosk_scans ].map( doc => () => doc.ref.delete() )
         await throttle_and_retry( deletion_queue, maxInProgress, `delete data of deleted event`, 5, 5 )
