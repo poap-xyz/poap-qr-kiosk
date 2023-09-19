@@ -80,7 +80,13 @@ async function claim_code_to_address( claim_code, drop_id, address, claim_secret
 
 }
 
-// Code updater
+/**
+ * Update the local status of a claim code against the live status of the POAP api
+ * @param {String} code - The claim code to update
+ * @param {Object} cachedResponse - Provide a cached or mocked response that will be used instead of calling the api
+ * @returns {Boolean} claimed - Whether the code is claimed or not 
+
+ */
 async function updateCodeStatus( code, cachedResponse ) {
 
     if( !code ) return
@@ -165,9 +171,11 @@ exports.getEventDataFromCode = async function ( code, context ) {
 
 
 
-// ///////////////////////////////
-// Check status of old unknowns
-// ///////////////////////////////
+/**
+ * Update the status of codes that have ( claimed == "unknown" ) or ( amountOfRemoteStatusChecks == 0 )
+ * @param {String} event_id - The event ID to refresh 
+ * @returns {String} status - Success or error 
+ */
 exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
 
     // If this was called with context (cron) use delay check
@@ -225,41 +233,42 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
         // Make the error checking slower
         const olderWithErrors = withErrors.filter( ( { updated } ) => updated <  Date.now() -  ageInMs * errorSlowdownFactor   )
 
-        // Build action queue
-        const old_unknown_queue = [ ...uncheckedCodes, ...clean, ...olderWithErrors ].map( ( { uid } ) => function() {
+        // Build action queue for codes with ( claimed == "unknown" )
+        const old_unknown_queue = [ ...clean, ...olderWithErrors ].map( ( { uid } ) => function() {
 
             return updateCodeStatus( uid )
 
         } )
 
         // Throttle dependency
-        const Throttle = require( 'promise-parallel-throttle' )
+        const { throttle_and_retry } = require( './helpers' )
 
         // Check old unknowns against the live API
-        await Throttle.all( old_unknown_queue, {
-            maxInProgress: maxInProgress
-        } )
+        const statuses_of_unknowns = await throttle_and_retry( old_unknown_queue, maxInProgress )
 
-        // Build action queue
+        // Build action queue for codes with ( amountOfRemoteStatusChecks == 0 )
         const unscanned_queue = [ ...uncheckedCodes ].map( ( { uid } ) => function() {
 
             return updateCodeStatus( uid )
 
         } )
 
-        // Check unscanned against live qpi
-        const unscanned_statusses = await Throttle.all( unscanned_queue, {
-            maxInProgress: maxInProgress
-        } )
+        // Check unscanned against live api
+        const statuses_of_unscanned = await throttle_and_retry( unscanned_queue, maxInProgress )
 
-        // Update public event counter
-        const codes_already_claimed = unscanned_statusses.reduce( ( acc, val ) => {
-            if( val == true ) return acc + 1
-            return acc
-        }, 0 )
+        // NOTE: previously this part decremented the available codes, but this is now already done in document( `codes/{codeId}` ).onUpdate( updateEventAvailableCodes )
+        // The updateCodeStatus already updates the collection( 'codes' ) entry so decrementing here would just duplicate things
+        // I'm leaving this for reference purposes, but it is no longer needed
 
-        // Increment event database
-        await db.collection( 'events' ).doc( event_id ).set( { codesAvailable: increment( -codes_already_claimed ), updated: Date.now(), updated_by: 'refresh_unknown_and_unscanned_codes' }, { merge: true } )
+        // // Calculate how many of the currently unknown or unscanned codes are actually claimed
+        // const codes_already_claimed = [ ...statuses_of_unknowns, ...statuses_of_unscanned ].reduce( ( acc, val ) => {
+        //     if( val == true ) return acc + 1
+        //     return acc
+        // }, 0 )
+
+        // // Increment event database
+        // await db.collection( 'events' ).doc( event_id ).set( { codesAvailable: increment( -codes_already_claimed ), updated: Date.now(), updated_by: 'refresh_unknown_and_unscanned_codes' }, { merge: true } )
+
 
         // Mark this run as finished
         await db.collection( 'meta' ).doc( `event_refresh_debounce_${ event_id }` ).set( { started: deleteField(), started_human: deleteField(), ended: Date.now(), ended_human: new Date().toString() }, { merge: true } )
@@ -274,16 +283,23 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
 
 }
 
-// ///////////////////////////////
-// Check status of scanned codes
-// ///////////////////////////////
+/**
+ * Check status of scanned codes that are known to be ( claimed == false )
+ * @param {String} eventId - The event ID for which to refresh the codes
+ * @param {Object} context - The context of the function call, provided by firebase 
+ * @returns {Object} result
+ * @returns {Number} result.updated - The amount of codes that were updated
+ * @returns {Number} result.reset - The amount of codes that were reset
+ * @returns {String} result.error - The error message if any
+ */
 exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 
     // const oneHour = 1000 * 60 * 60
     const checkCodesAtLeast = 2
     const checkCooldown = 1000 * 30
-    const maxInProgress = 10
+    const maxInProgress = 500
     const debounce_ms = 1000 * 60
+    const expected_max_claim_duration = 1000 * 60 * 2
 
 
     try {
@@ -306,9 +322,8 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
         // Get event data
         const event = await db.collection( 'events' ).doc( eventId ).get().then( dataFromSnap )
 
-        // Set the code reset timeout to the length of the anti-farming game plus 10 seconds buffer
-        const codeResetTimeout =  1000 * 10  + ( event?.game_config?.duration ||  1000 * 60  )
-
+        // Set the code reset timeout to the length of the anti-farming game plus expected_max_claim_duration buffer so that slow claimers don't get their codes reset (which could cause collisions)
+        const codeResetTimeout =  expected_max_claim_duration  + ( event?.game_config?.duration ||  1000 * 60  )
 
         // Codes that have been scanned and have not been claimed
         const scannedAndUnclaimedCodes = await db.collection( 'codes' )
@@ -317,24 +332,27 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
             .where( 'claimed', '==', false )
             .get().then( dataFromSnap )
 
-        // Grab codes that have been checked and are old enough
+        // Filter out codes that exhausted their checkCodesAtleast and are older than codeResetTimeout, those are presumed to be unclaimed and are added back as scanned: false
         const codesToReset = scannedAndUnclaimedCodes.filter( ( { amountOfRemoteStatusChecks, lastRemoteStatusCheck, } ) => amountOfRemoteStatusChecks > checkCodesAtLeast && lastRemoteStatusCheck <  Date.now() - codeResetTimeout  )
-        await Promise.all( codesToReset.map( ( { uid } ) => db.collection( 'codes' ).doc( uid ).set( {
+        const { throttle_and_retry } = require( './helpers' )
+        const reset_queue = codesToReset.map( ( { uid } ) => () => db.collection( 'codes' ).doc( uid ).set( {
             scanned: false,
-            amountOfRemoteStatusChecks: 0
-        }, { merge: true } ) ) )
+            amountOfRemoteStatusChecks: 0,
+            updated: Date.now(),
+            updated_human: new Date().toString(),
+            updated_by: 'refreshScannedCodesStatuses'
+        }, { merge: true } ) )
+        await throttle_and_retry( reset_queue, maxInProgress )
 
         // Filter out codes that were checked within the throttle interval. This may be useful if there are 50 ipads at an event and they all trigger rechecks.
+        // note: this should no longer be needed after implementing debounce. Leaving it for not as it has no downside, could be removed later
         const codesToCheck = scannedAndUnclaimedCodes.filter( ( { updated } ) => updated <  Date.now() - checkCooldown  )
 
         // Build action queue
         const queue = codesToCheck.map( ( { uid } ) => () => updateCodeStatus( uid ) )
 
         // For every unknown, check the status against live API
-        const Throttle = require( 'promise-parallel-throttle' )
-        await Throttle.all( queue, {
-            maxInProgress: maxInProgress
-        } )
+        await throttle_and_retry( queue, maxInProgress )
 
         // Delete debounce doc
         await db.collection( 'meta' ).doc( `scanned_codes_debounce_${ eventId }` ).set( { started: deleteField(), started_human: deleteField(), end: Date.now(), end_human: new Date().toString() }, { merge: true } )

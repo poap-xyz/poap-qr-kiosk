@@ -114,7 +114,7 @@ function make_retryable( async_function, logging_label='unlabeled retry', retry_
 * @param { number } cooldown_in_s The amount of seconds to wait between retries
 * @returns { Promise } An async function (promise) that will retry retry_times before throwing
 */
-async function throttle_and_retry( async_function_array=[], max_parallell=2, logging_label, retry_times, cooldown_in_s ) {
+async function throttle_and_retry( async_function_array=[], max_parallell=2, logging_label='', retry_times=1, cooldown_in_s=2 ) {
 
     // Function dependencies
     const Throttle = require( 'promise-parallel-throttle' )

@@ -159,7 +159,7 @@ export default function ViewQR( ) {
     useEffect( f => {
 
         if( !event ) return
-        log( `For manual testing: \n${ dev ? get_emulator_function_call_url( 'claimmiddleware' ) : VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }?CI=true` )
+        log( `For manual testing: \n${ dev ? get_emulator_function_call_url( 'claimMiddleware' ) : VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }?CI=true` )
 
     },  [ event?.public_auth?.token ] )
 
@@ -185,7 +185,7 @@ export default function ViewQR( ) {
     if( iframeMode && !event?.public_auth?.expires ) return  <ExpiredQR status='noCodes'/>
 
     // If iframe mode, render only QR
-    if( iframeMode ) return <EventQR event_id={ internalEventId } />
+    if( iframeMode ) return <EventQR color="black" background="white" event_id={ internalEventId } />
 
     // ///////////////////////////////
     // Error states

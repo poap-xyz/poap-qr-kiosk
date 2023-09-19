@@ -32,10 +32,10 @@ exports.getEventDataFromCode = functions.https.onCall( getEventDataFromCode )
 // Get all data of a code
 exports.check_code_status = functions.https.onCall( check_code_status )
 
-// Refresh all codes ( trigger from frontend )
+// Refresh all codes ( trigger from frontend on page mount of EventView )
 exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.onCall( refresh_unknown_and_unscanned_codes )
 
-// Allow frontend to trigger updates for scanned codes
+// Allow frontend to trigger updates for scanned codes, ( triggers on a periodic interval from EventView ), is lighter than requestManualCodeRefresh as it checks only scanned and claimed == true codes
 exports.refreshScannedCodesStatuses = functions.runWith( generousRuntime ).https.onCall( refreshScannedCodesStatuses )
 
 // ///////////////////////////////
