@@ -15,6 +15,7 @@ import Loading from '../molecules/Loading'
 import Layout from '../molecules/Layout'
 
 import { CardContainer, Container, Text, H1, H2, Input, Button } from '@poap/poap-components'
+import { useHealthCheck } from '../../hooks/health_check'
 
 // ///////////////////////////////
 // Render component
@@ -34,30 +35,12 @@ export default function EventAdmin( ) {
     const adminLink = `${ dev ? 'http://localhost:3000' : VITE_publicUrl }/#/event/admin/${ eventId }/${ authToken }`
     const clipboardAPI = !!navigator.clipboard
 
+    // Data destructuring
+    const { scans=0, codesAvailable=0, codes=0 } = event
+
     // Health check
-    useEffect( (  ) => {
-
-        let cancelled = false;
-
-        ( async () => {
-
-            try {
-
-                const { data: health } = await health_check()
-                log( `Systems health: `, health )
-                if( cancelled ) return log( `Health effect cancelled` )
-                if( !health.healthy ) return alert( `${ t( 'messaging.health.maintenance' ) }` )
-
-            } catch ( e ) {
-                log( `Error getting system health: `, e )
-            }
-
-        } )( )
-
-        return () => cancelled = true
-
-    }, [] )
-
+    useHealthCheck()
+    
     // ///////////////////////////////
     // State management
     // ///////////////////////////////
@@ -73,18 +56,18 @@ export default function EventAdmin( ) {
         let cancelled = false
 
         log( `New event ID ${ eventId } detected, listening to event meta` )
-        if( eventId ) return listenToEventMeta( eventId, event => {
+        if( eventId ) return listenToEventMeta( eventId, async event => {
             setEvent( event )
             log( `Event data detected: `, event )
             setLoading( false )
             if( !event ) {
 
                 // Wait for 5 seconds in case the backend is refreshng public event mets
-                wait( 5000 )
+                await wait( 5000 )
                 if( !cancelled ) setLoading( `${ t( 'eventAdmin.loadingValidity' ) }` )
 
                 // If after 10 seconds it is still down, trigger failure
-                wait( 5000 )
+                await wait( 5000 )
                 if( !cancelled ) setLoading( `${ t( 'eventAdmin.invalidValidity' ) }` )
 
             }
@@ -181,8 +164,12 @@ export default function EventAdmin( ) {
                         </> }
                     </Grid>
                 </CardContainer>
+
                 <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
                     <H1>{ t( 'eventAdmin.deleteDispenser.title' ) }</H1>
+                    <Text>
+                        Your QR was scanned <b>{ scans }</b> times and <b>{ codes - codesAvailable } out of { codes }</b> POAPs were claimed.
+                    </Text>
                     <Grid>
                         <Row>
                             <Col size='3'>

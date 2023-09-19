@@ -324,34 +324,52 @@ exports.updatePublicEventData = async function( change, context ) {
     const { db } = require( './firebase' )
 
     // Define which keys should be shown publicly
-    const public_keys = [ 'name', 'codes', 'codesAvailable', 'expires', 'public_auth', 'challenges', 'game_config', 'template', 'css', 'collect_emails', 'claim_base_url' ]
+    const public_keys = [ 'name', 'codes', 'codesAvailable', 'expires', 'public_auth', 'challenges', 'game_config', 'template', 'css', 'collect_emails', 'claim_base_url', 'scans' ]
 
-    // Check if any of the public keys changed between the before and after
+    // Get the data of the changes
     const after_data = after.data()
-    const before_data = before.data()
-    const changed_keys = public_keys.some( key => JSON.stringify( after_data[ key ] ) != JSON.stringify( before_data[ key ] ) )
+    let before_data = before.data()
 
-    // If no keys changed, return
-    if( !changed_keys ) return
+    // If there was no data after, thai was a deletion and we can stop, indes.js:delete_data_of_deleted_event will handle it
+    if( !after_data ) return
 
+    // If there was data before, check if any keys changed
+    if( before_data ) {
+
+        // Check if any of the public keys changed between the before and after
+        const keys_changed = public_keys.some( key => JSON.stringify( after_data[ key ] ) != JSON.stringify( before_data[ key ] ) )
+
+        // If no keys changed, return
+        if( !keys_changed ) return
+
+    }
+
+    // If there was no before data, this is a new event and we should set the before data to an empty object so the below reducer can work
+    if( !before_data ) before_data = {}
+
+    
     // Generate an object with the changed keys
     const changed_keys_object = public_keys.reduce( ( acc, key ) => {
 
-        // If the key was not in the previous object, add it
-        if( !before_data[ key ] ) acc[ key ] = after_data[ key ]
+        // Get the values of the key in the before and after objects
+        const old_value = before_data[ key ]
+        const new_value = after_data[ key ]
+
+        // If the key was not in the previous object and it is in the new object, add it
+        const { is_valid_firestore_value } = require( './firebase' )
+        if( !old_value && is_valid_firestore_value( new_value ) ) acc[ key ] = new_value
 
         // If the key was in the previous object, but the value changed, update
         // we're using a naive JSON.stringify comparison here, but it's good enough for our purposes
-        const old_value = before_data[ key ]
-        const new_value = after_data[ key ]
         if( JSON.stringify( old_value ) != JSON.stringify( new_value ) ) acc[ key ] = new_value
+
         return acc
 
     } , {} )
 
     // Set default values for keys that are not explicitly set but need a value
-    if( !changed_keys.collect_emails ) changed_keys_object.collect_emails = false
-    if( !changed_keys.codesAvailable ) changed_keys_object.codesAvailable = 0
+    if( !changed_keys_object.collect_emails ) changed_keys_object.collect_emails = false
+    if( !changed_keys_object.codesAvailable ) changed_keys_object.codesAvailable = 0
 
     // If this was an update, grab the public properties and set them
     const public_data_object = {
