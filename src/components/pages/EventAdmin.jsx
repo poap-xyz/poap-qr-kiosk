@@ -168,7 +168,7 @@ export default function EventAdmin( ) {
                 <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
                     <H1>{ t( 'eventAdmin.deleteDispenser.title' ) }</H1>
                     <Text>
-                        Your QR was scanned <b>{ scans }</b> times and <b>{ codes - codesAvailable } out of { codes }</b> POAPs were claimed.
+                        { t( 'eventAdmin.amountScannedMessage', { codes, scans, claimed: codes - codesAvailable } ) }
                     </Text>
                     <Grid>
                         <Row>

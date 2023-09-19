@@ -185,7 +185,7 @@ export default function ViewQR( ) {
     if( iframeMode && !event?.public_auth?.expires ) return  <ExpiredQR status='noCodes'/>
 
     // If iframe mode, render only QR
-    if( iframeMode ) return <EventQR event_id={ internalEventId } />
+    if( iframeMode ) return <EventQR color="black" background="white" event_id={ internalEventId } />
 
     // ///////////////////////////////
     // Error states
