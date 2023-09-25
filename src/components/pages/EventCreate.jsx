@@ -239,7 +239,7 @@ export default function Admin( ) {
             setLoading( `${ t( 'eventCreate.creatingDispenser' ) }` )
 
             // Create remote event
-            const { data: newEvent } = await registerEvent( {
+            const event_data = {
                 name,
                 email,
                 date,
@@ -252,7 +252,9 @@ export default function Admin( ) {
                 ... !collectEmails && customBaseurl && { claim_base_url: customBaseurl } ,
                 game_config: { duration: gameDuration, target_score: Math.ceil( gameDuration / 5 ) },
                 ... css && { css } 
-            } )
+            }
+            log( 'Creating event with data: ', JSON.stringify( event_data, null, 2 ) )
+            const { data: newEvent } = await registerEvent( event_data )
 
             log( 'Event created: ', newEvent, { name, email, date, codes } )
             trackEvent( 'admin_event_create' )

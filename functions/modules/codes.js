@@ -81,7 +81,7 @@ async function claim_code_to_address( claim_code, drop_id, address, claim_secret
 }
 
 /**
- * Update the local status of a claim code against the live status of the POAP api
+ * Update the local status of a claim code against the live status of the POAP api, it writes to the codes/{codeId} document
  * @param {String} code - The claim code to update
  * @param {Object} cachedResponse - Provide a cached or mocked response that will be used instead of calling the api
  * @returns {Boolean} claimed - Whether the code is claimed or not 
@@ -215,7 +215,7 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
             .where( 'event', '==', event_id )
             .get().then( dataFromSnap )
 
-        // Get unchecked codes
+        // Get unchecked codes, these will also have status claimed == unknown
         const uncheckedCodes = await db.collection( 'codes' )
             .where( 'amountOfRemoteStatusChecks', '==', 0 )
             .where( 'event', '==', event_id )
@@ -233,34 +233,50 @@ exports.refresh_unknown_and_unscanned_codes = async ( event_id, context ) => {
         // Make the error checking slower
         const olderWithErrors = withErrors.filter( ( { updated } ) => updated <  Date.now() -  ageInMs * errorSlowdownFactor   )
 
-        // Build action queue for codes with ( claimed == "unknown" )
-        const old_unknown_queue = [ ...clean, ...olderWithErrors ].map( ( { uid } ) => function() {
+        // Make a big list of codes to update
+        const codes_to_update = [ ...clean, ...olderWithErrors, ...uncheckedCodes ]
 
+        // Dedupe the codes
+        const code_uids_to_update_deduped = [ ...new Set( codes_to_update.map( ( { uid } ) => uid ) ) ]
+
+        // Make an action quene for the codes
+        const old_unknown_queue = code_uids_to_update_deduped.map( ( uid ) => function() {
             return updateCodeStatus( uid )
-
         } )
+
+        // Run the queue with throttling
+        const { throttle_and_retry } = require( './helpers' )
+        await throttle_and_retry( old_unknown_queue, maxInProgress )
+
+        // Build action queue for codes with ( claimed == "unknown" )
+        // const old_unknown_queue = [ ...clean, ...olderWithErrors ].map( ( { uid } ) => function() {
+
+        //     return updateCodeStatus( uid )
+
+        // } )
 
         // Throttle dependency
-        const { throttle_and_retry } = require( './helpers' )
+        // const { throttle_and_retry } = require( './helpers' )
 
         // Check old unknowns against the live API
-        const statuses_of_unknowns = await throttle_and_retry( old_unknown_queue, maxInProgress )
+        // const statuses_of_unknowns = await throttle_and_retry( old_unknown_queue, maxInProgress )
 
-        // Build action queue for codes with ( amountOfRemoteStatusChecks == 0 )
-        const unscanned_queue = [ ...uncheckedCodes ].map( ( { uid } ) => function() {
+        // // Build action queue for codes with ( amountOfRemoteStatusChecks == 0 )
+        // const unscanned_queue = [ ...uncheckedCodes ].map( ( { uid } ) => function() {
 
-            return updateCodeStatus( uid )
+        //     return updateCodeStatus( uid )
 
-        } )
+        // } )
 
-        // Check unscanned against live api
-        const statuses_of_unscanned = await throttle_and_retry( unscanned_queue, maxInProgress )
+        // // Check unscanned against live api
+        // const statuses_of_unscanned = await throttle_and_retry( unscanned_queue, maxInProgress )
 
-        // NOTE: previously this part decremented the available codes, but this is now already done in document( `codes/{codeId}` ).onUpdate( updateEventAvailableCodes )
-        // The updateCodeStatus already updates the collection( 'codes' ) entry so decrementing here would just duplicate things
-        // I'm leaving this for reference purposes, but it is no longer needed
+        // 🔥 NOTE: Disabled since this is now done in updateEventAvailableCodes
 
-        // // Calculate how many of the currently unknown or unscanned codes are actually claimed
+        // Calculate how many of the currently unknown or unscanned codes are actually claimed
+        // Note: the statuses_of_unscanned are codes who have never been checked against the API, they were assumed to be valid in the registerEvent call, that is why they are included here
+        // The statuses_of_unknowns are codes will be updated by the onUpdate( updateEventAvailableCodes ) since updateCodeStatus sets the code document state
+        // the unscanned codes are ignored by onUpdate( updateEventAvailableCodes ) if their amountOfRemoteStatusChecks is 0
         // const codes_already_claimed = [ ...statuses_of_unknowns, ...statuses_of_unscanned ].reduce( ( acc, val ) => {
         //     if( val == true ) return acc + 1
         //     return acc
@@ -352,6 +368,7 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
         const queue = codesToCheck.map( ( { uid } ) => () => updateCodeStatus( uid ) )
 
         // For every unknown, check the status against live API
+        log( `Checking ${ codesToCheck.length } codes against the API` )
         await throttle_and_retry( queue, maxInProgress )
 
         // Delete debounce doc
@@ -373,36 +390,53 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 
 exports.updateEventAvailableCodes = async function( change, context ) {
 
+    const debug = true
+    const { codeId } = context.params
+    if( debug ) console.log( `Running updateEventAvailableCodes verbosely for ${ codeId }` )
+
     const { before, after } = change
 
     // Exit on deletion or creation
-    if( !after.exists || !before.exists ) return
+    // on creation the default state is claimed == unknown
+    if( !after.exists || !before.exists ) {
+        if( debug ) console.log( `DEBUG: code ${ !before.exists ? 'created' : 'deleted' }, exiting` )
+        return
+    }
 
-    const { codeId } = context.params
+    // Get the old and new data
     const { claimed: prevClaimed } = before.data() || {}
     const { event, claimed, amountOfRemoteStatusChecks } = after.data()
 
-    // Do nothing if no change
-    if( prevClaimed === claimed ) return
+    if( debug ) console.log( `DEBUG: code from ${ prevClaimed } to ${ claimed }` )
 
-    // If this is the first update, do not increment the public event data
-    // this is being done manually in refresh_unknown_and_unscanned_codes
-    if( amountOfRemoteStatusChecks <= 1 ) return
+    // // Do nothing if no change
+    // if( prevClaimed === claimed ) return
 
-    // Scenarios:
-    // false > unknown = -1
-    // false > true = -1
-    // unknown > true = 0
-    // true > false = +1
-    // unknown > false = +1
+    // // If this is the first update, do not increment the public event data
+    // // the code entries are created blindly, and only afterwards are checked against the API
+    // if( amountOfRemoteStatusChecks <= 1 ) return
+
+    // ----------------
+    // Scenarios
+    // ----------------
+    // 1. false > unknown = -1 (thought unclaimed, but is unknown, assume less available)
+    // 2. false > true = -1 (thought unclaimed, but is claimed, less available)
+    // ----------------
+    // 3. unknown > true = 0
+    // ----------------
+    // 4. true > false = +1
+    // 5. unknown > false = +1
+    // ----------------
 
     // If code was unclaimed, and it is now claimed or possibly claimed (unknown status), increment the counter up
-    if( prevClaimed === false && [ 'unknown', true ].includes( claimed ) ) {
+    if( false === prevClaimed && [ 'unknown', true ].includes( claimed ) ) {
+        if( debug ) console.log( `DEBUG: code was unclaimed, and it is now claimed or possibly claimed (unknown status), DECREMENT available` )
         return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now(), updated_by: 'updateEventsAvailableCodes decrement' }, { merge: true } )
     }
 	
     // If the code was thought to be (possibly) claimed previously, but we now know it is unclaimed for sure, add an extra code to the event counter
     if( [ true, 'unknown' ].includes( prevClaimed ) && claimed === false ) {
+        if( debug ) console.log( `DEBUG: code was thought to be (possibly) claimed previously, but is unclaimed: INCREMENT available` )
         return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now(), updated_by: 'updateEventsAvailableCodes increment' }, { merge: true } )
     }	
 

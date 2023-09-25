@@ -4,6 +4,10 @@
 export const dev = import.meta.env.NODE_ENV === 'development' ||  typeof location !== 'undefined' && ( location.href.includes( 'debug=true' ) || location.href.includes( 'localhost' ) ) 
 
 export const log = ( ...messages ) => {
+
+    // If we are in cypress, strinfify objects
+    if( window.Cypress ) messages = messages.map( message => typeof message === 'object' ? JSON.stringify( message, null, 2 ) : message )
+
     if( dev ) console.log( ...messages )
 }
 
