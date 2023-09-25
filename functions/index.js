@@ -38,6 +38,10 @@ exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.on
 // Allow frontend to trigger updates for scanned codes, ( triggers on a periodic interval from EventView ), is lighter than requestManualCodeRefresh as it checks only scanned and claimed == true codes
 exports.refreshScannedCodesStatuses = functions.runWith( generousRuntime ).https.onCall( refreshScannedCodesStatuses )
 
+// Directly mint a code to an address
+const { mint_code_to_address } = require( './modules/minting' )
+exports.mint_code_to_address = onCall( protected_runtime, mint_code_to_address )
+
 // ///////////////////////////////
 // Event data
 // ///////////////////////////////

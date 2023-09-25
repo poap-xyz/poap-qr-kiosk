@@ -60,6 +60,7 @@ export const export_emails_of_static_drop = httpsCallable( functions, 'export_em
 export const delete_emails_of_static_drop = httpsCallable( functions, 'delete_emails_of_static_drop' )
 export const create_static_drop = httpsCallable( functions, 'create_static_drop' )
 export const log_kiosk_open = httpsCallable( functions, 'log_kiosk_open' )
+export const mint_code_to_address = httpsCallable( functions, 'mint_code_to_address' )
 
 // Offline functions emulator
 const functions_emulator_port = 5001
