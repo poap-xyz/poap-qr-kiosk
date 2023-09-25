@@ -246,14 +246,14 @@ exports.registerEvent = async function( data, context ) {
         // 🤡 Check if this is a mock event
         const is_mock = !!codes.find( code => code.includes( 'testing' ) )
         const public_auth_expiry_interval_minutes = is_mock ? .5 : 2
-        const { id } = await db.collection( 'events' ).add( {
+        const event_data = {
             dropId,
             name,
             email,
             expires: new Date( date ).getTime() + weekInMs, // Event expiration plus a week
             expires_yyyy_mm_dd: date,
             codes: codes.length,
-            codesAvailable: codes.length, // This will be updated by the initial scan run in codes.js:updatePublicEventAvailableCodes
+            codesAvailable: 0, // This will be updated by the initial scan run in codes.js:updateEventAvailableCodes
             authToken,
             challenges,
             game_config,
@@ -267,10 +267,12 @@ exports.registerEvent = async function( data, context ) {
             updated: Date.now(),
             updated_by: 'registerEvent',
             created_from_ip
-        } )
+        }
+        log( `Creating event: `, event_data )
+        const { id } = await db.collection( 'events' ).add( event_data )
 
         // Format codes to the helpers understand the format
-        const formatted_codes = codes.map( qr_hash => ( { qr_hash } ) )
+        const formatted_codes = codes.map( qr_hash => ( { qr_hash, claimed: 'unknown' } ) )
 
         // Check code validity and write to firestore
         await validate_and_write_event_codes( id, date, formatted_codes )
@@ -368,8 +370,8 @@ exports.updatePublicEventData = async function( change, context ) {
     } , {} )
 
     // Set default values for keys that are not explicitly set but need a value
-    if( !changed_keys_object.collect_emails ) changed_keys_object.collect_emails = false
-    if( !changed_keys_object.codesAvailable ) changed_keys_object.codesAvailable = 0
+    if( !after_data.collect_emails ) changed_keys_object.collect_emails = false
+    if( !after_data.codesAvailable ) changed_keys_object.codesAvailable = 0
 
     // If this was an update, grab the public properties and set them
     const public_data_object = {
@@ -378,11 +380,10 @@ exports.updatePublicEventData = async function( change, context ) {
         updated_by: 'updatePublicEventData'
     }
 
+    await db.collection( 'publicEventData' ).doc( eventId ).set( public_data_object, { merge: true } )
+
     // Sync the event data with the POAP central systems if needed
-    await update_event_data_of_kiosk( eventId )
-
-
-    return db.collection( 'publicEventData' ).doc( eventId ).set( public_data_object, { merge: true } )
+    return update_event_data_of_kiosk( eventId )
 
 }
 
