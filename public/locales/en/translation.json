@@ -246,6 +246,7 @@
     "succesDeleteDispenser": "Deletion success!\n\nYour POAP Kiosk has been deleted.\n\nClick OK to be redirected to the home page. ",
     "deletionCancelled": "Deletion cancelled, your event still exists.",
     "errorDeleteDispenser": "Error Deleting POAP Kiosk: {{ message }}",
+    "amountScannedMessage": "Your POAP Kiosk QR was scanned {{ scans }} times and {{ claimed }} out of {{ codes }} POAPs were claimed.",
     "hero": {
       "subheading": {
         "reviewed": "⚠️ Your event is being reviewed",

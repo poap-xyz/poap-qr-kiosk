@@ -1,20 +1,21 @@
 // Firebase interactors
-const { initializeApp } = require( "firebase-admin/app" )
-const { getFirestore, FieldValue } = require( 'firebase-admin/firestore' )
+const { FieldValue } = require( 'firebase-admin/firestore' )
 const { dev, log } = require( "./helpers" )
 
 // Cached app instalce
 let cached_app = undefined
 const get_app = () => {
     if( cached_app ) return cached_app
+    const { initializeApp } = require( "firebase-admin/app" )
     cached_app = initializeApp()
     return cached_app
 }
 
-// Cached firestore instalce
+// Cached firestore instance
 let cached_db = undefined
 const get_db = () => {
     if( cached_db ) return cached_db
+    const { getFirestore } = require( 'firebase-admin/firestore' )
     cached_db = getFirestore( get_app() )
     return cached_db
 }
@@ -32,6 +33,9 @@ const dataFromSnap = ( snapOfDocOrDocs, withDocId=true ) => {
     return { ...snapOfDocOrDocs.data(), ... withDocId && { uid: snapOfDocOrDocs.id }  }
 
 }
+
+// Firestore helpers
+const is_valid_firestore_value = value => value !== undefined && value !== null && value !== ''
 
 
 /**
@@ -63,13 +67,13 @@ const get_ip_from_request = firebase_request => {
         let { ip: request_ip, ips } = req
 
         // Try to get ip from headers
-        let ip = request_ip || ips?.[0] || req.get( 'x-forwarded-for' ) || req.get( 'fastly-client-ip' )
+        let ip = req.get( 'fastly-client-ip' ) || req.get( 'x-forwarded-for' ) || request_ip || ips?.[0]
+
+        // If ip is an array, take the first one
+        if( Array.isArray( ip ) ) [ ip ] = ip
 
         // If headers contained a comma separated ip list, take the first one
         if( `${ ip }`.includes( ',' ) ) ip = ip?.split( ',' )?.[0]?.trim()
-
-        // If ip is still an array, take the first one
-        if( Array.isArray( ip ) ) [ ip ] = ip
 
         // Return the ip
         return ip
@@ -89,5 +93,6 @@ module.exports = {
     increment: FieldValue.increment,
     arrayUnion: FieldValue.arrayUnion,
     deleteField: FieldValue.delete,
-    get_ip_from_request
+    get_ip_from_request,
+    is_valid_firestore_value
 }
