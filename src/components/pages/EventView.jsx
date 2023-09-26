@@ -24,6 +24,7 @@ import { useHealthCheck } from '../../hooks/health_check'
 import { useEvent, useEventTemplate } from '../../hooks/events'
 import ScannablePreview from '../organisms/ScannablePreview'
 import EventQR from '../organisms/EventQR'
+import CustomCssWrapper from '../molecules/CustomCssWrapper'
 
 // ///////////////////////////////
 // Render component
@@ -179,13 +180,19 @@ export default function ViewQR( ) {
     // ///////////////////////////////
 
     // Expired event qr error
-    if( iframeMode && event?.expires && event.expires < Date.now() ) return <ExpiredQR status='expired'/>
+    if( iframeMode && event?.expires && event.expires < Date.now() ) return <CustomCssWrapper>
+        <ExpiredQR status='expired'/>
+    </CustomCssWrapper>
 
     // // No code qr error
-    if( iframeMode && !event?.public_auth?.expires ) return  <ExpiredQR status='noCodes'/>
+    if( iframeMode && !event?.public_auth?.expires ) return  <CustomCssWrapper>
+        <ExpiredQR status='noCodes'/>
+    </CustomCssWrapper>
 
     // If iframe mode, render only QR
-    if( iframeMode ) return <EventQR color="black" background="white" event_id={ internalEventId } />
+    if( iframeMode ) return <CustomCssWrapper>
+        <EventQR id="iframe-mode-qr" color="black" background="white" event_id={ internalEventId } />
+    </CustomCssWrapper>
 
     // ///////////////////////////////
     // Error states

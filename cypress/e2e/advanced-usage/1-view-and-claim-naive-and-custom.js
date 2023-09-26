@@ -24,12 +24,68 @@ context( 'Advanced functionality works', () => {
     } )
 
     /* ///////////////////////////////
+    // iframe mode
+    // /////////////////////////////*/
+    it( "Event loads iframe mode according to spec", function() {
+
+        // Spec parameters
+        const iframe_qr_size = 256
+
+        // Visit the public interface
+        cy.visit( `${ this.event_1_publiclink }/iframe` )
+
+        // Check that the url is correct
+        cy.url().should( 'include', 'event/cached/iframe' )
+
+        // Check that the disclaimer is not present
+        cy.get( '#event-view-accept-disclaimer' ).should( 'not.exist' )
+
+        // Check that the svg is the right size
+        cy.get( "#iframe-mode-qr" ).invoke( 'attr', 'width' ).should( 'eq', `${ iframe_qr_size }` )
+        cy.get( "#iframe-mode-qr" ).invoke( 'attr', 'height' ).should( 'eq', `${ iframe_qr_size }` )
+
+        // Check that the svg is aligned exactly with the top left of the dom
+        cy.get( "#iframe-mode-qr" ).should( $el => {
+
+            // Get element coordinates
+            const rect = $el[0].getBoundingClientRect()
+
+            // Check that the element is at the top left of the dom
+            expect( rect.top ).to.eq( 0 )
+            expect( rect.left ).to.eq( 0 )
+
+            // Check that bottom right corner is exactly where expected
+            expect( rect.bottom ).to.eq( iframe_qr_size )
+            expect( rect.right ).to.eq( iframe_qr_size )
+
+        } )
+
+
+    } )
+
+    /* ///////////////////////////////
     // Custom css
     // /////////////////////////////*/
     it( 'Event loads custom css', function() {
 
         // Visit the public interface
         cy.visit( this.event_1_publiclink )
+        
+        // Check that the custom css was loaded
+        cy.get( "style#custom-added-css-overrides" )
+
+        // This is custom css set in ../support/commands.js
+        cy.get( 'body' ).should( 'have.css', 'opacity', '0.99' )
+
+    } )
+
+    it( 'Event loads custom css when in iframe mode', function() {
+
+        // Visit the public interface
+        cy.visit( `${ this.event_1_publiclink }/iframe` )
+
+        // Check that the url is correct
+        cy.url().should( 'include', 'event/cached/iframe' )
         
         // Check that the custom css was loaded
         cy.get( "style#custom-added-css-overrides" )

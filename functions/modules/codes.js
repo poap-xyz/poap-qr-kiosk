@@ -390,7 +390,7 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 
 exports.updateEventAvailableCodes = async function( change, context ) {
 
-    const debug = true
+    const debug = false
     const { codeId } = context.params
     if( debug ) console.log( `Running updateEventAvailableCodes verbosely for ${ codeId }` )
 
