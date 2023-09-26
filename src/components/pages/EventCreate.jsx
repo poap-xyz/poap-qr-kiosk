@@ -61,7 +61,6 @@ export default function Admin( ) {
             value: 'yes'    
         }
     ]
-    log( email_collect_options )
 
     const gameOptions = [
         {
