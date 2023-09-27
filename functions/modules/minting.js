@@ -15,7 +15,7 @@ exports.mint_code_to_address = async ( { data } ) => {
         address_to_claim_to = sanitise_string( address_to_claim_to )
 
         // Check if claim code is a mock code
-        const is_mock = claim_code.includes( 'testing-' )
+        const is_mock = claim_code.includes( 'testing' )
         if( is_mock ) {
             log( `🤡 mocking the successful claiming of a code` )
             return { success: true }
@@ -23,7 +23,11 @@ exports.mint_code_to_address = async ( { data } ) => {
 
         // Get the claim secret of the mint link
         const { call_poap_endpoint } = require( './poap_api' )
-        const { claimed, secret } = await call_poap_endpoint( `/actions/claim-qr`, { qr_hash: claim_code } )
+        const { claimed, secret, error: preclaim_error, message: preclaim_error_message } = await call_poap_endpoint( `/actions/claim-qr`, { qr_hash: claim_code } )
+        if( preclaim_error ) {
+            if( preclaim_error_message.includes( "Qr Claim not found" ) ) throw new Error( `Failed to get claim secret: Invalid claim link` )
+            throw new Error( `Failed to get claim secret: ${ preclaim_error_message || preclaim_error }` )
+        }
         if( claimed ) throw new Error( `This POAP has already been claimed, please scan again` )
 
         // Mint the POAP using the secret

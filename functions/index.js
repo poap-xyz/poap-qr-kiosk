@@ -42,6 +42,10 @@ exports.refreshScannedCodesStatuses = functions.runWith( generousRuntime ).https
 const { mint_code_to_address } = require( './modules/minting' )
 exports.mint_code_to_address = onCall( protected_runtime, mint_code_to_address )
 
+// Let admins recalculate available codes
+const { recalculate_available_codes_admin } = require( './modules/codes' )
+exports.recalculate_available_codes = onCall( protected_runtime, recalculate_available_codes_admin )
+
 // ///////////////////////////////
 // Event data
 // ///////////////////////////////

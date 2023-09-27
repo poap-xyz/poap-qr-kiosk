@@ -8,10 +8,11 @@ import { log } from "../../modules/helpers"
 import Loading from "../molecules/Loading"
 import { mint_code_to_address } from "../../modules/firebase"
 import { useParams } from "react-router-dom"
+import { eth_address_or_ens_regex } from "../../modules/validations"
 
 export default function MintPOAP() {
 
-    const probable_user_address = useProbableMintAddress()
+    const { probable_user_address, address_in_query } = useProbableMintAddress()
     const [ address_to_mint_to, set_address_to_mint_to ] = useState( probable_user_address )
     const [ loading, set_loading ] = useState( false )
     const { claim_code } = useParams(  )
@@ -25,6 +26,18 @@ export default function MintPOAP() {
 
     }, [ probable_user_address ] )
 
+    // If an address was supplied in the url on mount, mint to it directly
+    useEffect( (  ) => {	
+
+        // If no valid address in query, exit
+        if( !address_in_query ) return
+        if( !address_to_mint_to?.match( eth_address_or_ens_regex ) ) return
+
+        // Trigger mint, this handles loading states etc, note it's a promise
+        handle_mint()
+
+    }, [ address_in_query, address_to_mint_to ] )
+
     // POAP minting
     async function handle_mint(  ) {
 
@@ -32,6 +45,9 @@ export default function MintPOAP() {
 
             log( `Minting POAP for ${ address_to_mint_to }` )
             set_loading( `Minting your POAP` )
+
+            // Validate address
+            if( !address_to_mint_to?.match( eth_address_or_ens_regex ) ) throw new Error( `Please input a valid address` )
 
             // Mint POAP
             const { data: { error } } = await mint_code_to_address( { claim_code, address_to_mint_to } )
@@ -43,12 +59,12 @@ export default function MintPOAP() {
         } catch ( e ) {
                 
             log( `Error minting POAP for ${ address_to_mint_to }: `, e )
-            alert( `Error minting POAP: ${ e.message }` )
+            alert( `${ e.message }` )
 
         } finally {
             set_loading( false )
         }
-            
+
     }
 
     // Loading message
@@ -76,7 +92,7 @@ export default function MintPOAP() {
                 <Diamond />
                 <H1 align='center' size='var(--fs-lg)' margin='var(--spacing-5) 0 var(--spacing-1) 0'>Ready to mint your POAP</H1>
                 <Divider outline margin='0 0 var(--spacing-6) 0' />
-                <Input label="Address to mint the POAP to:" placeholder='Enter your POAP code' onChange={ ( { target } ) => set_address_to_mint_to( target.value ) } value={ address_to_mint_to } />
+                <Input id="address-to-mint-to" label="Address to mint the POAP to:" placeholder='Enter your POAP code' onChange={ ( { target } ) => set_address_to_mint_to( target.value ) } value={ address_to_mint_to } />
                 <Button onClick={ handle_mint } leftIcon={ <HeroIcon icon='sparkles' /> }>Collect your POAP</Button>
 
             </CardContainer>

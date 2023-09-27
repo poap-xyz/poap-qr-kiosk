@@ -19,7 +19,8 @@ const checkCodeStatus = async code => {
     // For testing codes, always reset on refresh
     if( code.includes( 'testing' ) ) {
 
-        // Get cached CI claim data
+        // Get cached CI claim data based on static claim data, defaults to false for non static drops
+        // this means testing codes are always mocked as available when called
         const [ claimed_code ] = await db.collection( `static_drop_claims` ).where( 'claim_code', '==', code ).get().then( dataFromSnap )
         
         // Claim data
@@ -83,11 +84,12 @@ async function claim_code_to_address( claim_code, drop_id, address, claim_secret
 /**
  * Update the local status of a claim code against the live status of the POAP api, it writes to the codes/{codeId} document
  * @param {String} code - The claim code to update
+ * @param {String} edit_marker - A string that will be added to the edit_marker field of the code document, this is used to prevent unneeded updates in the onUpdate( updateEventAvailableCodes ) function
  * @param {Object} cachedResponse - Provide a cached or mocked response that will be used instead of calling the api
  * @returns {Boolean} claimed - Whether the code is claimed or not 
 
  */
-async function updateCodeStatus( code, cachedResponse ) {
+async function updateCodeStatus( code, edit_marker, cachedResponse ) {
 
     if( !code ) return
 
@@ -101,7 +103,7 @@ async function updateCodeStatus( code, cachedResponse ) {
     if( error ) readableError = `${ error } - ${ message || Message }`
 
     // Formulate updates
-    const updates = { updated: Date.now() }
+    const updates = { updated: Date.now(), edit_marker: edit_marker || deleteField() }
 
     // If there was an error, append it to the code
     if( error || message || Message ) {
@@ -130,7 +132,7 @@ async function updateCodeStatus( code, cachedResponse ) {
         await db.collection( 'errors' ).doc( error ).set( {
             updated: Date.now(),
             strikes: increment( 1 ),
-            message: message || ''
+            message: message || '',
         }, { merge: true } ).catch( e => {
             // This might happen if the remote error code has weird characters
             console.error( 'Unable to write error ', e )
@@ -384,6 +386,78 @@ exports.refreshScannedCodesStatuses = async ( eventId, context ) => {
 
 }
 
+/**
+ * Grab the live statuses of all codes and recalculate which are available
+ * note that calling this on a running event might cause collisions as ( claimed == unknown ) codes will be reset too
+ * @param {String} event_id - The event ID for which to refresh the codes 
+ * @returns {Promise<Object>} response
+ * @returns {Number} response.codes_available - The amount of codes that are available
+ */
+const recalculate_available_codes = async event_id => {
+
+    try {
+
+        // Get all codes for this event
+        const codes = await db.collection( 'codes' ).where( 'event', '==', event_id ).get().then( dataFromSnap )
+        log( `Recalculating available codes for ${ event_id } with ${ codes.length } codes` )
+
+        // Update all code statuses with update marker recalculate_<timestamp> to prevent code availability in/de-crement, see updateEventAvailableCodes
+        const update_queue = codes.map( ( { uid } ) => function() {
+
+            const edit_marker = `recalculation_${ Date.now() }`
+            return updateCodeStatus( uid, edit_marker )
+
+        } )
+
+        // Throttle dependency
+        const { throttle_and_retry } = require( './helpers' )
+        const code_statuses = await throttle_and_retry( update_queue, 500, 'recalculate_available_codes', 2, 5 )
+
+        // Calculate the amount of available codes
+        const codes_available = code_statuses.reduce( ( acc, claimed ) => {
+            if( claimed == false ) return acc + 1
+            return acc
+        }, 0 )
+
+        // Update the event data to reflect available codes
+        log( `Updating event ${ event_id } with ${ codes_available } available codes: `, code_statuses )
+        await db.collection( 'events' ).doc( event_id ).set( { codesAvailable: codes_available, updated: Date.now(), updated_by: 'recalculate_available_codes' }, { merge: true } )
+
+        return { codes_available }
+        
+
+    } catch ( e ) {
+        log( `Error recalculating available codes: `, e )
+        return { error: e.message }
+    }
+
+}
+exports.recalculate_available_codes = recalculate_available_codes
+
+// Admin-facing recalculation function
+exports.recalculate_available_codes_admin = async ( { data } ) => {
+
+    try {
+
+        const { eventId, authToken } = data
+
+        log( `Recalculating available codes for ${ eventId } with token: ${ authToken }` )
+
+        // Check that the auth token matches the token of this event
+        const { authToken: valid_auth_token } = await db.collection( 'events' ).doc( eventId ).get().then( dataFromSnap )
+        if( valid_auth_token !== authToken ) throw new Error( `Invalid auth token` )
+        log( `Auth token matches` )
+
+        // Recalculate
+        return recalculate_available_codes( eventId )
+
+    } catch ( e ) {
+        log( `Error in recalculate_available_codes_admin available codes: `, e )
+        return { error: e.message }
+    }
+
+}
+
 /* ///////////////////////////////
 // Public event data updater
 // /////////////////////////////*/
@@ -392,29 +466,34 @@ exports.updateEventAvailableCodes = async function( change, context ) {
 
     const debug = false
     const { codeId } = context.params
-    if( debug ) console.log( `Running updateEventAvailableCodes verbosely for ${ codeId }` )
+    if( debug ) log( `Running updateEventAvailableCodes verbosely for ${ codeId }` )
 
     const { before, after } = change
 
     // Exit on deletion or creation
     // on creation the default state is claimed == unknown
     if( !after.exists || !before.exists ) {
-        if( debug ) console.log( `DEBUG: code ${ !before.exists ? 'created' : 'deleted' }, exiting` )
+        if( debug ) log( `DEBUG: code ${ !before.exists ? 'created' : 'deleted' }, exiting` )
         return
     }
 
     // Get the old and new data
-    const { claimed: prevClaimed } = before.data() || {}
-    const { event, claimed, amountOfRemoteStatusChecks } = after.data()
+    const { claimed: prevClaimed, edit_marker: edit_marker_before } = before.data() || {}
+    const { event, claimed, edit_marker: edit_marker_after } = after.data()
 
-    if( debug ) console.log( `DEBUG: code from ${ prevClaimed } to ${ claimed }` )
+    /* ///////////////////////////////
+    // Edit marker based gate conditions */
+
+    // If edit marker is "recalculation_x" and the marker has changed, exit
+    if( edit_marker_after?.includes( 'recalculation' ) && edit_marker_before !== edit_marker_after ) {
+        if( debug ) log( `DEBUG: edit marker changed from ${ edit_marker_before } to ${ edit_marker_after }, exiting` )
+        return
+    }
+
+    if( debug ) log( `DEBUG: code from ${ prevClaimed } to ${ claimed }` )
 
     // // Do nothing if no change
-    // if( prevClaimed === claimed ) return
-
-    // // If this is the first update, do not increment the public event data
-    // // the code entries are created blindly, and only afterwards are checked against the API
-    // if( amountOfRemoteStatusChecks <= 1 ) return
+    if( prevClaimed === claimed ) return
 
     // ----------------
     // Scenarios
@@ -430,13 +509,13 @@ exports.updateEventAvailableCodes = async function( change, context ) {
 
     // If code was unclaimed, and it is now claimed or possibly claimed (unknown status), increment the counter up
     if( false === prevClaimed && [ 'unknown', true ].includes( claimed ) ) {
-        if( debug ) console.log( `DEBUG: code was unclaimed, and it is now claimed or possibly claimed (unknown status), DECREMENT available` )
+        if( debug ) log( `DEBUG: code was unclaimed, and it is now claimed or possibly claimed (unknown status), DECREMENT available` )
         return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( -1 ), updated: Date.now(), updated_by: 'updateEventsAvailableCodes decrement' }, { merge: true } )
     }
 	
     // If the code was thought to be (possibly) claimed previously, but we now know it is unclaimed for sure, add an extra code to the event counter
     if( [ true, 'unknown' ].includes( prevClaimed ) && claimed === false ) {
-        if( debug ) console.log( `DEBUG: code was thought to be (possibly) claimed previously, but is unclaimed: INCREMENT available` )
+        if( debug ) log( `DEBUG: code was thought to be (possibly) claimed previously, but is unclaimed: INCREMENT available` )
         return db.collection( 'events' ).doc( event ).set( { codesAvailable: increment( 1 ), updated: Date.now(), updated_by: 'updateEventsAvailableCodes increment' }, { merge: true } )
     }	
 

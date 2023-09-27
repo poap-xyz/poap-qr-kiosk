@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-import { deleteEvent, trackEvent, health_check, listenToEventMeta } from '../../modules/firebase'
+import { deleteEvent, trackEvent, listenToEventMeta, recalculate_available_codes } from '../../modules/firebase'
 import { log, dev, wait } from '../../modules/helpers'
 
 
@@ -14,7 +14,7 @@ import { Grid, Row, Col } from '../atoms/Grid'
 import Loading from '../molecules/Loading'
 import Layout from '../molecules/Layout'
 
-import { CardContainer, Container, Text, H1, H2, Input, Button } from '@poap/poap-components'
+import { CardContainer, Container, Text, H1, H2, Input, Button, Divider } from '@poap/poap-components'
 import { useHealthCheck } from '../../hooks/health_check'
 
 // ///////////////////////////////
@@ -116,6 +116,33 @@ export default function EventAdmin( ) {
 
     }
 
+    // Recauculate available codes
+    async function recalculateAvailableCodes() {
+
+        try {
+
+            // Confirm that the user realises this can be dangerous
+            if( !confirm( `${ t( 'eventAdmin.confirmRecalculate' ) }` ) ) throw new Error( `${ t( 'eventAdmin.recalculationCancelled' ) }` )
+
+            // Set loading state
+            setLoading( `${ t( 'eventAdmin.recalculating' ) }` )
+
+            // Recalculate available codes
+            const { data: { error } } = await recalculate_available_codes( { eventId, authToken } )
+
+            if( error ) throw new Error( error )
+
+            alert( `${ t( 'eventAdmin.recalculationSuccess' ) }` )
+
+        } catch ( e ) {
+            log( `Error recalculating codes:`, e )
+            alert( `${ e.message }` )
+        } finally {
+            setLoading( false )
+        }
+
+    }
+
     // ///////////////////////////////
     // Render component
     // ///////////////////////////////
@@ -170,10 +197,13 @@ export default function EventAdmin( ) {
                     <Text>
                         { t( 'eventAdmin.amountScannedMessage', { codes, scans, claimed: codes - codesAvailable } ) }
                     </Text>
+
+                    <Divider />
+
                     <Grid>
                         <Row>
                             <Col size='3'>
-                                <H2 margin='0'>{ t( 'eventAdmin.adminDispenser.title' ) }</H2>
+                                <H2 margin='1rem 0 0'>{ t( 'eventAdmin.adminDispenser.title' ) }</H2>
                                 <Text>{ t( 'eventAdmin.adminDispenser.description' ) }</Text>
                             </Col>
                             <Col size='1'></Col>
@@ -195,9 +225,23 @@ export default function EventAdmin( ) {
                             </Col>
                         </Row>
 
+                        <Row margin='0 0 var(--spacing-6) 0'>
+                            <Col size='3' align='flex-start'>
+                                <H2 margin='0 0'>{ t( 'eventAdmin.editActions.editHeading' ) }</H2>
+                                <Text>{ t( 'eventAdmin.editActions.editDescription' ) }</Text>
+                                
+                                <Row>
+                                    <Button variation="white" margin="0 .5rem 0 0" onClick={ recalculateAvailableCodes }>{ t( 'eventAdmin.editActions.recalculate' ) }</Button>
+                                    <Button variation="white" margin="0 .5rem 0 0" href="https://poap.zendesk.com/">{ t( 'eventAdmin.editActions.help' ) }</Button>
+                                </Row>
+
+                            </Col>
+                            <Col size='1'></Col>
+                        </Row>
+
                         <Row>
                             <Col size='3' align='flex-start'>
-                                <H2 margin='0'>{ t( 'eventAdmin.deleteDispenser.subheading' ) }</H2>
+                                <H2 margin='1rem 0 0'>{ t( 'eventAdmin.deleteDispenser.subheading' ) }</H2>
                                 <Text>{ t( 'eventAdmin.deleteDispenser.description' ) }</Text>
                                 <Button variation='red' onClick={ safelyDeleteEvent }>{ t( 'eventAdmin.deleteDispenser.deleteBtn' ) }</Button>
 

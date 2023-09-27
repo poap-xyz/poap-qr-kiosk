@@ -247,6 +247,16 @@
     "deletionCancelled": "Deletion cancelled, your event still exists.",
     "errorDeleteDispenser": "Error Deleting POAP Kiosk: {{ message }}",
     "amountScannedMessage": "Your POAP Kiosk QR was scanned {{ scans }} times and {{ claimed }} out of {{ codes }} POAPs were claimed.",
+    "editActions": {
+      "editHeading": "Admin actions",
+      "editDescription": "Is something wrong with your Kiosk? Here you can recalculate the amount of available codes, and ask for help from the POAP team.",
+      "recalculate": "Recalculate available codes",
+      "help": "Ask for help"
+    },
+    "confirmRecalculate": "During the recalculation process, your POAP Kiosk will be unstable and might not work as expected.\n\nAre you sure you want to recalculate?",
+    "recalculationCancelled": "Recalculation was cancelled, nothing changed",
+    "recalculationSuccess": "Recalculation succeeded, your POAP Kiosk should be working as expected again.",
+    "recalculating": "Recalculating the amount of codes available for this Kiosk",
     "hero": {
       "subheading": {
         "reviewed": "⚠️ Your event is being reviewed",

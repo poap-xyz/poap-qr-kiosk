@@ -161,6 +161,36 @@ context( 'Claimer can view valid events', () => {
 
     } )
 
+    it( "Event 1: shows all codes available when admin requests code refresh", function() {
+
+        // Check that confirmation and completion are communicated
+        cy.on( 'window:confirm', response => {
+            expect( response ).to.contain( 'Are you sure' )
+        } )
+        cy.on( 'window:alert', response => {
+            expect( response ).to.contain( 'Recalculation succeeded' )
+        } )
+
+        // Open admin panel
+        cy.visit( this.event_1_secretlink )
+
+        // Click recalculation button
+        cy.contains( 'Recalculate available codes' ).click()
+
+        // Wait for recalculation to finish and the button to reappear
+        cy.contains( 'Recalculate available codes' )
+
+        // Visit public event link
+        cy.visit( this.event_1_publiclink )
+
+        // Accept disclaimer
+        cy.get( '#event-view-accept-disclaimer' ).click()
+
+        // Expect all codes to be available, note: the behaviour of a refresh causing all codes to be available is CI-only, in production it checks against the API
+        cy.contains( '0 of 2 codes' )
+
+    } )
+
     // /////////////////////////////
     // Second event
     // /////////////////////////////
