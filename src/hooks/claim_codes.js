@@ -23,7 +23,7 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
     const event = useEventOfChallenge( challenge_code )
 
     // Get the probable user address based on query andor local storage
-    const probable_user_address = useProbableMintAddress(  )
+    const { probable_user_address } = useProbableMintAddress(  )
 
     // Get claim code
     async function get_poap_link() {

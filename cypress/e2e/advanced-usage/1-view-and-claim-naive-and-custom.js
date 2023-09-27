@@ -155,7 +155,6 @@ context( 'Advanced functionality works', () => {
                 expect( redirect_url ).to.contain( eth_address )
 
             } )
-		
 
     } )
 
@@ -219,6 +218,7 @@ context( 'Advanced functionality works', () => {
 
                 // Check if POAP link supplies the expected user_address and base url
                 cy.contains( 'POAP link' ).invoke( 'text' ).then( text => {
+                    cy.log( `POAP link: `, text )
                     expect( text ).to.satisfy( base => base.includes( eth_address ) )
                     expect( text ).to.satisfy( base => base.includes( custom_base_url ) )
                 } )
