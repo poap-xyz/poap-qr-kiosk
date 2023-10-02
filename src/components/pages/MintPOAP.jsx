@@ -15,7 +15,7 @@ export default function MintPOAP() {
     const { probable_user_address, address_in_query } = useProbableMintAddress()
     const [ address_to_mint_to, set_address_to_mint_to ] = useState( probable_user_address )
     const [ loading, set_loading ] = useState( false )
-    const { claim_code } = useParams(  )
+    const { claim_code, challenge_code } = useParams(  )
     const [ claim_success, set_claim_success ] = useState(  )
 
     // If a probable address is found, and the user did not supply an address, set the address to state
@@ -50,7 +50,7 @@ export default function MintPOAP() {
             if( !address_to_mint_to?.match( eth_address_or_ens_regex ) ) throw new Error( `Please input a valid address` )
 
             // Mint POAP
-            const { data: { error } } = await mint_code_to_address( { claim_code, address_to_mint_to } )
+            const { data: { error } } = await mint_code_to_address( { claim_code, address_to_mint_to, challenge_code } )
             if( error ) throw new Error( error )
 
             // Success

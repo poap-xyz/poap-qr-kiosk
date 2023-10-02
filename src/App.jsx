@@ -50,7 +50,7 @@ export default function App( ) {
 
                     </Route>
 
-                    <Route path='/mint/:claim_code' element={ <MintPOAP /> } />
+                    <Route path='/mint/:claim_code/:challenge_code?' element={ <MintPOAP /> } />
 
                     <Route path='/static/'>
 

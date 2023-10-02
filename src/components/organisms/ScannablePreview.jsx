@@ -7,13 +7,13 @@ import Image from "../atoms/Image"
 import FlatCard from "../molecules/FlatCard"
 import EventQR from "./EventQR"
 
-export default function ScannablePreview( { event_id } ) {
+export default function ScannablePreview( { event_id, ...props } ) {
 
     const event = useEvent( event_id )
     const { t } = useTranslation()
 
 
-    return <Section>
+    return <Section { ...props }>
         <Container>
             <FlatCard padding="2rem" align="center" justify="center" width='650px'>
 

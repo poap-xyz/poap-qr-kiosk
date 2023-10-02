@@ -522,6 +522,47 @@ exports.updateEventAvailableCodes = async function( change, context ) {
 
 }
 
+/**
+ * Get an uncaimed claim code by event id
+ * Note: in the worst case scenario this will loop through all codes and will throw if none are unclaimed
+ * @param {String} event_id - The event ID for which to get a code 
+ * @returns {Promise<String>} code - The claim code
+ */
+const get_code_for_event = async event_id => {
+
+    let valid_code = undefined
+    while( !valid_code ) {
+
+        // Grab oldest available code
+        const [ oldestCode ] = await db.collection( 'codes' )
+            .where( 'event', '==', event_id )
+            .where( 'claimed', '==', false )
+            .orderBy( 'updated', 'asc' )
+            .limit( 1 ).get().then( dataFromSnap )
+
+        if( !oldestCode || !oldestCode.uid ) throw new Error( `No more POAPs available for event ${ event_id }!` )
+
+        // Mark oldest code as unknown status so other users don't get it suggested
+        log( `Marking code ${ oldestCode.uid } claimed status as ${ oldestCode.uid.includes( 'testing' ) ? true : 'unknown' }: `, oldestCode )
+        await db.collection( 'codes' ).doc( oldestCode.uid ).set( {
+            updated: Date.now(),
+            scanned: true,
+            claimed: oldestCode.uid.includes( 'testing' ) ? true : 'unknown'
+        }, { merge: true } )
+
+        // Check whether the code is actually valid
+        const code_meta = await checkCodeStatus( oldestCode.uid )
+
+        // If this code is confirmed available, send it to the user
+        if( code_meta && !code_meta?.claimed ) valid_code = oldestCode
+
+    }
+
+    return valid_code
+    
+}
+exports.get_code_for_event = get_code_for_event
+
 /* ///////////////////////////////
 // Get code based on valid challenge
 // /////////////////////////////*/
@@ -575,39 +616,16 @@ exports.get_code_by_challenge = async ( data, context ) => {
 
         /* ///////////////////////////////
 		// Get a verified available code */
-        let valid_code = undefined
-        while( !valid_code ) {
-
-            // Grab oldest available code
-            const [ oldestCode ] = await db.collection( 'codes' )
-                .where( 'event', '==', challenge.eventId )
-                .where( 'claimed', '==', false )
-                .orderBy( 'updated', 'asc' )
-                .limit( 1 ).get().then( dataFromSnap )
-
-            if( !oldestCode || !oldestCode.uid ) throw new Error( `No more POAPs available for event ${ challenge.eventId }!` )
-
-            // Mark oldest code as unknown status so other users don't get it suggested
-            log( `Marking code ${ oldestCode.uid } claimed status as ${ oldestCode.uid.includes( 'testing' ) ? true : 'unknown' }: `, oldestCode )
-            await db.collection( 'codes' ).doc( oldestCode.uid ).set( {
-                updated: Date.now(),
-                scanned: true,
-                claimed: oldestCode.uid.includes( 'testing' ) ? true : 'unknown'
-            }, { merge: true } )
-
-            // Check whether the code is actually valid
-            const code_meta = await checkCodeStatus( oldestCode.uid )
-
-            // If this code is confirmed available, send it to the user
-            if( code_meta && !code_meta?.claimed ) valid_code = oldestCode
-
-        }
+        let valid_code = await get_code_for_event( challenge.eventId )
 
         // Delete challenge to prevent reuse
         await db.collection( 'claim_challenges' ).doc( challenge_code ).delete()
 
         // In case of success, remove cached captcha
         if( captcha_response ) await db.collection( 'recaptcha' ).doc( captcha_response ).delete()
+
+        // Mark this code and challenge as linked, so if the code claim fails within-kiosk we can try to get a new code
+        await db.collection( 'code_issuances' ).doc( challenge_code ).set( { code: valid_code.uid, event_id: challenge.eventId, updated: Date.now(), updated_human: new Date().toString() } )
 
         // Return valid code to the frontend
         return valid_code.uid
