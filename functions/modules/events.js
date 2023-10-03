@@ -284,8 +284,8 @@ exports.registerEvent = async function( data, context ) {
         const { recalculate_available_codes } = require( './codes' )
         await recalculate_available_codes( id )
 
-        // Grab the latest drop data
-        await update_event_data_of_kiosk( id )
+        // Grab the latest drop data form api, adding the event_data is important because the publicEventData does not exist yet
+        await update_event_data_of_kiosk( id, event_data )
 
         // Send email to user with event and admin links
         const { sendEventAdminEmail } = require( './email' )

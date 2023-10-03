@@ -80,8 +80,7 @@ context( 'Claimer can view valid events', () => {
 
                 // Check if POAP link supplies one of the test codes
                 cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
-                    const [ base, code ] = text.split( '/claim/' )
-                    expect( code ).to.satisfy( code => check_if_code_is_expected( code, twoCodes ) )
+                    expect( text ).to.satisfy( mint_link => check_if_code_is_expected( mint_link, twoCodes ) )
                 } )
 
             } )
@@ -128,8 +127,7 @@ context( 'Claimer can view valid events', () => {
 
                 // Check if POAP link supplies one of the test codes
                 cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
-                    const [ base, code ] = text.split( '/claim/' )
-                    expect( code ).to.satisfy( coed => check_if_code_is_expected( code, twoCodes ) )
+                    expect( text ).to.satisfy( mint_link => check_if_code_is_expected( mint_link, twoCodes ) )
                 } )
 
             } )
@@ -245,8 +243,7 @@ context( 'Claimer can view valid events', () => {
 
                 // Check if POAP link supplies one of the test codes
                 cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
-                    const [ base, code ] = text.split( '/claim/' )
-                    expect( code ).to.satisfy( code => check_if_code_is_expected( code, fiveCodes ) )
+                    expect( text ).to.satisfy( mint_link => check_if_code_is_expected( mint_link, fiveCodes ) )
                 } )
 
             } )
