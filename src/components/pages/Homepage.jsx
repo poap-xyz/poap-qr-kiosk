@@ -14,6 +14,7 @@ import Layout from '../molecules/Layout'
 import { HeroImage, GirlQRImage, FooterImage, FullLine, StyledDutchBackgroundFullWidth, GroupPhoneImage, FooterDecorationLeft, FooterDecorationRight } from '../molecules/HomeDecorations'
 
 import { H2, H3, Text, Button, Container, LayeredText, DynamicTag, Divider, useViewport } from '@poap/poap-components'
+import { serveToast } from '../molecules/Toast'
 
 // ///////////////////////////////
 // Render component
@@ -96,6 +97,8 @@ export default function Homepage( ) {
                         <LayeredText label='?'/>
                     </DynamicTag>
                 </Row>
+
+                <Button onClick={ f => serveToast( { message: 'hello' } ) }>test toast</Button>
 
                 <Row justify='center' align={ isMobile ? 'center' : 'flex-start' } gap='56px'>
                     <Col align='center' width='360px' padding='var(--spacing-4)'>

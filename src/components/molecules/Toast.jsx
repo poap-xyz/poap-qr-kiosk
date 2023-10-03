@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 
 import { Expander, PoapIcon } from '@poap/poap-components'
 
-import CloseIcon from "../../../assets/icons/Icon_close_2.svg"
+import CloseIcon from "../../assets/icons/Icon_close.svg"
 
 // Export Toaster
 export { Toaster }
