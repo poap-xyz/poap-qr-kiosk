@@ -5,6 +5,7 @@
 const admin = require( '../../fixtures/admin-user' )
 const { get_claim_function_url } = require( '../../support/e2e' )
 const oneCode = require( `../../fixtures/one-correct-code${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
+const isLocal = Cypress.env( 'LOCAL' )
 const request_options = {
 
     headers: {
@@ -13,6 +14,7 @@ const request_options = {
     failOnStatusCode: false
 
 }
+
 
 async function extract_challenge_from_url ( response ) {
 
@@ -113,11 +115,8 @@ context( 'Claimer can view valid events with game', () => {
                 // Click retrieval link
                 cy.contains( 'a', 'Collect your' ).click()
 
-                // Wait for code retrieval
-                cy.url().should( 'satisfy', url => {
-                    const claim_frontends = [ 'collectors.poap.xyz', 'app.poap.xyz' ]
-                    return claim_frontends.some( claim_url => url.includes( claim_url ) )
-                } )
+                // Expect to be redirected to the claim page
+                cy.url().includes( `${ Cypress.env( 'VITE_publicUrl' ) }/#/mint/` )
 
                 // Check if POAP link supplies one of the test codes
                 cy.url().should( 'include', oneCode )
