@@ -3,9 +3,10 @@
 // /////////////////////////////*/
 
 const admin = require( '../../fixtures/admin-user' )
+const { ens_address } = require( "../../fixtures/mock-data" )
 const { get_claim_function_url } = require( '../../support/e2e' )
 const oneCode = require( `../../fixtures/one-correct-code${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
-const isLocal = Cypress.env( 'LOCAL' )
+
 const request_options = {
 
     headers: {
@@ -62,6 +63,9 @@ context( 'Claimer can view valid events with game', () => {
     } )
 
     it( 'Event 1: Successfully redirects to challenge link and play game', function( ) {
+        
+        // Store current
+        const start = Date.now()
 
         // Visit the public link with games
         const slow = 1000
@@ -116,13 +120,15 @@ context( 'Claimer can view valid events with game', () => {
                 cy.contains( 'a', 'Collect your' ).click()
 
                 // Expect to be redirected to the claim page
-                cy.url().includes( `${ Cypress.env( 'VITE_publicUrl' ) }/#/mint/` )
+                cy.url().should( 'include', `${ Cypress.env( 'VITE_publicUrl' ) }/#/mint/` )
 
                 // Check if POAP link supplies one of the test codes
                 cy.url().should( 'include', oneCode )
 
+                // Claim POAP
+                cy.mint_poap( ens_address, 'mint_w_game_one', start )
+
             } )
-		
 
     } )
 

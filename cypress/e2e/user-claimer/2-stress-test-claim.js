@@ -51,9 +51,9 @@ context( 'Claimer can view valid events', () => {
     it( 'Successfully claims 3 challenge links', function( ) {
 
         // Scan in rapid succession
-        cy.claim_challenge( this.challenge_one, `challenge_one`, start )
-        cy.claim_challenge( this.challenge_two, `challenge_two`, start )
-        cy.claim_challenge( this.challenge_three, `challenge_three`, start )
+        cy.mint_poap_from_challenge( this.challenge_one, `challenge_one`, start )
+        cy.mint_poap_from_challenge( this.challenge_two, `challenge_two`, start )
+        cy.mint_poap_from_challenge( this.challenge_three, `challenge_three`, start )
 
 
     } )

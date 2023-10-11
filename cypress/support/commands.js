@@ -183,3 +183,48 @@ Cypress.Commands.add( 'get_challenge_from_qr_public_auth', ( public_auth_string,
         .then( challenge => cy.wrap( challenge ).as( alias ) )
 
 } )
+
+// mint a POAP
+Cypress.Commands.add( 'mint_poap', ( address, alias, start ) => {
+
+    start = start || Date.now()
+
+    cy.url().then( ( url ) => {
+
+        cy.log( `[ ${ elapsed( start ) }s ] Minting POAP for: ${ alias } with link: ${ url }` )
+
+        // POAP minting screen
+        cy.contains( 'Ready to mint' )
+
+        // Input claim ENS
+        cy.get( '#address-to-mint-to' ).clear()
+        cy.get( '#address-to-mint-to' ).type( address )
+
+        // Successfully minting
+        cy.get( '#mint-poap-submit' ).click()
+
+        // Check that backend redirected us to the claim page
+        cy.contains( 'The minting process has started' )
+
+        cy.log( `[ ${ elapsed( start ) }s ] Succesfully minted POAP for: ${ alias } with: ${ address } at: ${ url }` )
+    } )
+} )
+
+// Scan a QR and mint the challenge
+Cypress.Commands.add( 'mint_poap_from_challenge', ( challenge_string, alias, start ) => {
+
+    start = start || Date.now()
+
+    cy.log( `[ ${ elapsed( start ) }s ] Event challenge: ${ challenge_string } for: ${ alias }` )
+
+    // Visit the challenge link
+    cy.visit( `/` )
+    cy.visit( `/claim/${ challenge_string }` )
+
+    // Check that backend redirected us to the claim page
+    cy.url().should( 'include', '/#/mint' )
+
+    // Claim POAP with ENS
+    cy.mint_poap( 'poap.eth', alias, start )
+
+} )

@@ -185,7 +185,7 @@ export default function ViewQR( ) {
     </CustomCssWrapper>
 
     // // No code qr error
-    if( iframeMode && !event?.public_auth?.expires ) return  <CustomCssWrapper>
+    if( iframeMode && !event?.public_auth?.expires ) return <CustomCssWrapper>
         <ExpiredQR status='noCodes'/>
     </CustomCssWrapper>
 

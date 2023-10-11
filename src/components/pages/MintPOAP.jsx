@@ -93,7 +93,7 @@ export default function MintPOAP() {
                 <H1 align='center' size='var(--fs-lg)' margin='var(--spacing-5) 0 var(--spacing-1) 0'>Ready to mint your POAP</H1>
                 <Divider outline margin='0 0 var(--spacing-6) 0' />
                 <Input id="address-to-mint-to" label="Address to mint the POAP to:" placeholder='Enter your POAP code' onChange={ ( { target } ) => set_address_to_mint_to( target.value ) } value={ address_to_mint_to } />
-                <Button onClick={ handle_mint } leftIcon={ <HeroIcon icon='sparkles' /> }>Collect your POAP</Button>
+                <Button id='mint-poap-submit' onClick={ handle_mint } leftIcon={ <HeroIcon icon='sparkles' /> }>Collect your POAP</Button>
 
             </CardContainer>
         </Container>

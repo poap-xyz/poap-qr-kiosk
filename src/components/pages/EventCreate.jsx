@@ -16,7 +16,7 @@ import Layout from '../molecules/Layout'
 import FormFooter from '../molecules/FormFooter'
 import { UploadButton } from '../molecules/UploadButton'
 
-import { Button, CardContainer, Container, H3, Input, Dropdown } from '@poap/poap-components'
+import { Button, CardContainer, Container, H3, Input, Dropdown, CardDashboard, useViewport } from '@poap/poap-components'
 
 // ///////////////////////////////
 // Render component
@@ -29,6 +29,9 @@ export default function Admin( ) {
     // i18next hook
     const { t } = useTranslation()
 
+    // Responsive helpers
+    const { isMobile } = useViewport()
+
     // ///////////////////////////////
     // State handling
     // ///////////////////////////////
@@ -36,6 +39,7 @@ export default function Admin( ) {
     const [ email, setEmail ] = useState( dev ? 'mentor@poap.io' : '' )
     const [ date, setDate ] = useState( '' )
     const [ name, setName ] = useState( '' )
+    const [ currentEvent, setEvent ] = useState( '' )
     const [ dropId, setDropId ] = useState( '' )
     const [ csv, setCsv ] = useState(  )
     const [ css, setCss ] = useState(  )
@@ -168,6 +172,7 @@ export default function Admin( ) {
                 log( `Computed event`, event )
                 setName( event.name )
                 setDropId( event.id )
+                setEvent( event )
                 if( event.expiry_date ) {
 
                     const [ day, monthName, year ] = event.expiry_date.split( '-' )
@@ -185,6 +190,8 @@ export default function Admin( ) {
                 if( !cancelled ) setCodes( undefined )
                 if( !cancelled ) setLoading( false )
                 if( !cancelled ) setCsv( undefined )
+                if( !cancelled ) setEvent( '' )
+                
                 return alert( e.message )
 
             }
@@ -277,6 +284,7 @@ export default function Admin( ) {
     const clearEvent = () => {
         setCodes( undefined )
         setCsv( undefined )
+        setEvent( '' )
     }
 
     // ///////////////////////////////
@@ -312,16 +320,27 @@ export default function Admin( ) {
             <Container width='750px'>
                 <br/>
                 <H3 align='center' size=''>{ t( 'eventCreate.title' ) }</H3>
-
-                <Grid margin={ developer_mode ? '0 auto var(--spacing-12) auto' : '' }>
-                    <Row>
-                        <Col size={ 1 }>
-                            <Input disabled label={ t( 'eventCreate.form.fileName.label' ) } value={ filename } />
+    
+                <Grid margin={ developer_mode ? '0 auto var(--spacing-12) auto' : '0 auto var(--spacing-12) auto' }>
+                    <Row margin='0 0 var(--spacing-4) 0'>
+                        <Col>
+                            <CardDashboard codes={ codes.length } event={ currentEvent } />
                         </Col>
+                        
+                    </Row>
+
+                    <Row gap='1rem'>
+                        <Col size={ 8 }>
+                            <Input disabled label={ t( 'eventCreate.form.fileName.label' ) } value={ filename } margin='0 0 var(--spacing-3) 0'/>
+                        </Col>
+                        { isMobile ? '' : <Col size={ 1 } justify='flex-end'>
+                            <Button size='small' onClick={ clearEvent } variation='white' tabIndex='0' margin='0 0 var(--spacing-4) 0'>Switch</Button>
+                        </Col> }
+
                     </Row>
                     <Row>
                         <Col size={ 1 }>
-                            <Input disabled label={ t( 'eventCreate.form.codesAmount.label' ) } value={ codes.length } width='66px'/>
+                            <Input disabled label={ t( 'eventCreate.form.codesAmount.label' ) } value={ codes.length } margin='0 0 var(--spacing-6) 0' width='66px'/>
                         </Col>
                     </Row>
                     <Input id="event-create-name" onChange={ ( { target } ) => setName( target.value ) } placeholder={ t( 'eventCreate.form.dropName.placeholder' ) } label={ t( 'eventCreate.form.dropName.label' ) } toolTip={ t( 'eventCreate.form.dropName.info' ) } value={ name } optional />
