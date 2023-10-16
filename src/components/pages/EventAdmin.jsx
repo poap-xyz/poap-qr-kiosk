@@ -9,12 +9,11 @@ import { log, dev, wait } from '../../modules/helpers'
 
 
 import Section from '../atoms/Section'
-import { Grid, Row, Col } from '../atoms/Grid'
 
 import Loading from '../molecules/Loading'
 import Layout from '../molecules/Layout'
 
-import { CardContainer, Container, Text, H1, H2, Input, Button, Divider } from '@poap/poap-components'
+import { CardContainer, Container, Text, H1, H2, H3,  Input, Button, Dropdown, CardDashboard, Divider, Grid, Row, Col } from '@poap/poap-components'
 import { useHealthCheck } from '../../hooks/health_check'
 
 // ///////////////////////////////
@@ -150,10 +149,15 @@ export default function EventAdmin( ) {
     return <Layout>
 
         <Section>
-            <Container>
-                
-                <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
+            <Container width='760px'>
+
+                <Grid>
                     <H1 align='center'>{ t( 'eventAdmin.title' ) }</H1>
+
+                    { /* Dashboard overview */ }
+                    <CardDashboard event={ event } codes={ event.codes.length }/>
+                </Grid>
+                <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
                     <Grid>
 
                         { /* Event meta loaded, codes available */ }

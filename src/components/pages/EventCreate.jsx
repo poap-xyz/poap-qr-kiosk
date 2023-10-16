@@ -316,7 +316,7 @@ export default function Admin( ) {
     // Main render
     return <Layout id="event-create-layout-container" hide_background={ codes } hide_footer onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 
-        <Section padding='var(--spacing-4) 0 var(--spacing-4) 0'>
+        <Section padding='var(--spacing-4) 0 var(--spacing-12) 0'>
             <Container width='750px'>
                 <br/>
                 <H3 align='center' size=''>{ t( 'eventCreate.title' ) }</H3>

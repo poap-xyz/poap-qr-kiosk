@@ -110,7 +110,7 @@ export function listenToEventMeta( eventId, cb ) {
     return onSnapshot( d, snap => {
 
         const data = snap.data()
-        log( `Retreived event metadata: `, data )
+        log( `Retrieved event metadata: `, data )
         if( cb ) cb( data )
         else console.error( `Missing callback` )
 
@@ -129,7 +129,7 @@ export function listen_to_claim_challenge( challenge_id, cb ) {
     return onSnapshot( d, snap => {
 
         const data = snap.data()
-        log( `Retreived claim challenge: `, data )
+        log( `Retrieved claim challenge: `, data )
         if( cb ) cb( data )
         else console.error( `Missing callback` )
 
@@ -151,7 +151,7 @@ export function listen_to_document( collection, document, cb ) {
     return onSnapshot( d, snap => {
 
         const data = snap.data()
-        log( `Retreived document ${ collection }/${ document }: `, data )
+        log( `Retrieved document ${ collection }/${ document }: `, data )
         if( cb ) cb( data )
         else console.error( `Missing callback` )
 
