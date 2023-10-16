@@ -151,11 +151,16 @@ export default function EventAdmin( ) {
         <Section>
             <Container width='760px'>
 
+                <H1 align='center'>{ t( 'eventAdmin.title' ) }</H1>
+                { /* Dashboard overview */ }
                 <Grid>
-                    <H1 align='center'>{ t( 'eventAdmin.title' ) }</H1>
-
-                    { /* Dashboard overview */ }
-                    <CardDashboard event={ event } codes={ event.codes.length }/>
+                    <Row margin='0 auto var(--spacing-6) auto'>
+                        <Col>
+                            <CardDashboard event={ event?.event } codes={ event.codes }/>   
+                        </Col>
+                    </Row>
+                    
+                    
                 </Grid>
                 <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
                     <Grid>
