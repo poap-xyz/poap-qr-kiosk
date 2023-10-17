@@ -1,24 +1,18 @@
 // V1 Dependencies
 const functions = require( "firebase-functions" )
 
-// V2 Dependencies
-const { onRequest, onCall } = require( "firebase-functions/v2/https" )
-
-// V2 Runtime config
-const protected_runtime = {
-    enforceAppCheck: true,
-}
-
 // V1 Runtime config
 const generousRuntime = {
     timeoutSeconds: 540,
     memory: '4GB'
 }
-const keepWarmRuntime = {
-    minInstances: 1,
-}
+
 const { log, dev } = require( './modules/helpers' )
 log( `⚠️ Verbose mode on, ${ dev ? '⚙️ dev mode on' : '🚀 production mode on' }` )
+
+// Runtime config
+const { v1_oncall, v2_oncall } = require( './runtime/on_call_runtimes' )
+const { v1_onrequest, v2_onrequest } = require( './runtime/on_request_runtimes' )
 
 // ///////////////////////////////
 // Code status managers
@@ -27,47 +21,47 @@ log( `⚠️ Verbose mode on, ${ dev ? '⚙️ dev mode on' : '🚀 production m
 const { refreshScannedCodesStatuses, refresh_unknown_and_unscanned_codes, getEventDataFromCode, check_code_status } = require( './modules/codes' )
 
 // Get event data of a code
-exports.getEventDataFromCode = functions.https.onCall( getEventDataFromCode )
+exports.getEventDataFromCode = v1_oncall( getEventDataFromCode )
 
 // Get all data of a code
-exports.check_code_status = functions.https.onCall( check_code_status )
+exports.check_code_status = v1_oncall( check_code_status )
 
 // Refresh all codes ( trigger from frontend on page mount of EventView )
-exports.requestManualCodeRefresh = functions.runWith( generousRuntime ).https.onCall( refresh_unknown_and_unscanned_codes )
+exports.requestManualCodeRefresh = v2_oncall( [ 'high_memory', 'long_timeout'  ], refresh_unknown_and_unscanned_codes )
 
 // Allow frontend to trigger updates for scanned codes, ( triggers on a periodic interval from EventView ), is lighter than requestManualCodeRefresh as it checks only scanned and claimed == true codes
-exports.refreshScannedCodesStatuses = functions.runWith( generousRuntime ).https.onCall( refreshScannedCodesStatuses )
+exports.refreshScannedCodesStatuses = v1_oncall( [ 'high_memory', 'long_timeout' ], refreshScannedCodesStatuses )
 
 // Directly mint a code to an address
 const { mint_code_to_address } = require( './modules/minting' )
-exports.mint_code_to_address = onCall( protected_runtime, mint_code_to_address )
+exports.mint_code_to_address = v2_oncall( [ 'high_memory', 'long_timeout' ], mint_code_to_address )
 
 // Let admins recalculate available codes
 const { recalculate_available_codes_admin } = require( './modules/codes' )
-exports.recalculate_available_codes = onCall( protected_runtime, recalculate_available_codes_admin )
+exports.recalculate_available_codes = v2_oncall( recalculate_available_codes_admin )
 
 // ///////////////////////////////
 // Event data
 // ///////////////////////////////
 
 const { registerEvent, deleteEvent, getUniqueOrganiserEmails } = require( './modules/events' )
-exports.registerEvent = functions.runWith( generousRuntime ).https.onCall( registerEvent )
-exports.deleteEvent = functions.https.onCall( deleteEvent )
+exports.registerEvent = v1_oncall( [ 'high_memory', 'long_timeout' ], registerEvent )
+exports.deleteEvent = v1_oncall( deleteEvent )
 
 // Email export to update event organisers
-exports.getUniqueOrganiserEmails = functions.https.onCall( getUniqueOrganiserEmails )
+exports.getUniqueOrganiserEmails = v1_oncall( getUniqueOrganiserEmails )
 
 // ///////////////////////////////
 // QR Middleware API
 // ///////////////////////////////
 const claimMiddleware = require( './modules/claim' )
-exports.claimMiddleware = onRequest( { cors: true, ...keepWarmRuntime }, claimMiddleware )
+exports.claimMiddleware = v2_onrequest( [ 'max_concurrency', 'keep_warm', 'memory' ], claimMiddleware )
 
 /* ///////////////////////////////
 // Kiosk generator middleware API
 // /////////////////////////////*/
 const generate_kiosk = require( './modules/kiosk_generator' )
-exports.generate_kiosk = functions.https.onRequest( generate_kiosk )
+exports.generate_kiosk = v1_onrequest( generate_kiosk )
 
 // ///////////////////////////////
 // Housekeeping
@@ -90,36 +84,36 @@ exports.updateEventAvailableCodes = functions.firestore.document( `codes/{codeId
 // Security
 // /////////////////////////////*/
 const { validateCallerDevice, validateCallerCaptcha } = require( './modules/security' )
-exports.validateCallerDevice = onCall( { ...protected_runtime, ...keepWarmRuntime,  }, validateCallerDevice )
-exports.validateCallerCaptcha = functions.https.onCall( validateCallerCaptcha )
+exports.validateCallerDevice = v2_oncall( [ 'high_memory', 'long_timeout', 'keep_warm' ], validateCallerDevice )
+exports.validateCallerCaptcha = v1_oncall( validateCallerCaptcha )
 
 // Log kiosk opens
 const { log_kiosk_open } = require( './modules/security' )
-exports.log_kiosk_open = onCall( protected_runtime, log_kiosk_open )
+exports.log_kiosk_open = v2_oncall( log_kiosk_open )
 
 /* ///////////////////////////////
 // Code claiming
 // /////////////////////////////*/
 const { get_code_by_challenge } = require( './modules/codes' )
-exports.get_code_by_challenge = functions.https.onCall( get_code_by_challenge )
+exports.get_code_by_challenge = v1_oncall( get_code_by_challenge )
 
 /* ///////////////////////////////
 // Health check
 // /////////////////////////////*/
 const { health_check, public_health_check } = require( './modules/health' )
-exports.health_check = functions.https.onCall( health_check )
-exports.ping = functions.https.onCall( ping => 'pong' )
+exports.health_check = v1_oncall( health_check )
+exports.ping = v2_oncall( [ 'max_concurrency' ],ping => 'pong' )
 
 /* ///////////////////////////////
 // Static QR system
 // /////////////////////////////*/
 const { claim_code_by_email } = require( './modules/codes' )
 const { export_emails_of_static_drop, create_static_drop, update_public_static_drop_data, delete_emails_of_static_drop } = require( './modules/static_qr_drop' )
-exports.export_emails_of_static_drop = functions.https.onCall( export_emails_of_static_drop )
-exports.delete_emails_of_static_drop = functions.https.onCall( delete_emails_of_static_drop )
-exports.claim_code_by_email = functions.https.onCall( claim_code_by_email )
-exports.create_static_drop = functions.https.onCall( create_static_drop )
+exports.export_emails_of_static_drop = v1_oncall( export_emails_of_static_drop )
+exports.delete_emails_of_static_drop = v1_oncall( delete_emails_of_static_drop )
+exports.claim_code_by_email = v1_oncall( claim_code_by_email )
+exports.create_static_drop = v1_oncall( create_static_drop )
 exports.update_public_static_drop_data = functions.firestore.document( `static_drop_private/{drop_id}` ).onWrite( update_public_static_drop_data )
 
 // Public health check
-exports.public_health_check = functions.https.onRequest( public_health_check )
+exports.public_health_check = v1_onrequest( public_health_check )

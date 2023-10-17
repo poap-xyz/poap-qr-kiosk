@@ -1,6 +1,9 @@
 const { log } = require( './helpers' )
 const { db } = require( './firebase' )
 
+let cached_api_health = false
+let cached_api_health_timestamp = 0
+const cached_api_health_duration_ms = 10_000
 const health_check = async () => {
 
     // Function dependencies
@@ -20,15 +23,21 @@ const health_check = async () => {
             return false
         } )
 
-        // Check the self-reported health of the POAP api
-        const api_health = await call_poap_endpoint( `/health-check` ).catch( e => {
-            log( e )
-            return false
-        } )
+        // if the cached api health is stale, check the api health
+        const api_health_cache_stale = Date.now() - cached_api_health_timestamp > cached_api_health_duration_ms
+        if( api_health_cache_stale ) {
+
+            // Check the self-reported health of the POAP api
+            cached_api_health = await call_poap_endpoint( `/health-check` ).catch( e => {
+                log( e )
+                return false
+            } )
+        }
+        
 
         // Update status object to reflect new data
-        status.healthy = !!( has_token && api_health )
-        status.poap_api = !!api_health
+        status.healthy = !!( has_token && cached_api_health )
+        status.poap_api = !!cached_api_health
         status.poap_api_auth = !!has_token
 
         return status
