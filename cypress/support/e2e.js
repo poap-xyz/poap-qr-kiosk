@@ -60,6 +60,8 @@ export const check_if_code_is_expected = ( code_to_check, expected_codes ) => {
 export async function extract_redirect_url ( response ) {
 
     cy.log( `Url from which to extract challenge: `, response )
+    // strinified response
+    console.log( `Response data: `, JSON.stringify( response ) )
     const { redirects } = response
     const [ redirect_url ] = redirects
     cy.log( `Redirect: `, redirect_url )

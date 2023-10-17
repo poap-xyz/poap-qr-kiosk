@@ -17,6 +17,7 @@ import FormFooter from '../molecules/FormFooter'
 import { UploadButton } from '../molecules/UploadButton'
 
 import { Button, CardContainer, Container, H3, Input, Dropdown, CardDashboard, useViewport } from '@poap/poap-components'
+import Modal from '../molecules/Modal'
 
 // ///////////////////////////////
 // Render component
@@ -328,6 +329,10 @@ export default function Admin( ) {
                         </Col>
                         
                     </Row>
+
+                    { /* <Modal showClose>
+                        <p>Modal is active</p>
+                    </Modal> */ }
 
                     <Row gap='1rem'>
                         <Col size={ 8 }>
