@@ -2,16 +2,8 @@
 // Event creation page
 // /////////////////////////////*/
 
-const admin = require( '../../fixtures/admin-user' )
-const { get_claim_function_url } = require( '../../support/e2e' )
-const request_options = {
+const { get_claim_function_url, request_options } = require( '../../support/e2e' )
 
-    headers: {
-        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
-    },
-    failOnStatusCode: false
-
-}
 
 async function extract_challenge_from_url ( response ) {
 

@@ -2,16 +2,9 @@
 // Event creation page
 // /////////////////////////////*/
 
-const admin = require( '../../fixtures/admin-user' )
-const { get_claim_function_url, check_if_code_is_expected } = require( '../../support/e2e' )
+const { get_claim_function_url, check_if_code_is_expected, request_options } = require( '../../support/e2e' )
 const twoCodes = require( `../../fixtures/two-correct-codes${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
 const fiveCodes = require( `../../fixtures/five-correct-codes${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
-const request_options = {
-    headers: {
-        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
-    },
-    failOnStatusCode: false
-}
 
 async function extract_challenge_from_url ( response ) {
 
@@ -152,7 +145,7 @@ context( 'Claimer can view valid events', () => {
                 // Visit the challenge link
                 cy.visit( `/claim/${ event_1_second_challenge }` )
 
-                // // Wait for code retreival
+                // Wait for code retreival
                 cy.contains( 'No more POAP' )
 
             } )

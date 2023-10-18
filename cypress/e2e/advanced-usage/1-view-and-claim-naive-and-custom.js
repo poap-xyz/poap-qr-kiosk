@@ -3,13 +3,7 @@
 // /////////////////////////////*/
 
 const { eth_address, custom_base_url } = require( '../../fixtures/mock-data' )
-const { get_claim_function_url, extract_challenge_from_url, extract_redirect_url } = require( '../../support/e2e' )
-const request_options = {
-    headers: {
-        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
-    },
-    failOnStatusCode: false
-}
+const { get_claim_function_url, extract_challenge_from_url, extract_redirect_url, request_options } = require( '../../support/e2e' )
 
 context( 'Advanced functionality works', () => {
 

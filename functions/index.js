@@ -27,7 +27,7 @@ exports.getEventDataFromCode = v1_oncall( getEventDataFromCode )
 exports.check_code_status = v1_oncall( check_code_status )
 
 // Refresh all codes ( trigger from frontend on page mount of EventView )
-exports.requestManualCodeRefresh = v2_oncall( [ 'high_memory', 'long_timeout'  ], refresh_unknown_and_unscanned_codes )
+exports.requestManualCodeRefresh = v1_oncall( [ 'high_memory', 'long_timeout'  ], refresh_unknown_and_unscanned_codes )
 
 // Allow frontend to trigger updates for scanned codes, ( triggers on a periodic interval from EventView ), is lighter than requestManualCodeRefresh as it checks only scanned and claimed == true codes
 exports.refreshScannedCodesStatuses = v1_oncall( [ 'high_memory', 'long_timeout' ], refreshScannedCodesStatuses )

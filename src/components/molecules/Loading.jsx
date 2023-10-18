@@ -13,7 +13,11 @@ const RiveWrapper = styled.div`
 
 export default function LoadingScreen( { children, message, generic_loading_styles, className, ...props } ) {
 
-    const { RiveComponent: POAPSpinner } = useRive( {
+    // If we are running in Cypress, disable the Rive aspect of the loading screen
+
+    const { RiveComponent: POAPSpinner } = window.Cypress ?  {
+        RiveComponent: () => <div className="cypress_loader" />
+    }  : useRive( {
         src: '/assets/rive/poap_logo_loader.riv',
         autoplay: true,
         stateMachines: 'statemachine_staticloader',

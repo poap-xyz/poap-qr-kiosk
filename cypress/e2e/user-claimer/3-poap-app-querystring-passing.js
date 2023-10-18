@@ -1,13 +1,3 @@
-const { eth_address } = require( "../../fixtures/mock-data" )
-const { get_claim_function_url, extract_challenge_from_url } = require( "../../support/e2e" )
-
-const request_options = {
-    headers: {
-        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
-    },
-    failOnStatusCode: false
-}
-
 context( "POAP-app provided user_address is passed along to mint link", () => {
 
     it( 'Creates event', function() {

@@ -16,6 +16,14 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 
+// Request configuration for in-cypress reqyests
+export const request_options = {
+    headers: {
+        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
+    },
+    failOnStatusCode: false
+}
+
 // Get the url of functions, to be used to call emulator or live url
 export const get_claim_function_url = () => {
 

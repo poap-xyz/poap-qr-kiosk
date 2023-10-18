@@ -35,7 +35,7 @@ export default function EventAdmin( ) {
     const clipboardAPI = !!navigator.clipboard
 
     // Data destructuring
-    const { scans=0, codesAvailable=0, codes=0 } = event
+    const { scans=0, codesAvailable=0, codes=0 } = event || {}
 
     // Health check
     useHealthCheck()

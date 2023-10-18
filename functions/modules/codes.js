@@ -1,6 +1,6 @@
 // Firebase interactors
 const { db, dataFromSnap, increment, deleteField } = require( './firebase' )
-const { log, isEmail, isWalletOrENS, isWallet } = require( './helpers' )
+const { log, isEmail, isWalletOrENS, isWallet, dev } = require( './helpers' )
 const { throw_on_failed_app_check } = require( './security' )
 
 
@@ -571,7 +571,7 @@ exports.get_code_by_challenge = async ( data, context ) => {
     try {
 
         const { challenge_code, captcha_response } = data
-        log( `Get code for challenge: ${ challenge_code }` )
+        log( `Get code for challenge: ${ challenge_code }, captcha-based: ${ !!captcha_response }` )
 
         // Grace period for completion, this is additional to the window of generate_new_event_public_auth
         let grace_period_in_ms = 1000 * 30
@@ -619,6 +619,7 @@ exports.get_code_by_challenge = async ( data, context ) => {
         let valid_code = await get_code_for_event( challenge.eventId )
 
         // Delete challenge to prevent reuse
+        if( dev ) log( `Deleting challenge ${ challenge_code }, supplying code: ${ valid_code.uid }` )
         await db.collection( 'claim_challenges' ).doc( challenge_code ).delete()
 
         // In case of success, remove cached captcha

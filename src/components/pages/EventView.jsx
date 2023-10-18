@@ -1,4 +1,4 @@
-let { VITE_publicUrl, VITE_useEmulator } = import.meta.env
+let { VITE_publicUrl } = import.meta.env
 
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next'
 
 import { requestManualCodeRefresh, refreshScannedCodesStatuses, trackEvent, get_emulator_function_call_url, log_kiosk_open } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
-log( `Frontend using live url ${ VITE_publicUrl } with ${ VITE_useEmulator ? 'emulator' : 'live backend' }` )
 
 import Section from '../atoms/Section'
 import Loading from '../molecules/Loading'
@@ -277,8 +276,6 @@ export default function ViewQR( ) {
         {  /* QR showing code */ }
         <ScannablePreview event_id={ internalEventId } />
         
-        { /* <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } /> */ }
-        { /* event && <Sidenote margin='0'>{ t( 'eventView.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> */ }
     
         <Network />
 
