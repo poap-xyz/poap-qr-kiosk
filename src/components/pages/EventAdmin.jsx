@@ -15,6 +15,7 @@ import Layout from '../molecules/Layout'
 
 import { CardContainer, Container, Text, H1, H2, H3,  Input, Button, Dropdown, CardDashboard, Divider, Grid, Row, Col } from '@poap/poap-components'
 import { useHealthCheck } from '../../hooks/health_check'
+import { MethodCard } from '../molecules/MethodCard'
 
 // ///////////////////////////////
 // Render component
@@ -146,131 +147,64 @@ export default function EventAdmin( ) {
     // Render component
     // ///////////////////////////////
     if( loading ) return <Loading message={ loading } />
-    return <Layout>
+    return <Layout hide_background>
 
-        <Section>
+        <Section margin='var(--spacing-4) 0 0 0'>
+            <Container>
+                { /* Heading */ }
+                <H1 weight='700'>Admin panel for</H1>
+            </Container>
             <Container width='760px'>
 
-                { /* Heading */ }
-                <H1 align='center'>{ t( 'eventAdmin.title' ) }</H1>
+                
+
                 
                 { /* Dashboard overview */ }
                 <Grid>
-                    <Row margin='0 auto var(--spacing-6) auto'>
+                    <Row margin='0 auto 20px auto'>
                         <Col>
                             <CardDashboard event={ event?.event } codes={ event.codes }/>   
                         </Col>
+                        
                     </Row>
+                    <Row>
+                        <Divider outline margin='0 auto 20px auto' />
+                    </Row>
+                    
+                    { /* Admin panel */ }
+                    <MethodCard event={ event } eventLink={ eventLink } adminLink={ adminLink } safelyDeleteEvent={ safelyDeleteEvent }/>
                 </Grid>
 
-                { /* Admin panel */ }
                 
 
+
+
                 { /* Old data */ }
-                <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
-                    <Grid>
 
-                        { /* Event meta loaded, codes available */ }
-                        { !event.loading && event.codes && <>
-                            <Row>
-                                <Col size='3'>
-                                    <Text>
-                                        { t( 'eventAdmin.hero.description.pre' ) }<b>{ t( 'eventAdmin.hero.description.bold' ) }</b>{ t( 'eventAdmin.hero.description.post' ) }
-                                    </Text>
-                                </Col>
-                                <Col size='1'></Col>
-                            </Row>
-                            <Row>
-                                <Col size='8'>
-                                    <Input
-                                        id='admin-eventlink-public' 
-                                        readOnly
-                                        onClick={ focus }
-                                        label={ t( 'eventAdmin.hero.input.label' ) }
-                                        value={ eventLink }
-                                        info={ t( 'eventAdmin.hero.input.info' ) }
-                                    />
-                                </Col>
-                                <Col size='4' direction='row' align='center'>
-                                    { clipboardAPI && <Button margin=".5em 0 0 .5rem" variation='white' onClick={ f => clipboard( eventLink ) }>{ t( 'eventAdmin.hero.distribute.clipboard' ) }</Button> }
-
-                                </Col>
-                            </Row>
-                            <Row margin='var(--spacing-2) 0 var(--spacing-4) 0'>
-                                <Col size='1' direction='row' align='center'>
-                                    <Button margin=".5em .5rem 0 0" onClick={ f => window.open( eventLink, '_self' ) }>{ t( 'eventAdmin.hero.distribute.button' ) }</Button>
-                                </Col>
-                            </Row>
-
-                        </> }
-                    </Grid>
-                </CardContainer>
 
                 <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
-                    <H1>{ t( 'eventAdmin.deleteDispenser.title' ) }</H1>
-                    <Text>
-                        { t( 'eventAdmin.amountScannedMessage', { codes, scans, claimed: codes - codesAvailable } ) }
-                    </Text>
-
-                    <Divider />
-
-                    <Grid>
-                        <Row>
-                            <Col size='3'>
-                                <H2 margin='1rem 0 0'>{ t( 'eventAdmin.adminDispenser.title' ) }</H2>
-                                <Text>{ t( 'eventAdmin.adminDispenser.description' ) }</Text>
-                            </Col>
-                            <Col size='1'></Col>
-                        </Row>
-                        <Row margin='0 0 var(--spacing-6) 0'>
-                            <Col size='8'>
-                                <Input
-                                    id='admin-eventlink-secret'
-                                    readOnly
-                                    onClick={ focus }
-                                    label={ t( 'eventAdmin.adminDispenser.input.label' ) }
-                                    value={ adminLink }
-                                    info={ t( 'eventAdmin.adminDispenser.input.info' ) }
-                                />
-                            </Col>
-                            <Col size='4' direction='row' align='center'>
-                                { clipboardAPI && <Button margin=".5em 0 0 .5rem" variation='white' onClick={ f => clipboard( adminLink ) }>{ t( 'eventAdmin.adminDispenser.clipboard' ) }</Button> }
-
-                            </Col>
-                        </Row>
-
-                        <Row margin='0 0 var(--spacing-6) 0'>
-                            <Col size='3' align='flex-start'>
-                                <H2 margin='0 0'>{ t( 'eventAdmin.editActions.editHeading' ) }</H2>
-                                <Text>{ t( 'eventAdmin.editActions.editDescription' ) }</Text>
+                    <Row margin='0 0 var(--spacing-6) 0'>
+                        <Col size='3' align='flex-start'>
+                            <H2 margin='0 0'>{ t( 'eventAdmin.editActions.editHeading' ) }</H2>
+                            <Text>{ t( 'eventAdmin.editActions.editDescription' ) }</Text>
                                 
-                                <Row>
-                                    <Button variation="white" margin="0 .5rem 0 0" onClick={ recalculateAvailableCodes }>{ t( 'eventAdmin.editActions.recalculate' ) }</Button>
-                                    <Button variation="white" margin="0 .5rem 0 0" href="https://poap.zendesk.com/">{ t( 'eventAdmin.editActions.help' ) }</Button>
-                                </Row>
+                            <Row>
+                                <Button variation="white" margin="0 .5rem 0 0" onClick={ recalculateAvailableCodes }>{ t( 'eventAdmin.editActions.recalculate' ) }</Button>
+                                <Button variation="white" margin="0 .5rem 0 0" href="https://poap.zendesk.com/">{ t( 'eventAdmin.editActions.help' ) }</Button>
+                            </Row>
 
-                            </Col>
-                            <Col size='1'></Col>
-                        </Row>
+                        </Col>
+                        <Col size='1'></Col>
+                    </Row>
 
-                        <Row>
-                            <Col size='3' align='flex-start'>
-                                <H2 margin='1rem 0 0'>{ t( 'eventAdmin.deleteDispenser.subheading' ) }</H2>
-                                <Text>{ t( 'eventAdmin.deleteDispenser.description' ) }</Text>
-                                <Button variation='red' onClick={ safelyDeleteEvent }>{ t( 'eventAdmin.deleteDispenser.deleteBtn' ) }</Button>
+                    { /* Event meta loaded, no codes available */ }
 
-                            </Col>
-                            <Col size='1'></Col>
-                        </Row>
-                        { /* Event meta loaded, no codes available */ }
+                    { !event.loading && !event.codes && <Section align='flex-start' margin="0">
 
-                        { !event.loading && !event.codes && <Section align='flex-start' margin="0">
+                        <Text>{ t( 'eventAdmin.hero.notavailable.title' ) }</Text>
+                        <Text>{ t( 'eventAdmin.hero.notavailable.description' ) }</Text>
+                    </Section> }
 
-                            <Text>{ t( 'eventAdmin.hero.notavailable.title' ) }</Text>
-                            <Text>{ t( 'eventAdmin.hero.notavailable.description' ) }</Text>
-                        </Section> }
-
-                    </Grid>
                 </CardContainer>
 
             </Container>
