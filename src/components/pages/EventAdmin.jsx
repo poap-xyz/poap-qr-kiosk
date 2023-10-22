@@ -64,6 +64,9 @@ export default function EventAdmin( ) {
     const adminLink = `${ dev ? 'http://localhost:3000' : VITE_publicUrl }/#/event/admin/${ eventId }/${ authToken }`
     const clipboardAPI = !!navigator.clipboard
 
+    const [ backgroundTaps, setBackgroundTaps ] = useState( 0 )
+    const developer_mode = backgroundTaps >= 20
+
     // Data destructuring
     const { scans=0, codesAvailable=0, codes=0 } = event || {}
 
@@ -184,7 +187,7 @@ export default function EventAdmin( ) {
     // Render component
     // ///////////////////////////////
     if( loading ) return <Loading message={ loading } />
-    return <Layout hide_background>
+    return <Layout hide_background  onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
 
         <Section margin='var(--spacing-4) 0 0 0'>
             <Container>
@@ -213,8 +216,7 @@ export default function EventAdmin( ) {
                 </Grid>
 
                 { /* Old data */ }
-
-                <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
+                { developer_mode && <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
                     <Row margin='0 0 var(--spacing-6) 0'>
                         <Col size='3' align='flex-start'>
                             <H2 margin='0 0'>{ t( 'eventAdmin.editActions.editHeading' ) }</H2>
@@ -237,7 +239,9 @@ export default function EventAdmin( ) {
                         <Text>{ t( 'eventAdmin.hero.notavailable.description' ) }</Text>
                     </Section> }
 
-                </CardContainer>
+                </CardContainer> }
+
+
 
             </Container>
         </Section>
