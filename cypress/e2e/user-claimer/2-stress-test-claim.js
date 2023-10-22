@@ -17,8 +17,8 @@ context( 'Claimer can view valid events', () => {
         cy.create_kiosk( 'five' )
 
         // Save the event and admin links for further use
-        cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'publiclink' ).then( f => cy.log( this.publiclink ) )
-        cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'secretlink' ).then( f => cy.log( this.secretlink ) )
+        cy.get( 'span#admin-eventlink-public' ).invoke( 'val' ).as( 'publiclink' ).then( f => cy.log( this.publiclink ) )
+        cy.get( 'span#admin-eventlink-secret' ).invoke( 'val' ).as( 'secretlink' ).then( f => cy.log( this.secretlink ) )
 
 
     } )

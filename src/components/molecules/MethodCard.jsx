@@ -221,7 +221,7 @@ export const MethodCard = ( { event, eventLink, adminLink, onDelete, ...props } 
                 <MetaCol>
                     <Text margin='0' size='14px' lineHeight='1' color='var(--neutral-500)'>Kiosk:&nbsp;</Text> 
                     <MetaLink onClick={ () => clipboard( eventLink, 'Kiosk link copied to clipboard' ) }>
-                        <ClippedContent margin='0' size='14px' weight='500'> { eventLink } </ClippedContent>
+                        <ClippedContent id='admin-eventlink-public' margin='0' size='14px' weight='500'> { eventLink } </ClippedContent>
                         <PoapIcon size='16' iconSet='outline' icon='DocumentDuplicateIcon' stroke='var(--neutral-500)' margin='0 3px 0 0' />
                     </MetaLink>
                 </MetaCol>
@@ -236,7 +236,7 @@ export const MethodCard = ( { event, eventLink, adminLink, onDelete, ...props } 
             <MetaRow>
                 <Text margin='0' size='14px' lineHeight='1' color='var(--neutral-500)'>Admin link:&nbsp;</Text>
                 <MetaLink onClick={ () => clipboard( adminLink, 'Admin link copied to clipboard' ) }>
-                    <ClippedContent margin='0' size='14px' weight='500'> { adminLink } </ClippedContent>
+                    <ClippedContent id='admin-eventlink-secret' margin='0' size='14px' weight='500'> { adminLink } </ClippedContent>
                     <PoapIcon size='16' iconSet='outline' icon='DocumentDuplicateIcon' stroke='var(--neutral-500)' margin='0 3px 0 0' />
                 </MetaLink>
             </MetaRow>
