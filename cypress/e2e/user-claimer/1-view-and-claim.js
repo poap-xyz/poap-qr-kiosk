@@ -30,8 +30,8 @@ context( 'Claimer can view valid events', () => {
         cy.create_kiosk( 'two' )
 
         // Save the event and admin links for further use
-        cy.get( 'span#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
-        cy.get( 'span#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+        cy.get( '#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
 
     } )
 
@@ -191,8 +191,8 @@ context( 'Claimer can view valid events', () => {
         cy.create_kiosk( 'five' )
 
         // Save the event and admin links for further use
-        cy.get( 'span#admin-eventlink-public' ).invoke( 'val' ).as( 'event_2_publiclink' ).then( f => cy.log( this.event_2_publiclink ) )
-        cy.get( 'span#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_2_secretlink' ).then( f => cy.log( this.event_2_secretlink ) )
+        cy.get( '#admin-eventlink-public' ).invoke( 'val' ).as( 'event_2_publiclink' ).then( f => cy.log( this.event_2_publiclink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_2_secretlink' ).then( f => cy.log( this.event_2_secretlink ) )
 
 
     } )
@@ -284,24 +284,19 @@ context( 'Claimer can view valid events', () => {
 
         } )
 
-		
-
     } )
-
 
     it( 'Event 1: Deletes the event when clicked', function() {
 
         cy.visit( this.event_1_secretlink )
 
-        cy.on( 'window:alert', response => {
-            expect( response ).to.contain( 'Deletion success' )
-        } )
-        cy.on( 'window:confirm', response => {
-            expect( response ).to.contain( 'Are you sure' )
-        } )
+        cy.get( '#deleteEvent' ).click()
 
-        cy.contains( 'Delete POAP Kiosk' ).click()
-        cy.contains( 'Delete POAP Kiosk' )
+        cy.contains( 'Delete Kiosk' )
+
+        cy.get( '#safelyDeleteButton' ).click()
+
+        cy.contains( 'Deletion success!' )
 
         cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
     } )
@@ -310,15 +305,13 @@ context( 'Claimer can view valid events', () => {
 
         cy.visit( this.event_2_secretlink )
 
-        cy.on( 'window:alert', response => {
-            expect( response ).to.contain( 'Deletion success' )
-        } )
-        cy.on( 'window:confirm', response => {
-            expect( response ).to.contain( 'Are you sure' )
-        } )
+        cy.get( '#deleteEvent' ).click()
 
-        cy.contains( 'Delete POAP Kiosk' ).click()
-        cy.contains( 'Delete POAP Kiosk' )
+        cy.contains( 'Delete Kiosk' )
+
+        cy.get( '#safelyDeleteButton' ).click()
+
+        cy.contains( 'Deletion success!' )
 
         cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
     } )

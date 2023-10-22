@@ -37,7 +37,7 @@ export default function Admin( ) {
     // State handling
     // ///////////////////////////////
 
-    const [ email, setEmail ] = useState( dev ? 'mentor@poap.io' : '' )
+    const [ email, setEmail ] = useState( dev ? 'ruben@poap.io' : '' )
     const [ date, setDate ] = useState( '' )
     const [ name, setName ] = useState( '' )
     const [ currentEvent, setEvent ] = useState( '' )

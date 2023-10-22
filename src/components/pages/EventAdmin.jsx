@@ -254,7 +254,7 @@ export default function EventAdmin( ) {
             <Divider plain style={ { color: 'var(--primary-200)', margin: 'auto 0 1rem 0' } } margin='0 0 1rem 0' />
             <ModalButtonContainer>
                 <Button variation='white' onClick={ handleCloseModal }>Cancel</Button>
-                <Button onClick={ safelyDeleteEvent }>Delete</Button>
+                <Button id='safelyDeleteButton' onClick={ safelyDeleteEvent }>Delete</Button>
 
             </ModalButtonContainer>
         </ModalSide>

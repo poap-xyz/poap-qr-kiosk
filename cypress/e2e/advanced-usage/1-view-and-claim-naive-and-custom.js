@@ -12,8 +12,8 @@ context( 'Advanced functionality works', () => {
         cy.create_kiosk( 'two', 'naive' )
 
         // Save the event and admin links for further use
-        cy.get( 'span#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
-        cy.get( 'span#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+        cy.get( '#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
 
     } )
 
@@ -25,6 +25,7 @@ context( 'Advanced functionality works', () => {
         // Spec parameters
         const iframe_qr_size = 256
 
+        cy.log( `publiclinkie: ${ this.event_1_publiclink }` )
         // Visit the public interface
         cy.visit( `${ this.event_1_publiclink }/iframe` )
 
@@ -156,15 +157,13 @@ context( 'Advanced functionality works', () => {
 
         cy.visit( this.event_1_secretlink )
 
-        cy.on( 'window:alert', response => {
-            expect( response ).to.contain( 'Deletion success' )
-        } )
-        cy.on( 'window:confirm', response => {
-            expect( response ).to.contain( 'Are you sure' )
-        } )
+        cy.get( '#deleteEvent' ).click()
 
-        cy.contains( 'Delete POAP Kiosk' ).click()
-        cy.contains( 'Delete POAP Kiosk' )
+        cy.contains( 'Delete Kiosk' )
+
+        cy.get( '#safelyDeleteButton' ).click()
+
+        cy.contains( 'Deletion success!' )
 
         cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
     } )
@@ -177,8 +176,8 @@ context( 'Advanced functionality works', () => {
         cy.create_kiosk( 'five', 'custombase' )
 
         // Save the event and admin links for further use
-        cy.get( 'span#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
-        cy.get( 'span#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+        cy.get( '#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
 
     } )
 
@@ -222,7 +221,5 @@ context( 'Advanced functionality works', () => {
 		
 
     } )
-
-
 
 } )

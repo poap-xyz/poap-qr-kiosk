@@ -1,4 +1,4 @@
-import { PoapIcon, H3, Text, Link, Number, useViewport } from '@poap/poap-components'
+import { PoapIcon, H3, Text, Link, Number, useViewport, Input } from '@poap/poap-components'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { formatDate, log } from '../../modules/helpers'
@@ -211,7 +211,7 @@ export const MethodCard = ( { event, eventLink, adminLink, onDelete, ...props } 
                             <PoapIcon size='16' icon='QRCodeIcon' color='var(--primary-500)' margin='0 3px 0 0' />
                             Open kiosk
                         </RoundedButton>
-                        <RoundedButton onClick={ onDelete } >
+                        <RoundedButton id='deleteEvent' onClick={ onDelete } >
                             <PoapIcon size='16' iconSet='outline' icon='TrashIcon' stroke='var(--primary-500)' />
                         </RoundedButton>
                     </ButtonContainer>
@@ -221,8 +221,9 @@ export const MethodCard = ( { event, eventLink, adminLink, onDelete, ...props } 
                 <MetaCol>
                     <Text margin='0' size='14px' lineHeight='1' color='var(--neutral-500)'>Kiosk:&nbsp;</Text> 
                     <MetaLink onClick={ () => clipboard( eventLink, 'Kiosk link copied to clipboard' ) }>
-                        <ClippedContent id='admin-eventlink-public' margin='0' size='14px' weight='500'> { eventLink } </ClippedContent>
+                        <ClippedContent margin='0' size='14px' weight='500'> { eventLink }</ClippedContent>
                         <PoapIcon size='16' iconSet='outline' icon='DocumentDuplicateIcon' stroke='var(--neutral-500)' margin='0 3px 0 0' />
+                        <input id='admin-eventlink-public' readOnly type='text' value={ eventLink } style={ { display: 'none' } }/>
                     </MetaLink>
                 </MetaCol>
                 { !isMobile && <MetaRow><Text margin='0' size='12px' lineHeight='1' color='var(--warning-400)'>&nbsp;|&nbsp;</Text></MetaRow> }
@@ -236,8 +237,9 @@ export const MethodCard = ( { event, eventLink, adminLink, onDelete, ...props } 
             <MetaRow>
                 <Text margin='0' size='14px' lineHeight='1' color='var(--neutral-500)'>Admin link:&nbsp;</Text>
                 <MetaLink onClick={ () => clipboard( adminLink, 'Admin link copied to clipboard' ) }>
-                    <ClippedContent id='admin-eventlink-secret' margin='0' size='14px' weight='500'> { adminLink } </ClippedContent>
+                    <ClippedContent margin='0' size='14px' weight='500'> { adminLink }</ClippedContent>
                     <PoapIcon size='16' iconSet='outline' icon='DocumentDuplicateIcon' stroke='var(--neutral-500)' margin='0 3px 0 0' />
+                    <input id='admin-eventlink-secret' readOnly type='text' value={ adminLink } style={ { display: 'none' } }/>
                 </MetaLink>
             </MetaRow>
             <WarningBox>
