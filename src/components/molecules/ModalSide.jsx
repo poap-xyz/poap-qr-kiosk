@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import ReactModal from 'react-modal'
 import styled from 'styled-components'
-import { serveToast } from '../molecules/Toast'
 
 import Section from '../atoms/Section'
 
@@ -11,7 +10,13 @@ export const CloseModal = styled( CloseIcon )`
     position: absolute;
     right: var(--spacing-3);
     top: var(--spacing-3);
+    width: 32px;
+    height: 32px;
     cursor: pointer;
+    color: var(--primary-400);
+    background-color: var(--primary-100);
+    border-radius: 50%;
+    padding: 5px;
 `
 
 export const StyledModal = styled( ReactModal )`
@@ -28,12 +33,14 @@ export const StyledModal = styled( ReactModal )`
 `
 
 const Modal = styled( Section )`
-    background: white;
-    box-shadow: 0px 0 5px 2px rgba( 0, 0, 0, .1);
     padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     width: 100%;
     max-width: 450px;
+    background: white;
+    box-shadow: 0px 0 5px 2px rgba( 0, 0, 0, .1);
 `
 
 export default ( { children, open = true, showClose = false, setIsOpen, ...props } ) => {

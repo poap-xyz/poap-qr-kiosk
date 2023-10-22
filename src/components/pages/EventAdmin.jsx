@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { deleteEvent, trackEvent, listenToEventMeta, recalculate_available_codes } from '../../modules/firebase'
 import { log, dev, wait } from '../../modules/helpers'
 
+import styled from 'styled-components'
 
 import Section from '../atoms/Section'
 
@@ -17,6 +18,33 @@ import { CardContainer, Container, Text, H1, H2, H3,  Input, Button, Dropdown, C
 import { useHealthCheck } from '../../hooks/health_check'
 import { MethodCard } from '../molecules/MethodCard'
 import ModalSide from '../molecules/ModalSide'
+import { serveToast } from '../molecules/toast'
+
+const DoodasH1 = styled( H1 )`
+    ::before {
+        content: url('/assets/decorations/doodas_set_1.svg'); 
+        position: absolute;
+        left: -8rem;
+        top: 2.5rem;
+        /* transform: translateY(-50%);  */
+        width: 20px; 
+        height: auto;
+        z-index: -1;
+    }
+`
+
+const ModalContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+`
+
+const ModalButtonContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+`
 
 // ///////////////////////////////
 // Render component
@@ -103,8 +131,6 @@ export default function EventAdmin( ) {
 
         try {
 
-            if( !confirm( `${ t( 'eventAdmin.confirmDeleteDispenser' ) }` ) ) throw new Error( `${ t( 'eventAdmin.deletionCancelled' ) }` )
-
             setLoading( `${ t( 'eventAdmin.setLoadingDispenser' ) }` )
             log( `Deleting event ${ eventId } using auth token ${ authToken }` )
             const { data: { error } } = await deleteEvent( {
@@ -114,12 +140,13 @@ export default function EventAdmin( ) {
 
             if( error ) throw new Error( error )
 
-            alert( `${ t( 'eventAdmin.succesDeleteDispenser' ) }` )
+            serveToast( { message: `${ t( 'eventAdmin.succesDeleteDispenser' ) }`, type: 'success' } )
             trackEvent( 'admin_event_deleted' )
             return navigate( '/' )
 
         } catch ( e ) {
-            alert( `${ t( 'eventAdmin.errorDeleteDispenser', { message: e.message } ) }` )
+
+            serveToast( { message: `${ t( 'eventAdmin.errorDeleteDispenser', { message: e.message } ) }`, type: 'error' } )
             log( `Error deleting Kiosk:`, e )
             setLoading( false )
         }
@@ -162,7 +189,7 @@ export default function EventAdmin( ) {
         <Section margin='var(--spacing-4) 0 0 0'>
             <Container>
                 { /* Heading */ }
-                <H1 weight='700'>Admin panel for</H1>
+                <DoodasH1 weight='700'>Admin panel for</DoodasH1>
             </Container>
             <Container width='760px'>
 
@@ -217,11 +244,19 @@ export default function EventAdmin( ) {
 
         { /* Modal for deleting kiosk */ }
         <ModalSide open={ isModalDestroy } setIsOpen={ setIsModalDestroy } showClose={ true }>
+            <ModalContainer>
+                <H3 color='var(--primary-600)' margin='0 0 var(--spacing-4) 0'>Delete Kiosk</H3>
+                <Divider margin='0 0 var(--spacing-7) 0'/>
+                <Text>Are you sure you want to delete this kiosk? You can create a new kiosk for this POAP after deletion. </Text>
 
-            <H3>Delete Kiosk</H3>
-            <Divider />
-            <Text>Are you sure you want to delete this kiosk? You can create a new kiosk for this POAP after deletion. </Text>
 
+            </ModalContainer>
+            <Divider plain style={ { color: 'var(--primary-200)', margin: 'auto 0 1rem 0' } } margin='0 0 1rem 0' />
+            <ModalButtonContainer>
+                <Button variation='white' onClick={ handleCloseModal }>Cancel</Button>
+                <Button onClick={ safelyDeleteEvent }>Delete</Button>
+
+            </ModalButtonContainer>
         </ModalSide>
     </Layout>
 
