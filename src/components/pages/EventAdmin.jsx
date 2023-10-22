@@ -16,6 +16,7 @@ import Layout from '../molecules/Layout'
 import { CardContainer, Container, Text, H1, H2, H3,  Input, Button, Dropdown, CardDashboard, Divider, Grid, Row, Col } from '@poap/poap-components'
 import { useHealthCheck } from '../../hooks/health_check'
 import { MethodCard } from '../molecules/MethodCard'
+import ModalSide from '../molecules/ModalSide'
 
 // ///////////////////////////////
 // Render component
@@ -40,7 +41,16 @@ export default function EventAdmin( ) {
 
     // Health check
     useHealthCheck()
-    
+
+    // Modal state
+    const [ isModalDestroy, setIsModalDestroy ] = useState( false )
+    function handleOpenModal() {
+        setIsModalDestroy( true )
+    }
+    function handleCloseModal() {
+        setIsModalDestroy( false )
+    }
+
     // ///////////////////////////////
     // State management
     // ///////////////////////////////
@@ -172,15 +182,10 @@ export default function EventAdmin( ) {
                     </Row>
                     
                     { /* Admin panel */ }
-                    <MethodCard event={ event } eventLink={ eventLink } adminLink={ adminLink } safelyDeleteEvent={ safelyDeleteEvent }/>
+                    <MethodCard event={ event } eventLink={ eventLink } adminLink={ adminLink } onDelete={ handleOpenModal }/>
                 </Grid>
 
-                
-
-
-
                 { /* Old data */ }
-
 
                 <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
                     <Row margin='0 0 var(--spacing-6) 0'>
@@ -209,6 +214,15 @@ export default function EventAdmin( ) {
 
             </Container>
         </Section>
+
+        { /* Modal for deleting kiosk */ }
+        <ModalSide open={ isModalDestroy } setIsOpen={ setIsModalDestroy } showClose={ true }>
+
+            <H3>Delete Kiosk</H3>
+            <Divider />
+            <Text>Are you sure you want to delete this kiosk? You can create a new kiosk for this POAP after deletion. </Text>
+
+        </ModalSide>
     </Layout>
 
 }

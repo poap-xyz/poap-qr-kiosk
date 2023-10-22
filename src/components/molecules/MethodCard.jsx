@@ -1,12 +1,13 @@
-import { PoapIcon, H3, Text, Number } from '@poap/poap-components'
+import { PoapIcon, H3, Text, Link, Number, useViewport } from '@poap/poap-components'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { log } from '../../modules/helpers'
+import { formatDate, log } from '../../modules/helpers'
 
 import { ReactComponent as SparklesIcon } from '../../assets/decorations/sparkles.svg'
 import { ReactComponent as ShareWarningIcon } from '../../assets/illustrations/share_warning.svg'
+import { clipboard } from '../../hooks/clipboard'
 
-export const HeroImage = styled( SparklesIcon )`
+export const SparklesImage = styled( SparklesIcon )`
     width: 16px;
     height: 16px;
 `
@@ -67,10 +68,11 @@ const HeaderBar = styled.div`
     flex-direction: column;
     gap: var(--spacing-1);
 
-    /* min height 48rem where rem = 10px */
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    @media (min-width: 768px) {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
 `
 
 const TextContainer = styled.div`
@@ -81,6 +83,7 @@ const TextContainer = styled.div`
 const MintContainer = styled.div`
     display: flex;
     align-items: center;
+    margin-bottom: var(--spacing-2);
 `
 
 const ButtonContainer = styled.div`
@@ -116,13 +119,75 @@ const WarningBox = styled.div`
     background: var(--neutral-100);
 `
 
+const EventMeta = styled.div`
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: .75rem;
+    @media (min-width: 768px) {
+        flex-direction: row;
+        align-items: center;
+    }
+`
+
+const MetaRow = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`
+
+const MetaCol = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`
+
+const MetaLink = styled( Link )`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    line-height: 1;
+    /* font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    width: 150px; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    color: var(--neutral-500);
+    line-height: 1; */
+    span {
+        text-decoration: none;
+    }
+`
+
+const ClippedContent = styled.span`
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    width: 150px; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    color: var(--neutral-500);
+    line-height: 1;
+`
 
 
-export const MethodCard = ( { event, eventLink, adminLink, safelyDeleteEvent, ...props } ) => {
 
+
+export const MethodCard = ( { event, eventLink, adminLink, onDelete, ...props } ) => {
+
+    const { isMobile, isTablet } = useViewport()
+    
     // if no event return null
     if( !event ) return
-    log( 'MethodCard event', event )
+
+    const expirationDate = formatDate( event.expires, 'nl-NL' )
 
     return <MethodContainer>
         <MethodLabel>
@@ -137,9 +202,8 @@ export const MethodCard = ( { event, eventLink, adminLink, safelyDeleteEvent, ..
                     <TextContainer>
                         <H3 margin='0 0 var(--spacing-2) 0'>Kiosk</H3>
                         <MintContainer>
-                            <HeroImage/>
+                            <SparklesImage/>
                             <Text margin='0'> Minted: <Number weight='700' color='var(--text-body-1)'>{ event.codes - event.codesAvailable }/{ event.codes }</Number></Text>
-                                
                         </MintContainer>
                     </TextContainer>
                     <ButtonContainer>
@@ -147,25 +211,43 @@ export const MethodCard = ( { event, eventLink, adminLink, safelyDeleteEvent, ..
                             <PoapIcon size='16' icon='QRCodeIcon' color='var(--primary-500)' margin='0 3px 0 0' />
                             Open kiosk
                         </RoundedButton>
-                        <RoundedButton onClick={ safelyDeleteEvent } >
-                            <PoapIcon size='16' icon='QRCodeIcon' color='var(--primary-500)' />
+                        <RoundedButton onClick={ onDelete } >
+                            <PoapIcon size='16' iconSet='outline' icon='TrashIcon' stroke='var(--primary-500)' />
                         </RoundedButton>
                     </ButtonContainer>
                 </HeaderBar>
             </ContentHeader>
+            <EventMeta>
+                <MetaCol>
+                    <Text margin='0' size='14px' lineHeight='1' color='var(--neutral-500)'>Kiosk:&nbsp;</Text> 
+                    <MetaLink onClick={ () => clipboard( eventLink, 'Kiosk link copied to clipboard' ) }>
+                        <ClippedContent margin='0' size='14px' weight='500'> { eventLink } </ClippedContent>
+                        <PoapIcon size='16' iconSet='outline' icon='DocumentDuplicateIcon' stroke='var(--neutral-500)' margin='0 3px 0 0' />
+                    </MetaLink>
+                </MetaCol>
+                { !isMobile && <MetaRow><Text margin='0' size='12px' lineHeight='1' color='var(--warning-400)'>&nbsp;|&nbsp;</Text></MetaRow> }
+                <MetaCol>
+                    <Text margin='0' size='14px' lineHeight='1' color='var(--neutral-500)'>Kiosk expiry date:&nbsp;<strong>{ expirationDate.toLocaleString() }</strong></Text>
 
-            <div>
-                { eventLink } | Kiosk expire date
-                <br/>
-                { adminLink }
-            </div>
+                </MetaCol>
+            </EventMeta>
+                
+
+            <MetaRow>
+                <Text margin='0' size='14px' lineHeight='1' color='var(--neutral-500)'>Admin link:&nbsp;</Text>
+                <MetaLink onClick={ () => clipboard( adminLink, 'Admin link copied to clipboard' ) }>
+                    <ClippedContent margin='0' size='14px' weight='500'> { adminLink } </ClippedContent>
+                    <PoapIcon size='16' iconSet='outline' icon='DocumentDuplicateIcon' stroke='var(--neutral-500)' margin='0 3px 0 0' />
+                </MetaLink>
+            </MetaRow>
             <WarningBox>
                 <ShareWarningIcon />
-                <Text margin='-.75rem 0 0 .5rem' color='var(--neutral-500)'>Never send your kiosk links to anyone!</Text>
+                <Text margin='-.75rem 0 0 .5rem' color='var(--neutral-500)' size='14px' lineHeight='1.3'>Never send your kiosk links to anyone!</Text>
             </WarningBox>
         </MethodContent>
         
     </ MethodContainer>
+    
 
 
 }
