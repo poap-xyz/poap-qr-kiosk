@@ -124,7 +124,7 @@ context( 'Claimer can view valid events', () => {
                 } )
 
             } )
-
+        
         // Visit public event link
         cy.visit( this.event_1_publiclink )
 
@@ -153,6 +153,9 @@ context( 'Claimer can view valid events', () => {
     } )
 
     it( "Event 1: shows all codes available when admin requests code refresh", function() {
+
+        // Visit admin event link
+        cy.visit( this.event_1_secretlink )
 
         // Open recalculation Modal and expect screen
         cy.contains( 'Refresh counter' ).click()
