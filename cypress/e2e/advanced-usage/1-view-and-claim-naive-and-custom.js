@@ -3,13 +3,7 @@
 // /////////////////////////////*/
 
 const { eth_address, custom_base_url } = require( '../../fixtures/mock-data' )
-const { get_claim_function_url, extract_challenge_from_url, extract_redirect_url } = require( '../../support/e2e' )
-const request_options = {
-    headers: {
-        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
-    },
-    failOnStatusCode: false
-}
+const { get_claim_function_url, extract_challenge_from_url, extract_redirect_url, request_options } = require( '../../support/e2e' )
 
 context( 'Advanced functionality works', () => {
 
@@ -18,8 +12,8 @@ context( 'Advanced functionality works', () => {
         cy.create_kiosk( 'two', 'naive' )
 
         // Save the event and admin links for further use
-        cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
-        cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+        cy.get( '#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
 
     } )
 
@@ -155,7 +149,6 @@ context( 'Advanced functionality works', () => {
                 expect( redirect_url ).to.contain( eth_address )
 
             } )
-		
 
     } )
 
@@ -163,15 +156,13 @@ context( 'Advanced functionality works', () => {
 
         cy.visit( this.event_1_secretlink )
 
-        cy.on( 'window:alert', response => {
-            expect( response ).to.contain( 'Deletion success' )
-        } )
-        cy.on( 'window:confirm', response => {
-            expect( response ).to.contain( 'Are you sure' )
-        } )
+        cy.get( '#deleteEvent' ).click()
 
-        cy.contains( 'Delete POAP Kiosk' ).click()
-        cy.contains( 'Delete POAP Kiosk' )
+        cy.contains( 'Delete Kiosk' )
+
+        cy.get( '#safelyDeleteButton' ).click()
+
+        cy.contains( 'Deletion success!' )
 
         cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
     } )
@@ -184,8 +175,8 @@ context( 'Advanced functionality works', () => {
         cy.create_kiosk( 'five', 'custombase' )
 
         // Save the event and admin links for further use
-        cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
-        cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+        cy.get( '#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
 
     } )
 
@@ -219,6 +210,7 @@ context( 'Advanced functionality works', () => {
 
                 // Check if POAP link supplies the expected user_address and base url
                 cy.contains( 'POAP link' ).invoke( 'text' ).then( text => {
+                    cy.log( `POAP link: `, text )
                     expect( text ).to.satisfy( base => base.includes( eth_address ) )
                     expect( text ).to.satisfy( base => base.includes( custom_base_url ) )
                 } )
@@ -228,7 +220,5 @@ context( 'Advanced functionality works', () => {
 		
 
     } )
-
-
 
 } )

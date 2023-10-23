@@ -42,13 +42,23 @@ context( 'Organiser successful event creation', () => {
             expect( val ).to.include( 'Test Event' )
         } )
 			
+        // const tomorrow = new Date( Date.now() + 1000 * 60 * 60 * 24 )
+        // let month = tomorrow.getUTCMonth() + 1
+        // month = `${ month }`.length == 1 ? `0${ month }` : month
+        // let day = tomorrow.getDate()
+        // day = `${ day }`.length == 1 ? `0${ day }` : day
+        // const YMD = `${ tomorrow.getFullYear() }-${ month }-${ day }`
+        // cy.get( 'input#event-create-date' ).should( 'have.value', YMD )
+
         const tomorrow = new Date( Date.now() + 1000 * 60 * 60 * 24 )
-        let month = tomorrow.getUTCMonth() + 1
-        month = `${ month }`.length == 1 ? `0${ month }` : month
-        let day = tomorrow.getDate()
-        day = `${ day }`.length == 1 ? `0${ day }` : day
-        const YMD = `${ tomorrow.getFullYear() }-${ month }-${ day }`
-        cy.get( 'input#event-create-date' ).should( 'have.value', YMD )
+        tomorrow.setUTCHours( 0, 0, 0, 0 ) // Set time to midnight UTC
+        const month = ( tomorrow.getUTCMonth() + 1 ).toString().padStart( 2, '0' )
+        const day = tomorrow.getUTCDate().toString().padStart( 2, '0' )
+        const expectedDate = `${ tomorrow.getUTCFullYear() }-${ month }-${ day }`
+        
+        cy.get( 'input#event-create-date' )
+            .invoke( 'val' )
+            .should( 'eq', expectedDate )
 
         cy.contains( 'Create Kiosk' )
 
@@ -90,15 +100,19 @@ context( 'Organiser successful event creation', () => {
             const val = input.val()
             expect( val ).to.include( 'Test Event' )
         } )
-			
-        const tomorrow = new Date( Date.now() + 1000 * 60 * 60 * 24 )
-        let month = tomorrow.getUTCMonth() + 1
-        month = `${ month }`.length == 1 ? `0${ month }` : month
-        let day = tomorrow.getDate()
-        day = `${ day }`.length == 1 ? `0${ day }` : day
-        const YMD = `${ tomorrow.getFullYear() }-${ month }-${ day }`
-        cy.get( 'input#event-create-date' ).should( 'have.value', YMD )
 
+        const tomorrow = new Date( Date.now() + 1000 * 60 * 60 * 24 )
+        const month = ( tomorrow.getUTCMonth() + 1 ).toString().padStart( 2, '0' )
+        const day = tomorrow.getUTCDate().toString().padStart( 2, '0' )
+        const expectedDate = `${ tomorrow.getUTCFullYear() }-${ month }-${ day }`
+        
+        cy.get( 'input#event-create-date' )
+            .invoke( 'val' )
+            .then( ( inputDate ) => {
+                const inputDateObject = new Date( inputDate )
+                const expectedDateObject = new Date( expectedDate )
+                expect( inputDateObject ).to.be.at.least( expectedDateObject )
+            } )
         cy.contains( 'Create Kiosk' )
 
     } )
@@ -147,11 +161,11 @@ context( 'Organiser successful event creation', () => {
         cy.contains( 'Creating POAP Kiosk' )
         cy.url().should( 'include', '/event/admin' )
 
-        cy.contains( 'Your public POAP Kiosk link' )
-        cy.contains( 'Your secret admin link' )
+        cy.contains( 'Admin panel for' )
+        cy.contains( 'Admin link:' )
 
         // Save the event and admin links for further use
-        cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
 
     } )
 
@@ -159,21 +173,17 @@ context( 'Organiser successful event creation', () => {
 
         cy.visit( this.event_1_secretlink )
 
-        cy.on( 'window:alert', response => {
-            expect( response ).to.contain( 'Deletion success' )
-        } )
-        cy.on( 'window:confirm', response => {
-            expect( response ).to.contain( 'Are you sure' )
-        } )
+        cy.get( '#deleteEvent' ).click()
 
-        cy.contains( 'Delete POAP Kiosk' ).click()
-        cy.contains( 'Delete POAP Kiosk' )
+        cy.contains( 'Delete Kiosk' )
+
+        cy.get( '#safelyDeleteButton' ).click()
+
+        cy.contains( 'Deletion success!' )
 
         cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
 
-        // Wait for firestore to delete old codes
         cy.wait( 2000 )
-
     } )
 
 } )

@@ -40,6 +40,10 @@ export const useProbableMintAddress = () => {
     }, [ url_address, cached_address ] )
 
     // Return the most probable address, where url gets priority over cache
-    return url_address || cached_address
+    return {
+        probable_user_address: url_address || cached_address,
+        address_in_query: url_address,
+        address_in_cache: cached_address
+    }
 
 }

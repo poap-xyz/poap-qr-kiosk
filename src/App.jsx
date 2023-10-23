@@ -18,6 +18,7 @@ import StaticCreate from './components/pages/StaticCreate'
 
 // Components
 import Loading from './components/molecules/Loading'
+import { Toaster } from 'react-hot-toast'
 
 // ///////////////////////////////
 // Render component
@@ -25,6 +26,8 @@ import Loading from './components/molecules/Loading'
 export default function App( ) {
 
     return <Theme>
+
+        <Toaster />
     
         <Router>
 
@@ -50,7 +53,7 @@ export default function App( ) {
 
                     </Route>
 
-                    <Route path='/mint/:claim_code' element={ <MintPOAP /> } />
+                    <Route path='/mint/:claim_code/:challenge_code?' element={ <MintPOAP /> } />
 
                     <Route path='/static/'>
 

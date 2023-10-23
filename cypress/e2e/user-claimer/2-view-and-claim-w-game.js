@@ -2,17 +2,9 @@
 // Event creation page
 // /////////////////////////////*/
 
-const admin = require( '../../fixtures/admin-user' )
-const { get_claim_function_url } = require( '../../support/e2e' )
+const { ens_address } = require( "../../fixtures/mock-data" )
+const { get_claim_function_url, request_options } = require( '../../support/e2e' )
 const oneCode = require( `../../fixtures/one-correct-code${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
-const request_options = {
-
-    headers: {
-        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
-    },
-    failOnStatusCode: false
-
-}
 
 async function extract_challenge_from_url ( response ) {
 
@@ -41,8 +33,8 @@ context( 'Claimer can view valid events with game', () => {
         cy.url().should( 'include', '/event/admin' )
 
         // Save the event and admin links for further use
-        cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
-        cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+        cy.get( '#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
 
     } )
 
@@ -60,6 +52,9 @@ context( 'Claimer can view valid events with game', () => {
     } )
 
     it( 'Event 1: Successfully redirects to challenge link and play game', function( ) {
+        
+        // Store current
+        const start = Date.now()
 
         // Visit the public link with games
         const slow = 1000
@@ -113,17 +108,16 @@ context( 'Claimer can view valid events with game', () => {
                 // Click retrieval link
                 cy.contains( 'a', 'Collect your' ).click()
 
-                // Wait for code retrieval
-                cy.url().should( 'satisfy', url => {
-                    const claim_frontends = [ 'collectors.poap.xyz', 'app.poap.xyz' ]
-                    return claim_frontends.some( claim_url => url.includes( claim_url ) )
-                } )
+                // Expect to be redirected to the claim page
+                cy.url().should( 'include', `/#/mint/` )
 
                 // Check if POAP link supplies one of the test codes
                 cy.url().should( 'include', oneCode )
 
+                // Claim POAP
+                cy.mint_poap( ens_address, 'mint_w_game_one', start )
+
             } )
-		
 
     } )
 
@@ -212,16 +206,15 @@ context( 'Claimer can view valid events with game', () => {
     it( 'Event 1: Deletes the event when clicked', function() {
 
         cy.visit( this.event_1_secretlink )
-
-        cy.on( 'window:alert', response => {
-            expect( response ).to.contain( 'Deletion success' )
-        } )
-        cy.on( 'window:confirm', response => {
-            expect( response ).to.contain( 'Are you sure' )
-        } )
-
-        cy.contains( 'Delete POAP Kiosk' ).click()
-
+    
+        cy.get( '#deleteEvent' ).click()
+    
+        cy.contains( 'Delete Kiosk' )
+    
+        cy.get( '#safelyDeleteButton' ).click()
+    
+        cy.contains( 'Deletion success!' )
+    
         cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
     } )
 

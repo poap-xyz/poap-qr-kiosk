@@ -60,6 +60,8 @@ export const export_emails_of_static_drop = httpsCallable( functions, 'export_em
 export const delete_emails_of_static_drop = httpsCallable( functions, 'delete_emails_of_static_drop' )
 export const create_static_drop = httpsCallable( functions, 'create_static_drop' )
 export const log_kiosk_open = httpsCallable( functions, 'log_kiosk_open' )
+export const mint_code_to_address = httpsCallable( functions, 'mint_code_to_address' )
+export const recalculate_available_codes = httpsCallable( functions, 'recalculate_available_codes' )
 
 // Offline functions emulator
 const functions_emulator_port = 5001
@@ -108,7 +110,7 @@ export function listenToEventMeta( eventId, cb ) {
     return onSnapshot( d, snap => {
 
         const data = snap.data()
-        log( `Retreived event metadata: `, data )
+        log( `Retrieved event metadata: `, data )
         if( cb ) cb( data )
         else console.error( `Missing callback` )
 
@@ -127,7 +129,7 @@ export function listen_to_claim_challenge( challenge_id, cb ) {
     return onSnapshot( d, snap => {
 
         const data = snap.data()
-        log( `Retreived claim challenge: `, data )
+        log( `Retrieved claim challenge: `, data )
         if( cb ) cb( data )
         else console.error( `Missing callback` )
 
@@ -149,7 +151,7 @@ export function listen_to_document( collection, document, cb ) {
     return onSnapshot( d, snap => {
 
         const data = snap.data()
-        log( `Retreived document ${ collection }/${ document }: `, data )
+        log( `Retrieved document ${ collection }/${ document }: `, data )
         if( cb ) cb( data )
         else console.error( `Missing callback` )
 
