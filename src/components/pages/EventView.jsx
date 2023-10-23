@@ -230,9 +230,7 @@ export default function ViewQR( ) {
                     <H3>{ t( 'eventView.codes.title' ) }</H3>
                     <Divider />
                     <br />
-                    { /* TODO discuss link */ }
                     <Text align='center'>{ t( 'eventView.codes.description' ) }</Text>
-                    { /* <Text onClick={ f => navigate( '/event/admin' ) } align='center'>{ t( 'eventView.codes.description' ) }</Text> */ }
 
                 </CardContainer>
             </Container>
