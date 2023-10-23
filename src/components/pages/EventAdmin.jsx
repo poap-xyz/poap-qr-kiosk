@@ -187,7 +187,7 @@ export default function EventAdmin( ) {
     // Render component
     // ///////////////////////////////
     if( loading ) return <Loading message={ loading } />
-    return <Layout hide_background  onClick={ () => setBackgroundTaps( backgroundTaps + 1 ) }>
+    return <Layout hide_background>
 
         <Section margin='var(--spacing-4) 0 0 0'>
             <Container>
@@ -195,9 +195,6 @@ export default function EventAdmin( ) {
                 <DoodasH1 weight='700'>Admin panel for</DoodasH1>
             </Container>
             <Container width='760px'>
-
-                
-
                 
                 { /* Dashboard overview */ }
                 <Grid>
@@ -216,7 +213,7 @@ export default function EventAdmin( ) {
                 </Grid>
 
                 { /* Old data */ }
-                { developer_mode && <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
+                <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
                     <Row margin='0 0 var(--spacing-6) 0'>
                         <Col size='3' align='flex-start'>
                             <H2 margin='0 0'>{ t( 'eventAdmin.editActions.editHeading' ) }</H2>
@@ -239,7 +236,7 @@ export default function EventAdmin( ) {
                         <Text>{ t( 'eventAdmin.hero.notavailable.description' ) }</Text>
                     </Section> }
 
-                </CardContainer> }
+                </CardContainer>
 
 
 

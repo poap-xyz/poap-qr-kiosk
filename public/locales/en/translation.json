@@ -243,7 +243,7 @@
     "loadingValidity": "Double-checking admin link validity",
     "invalidValidity": "Invalid event admin link",
     "confirmDeleteDispenser": "Are you sure you want to delete your POAP Kiosk?\n\nThis cannot be undone, but you can always create a new POAP Kiosk following the same simple steps you used to make this one.",
-    "succesDeleteDispenser": "Deletion success!\n\nYour POAP Kiosk has been deleted.\n\nClick OK to be redirected to the home page. ",
+    "succesDeleteDispenser": "Deletion success!\n\nYour POAP Kiosk has been deleted.",
     "deletionCancelled": "Deletion cancelled, your event still exists.",
     "errorDeleteDispenser": "Error Deleting POAP Kiosk: {{ message }}",
     "amountScannedMessage": "Your POAP Kiosk QR was scanned {{ scans }} times and {{ claimed }} out of {{ codes }} POAPs were claimed.",
