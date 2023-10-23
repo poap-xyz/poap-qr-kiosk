@@ -11,7 +11,13 @@ export const CloseModal = styled( CloseIcon )`
     position: absolute;
     right: var(--spacing-3);
     top: var(--spacing-3);
+    width: 32px;
+    height: 32px;
     cursor: pointer;
+    color: var(--primary-400);
+    background-color: var(--primary-100);
+    border-radius: 50%;
+    padding: 5px;
 `
 
 export const StyledModal = styled( ReactModal )`
@@ -30,29 +36,19 @@ export const StyledModal = styled( ReactModal )`
 const Modal = styled( Section )`
     background: white;
     box-shadow: 0px 0 5px 2px rgba( 0, 0, 0, .1);
-    padding: 2rem 0;
+    padding: 2rem;
+    border-radius: 24px;
 `
 
-export default ( { children, open = true, showClose = false, ...props } ) => {
-
-    // state for closebutton
-    const [ isOpen, setIsOpen ] = useState( open )
+export default ( { children, open = true, showClose = false, setIsOpen, ...props } ) => {
 
     // function to close modal
     const closeModal = () => setIsOpen( false )
 
     // useEffect for if the state of open is changed
-    // useEffect( () => setIsOpen( open ), [ open ] )
+    useEffect( () => setIsOpen( open ), [ open ] )
 
-    // const { connect, connectors, error, isLoading, pendingConnector } = useConnect()
-
-    // useEffect( () => {
-    //     if( !error ) return
-    //     log( `Connection error: `, error )
-    //     serveToast( { message: `Wallet error: ${ error.message }`, type: 'error' } )
-    // }, [ error ] )
-
-    return <StyledModal ariaHideApp={ false } style={ { overlay: { background: 'none' } } } isOpen={ isOpen } { ...props }>
+    return <StyledModal ariaHideApp={ false } style={ { overlay: { background: 'none' } } } isOpen={ open } { ...props }>
 
         <Modal width='500px' direction='column' align='center' justify='center'>
             { /* Close button for modal if showClose = true */ }

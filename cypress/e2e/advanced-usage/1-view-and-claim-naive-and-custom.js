@@ -25,7 +25,6 @@ context( 'Advanced functionality works', () => {
         // Spec parameters
         const iframe_qr_size = 256
 
-        cy.log( `publiclinkie: ${ this.event_1_publiclink }` )
         // Visit the public interface
         cy.visit( `${ this.event_1_publiclink }/iframe` )
 

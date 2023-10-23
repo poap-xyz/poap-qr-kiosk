@@ -3,22 +3,25 @@ const { VITE_publicUrl } = import.meta.env
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import { deleteEvent, trackEvent, listenToEventMeta, recalculate_available_codes } from '../../modules/firebase'
 import { log, dev, wait } from '../../modules/helpers'
 
-import styled from 'styled-components'
+import { useHealthCheck } from '../../hooks/health_check'
+
+import { CardContainer, Container, Text, H1, H2, H3,  Input, Button, Dropdown, CardDashboard, Divider, Grid, Row, Col } from '@poap/poap-components'
 
 import Section from '../atoms/Section'
 
 import Loading from '../molecules/Loading'
 import Layout from '../molecules/Layout'
-
-import { CardContainer, Container, Text, H1, H2, H3,  Input, Button, Dropdown, CardDashboard, Divider, Grid, Row, Col } from '@poap/poap-components'
-import { useHealthCheck } from '../../hooks/health_check'
 import { MethodCard } from '../molecules/MethodCard'
 import ModalSide from '../molecules/ModalSide'
+import Modal from '../molecules/Modal'
 import { serveToast } from '../molecules/Toast'
+
+import { ReactComponent as SearchImage } from '../../assets/illustrations/search_statistics.svg'
 
 const DoodasH1 = styled( H1 )`
     ::before {
@@ -44,6 +47,7 @@ const ModalButtonContainer = styled.div`
     flex-direction: row;
     justify-content: center;
     gap: 1rem;
+    margin-top: 1rem;
 `
 
 // ///////////////////////////////
@@ -73,12 +77,21 @@ export default function EventAdmin( ) {
     // Health check
     useHealthCheck()
 
-    // Modal state
+    // Modal Recalculate state
+    const [ isModalRecalculate, setIsModalRecalculate ] = useState( false )
+    function handleOpenModalRecalculate() {
+        setIsModalRecalculate( true )
+    }
+    function handleCloseModalRecalculate() {
+        setIsModalRecalculate( false )
+    }
+
+    // Modal Delete state
     const [ isModalDestroy, setIsModalDestroy ] = useState( false )
-    function handleOpenModal() {
+    function handleOpenModalDestroy() {
         setIsModalDestroy( true )
     }
-    function handleCloseModal() {
+    function handleCloseModalDestroy() {
         setIsModalDestroy( false )
     }
 
@@ -148,7 +161,7 @@ export default function EventAdmin( ) {
             return navigate( '/' )
 
         } catch ( e ) {
-
+            handleCloseModalDestroy()
             serveToast( { message: `${ t( 'eventAdmin.errorDeleteDispenser', { message: e.message } ) }`, type: 'error' } )
             log( `Error deleting Kiosk:`, e )
             setLoading( false )
@@ -161,9 +174,6 @@ export default function EventAdmin( ) {
 
         try {
 
-            // Confirm that the user realises this can be dangerous
-            if( !confirm( `${ t( 'eventAdmin.confirmRecalculate' ) }` ) ) throw new Error( `${ t( 'eventAdmin.recalculationCancelled' ) }` )
-
             // Set loading state
             setLoading( `${ t( 'eventAdmin.recalculating' ) }` )
 
@@ -172,12 +182,15 @@ export default function EventAdmin( ) {
 
             if( error ) throw new Error( error )
 
-            alert( `${ t( 'eventAdmin.recalculationSuccess' ) }` )
+            serveToast( { message: `${ t( 'eventAdmin.recalculationSuccess' ) }`, type: 'success' } )
 
         } catch ( e ) {
             log( `Error recalculating codes:`, e )
-            alert( `${ e.message }` )
+            serveToast( { message: e.message, type: 'error' } )
+            handleCloseModalRecalculate()
+
         } finally {
+            handleCloseModalRecalculate()
             setLoading( false )
         }
 
@@ -187,6 +200,18 @@ export default function EventAdmin( ) {
     // Render component
     // ///////////////////////////////
     if( loading ) return <Loading message={ loading } />
+
+    { /* Event meta loaded, no codes available */ }
+    if( !event.loading && !event.codes ) return <Layout hide_background > 
+        <Section align='flex-start' margin="0">
+
+            <Text>{ t( 'eventAdmin.hero.notavailable.title' ) }</Text>
+            <Text>{ t( 'eventAdmin.hero.notavailable.description' ) }</Text>
+
+        </Section> 
+    </Layout>
+        
+
     return <Layout hide_background>
 
         <Section margin='var(--spacing-4) 0 0 0'>
@@ -209,52 +234,43 @@ export default function EventAdmin( ) {
                     </Row>
                     
                     { /* Admin panel */ }
-                    <MethodCard event={ event } eventLink={ eventLink } adminLink={ adminLink } onDelete={ handleOpenModal }/>
+                    <MethodCard event={ event } eventLink={ eventLink } adminLink={ adminLink } onDelete={ handleOpenModalDestroy } onRecalculate={ handleOpenModalRecalculate }/>
                 </Grid>
-
-                { /* Old data */ }
-                <CardContainer width='900px' margin='0 auto var(--spacing-6) auto'>
-                    <Row margin='0 0 var(--spacing-6) 0'>
-                        <Col size='3' align='flex-start'>
-                            <H2 margin='0 0'>{ t( 'eventAdmin.editActions.editHeading' ) }</H2>
-                            <Text>{ t( 'eventAdmin.editActions.editDescription' ) }</Text>
-                                
-                            <Row>
-                                <Button variation="white" margin="0 .5rem 0 0" onClick={ recalculateAvailableCodes }>{ t( 'eventAdmin.editActions.recalculate' ) }</Button>
-                                <Button variation="white" margin="0 .5rem 0 0" href="https://poap.zendesk.com/">{ t( 'eventAdmin.editActions.help' ) }</Button>
-                            </Row>
-
-                        </Col>
-                        <Col size='1'></Col>
-                    </Row>
-
-                    { /* Event meta loaded, no codes available */ }
-
-                    { !event.loading && !event.codes && <Section align='flex-start' margin="0">
-
-                        <Text>{ t( 'eventAdmin.hero.notavailable.title' ) }</Text>
-                        <Text>{ t( 'eventAdmin.hero.notavailable.description' ) }</Text>
-                    </Section> }
-
-                </CardContainer>
-
-
 
             </Container>
         </Section>
 
         { /* Modal for deleting kiosk */ }
+        <ModalSide open={ isModalRecalculate } setIsOpen={ setIsModalRecalculate } showClose={ true }>
+
+            <ModalContainer>
+                <H3 color='var(--primary-600)' margin='0 0 var(--spacing-4) 0'>Refresh counter</H3>
+                <Divider margin='0 0 var(--spacing-7) 0'/>
+                <Text>Are you sure you want to refresh the mint link counter? Your POAP Kiosk will be unstable and might not work as expected.</Text>
+            </ModalContainer>
+
+            <Divider plain style={ { color: 'var(--primary-200)', margin: 'auto 0 1rem 0' } } />
+
+            <ModalButtonContainer>
+                <Button variation='white' onClick={ handleCloseModalRecalculate }>Cancel</Button>
+                <Button id='recalculateButton' onClick={ recalculateAvailableCodes }>Refresh</Button>
+            </ModalButtonContainer>
+
+        </ModalSide>
+
+        { /* Modal for deleting kiosk */ }
         <ModalSide open={ isModalDestroy } setIsOpen={ setIsModalDestroy } showClose={ true }>
+
             <ModalContainer>
                 <H3 color='var(--primary-600)' margin='0 0 var(--spacing-4) 0'>Delete Kiosk</H3>
                 <Divider margin='0 0 var(--spacing-7) 0'/>
                 <Text>Are you sure you want to delete this kiosk? You can create a new kiosk for this POAP after deletion. </Text>
-
-
             </ModalContainer>
-            <Divider plain style={ { color: 'var(--primary-200)', margin: 'auto 0 1rem 0' } } margin='0 0 1rem 0' />
+
+            <Divider plain style={ { color: 'var(--primary-200)', margin: 'auto 0 1rem 0' } } />
+
             <ModalButtonContainer>
-                <Button variation='white' onClick={ handleCloseModal }>Cancel</Button>
+                <Button variation='white' onClick={ handleCloseModalDestroy }>Cancel</Button>
                 <Button id='safelyDeleteButton' onClick={ safelyDeleteEvent }>Delete</Button>
 
             </ModalButtonContainer>

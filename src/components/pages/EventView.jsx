@@ -18,6 +18,7 @@ import { H1, H2, H3, Text, Button, Container, CardContainer, Divider } from '@po
 import { ReactComponent as UserConnected } from '../../assets/illustrations/user_connected.svg'
 import { ReactComponent as ManMoon } from '../../assets/illustrations/man_to_the_moon.svg'
 import { ReactComponent as NoCodes } from '../../assets/illustrations/no_more_codes.svg'
+
 import ExpiredQR from '../molecules/AnExpiredQR'
 import { useHealthCheck } from '../../hooks/health_check'
 import { useEvent, useEventTemplate } from '../../hooks/events'

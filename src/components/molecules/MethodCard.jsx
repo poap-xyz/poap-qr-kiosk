@@ -89,6 +89,7 @@ const MintContainer = styled.div`
 const ButtonContainer = styled.div`
     display: flex;
     gap: var(--spacing-1);
+    flex-wrap: wrap;
 `
 
 const RoundedButton = styled.button`
@@ -107,6 +108,7 @@ const RoundedButton = styled.button`
     line-height: var(--fs-3xs);
     color: var(--primary-500);
     cursor: pointer;
+    white-space: nowrap;
 `
 
 const WarningBox = styled.div`
@@ -180,7 +182,7 @@ const ClippedContent = styled.span`
 
 
 
-export const MethodCard = ( { event, eventLink, adminLink, onDelete, ...props } ) => {
+export const MethodCard = ( { event, eventLink, adminLink, onDelete, onRecalculate, ...props } ) => {
 
     const { isMobile, isTablet } = useViewport()
     
@@ -208,11 +210,16 @@ export const MethodCard = ( { event, eventLink, adminLink, onDelete, ...props } 
                     </TextContainer>
                     <ButtonContainer>
                         <RoundedButton onClick={ f => window.open( eventLink, '_blank' ) }>
-                            <PoapIcon size='16' icon='QRCodeIcon' color='var(--primary-500)' margin='0 3px 0 0' />
+                            <PoapIcon size='16' iconSet='outline' icon='ExternalLinkIcon' color='var(--primary-600)' margin='0 3px 0 0' />
                             Open kiosk
                         </RoundedButton>
+                        <RoundedButton onClick={ onRecalculate }>
+                            <PoapIcon size='16' iconSet='outline' icon='RefreshIcon' stroke='var(--primary-600)' margin='0 3px 0 0' />
+                            Refresh counter
+                        </RoundedButton>
                         <RoundedButton id='deleteEvent' onClick={ onDelete } >
-                            <PoapIcon size='16' iconSet='outline' icon='TrashIcon' stroke='var(--primary-500)' />
+                            <PoapIcon size='16' iconSet='outline' icon='TrashIcon' stroke='var(--primary-600)' margin='0 3px 0 0' />
+                            Delete kiosk
                         </RoundedButton>
                     </ButtonContainer>
                 </HeaderBar>
@@ -226,14 +233,12 @@ export const MethodCard = ( { event, eventLink, adminLink, onDelete, ...props } 
                         <input id='admin-eventlink-public' readOnly type='text' value={ eventLink } style={ { display: 'none' } }/>
                     </MetaLink>
                 </MetaCol>
-                { !isMobile && <MetaRow><Text margin='0' size='12px' lineHeight='1' color='var(--warning-400)'>&nbsp;|&nbsp;</Text></MetaRow> }
+                { !isMobile && <MetaRow><Text margin='0' size='12px' lineHeight='1' color='var(--warning-400)'>|</Text></MetaRow> }
                 <MetaCol>
                     <Text margin='0' size='14px' lineHeight='1' color='var(--neutral-500)'>Kiosk expiry date:&nbsp;<strong>{ expirationDate.toLocaleString() }</strong></Text>
 
                 </MetaCol>
             </EventMeta>
-                
-
             <MetaRow>
                 <Text margin='0' size='14px' lineHeight='1' color='var(--neutral-500)'>Admin link:&nbsp;</Text>
                 <MetaLink onClick={ () => clipboard( adminLink, 'Admin link copied to clipboard' ) }>

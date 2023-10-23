@@ -154,29 +154,15 @@ context( 'Claimer can view valid events', () => {
 
     it( "Event 1: shows all codes available when admin requests code refresh", function() {
 
-        // Check that confirmation and completion are communicated
-        cy.on( 'window:confirm', response => {
-            expect( response ).to.contain( 'Are you sure' )
-        } )
-        cy.on( 'window:alert', response => {
-            expect( response ).to.contain( 'Recalculation succeeded' )
-        } )
-
-        // Open admin panel
-        cy.visit( this.event_1_secretlink )
-
-        // cy.wait( 1000 )
-
-        // // Click the body 20x to show hidden fields
-        // for( let i = 0; i < 20; i++ ) {
-        //     cy.get( '#root' ).click()
-        // }
+        // Open recalculation Modal and expect screen
+        cy.contains( 'Refresh counter' ).click()
+        cy.contains( 'Are you sure you want to refresh ' )
 
         // Click recalculation button
-        cy.contains( 'Recalculate available codes' ).click()
+        cy.get( '#recalculateButton' ).click()
 
-        // Wait for recalculation to finish and the button to reappear
-        cy.contains( 'Recalculate available codes' )
+        // Wait for recalculation to finish and expect success message
+        cy.contains( 'Recalculation succeeded' )
 
         // Visit public event link
         cy.visit( this.event_1_publiclink )
