@@ -18,7 +18,7 @@ import { CardContainer, Container, Text, H1, H2, H3,  Input, Button, Dropdown, C
 import { useHealthCheck } from '../../hooks/health_check'
 import { MethodCard } from '../molecules/MethodCard'
 import ModalSide from '../molecules/ModalSide'
-import { serveToast } from '../molecules/toast'
+import { serveToast } from '../molecules/Toast'
 
 const DoodasH1 = styled( H1 )`
     ::before {

@@ -1,5 +1,5 @@
 import { trackEvent } from '../modules/firebase'
-import { serveToast } from '../components/molecules/toast'
+import { serveToast } from '../components/molecules/Toast'
 
 export const clipboard = async ( url, content ) => {
     try {
