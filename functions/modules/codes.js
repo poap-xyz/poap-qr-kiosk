@@ -29,9 +29,16 @@ const checkCodeStatus = async code => {
             secret: `mock_secret`,
             event: { 
                 id: `mock-event`,
+                start_date: dayMonthYear,
                 end_date: dayMonthYear, 
                 expiry_date: dayMonthYear, 
-                name: `Test Event ${ Math.random() }`
+                name: `Test Event ${ Math.random() }`,
+                // image_url: 'https://assets.poap.xyz/c292e0f2-270c-43b5-8531-43c5325c1d08.png',
+                location_type: 'VIRTUAL',
+                channel: 'POAP Kiosk',
+                platform: 'Cypress',
+                city: '',
+                country: '',
             }
         }
         log( `🤡 Mock code status data: `, mock_code_data )
