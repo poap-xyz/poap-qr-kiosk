@@ -113,7 +113,6 @@ export default function ComponentName( ) {
             { isMobile ? null : <StyledDutchBackgroundFullWidth/> }
         </Section>
 
-
         <Section before={ 3 } height='700px' justify='space-around' direction='row'>
             <Container>
 
