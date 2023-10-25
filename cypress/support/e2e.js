@@ -16,6 +16,14 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 
+// Request configuration for in-cypress reqyests
+export const request_options = {
+    headers: {
+        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
+    },
+    failOnStatusCode: false
+}
+
 // Get the url of functions, to be used to call emulator or live url
 export const get_claim_function_url = () => {
 
@@ -52,6 +60,8 @@ export const check_if_code_is_expected = ( code_to_check, expected_codes ) => {
 export async function extract_redirect_url ( response ) {
 
     cy.log( `Url from which to extract challenge: `, response )
+    // strinified response
+    console.log( `Response data: `, JSON.stringify( response ) )
     const { redirects } = response
     const [ redirect_url ] = redirects
     cy.log( `Redirect: `, redirect_url )

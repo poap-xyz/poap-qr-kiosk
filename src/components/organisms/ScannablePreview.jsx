@@ -7,13 +7,13 @@ import Image from "../atoms/Image"
 import FlatCard from "../molecules/FlatCard"
 import EventQR from "./EventQR"
 
-export default function ScannablePreview( { event_id } ) {
+export default function ScannablePreview( { event_id, ...props } ) {
 
     const event = useEvent( event_id )
     const { t } = useTranslation()
 
 
-    return <Section>
+    return <Section { ...props }>
         <Container>
             <FlatCard padding="2rem" align="center" justify="center" width='650px'>
 
@@ -25,7 +25,7 @@ export default function ScannablePreview( { event_id } ) {
 
                     <Col align="center" justify="center" size='3'>
                         <Image height="200px" width="200px" padding="0" margin="0" src={ event?.event?.image_url } />
-                        { event && <Sidenote align="center" margin='1rem 0'>{ t( 'eventView.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
+                        { event && <Sidenote align="center" margin='1rem 0 0'>{ t( 'eventView.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> }
                     </Col>
 
                 </Row>

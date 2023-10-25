@@ -9,13 +9,17 @@ export const useChallenge = challenge_code => {
 
     // Listen to challenge data
     useEffect( () => {
+
         if( !challenge_code ) return
         log( `Listening to challenge document for ${ challenge_code }` )
+
+        // Listen to challenge data
         return listen_to_claim_challenge( challenge_code, challenge_data => {
             log( `Challenge data received: `, challenge_data )
             if( challenge_data ) set_challenge( challenge_data )
             if( !challenge_data ) set_challenge( prev => ( { ...prev, deleted: true } ) )
         } )
+
     }, [ challenge_code ] )
 
     return challenge

@@ -1,0 +1,1 @@
+export const eth_address_or_ens_regex = /(0x[a-f0-9]{40})|(.*\.eth)/i

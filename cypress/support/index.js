@@ -21,7 +21,7 @@ import './commands'
 
 Cypress.on( 'uncaught:exception', ( err, runnable ) => {
 
-    Cypress.log( err )
+    cy.log( `🚨 Uncaught exception: `, err )
 
     // returning false here prevents Cypress from
     // failing the test

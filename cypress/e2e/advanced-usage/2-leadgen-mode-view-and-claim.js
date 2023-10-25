@@ -1,13 +1,8 @@
 const random_code = `testing-${ Math.random() }`
 const random_email = `${ Math.random() }@email.com`
 const invalid_code = `a_code_is_never_longer_than_6_characters-${ Math.random() }`
-const { get_claim_function_url } = require( '../../support/e2e' )
-const request_options = {
-    headers: {
-        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
-    },
-    failOnStatusCode: false
-}
+const { get_claim_function_url, request_options } = require( '../../support/e2e' )
+
 async function extract_challenge_from_url ( response ) {
 
     cy.log( `Url from which to extract challenge: `, response )
@@ -28,8 +23,8 @@ context( "User can view and claim through static QR url", function() {
         cy.create_kiosk( 'two', 'leadgen' )
 
         // Save the event and admin links for further use
-        cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
-        cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+        cy.get( '#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
 
     } )
 

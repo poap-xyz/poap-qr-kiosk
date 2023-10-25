@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { trackEvent } from '../../modules/firebase'
-import { dev, log } from '../../modules/helpers'
+import { dev, log, wait } from '../../modules/helpers'
 
 
 
@@ -68,6 +68,9 @@ export default function ClaimPOAP() {
 
         // User verified, and link available, forward
         if( !dev ) window.location.replace( claim_link )
+
+        // If we are in dev, wait for a few seconds so Cypress has time to check the link, and then forward
+        if( dev ) wait( 2000 ).then( f => window.location.replace( claim_link ) )
 
     }, [ claim_link, user_valid, has_game_challenge ] )
 

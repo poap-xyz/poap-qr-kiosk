@@ -1,4 +1,4 @@
-let { VITE_publicUrl, VITE_useEmulator } = import.meta.env
+let { VITE_publicUrl } = import.meta.env
 
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next'
 
 import { requestManualCodeRefresh, refreshScannedCodesStatuses, trackEvent, get_emulator_function_call_url, log_kiosk_open } from '../../modules/firebase'
 import { log, dev } from '../../modules/helpers'
-log( `Frontend using live url ${ VITE_publicUrl } with ${ VITE_useEmulator ? 'emulator' : 'live backend' }` )
 
 import Section from '../atoms/Section'
 import Loading from '../molecules/Loading'
@@ -19,6 +18,7 @@ import { H1, H2, H3, Text, Button, Container, CardContainer, Divider } from '@po
 import { ReactComponent as UserConnected } from '../../assets/illustrations/user_connected.svg'
 import { ReactComponent as ManMoon } from '../../assets/illustrations/man_to_the_moon.svg'
 import { ReactComponent as NoCodes } from '../../assets/illustrations/no_more_codes.svg'
+
 import ExpiredQR from '../molecules/AnExpiredQR'
 import { useHealthCheck } from '../../hooks/health_check'
 import { useEvent, useEventTemplate } from '../../hooks/events'
@@ -185,7 +185,7 @@ export default function ViewQR( ) {
     </CustomCssWrapper>
 
     // // No code qr error
-    if( iframeMode && !event?.public_auth?.expires ) return  <CustomCssWrapper>
+    if( iframeMode && !event?.public_auth?.expires ) return <CustomCssWrapper>
         <ExpiredQR status='noCodes'/>
     </CustomCssWrapper>
 
@@ -230,9 +230,7 @@ export default function ViewQR( ) {
                     <H3>{ t( 'eventView.codes.title' ) }</H3>
                     <Divider />
                     <br />
-                    { /* TODO discuss link */ }
                     <Text align='center'>{ t( 'eventView.codes.description' ) }</Text>
-                    { /* <Text onClick={ f => navigate( '/event/admin' ) } align='center'>{ t( 'eventView.codes.description' ) }</Text> */ }
 
                 </CardContainer>
             </Container>
@@ -277,8 +275,6 @@ export default function ViewQR( ) {
         {  /* QR showing code */ }
         <ScannablePreview event_id={ internalEventId } />
         
-        { /* <AnnotatedQR key={ internalEventId + event?.public_auth?.token } className='glow' data-code={ `${ internalEventId }/${ event?.public_auth?.token }` } value={ `${ VITE_publicUrl }/claim/${ internalEventId }/${ event?.public_auth?.token }${ force_appcheck_fail ? '?FORCE_INVALID_APPCHECK=true' : '' }` } /> */ }
-        { /* event && <Sidenote margin='0'>{ t( 'eventView.display.claimed', { available: event.codes - event.codesAvailable, codes: event.codes } ) }</Sidenote> */ }
     
         <Network />
 

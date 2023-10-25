@@ -2,16 +2,9 @@
 // Event creation page
 // /////////////////////////////*/
 
-const admin = require( '../../fixtures/admin-user' )
-const { get_claim_function_url, check_if_code_is_expected } = require( '../../support/e2e' )
+const { get_claim_function_url, check_if_code_is_expected, request_options } = require( '../../support/e2e' )
 const twoCodes = require( `../../fixtures/two-correct-codes${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
 const fiveCodes = require( `../../fixtures/five-correct-codes${ Cypress.env( 'LOCAL' ) ? '' : '-ci' }` )
-const request_options = {
-    headers: {
-        Host: new URL( Cypress.env( 'VITE_publicUrl' ) ).host
-    },
-    failOnStatusCode: false
-}
 
 async function extract_challenge_from_url ( response ) {
 
@@ -37,8 +30,8 @@ context( 'Claimer can view valid events', () => {
         cy.create_kiosk( 'two' )
 
         // Save the event and admin links for further use
-        cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
-        cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
+        cy.get( '#admin-eventlink-public' ).invoke( 'val' ).as( 'event_1_publiclink' ).then( f => cy.log( this.event_1_publiclink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_1_secretlink' ).then( f => cy.log( this.event_1_secretlink ) )
 
     } )
 
@@ -80,8 +73,7 @@ context( 'Claimer can view valid events', () => {
 
                 // Check if POAP link supplies one of the test codes
                 cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
-                    const [ base, code ] = text.split( '/claim/' )
-                    expect( code ).to.satisfy( code => check_if_code_is_expected( code, twoCodes ) )
+                    expect( text ).to.satisfy( mint_link => check_if_code_is_expected( mint_link, twoCodes ) )
                 } )
 
             } )
@@ -128,12 +120,11 @@ context( 'Claimer can view valid events', () => {
 
                 // Check if POAP link supplies one of the test codes
                 cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
-                    const [ base, code ] = text.split( '/claim/' )
-                    expect( code ).to.satisfy( coed => check_if_code_is_expected( code, twoCodes ) )
+                    expect( text ).to.satisfy( mint_link => check_if_code_is_expected( mint_link, twoCodes ) )
                 } )
 
             } )
-
+        
         // Visit public event link
         cy.visit( this.event_1_publiclink )
 
@@ -154,10 +145,36 @@ context( 'Claimer can view valid events', () => {
                 // Visit the challenge link
                 cy.visit( `/claim/${ event_1_second_challenge }` )
 
-                // // Wait for code retreival
+                // Wait for code retreival
                 cy.contains( 'No more POAP' )
 
             } )
+
+    } )
+
+    it( "Event 1: shows all codes available when admin requests code refresh", function() {
+
+        // Visit admin event link
+        cy.visit( this.event_1_secretlink )
+
+        // Open recalculation Modal and expect screen
+        cy.contains( 'Refresh counter' ).click()
+        cy.contains( 'Are you sure you want to refresh ' )
+
+        // Click recalculation button
+        cy.get( '#recalculateButton' ).click()
+
+        // Wait for recalculation to finish and expect success message
+        cy.contains( 'Recalculation succeeded' )
+
+        // Visit public event link
+        cy.visit( this.event_1_publiclink )
+
+        // Accept disclaimer
+        cy.get( '#event-view-accept-disclaimer' ).click()
+
+        // Expect all codes to be available, note: the behaviour of a refresh causing all codes to be available is CI-only, in production it checks against the API
+        cy.contains( '0 of 2 codes' )
 
     } )
 
@@ -170,8 +187,8 @@ context( 'Claimer can view valid events', () => {
         cy.create_kiosk( 'five' )
 
         // Save the event and admin links for further use
-        cy.get( 'input#admin-eventlink-public' ).invoke( 'val' ).as( 'event_2_publiclink' ).then( f => cy.log( this.event_2_publiclink ) )
-        cy.get( 'input#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_2_secretlink' ).then( f => cy.log( this.event_2_secretlink ) )
+        cy.get( '#admin-eventlink-public' ).invoke( 'val' ).as( 'event_2_publiclink' ).then( f => cy.log( this.event_2_publiclink ) )
+        cy.get( '#admin-eventlink-secret' ).invoke( 'val' ).as( 'event_2_secretlink' ).then( f => cy.log( this.event_2_secretlink ) )
 
 
     } )
@@ -215,8 +232,7 @@ context( 'Claimer can view valid events', () => {
 
                 // Check if POAP link supplies one of the test codes
                 cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
-                    const [ base, code ] = text.split( '/claim/' )
-                    expect( code ).to.satisfy( code => check_if_code_is_expected( code, fiveCodes ) )
+                    expect( text ).to.satisfy( mint_link => check_if_code_is_expected( mint_link, fiveCodes ) )
                 } )
 
             } )
@@ -264,24 +280,19 @@ context( 'Claimer can view valid events', () => {
 
         } )
 
-		
-
     } )
-
 
     it( 'Event 1: Deletes the event when clicked', function() {
 
         cy.visit( this.event_1_secretlink )
 
-        cy.on( 'window:alert', response => {
-            expect( response ).to.contain( 'Deletion success' )
-        } )
-        cy.on( 'window:confirm', response => {
-            expect( response ).to.contain( 'Are you sure' )
-        } )
+        cy.get( '#deleteEvent' ).click()
 
-        cy.contains( 'Delete POAP Kiosk' ).click()
-        cy.contains( 'Delete POAP Kiosk' )
+        cy.contains( 'Delete Kiosk' )
+
+        cy.get( '#safelyDeleteButton' ).click()
+
+        cy.contains( 'Deletion success!' )
 
         cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
     } )
@@ -290,15 +301,13 @@ context( 'Claimer can view valid events', () => {
 
         cy.visit( this.event_2_secretlink )
 
-        cy.on( 'window:alert', response => {
-            expect( response ).to.contain( 'Deletion success' )
-        } )
-        cy.on( 'window:confirm', response => {
-            expect( response ).to.contain( 'Are you sure' )
-        } )
+        cy.get( '#deleteEvent' ).click()
 
-        cy.contains( 'Delete POAP Kiosk' ).click()
-        cy.contains( 'Delete POAP Kiosk' )
+        cy.contains( 'Delete Kiosk' )
+
+        cy.get( '#safelyDeleteButton' ).click()
+
+        cy.contains( 'Deletion success!' )
 
         cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
     } )

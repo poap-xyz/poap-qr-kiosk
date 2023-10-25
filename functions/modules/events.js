@@ -219,6 +219,8 @@ exports.update_event_data_of_kiosk = update_event_data_of_kiosk
 
 exports.registerEvent = async function( data, context ) {
 
+    let new_event_id = undefined
+
     try {
 
         // Function dependencies
@@ -270,12 +272,20 @@ exports.registerEvent = async function( data, context ) {
         }
         log( `Creating event: `, event_data )
         const { id } = await db.collection( 'events' ).add( event_data )
+        new_event_id = id
 
         // Format codes to the helpers understand the format
         const formatted_codes = codes.map( qr_hash => ( { qr_hash, claimed: 'unknown' } ) )
 
         // Check code validity and write to firestore
         await validate_and_write_event_codes( id, date, formatted_codes )
+
+        // Calculate publicly available codes for this new event
+        const { recalculate_available_codes } = require( './codes' )
+        await recalculate_available_codes( id )
+
+        // Grab the latest drop data form api, adding the event_data is important because the publicEventData does not exist yet
+        await update_event_data_of_kiosk( id, event_data )
 
         // Send email to user with event and admin links
         const { sendEventAdminEmail } = require( './email' )
@@ -296,9 +306,6 @@ exports.registerEvent = async function( data, context ) {
             updated_human: new Date().toString()
         }, { merge: true } )
 
-        // Grab the latest drop data
-        await update_event_data_of_kiosk( id )
-
         // Return event data
         return {
             id,
@@ -310,6 +317,14 @@ exports.registerEvent = async function( data, context ) {
     } catch ( e ) {
 
         console.error( 'createEvent error ', e )
+
+        // If we created an event, delete it and its codes
+        if( new_event_id ) {
+            const { db } = require( './firebase' )
+            await db.collection( 'events' ).doc( new_event_id ).delete().catch( e => log( `Error deleting event data for ${ new_event_id }`, e ) )
+            await db.collection( 'codes' ).where( 'event', '==', new_event_id ).get().then( snap => snap.map( doc => doc.ref.delete() ) ).catch( e => log( `Error deleting event data for ${ new_event_id }`, e ) )
+        }
+
         return { error: e.message }
 
     }

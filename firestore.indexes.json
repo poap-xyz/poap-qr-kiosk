@@ -71,6 +71,20 @@
           "order": "ASCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "static_drop_claims",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "is_mock_claim",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "expires",
+          "order": "ASCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

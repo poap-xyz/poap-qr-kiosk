@@ -1,5 +1,5 @@
 const { get_code_by_challenge } = require( './codes' )
-const { log } = require( './helpers' )
+const { log, dev } = require( './helpers' )
 
 const app = require( './express' )()
 
@@ -36,6 +36,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
         // Check whether this request came from a CI instance, set the relevant return URL based on that
         const { CI, FORCE_INVALID_APPCHECK } = req.query
         const redirect_baseurl = CI ? `http://localhost:3000` : KIOSK_PUBLIC_URL
+        if( dev ) log( `CI: ${ CI }, FORCE_INVALID_APPCHECK: ${ FORCE_INVALID_APPCHECK }, redirect_baseurl: ${ redirect_baseurl }` )
 
         // Get event id and authentication from request
         const { event_id, public_auth_token } = req.params
@@ -43,7 +44,10 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
         log( `Request for ${ event_id }/${ public_auth_token }` )
 
         // If missing data, send to robot stall page
-        if( !event_id || !public_auth_token ) return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot/syntax_error` )
+        if( !event_id || !public_auth_token ) {
+            if( dev ) log( `Missing data, sending to robot stall page` )
+            return res.redirect( 307, `${ redirect_baseurl }/#/claim/robot/syntax_error` )
+        }
 
         // Get the event from firestore
         const event = await db.collection( 'events' ).doc( event_id ).get().then( dataFromSnap )
@@ -58,8 +62,12 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
         // Check if event was previously marked as being a test event
         const is_test_event = previous_public_auth?.token?.includes( 'testing-' )
 
+        // /////////////////////
         // Grace period config
-        const old_auth_grace_period_in_ms = 1000 * (  CI || is_test_event  ? 5 : 30 )
+        // Note: this sets how long scans are valid, it is an ESSENTIAL part of this applicaion
+        // CI is set low so we can check if our app is performans
+        // Live is set longer so that users on slow networks are not penalised
+        const old_auth_grace_period_in_ms = 1000 * (  CI || is_test_event ? 30 : 30 )
 
         // Check whether the (previous) auth token is still valid
         const current_auth_is_valid = public_auth?.token == public_auth_token
@@ -86,6 +94,16 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
             url += current_auth_is_valid ? 'valpub_' : 'nvalpub_'
             url += previous_auth_is_valid ? 'valprev_' : 'nvalprev_'
             url += previous_auth_within_grace_period ? 'previngr_' : 'nprevingr_'
+            if( dev ) {
+
+                // Log timing data
+                log( `Grace period for ${ CI ? 'CI' : 'non-CI' }, event ${ is_test_event ? 'is' : 'is not' } mock/test event, old_auth_grace_period_in_ms: ${ old_auth_grace_period_in_ms }` )
+                log( `Seconds left in grace period for previous auth: ${ ( old_auth_grace_period_in_ms - ( Date.now() - public_auth?.created ) ) / 1000 }` )
+
+                // log out all condition values
+                log( `completely_invalid: ${ completely_invalid }, outside_grace_period: ${ outside_grace_period }, current_auth_is_valid: ${ current_auth_is_valid }, previous_auth_is_valid: ${ previous_auth_is_valid }, previous_auth_within_grace_period: ${ previous_auth_within_grace_period }` )
+                log( `Invalid auth, sending to robot stall page with 307 ${ url }` )
+            }
             return res.redirect( 307, url )
 
         }
@@ -162,6 +180,12 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
             redirect_link += current_auth_is_valid ? 'valpub_' : 'nvalpub_'
             redirect_link += previous_auth_is_valid ? 'valprev_' : 'nvalprev_'
             redirect_link += previous_auth_within_grace_period ? 'previngr_' : 'nprevingr_'
+
+            // Log out all condition values
+            if( dev ) {
+                log( `completely_invalid: ${ completely_invalid }, outside_grace_period: ${ outside_grace_period }, current_auth_is_valid: ${ current_auth_is_valid }, previous_auth_is_valid: ${ previous_auth_is_valid }, previous_auth_within_grace_period: ${ previous_auth_within_grace_period }` )
+                log( `Sending to ${ redirect_link }` )
+            }
         }
         // If this request included ?user_address=0x... add it to the redirect link, this is the behaviour of the POAP app
         const { user_address } = req.query || {}

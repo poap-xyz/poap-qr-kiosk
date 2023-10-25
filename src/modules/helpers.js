@@ -19,6 +19,27 @@ export { v4 as uuidv4 } from 'uuid'
 // ///////////////////////////////
 // Date helpers
 // ///////////////////////////////
+
+/**
+ * Formats a timestamp into a custom date format string in the specified locale.
+ *
+ * @param {number} timestamp - The timestamp to format.
+ * @param {string} locale - The locale for formatting the date (e.g., 'en-US', 'nl-NL').
+ * @returns {string} The formatted date string.
+ */
+export function formatDate( timestamp, locale ) {
+    const date = new Date( timestamp )
+    const options = {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+    }
+  
+    return date.toLocaleDateString( locale, options )
+}
+  
+
+
 export const dateOnXDaysFromNow = days => {
 
     const daysInMs = days * 24 * 60 * 60 * 1000
