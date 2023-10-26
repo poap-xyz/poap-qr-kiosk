@@ -8,7 +8,8 @@ import { log } from "../../modules/helpers"
 import Loading from "../molecules/Loading"
 import { mint_code_to_address } from "../../modules/firebase"
 import { useParams } from "react-router-dom"
-import { eth_address_or_ens_regex } from "../../modules/validations"
+import { eth_address_or_ens_regex, valid_email_regex } from "../../modules/validations"
+import { serveToast } from '../molecules/Toast'
 
 export default function MintPOAP() {
 
@@ -46,10 +47,11 @@ export default function MintPOAP() {
             log( `Minting POAP for ${ address_to_mint_to }` )
             set_loading( `Minting your POAP` )
 
-            // Validate address
-            if( !address_to_mint_to?.match( eth_address_or_ens_regex ) ) throw new Error( `Please input a valid address` )
+            // Validate address based on address or email
+            if( !address_to_mint_to?.match( eth_address_or_ens_regex ) && !address_to_mint_to?.match( valid_email_regex ) ) {
+                throw new Error( 'Please input a valid Ethereum address/ENS or email address' )
+            }
 
-            // Mint POAP
             const { data: { error } } = await mint_code_to_address( { claim_code, address_to_mint_to, challenge_code } )
             if( error ) throw new Error( error )
 
@@ -59,7 +61,8 @@ export default function MintPOAP() {
         } catch ( e ) {
                 
             log( `Error minting POAP for ${ address_to_mint_to }: `, e )
-            alert( `${ e.message }` )
+            serveToast( { message: `${ e.message }`, type: 'error' } )
+
 
         } finally {
             set_loading( false )
