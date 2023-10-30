@@ -49,7 +49,7 @@ export default function MintPOAP() {
 
             // Validate address based on address or email
             if( !address_to_mint_to?.match( eth_address_or_ens_regex ) && !address_to_mint_to?.match( valid_email_regex ) ) {
-                throw new Error( 'Please input a valid Ethereum address/ENS or email address' )
+                throw new Error( 'Please input a valid Ethereum address/ENS or email address.' )
             }
 
             const { data: { error } } = await mint_code_to_address( { claim_code, address_to_mint_to, challenge_code } )
