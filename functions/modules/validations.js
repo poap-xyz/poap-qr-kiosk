@@ -17,7 +17,8 @@ exports.sanitise_email = input => {
 
 }
 
-const eth_address_or_ens_regex = /(0x[a-f0-9]{40})|(.*\.eth)/i
+// TLDs may be 1-63 characters long, see https://www.rfc-editor.org/rfc/rfc1034
+const eth_address_or_ens_regex = /(0x[a-fA-F0-9]{40})|(.*\.[a-z]{2,63})/i
 exports.eth_address_or_ens_regex = eth_address_or_ens_regex
 exports.sanitise_address_or_ens = input => {
 
@@ -64,4 +65,4 @@ exports.sanitise_poap_drop_secret_code = input => {
 
 exports.sanitise_string = string => `${ string }`.toLocaleLowerCase().trim()
 
-exports.ens_address_regex = /(.*\.eth)/i
+exports.ens_address_regex = /(.*\..{1,63})/i

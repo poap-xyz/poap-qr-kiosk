@@ -29,11 +29,10 @@ export const StyledModal = styled( ReactModal )`
     align-items: center;
     justify-content: flex-end;
     overflow: scroll;
-    /* padding: var(--spacing-3); */
 `
 
 const Modal = styled( Section )`
-    padding: 2rem 1rem;
+    padding: 5rem 2rem 1rem 2rem;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -41,6 +40,7 @@ const Modal = styled( Section )`
     max-width: 450px;
     background: white;
     box-shadow: 0px 0 5px 2px rgba( 0, 0, 0, .1);
+    border-left: 1px solid var(--primary-700);
 `
 
 export default ( { children, open = true, showClose = false, setIsOpen, ...props } ) => {
