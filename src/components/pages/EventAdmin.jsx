@@ -47,7 +47,6 @@ const ModalButtonContainer = styled.div`
     flex-direction: row;
     justify-content: center;
     gap: 1rem;
-    margin-top: 1rem;
 `
 
 // ///////////////////////////////
@@ -249,7 +248,7 @@ export default function EventAdmin( ) {
                 <Text>Are you sure you want to refresh the mint link counter? Your POAP Kiosk will be unstable and might not work as expected.</Text>
             </ModalContainer>
 
-            <Divider plain style={ { color: 'var(--primary-200)', margin: 'auto 0 1rem 0' } } />
+            <Divider plain style={ { margin: 'auto 0 1rem 0', borderTop: '1px solid var(--primary-200)' } } />
 
             <ModalButtonContainer>
                 <Button variation='white' onClick={ handleCloseModalRecalculate }>Cancel</Button>
@@ -267,7 +266,7 @@ export default function EventAdmin( ) {
                 <Text>Are you sure you want to delete this kiosk? You can create a new kiosk for this POAP after deletion. </Text>
             </ModalContainer>
 
-            <Divider plain style={ { color: 'var(--primary-200)', margin: 'auto 0 1rem 0' } } />
+            <Divider plain style={ { margin: 'auto 0 .5rem 0', borderTop: '1px solid var(--primary-200)' } } />
 
             <ModalButtonContainer>
                 <Button variation='white' onClick={ handleCloseModalDestroy }>Cancel</Button>

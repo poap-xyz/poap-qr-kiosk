@@ -193,7 +193,7 @@ export const MethodCard = ( { event, eventLink, adminLink, onDelete, onRecalcula
     return <MethodContainer>
         <MethodLabel>
             <IconContainer>
-                <PoapIcon size={ isMobile ? '16px' : '20' } icon='QRCodeIcon' color='var(--warning-500)' />
+                <PoapIcon size={ isMobile ? '16' : '20' } icon='QRCodeIcon' color='var(--warning-500)' />
             </IconContainer>
         </MethodLabel>
         <MethodContent>
