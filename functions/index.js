@@ -102,7 +102,7 @@ exports.get_code_by_challenge = v1_oncall( get_code_by_challenge )
 // /////////////////////////////*/
 const { health_check, public_health_check } = require( './modules/health' )
 exports.health_check = v1_oncall( health_check )
-exports.ping = v2_oncall( [ 'max_concurrency' ],ping => 'pong' )
+exports.ping = v2_oncall( [ 'max_concurrency' ], ping => 'pong' )
 
 /* ///////////////////////////////
 // Static QR system

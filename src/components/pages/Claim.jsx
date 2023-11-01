@@ -79,17 +79,11 @@ export default function ClaimPOAP() {
     // Render component
     // ///////////////////////////////
 
-    // Error case 1: background captcha cannot validate user
-    // Action: show fallback captcha
+    // If there is a validation status use it
+    if( user_validation_status_message || error_getting_claim_code ) return <Loading message={ user_validation_status_message || error_getting_claim_code } />
+
+    // If user is not valid, and no captcha response is known, show captcha
     if( !user_valid && !captchaResponse ) return <Captcha onChange={ response => setCaptchaResponse( response ) } />
-
-    // Error case 2: there was an error getting the claim code
-    // Action: show error message
-    if( error_getting_claim_code ) return <Loading message={ error_getting_claim_code } />
-
-    // Error case 3: background captcha and foreground captcha both failed
-    // Action: show last known captcha error
-    if( !user_valid && user_validation_status_message ) return <Loading message={ user_validation_status_message } />
 
     // If game challenge requested, show
     // Note that the Stroop module also handles the showing of the "claim POAP" button and we do not rely on the other components in here
