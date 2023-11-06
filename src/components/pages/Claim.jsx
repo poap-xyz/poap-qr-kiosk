@@ -32,7 +32,7 @@ export default function ClaimPOAP() {
     // If this challenge includes a game, set the default gameDone to false (and the reverse too)
     const [ gameDone, setGameDone ] = useState()
     const should_fetch_poap_claim_code = gameDone || challenge && !has_game_challenge
-    const { claim_link, error } = useClaimcodeForChallenge( captchaResponse, should_fetch_poap_claim_code )
+    const { claim_link, error: error_getting_claim_code } = useClaimcodeForChallenge( captchaResponse, should_fetch_poap_claim_code )
 
     log( `Challenge ${ challenge_code }: `, challenge )
     log( `Has game: ${ has_game_challenge }, Game done: ${ gameDone }. User valid: ${ user_valid } (${ user_validation_status_message || 'no message' }). Claim link: ${ claim_link } (${ should_fetch_poap_claim_code ? 'should' : 'should not' } fetch)` )
@@ -80,7 +80,7 @@ export default function ClaimPOAP() {
     // ///////////////////////////////
 
     // If there is a validation status use it
-    if( user_validation_status_message || error ) return <Loading message={ user_validation_status_message || error } />
+    if( user_validation_status_message || error_getting_claim_code ) return <Loading message={ user_validation_status_message || error_getting_claim_code } />
 
     // If user is not valid, and no captcha response is known, show captcha
     if( !user_valid && !captchaResponse ) return <Captcha onChange={ response => setCaptchaResponse( response ) } />

@@ -62,7 +62,10 @@ export const useValidateUser = ( captchaResponse ) => {
 
                 // Validate device using appcheck
                 log( `🕵️ Validating caller device` )
-                let { data: isValid } = await validateCallerDevice()
+                let { data: isValid } = await validateCallerDevice().catch( e => {
+                    log( `Firebase gen2 functions can fail with 'Unauthorized' throws if appcheck fails` )
+                    return { data: false }
+                } )
                 log( `🕵️ Caller validated: `, isValid )
                 if( cancelled ) return
 
@@ -98,6 +101,7 @@ export const useValidateUser = ( captchaResponse ) => {
                 if( !isValid && captchaResponse ) {
 
                     log( `🕵️ Starting manual captcha validation` )
+                    set_message( "Validating captcha" )
                     const { data: captchaIsValid } = await validateCallerCaptcha( captchaResponse )
                     log( `🕵️ Manual captcha validation: `, captchaIsValid )
 
@@ -123,7 +127,12 @@ export const useValidateUser = ( captchaResponse ) => {
 
                 log( e )
                 trackEvent( 'claim_device_validation_failed' )
-                if( !cancelled ) set_message( e.message )
+                
+                // If we are unable to validate the user, set the error message and set user to invalid (will trigger manual captcha)
+                if( !cancelled ) {
+                    set_message( e.message )
+                    set_user_valid( false )
+                }
 
             }
 
