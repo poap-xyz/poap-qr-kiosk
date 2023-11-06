@@ -10,6 +10,7 @@ import { mint_code_to_address } from "../../modules/firebase"
 import { useParams } from "react-router-dom"
 import { eth_address_or_ens_regex, valid_email_regex } from "../../modules/validations"
 import { serveToast } from '../molecules/Toast'
+import Confetti from "../atoms/Confetti"
 
 export default function MintPOAP() {
 
@@ -86,6 +87,9 @@ export default function MintPOAP() {
 
             </CardContainer>
         </Container>
+        { /* Confetti injection */ }
+        <Confetti autoPlay={ true }/>
+        { /* End of Confetti injection */ }
     </ViewWrapper>
 
     // Claim interface
