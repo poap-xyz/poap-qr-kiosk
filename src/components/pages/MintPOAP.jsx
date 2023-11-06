@@ -10,11 +10,9 @@ import { Button, CardContainer, Container, Divider, H1, HeroIcon, Input, Text, H
 import ViewWrapper from "../molecules/ViewWrapper"
 import Loading from "../molecules/Loading"
 import { serveToast } from '../molecules/Toast'
+import { eth_or_ens_address_regex, email_regex } from '@poap/sane-data'
 import Confetti from "../atoms/Confetti"
 
-import { ReactComponent as WelldoneIcon } from '../../assets/illustrations/well_done.svg'
-import { ReactComponent as FailedIcon } from '../../assets/illustrations/man_vr_failed.svg'
-import { ReactComponent as Diamond } from '../../assets/illustrations/valuable-diamond.svg'
 
 export default function MintPOAP() {
 
@@ -116,8 +114,7 @@ export default function MintPOAP() {
             </CardContainer>
         </Container>
         { /* Confetti injection */ }
-        { isMobile ? <Confetti autoPlay={ true } mobile /> : <Confetti autoPlay={ true } /> }
-        { /* <Confetti autoPlay={ true } /> */ }
+        <Confetti autoPlay={ true }/>
         { /* End of Confetti injection */ }
     </ViewWrapper>
 
