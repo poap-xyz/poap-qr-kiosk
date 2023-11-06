@@ -65,7 +65,7 @@ export default function Homepage( ) {
     // ///////////////////////////////
     // Render component
     // ///////////////////////////////
-    return <Layout hide_background>
+    return <Layout hide_background hide_footer header_show_help={ false }>
 
         <Section after='1'>
             <HeroImage /> 
