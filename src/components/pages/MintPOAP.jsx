@@ -44,7 +44,7 @@ export default function MintPOAP() {
 
         // If no valid address in query, exit
         if( !address_in_query ) return
-        if( !address_to_mint_to?.match( eth_address_or_ens_regex ) ) return
+        if( !address_to_mint_to?.match( eth_or_ens_address_regex ) ) return
 
         // If auto mint already attempted, exit
         if( auto_mint_attempted ) return
@@ -63,7 +63,7 @@ export default function MintPOAP() {
             set_loading( `Minting your POAP` )
 
             // Validate address based on address or email
-            if( !address_to_mint_to?.match( eth_address_or_ens_regex ) && !address_to_mint_to?.match( valid_email_regex ) ) {
+            if( !address_to_mint_to?.match( eth_or_ens_address_regex ) && !address_to_mint_to?.match( email_regex ) ) {
                 throw new Error( 'Please input a valid Ethereum address/ENS or email address.' )
             }
 
