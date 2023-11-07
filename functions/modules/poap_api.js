@@ -1,6 +1,6 @@
 // Firebase interactors
 const { db, dataFromSnap } = require( './firebase' )
-const { log, dev } = require( './helpers' )
+const { log } = require( './helpers' )
 
 // Secrets
 const { POAP_API_KEY, AUTH0_CLIENT_ID, AUTH0_ENDPOINT, AUTH0_CLIENT_SECRET, AUTH0_AUDIENCE } = process.env
