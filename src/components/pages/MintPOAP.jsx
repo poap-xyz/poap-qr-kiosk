@@ -97,7 +97,7 @@ export default function MintPOAP() {
                 <FailedIcon />
             </div>
             <H3 align="center">Oh no! Something went wrong.</H3>
-            <Button onClick={ () => navigate( '/' ) }>back to home</Button>
+            <Button onClick={ () => navigate( '/' ) }>Back to home</Button>
 
         </Container>
     </ViewWrapper>
