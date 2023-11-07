@@ -135,7 +135,7 @@ exports.create_static_drop = async ( data, context ) => {
 
 exports.update_public_static_drop_data = async function( change, context ) {
 
-    const { after, before } = change
+    const { after } = change
     const { drop_id } = context.params
 
     // If this was a deletion, delete public data
