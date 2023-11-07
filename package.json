@@ -5,6 +5,7 @@
   "dependencies": {
     "@heroicons/react": "^2.0.18",
     "@poap/poap-components": "^0.1.20",
+    "@poap/sane-data": "^0.0.2",
     "@rive-app/react-canvas": "^4.5.0",
     "@vitejs/plugin-react": "^4.1.1",
     "cypress": "^11.2.0",
