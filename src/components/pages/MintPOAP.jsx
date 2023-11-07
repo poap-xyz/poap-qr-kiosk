@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom"
 import { log } from "../../modules/helpers"
 import { mint_code_to_address } from "../../modules/firebase"
 import { eth_address_or_ens_regex, valid_email_regex } from "../../modules/validations"
-
 import { useProbableMintAddress } from "../../hooks/minter"
 
 import { Button, CardContainer, Container, Divider, H1, HeroIcon, Input, Text, H3, useViewport } from "@poap/poap-components"
@@ -13,6 +12,9 @@ import { serveToast } from '../molecules/Toast'
 import { eth_or_ens_address_regex, email_regex } from '@poap/sane-data'
 import Confetti from "../atoms/Confetti"
 
+import { ReactComponent as WelldoneIcon } from '../../assets/illustrations/well_done.svg'
+import { ReactComponent as FailedIcon } from '../../assets/illustrations/man_vr_failed.svg'
+import { ReactComponent as Diamond } from '../../assets/illustrations/valuable-diamond.svg'
 
 export default function MintPOAP() {
 
@@ -22,7 +24,8 @@ export default function MintPOAP() {
     const { claim_code, challenge_code } = useParams(  )
     const [ claim_success, set_claim_success ] = useState(  )
     const [ claim_failed, set_claim_fail ] = useState( false )
-
+    const [ auto_mint_attempted, set_auto_mint_attempted ] = useState( false )
+    
     // Navigation
     const navigate = useNavigate()
 
