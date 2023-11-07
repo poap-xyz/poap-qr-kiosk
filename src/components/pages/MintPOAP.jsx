@@ -49,9 +49,6 @@ export default function MintPOAP() {
         // If auto mint already attempted, exit
         if( auto_mint_attempted ) return
 
-        // If auto mint already attempted, exit
-        if( auto_mint_attempted ) return
-
         // Trigger mint, this handles loading states etc, note it's a promise
         handle_mint().finally( () => set_auto_mint_attempted( true ) )
 
