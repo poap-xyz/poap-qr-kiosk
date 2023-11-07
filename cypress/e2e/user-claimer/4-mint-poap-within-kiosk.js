@@ -33,14 +33,12 @@ context( "Minting POAPs within Kiosk", () => {
         cy.get( "#address-to-mint-to" ).type( ens_address )
         cy.contains( "Collect your POAP" ).click()
         cy.contains( "The minting process has started" )
-        cy.wait( 1000 )
     } )
 
     it( "Auto-mints when the address is passed through the query string", () => {
 
         cy.visit( `/mint/testing-123?user_address=${ eth_address }` )
         cy.contains( "The minting process has started" )
-        cy.wait( 1000 )
     } )
 
 
