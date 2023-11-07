@@ -18,7 +18,7 @@
   },
   "main": "index.js",
   "dependencies": {
-    "@poap/sane-data": "^0.0.2",
+    "@poap/sane-data": "^0.0.6",
     "@sendgrid/mail": "^7.7.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",

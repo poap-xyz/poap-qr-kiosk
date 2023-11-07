@@ -5,14 +5,14 @@ exports.mint_code_to_address = async ( { data } ) => {
     try {
 
         // Function dependencies
-        const { sanetise_eth_or_ens_address } = require( '@poap/sane-data' )
+        const { sanetise_string } = require( '@poap/sane-data' )
 
         // Get the claim code and address to claim to from data property
         let { claim_code, challenge_code, address_to_mint_to } = data
 
         // Sanetise data
-        claim_code = `${ claim_code }`.toLowerCase().trim()
-        address_to_mint_to = `${ address_to_mint_to }`.toLowerCase().trim()
+        claim_code = sanetise_string( claim_code )
+        address_to_mint_to = sanetise_string( address_to_mint_to )
 
         // Check if claim code is a mock code
         const is_mock = claim_code.includes( 'testing' )
