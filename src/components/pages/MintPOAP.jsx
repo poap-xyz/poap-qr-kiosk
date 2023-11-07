@@ -88,7 +88,7 @@ export default function MintPOAP() {
             </CardContainer>
         </Container>
         { /* Confetti injection */ }
-        <Confetti autoPlay={ true }/>
+        <Confetti autoPlay={ true } />
         { /* End of Confetti injection */ }
     </ViewWrapper>
 
