@@ -12,7 +12,7 @@ exports.mint_code_to_address = async ( { data } ) => {
 
         // Sanetise data
         claim_code = `${ claim_code }`.toLowerCase().trim()
-        address_to_mint_to = sanetise_eth_or_ens_address( address_to_mint_to )
+        address_to_mint_to = `${ address_to_mint_to }`.toLowerCase().trim()
 
         // Check if claim code is a mock code
         const is_mock = claim_code.includes( 'testing' )
