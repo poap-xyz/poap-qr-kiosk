@@ -2,10 +2,12 @@ import React, { useEffect, useState, useCallback, useRef } from 'react'
 import Particles from 'react-tsparticles'
 import { loadFull } from "tsparticles"
 
-import particleOptions from '../../assets/json/poap-particles.json'
+import desktopParticles from '../../assets/json/poap-particles.json'
+import mobileParticles from '../../assets/json/poap-particles-mobile.json'
 
-const Confetti = ( { autoPlay = true, duration = Infinity, toggle } ) => {
+const Confetti = ( { autoPlay = true, duration = Infinity, toggle, mobile } ) => {
 
+    const particleOptions = mobile ? mobileParticles : desktopParticles
     const containerRef = useRef()
     const particlesInit = useCallback( async ( main ) => {
         await loadFull( main )
@@ -14,6 +16,8 @@ const Confetti = ( { autoPlay = true, duration = Infinity, toggle } ) => {
     // Add autoPlay to the options
     useEffect( () => {
         if( containerRef && containerRef.current ) {
+
+            // Fuse autoplay option into current container options
             containerRef.current.options.autoPlay = autoPlay
         }
     } )
