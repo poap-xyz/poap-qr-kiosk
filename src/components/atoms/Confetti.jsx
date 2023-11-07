@@ -1,18 +1,14 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
 import Particles from 'react-tsparticles'
 import { loadFull } from "tsparticles"
-import { tsParticles } from "tsparticles-engine"
 
 import particleOptions from '../../assets/json/poap-particles.json'
-
-import { log, wait } from '../../modules/helpers'
 
 const Confetti = ( { autoPlay = true, duration = Infinity, toggle } ) => {
 
     const containerRef = useRef()
     const particlesInit = useCallback( async ( main ) => {
         await loadFull( main )
-        log( main )
     }, [] )
 
     // Add autoPlay to the options
@@ -79,7 +75,7 @@ const Confetti = ( { autoPlay = true, duration = Infinity, toggle } ) => {
         id="tsparticles"
         init={ particlesInit }
         container={ containerRef }
-        options={ { ...particleOptions, autoPlay } }
+        options={ { ...particleOptions } }
     />
 
 }
