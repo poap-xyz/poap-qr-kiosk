@@ -59,7 +59,7 @@ export const check_if_code_is_expected = ( code_to_check, expected_codes ) => {
 
 export async function extract_redirect_url ( response ) {
 
-    cy.log( `Url from which to extract challenge (can be printed to browser console): `, response )
+    cy.log( `Response object from which to extract challenge (can be printed to browser console): `, response )
     const { redirects } = response
 
     // If there are no redirects, something weird happens that we need to debug
