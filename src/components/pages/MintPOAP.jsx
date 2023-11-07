@@ -46,8 +46,11 @@ export default function MintPOAP() {
         if( !address_in_query ) return
         if( !address_to_mint_to?.match( eth_address_or_ens_regex ) ) return
 
+        // If auto mint already attempted, exit
+        if( auto_mint_attempted ) return
+
         // Trigger mint, this handles loading states etc, note it's a promise
-        handle_mint()
+        handle_mint().finally( () => set_auto_mint_attempted( true ) )
 
     }, [ address_in_query, address_to_mint_to ] )
 
