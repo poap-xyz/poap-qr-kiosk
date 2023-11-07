@@ -18,6 +18,7 @@ export default function MintPOAP() {
     const [ loading, set_loading ] = useState( false )
     const { claim_code, challenge_code } = useParams(  )
     const [ claim_success, set_claim_success ] = useState(  )
+    const [ auto_mint_attempted, set_auto_mint_attempted ] = useState( false )
 
     // If a probable address is found, and the user did not supply an address, set the address to state
     useEffect( (  ) => {
@@ -34,8 +35,11 @@ export default function MintPOAP() {
         if( !address_in_query ) return
         if( !address_to_mint_to?.match( eth_address_or_ens_regex ) ) return
 
+        // If auto mint already attempted, exit
+        if( auto_mint_attempted ) return
+
         // Trigger mint, this handles loading states etc, note it's a promise
-        handle_mint()
+        handle_mint().finally( () => set_auto_mint_attempted( true ) )
 
     }, [ address_in_query, address_to_mint_to ] )
 

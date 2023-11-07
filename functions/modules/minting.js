@@ -36,6 +36,8 @@ exports.mint_code_to_address = async ( { data } ) => {
             // Get the claim secret of the mint link
             const { call_poap_endpoint } = require( './poap_api' )
             const { claimed, secret, error: preclaim_error, message: preclaim_error_message } = await call_poap_endpoint( `/actions/claim-qr`, { qr_hash: claim_code } )
+            
+            // Handle claim secret errors
             if( preclaim_error ) {
                 log( `Error getting claim secret: `, preclaim_error )
                 if( preclaim_error_message.includes( "Qr Claim not found" ) ) throw new Error( `Failed to get claim secret: Invalid claim link` )
@@ -78,12 +80,12 @@ exports.mint_code_to_address = async ( { data } ) => {
             }
 
             // Check if the error was due to already being claimed
-            if( error || message.includes( 'already claimed' ) ) {
+            if( error && message.includes( 'already claimed' ) ) {
                 claim_attempts++
                 continue
             }
 
-            if( error ) throw new Error( `Failed to mint POAP: ${ error }` )
+            if( error ) throw new Error( `Failed to mint POAP: ${ message }` )
 
         }
 
