@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef } from 'react'
-import Particles from 'react-tsparticles'
+import Particles, { loadFull } from 'react-particles'
 import { loadFull } from "tsparticles"
 
 import desktopParticles from '../../assets/json/poap-particles.json'
