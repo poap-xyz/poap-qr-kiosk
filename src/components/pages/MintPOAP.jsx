@@ -78,7 +78,7 @@ export default function MintPOAP() {
                 
             log( `Error minting POAP for ${ address_to_mint_to }: `, e )
             serveToast( { message: `${ e.message }`, type: 'error', duration: 10000 } )
-            if( e.message.includes( 'querystring/qr_hash' ) ) {
+            if( e.message.includes( 'is not valid' ) ) {
                 set_claim_fail( true )
             }
         } finally {

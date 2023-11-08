@@ -8,23 +8,21 @@ context( "Minting POAPs within Kiosk", () => {
         cy.get( "#address-to-mint-to" ).type( eth_address )
         cy.contains( "Collect your POAP" ).click()
         // Show error Toast
-        cy.contains( "Failed to get" ).click()
+        cy.contains( "is not valid" )
 
         // Show failed landing
-        cy.contains( "Oh no! Something went wrong." ).click()
+        cy.contains( "Oh no! Something went wrong." )
     } )
 
     it( "Auto-mint fails with an invalid claim code", () => {
 
-        cy.contains( "Failed to get" ).click()
-
         cy.visit( `/mint/not-a-valid-claim-code?user_address=${ eth_address }` )
 
         // Show error Toast
-        cy.contains( "Failed to get" ).click()
+        cy.contains( "is not valid" )
 
         // Show failed landing
-        cy.contains( "Oh no! Something went wrong." ).click()
+        cy.contains( "Oh no! Something went wrong." )
     } )
 
     it( "Mints valid test claim codes", () => {
