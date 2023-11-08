@@ -26,21 +26,16 @@
   <!-- Prefetching of assets, note: prefetching is low-prio and up to the browser, critical assets needed within 3 sec of render should preload instead -->
   <!-- See https://developer.mozilla.org/en-US/docs/Glossary/Prefetch vs https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload -->
   <link rel="prefetch" href="/assets/rive/poap_logo_loader.riv" />
-  <!-- Matomo -->
+  <!-- Matomo Tag Manager -->
   <script>
-    var _paq = window._paq = window._paq || [];
-    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-    _paq.push(['trackPageView']);
-    _paq.push(['enableLinkTracking']);
+    var _mtm = window._mtm = window._mtm || [];
+    _mtm.push({ 'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start' });
     (function () {
-      var u = "https://poapxyz.matomo.cloud/";
-      _paq.push(['setTrackerUrl', u + 'matomo.php']);
-      _paq.push(['setSiteId', '%VITE_matomo_id%']);
       var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-      g.async = true; g.src = '//cdn.matomo.cloud/%VITE_matomo_url%/matomo.js'; s.parentNode.insertBefore(g, s);
+      g.async = true; g.src = 'https://cdn.matomo.cloud/%VITE_matomo_url%/container_%VITE_matomo_container%.js'; s.parentNode.insertBefore(g, s);
     })();
   </script>
-  <!-- End Matomo Code -->
+  <!-- End Matomo Tag Manager -->
 </head>
 
 <body>
