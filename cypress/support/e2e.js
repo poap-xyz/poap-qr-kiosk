@@ -59,10 +59,19 @@ export const check_if_code_is_expected = ( code_to_check, expected_codes ) => {
 
 export async function extract_redirect_url ( response ) {
 
-    cy.log( `Url from which to extract challenge: `, response )
-    // strinified response
-    console.log( `Response data: `, JSON.stringify( response ) )
+    cy.log( `Response object from which to extract challenge (can be printed to browser console): `, response )
     const { redirects } = response
+
+    // If there are no redirects, something weird happens that we need to debug
+    if( !redirects?.length ) {
+        cy.log( `No redirects found, full response body (status ${ response.status }): `, response.body )
+        cy.log( `There were ${ response?.allRequestResponses?.length } responses to the request:` )
+        response?.allRequestResponses?.forEach( unique_res => {
+            cy.log( `Status ${ unique_res[ 'Response Status' ] } from ${ unique_res[ 'Request URL' ] }`, unique_res[ 'Response Body' ] )
+        } )
+        return null
+    }
+
     const [ redirect_url ] = redirects
     cy.log( `Redirect: `, redirect_url )
     return redirect_url

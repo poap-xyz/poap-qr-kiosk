@@ -8,8 +8,8 @@ import { log } from "../../modules/helpers"
 import Loading from "../molecules/Loading"
 import { mint_code_to_address } from "../../modules/firebase"
 import { useParams } from "react-router-dom"
-import { eth_address_or_ens_regex, valid_email_regex } from "../../modules/validations"
 import { serveToast } from '../molecules/Toast'
+import { eth_or_ens_address_regex, email_regex } from '@poap/sane-data'
 
 export default function MintPOAP() {
 
@@ -18,6 +18,7 @@ export default function MintPOAP() {
     const [ loading, set_loading ] = useState( false )
     const { claim_code, challenge_code } = useParams(  )
     const [ claim_success, set_claim_success ] = useState(  )
+    const [ auto_mint_attempted, set_auto_mint_attempted ] = useState( false )
 
     // If a probable address is found, and the user did not supply an address, set the address to state
     useEffect( (  ) => {
@@ -32,10 +33,13 @@ export default function MintPOAP() {
 
         // If no valid address in query, exit
         if( !address_in_query ) return
-        if( !address_to_mint_to?.match( eth_address_or_ens_regex ) ) return
+        if( !address_to_mint_to?.match( eth_or_ens_address_regex ) ) return
+
+        // If auto mint already attempted, exit
+        if( auto_mint_attempted ) return
 
         // Trigger mint, this handles loading states etc, note it's a promise
-        handle_mint()
+        handle_mint().finally( () => set_auto_mint_attempted( true ) )
 
     }, [ address_in_query, address_to_mint_to ] )
 
@@ -48,7 +52,7 @@ export default function MintPOAP() {
             set_loading( `Minting your POAP` )
 
             // Validate address based on address or email
-            if( !address_to_mint_to?.match( eth_address_or_ens_regex ) && !address_to_mint_to?.match( valid_email_regex ) ) {
+            if( !address_to_mint_to?.match( eth_or_ens_address_regex ) && !address_to_mint_to?.match( email_regex ) ) {
                 throw new Error( 'Please input a valid Ethereum address/ENS or email address.' )
             }
 
