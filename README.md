@@ -66,18 +66,4 @@ To configure Firebase services:
 
 1. Enable firestore, functions, hosting, analytics
 2. Enable [app check]( https://console.firebase.google.com/u/0/project/poap-qr-kiosk/settings/appcheck ) ([docs](https://firebase.google.com/docs/app-check/web/recaptcha-provider))
-3. Fill out all variables in `.env`
-
-To Configure backend:
-
-1. Set keys using `firebase functions:config:set key=value`:
-    - `auth0.audience`
-    - `auth0.client_id`
-    - `auth0.client_secret`
-    - `auth0.endpoint`
-    - `sendgrid.fromemail`
-    - `sendgrid.apikey`
-    - `poap.apikey`
-    - `recaptcha.secret`
-    - `kiosk.publicUrl`
-1. `firebase functions:config:get > .runtimeconfig.json`
+3. Fill out all variables in `.env` from 1Password
