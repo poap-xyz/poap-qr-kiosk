@@ -1,15 +1,22 @@
-import { Button, CardContainer, Container, Divider, H1, HeroIcon, Input, Text } from "@poap/poap-components"
-import ViewWrapper from "../molecules/ViewWrapper"
-import { ReactComponent as WelldoneIcon } from '../../assets/illustrations/well_done.svg'
-import { ReactComponent as Diamond } from '../../assets/illustrations/valuable-diamond.svg'
-import { useProbableMintAddress } from "../../hooks/minter"
 import { useEffect, useState } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+
 import { log } from "../../modules/helpers"
-import Loading from "../molecules/Loading"
+import { useProbableMintAddress } from "../../hooks/minter"
 import { mint_code_to_address } from "../../modules/firebase"
-import { useParams } from "react-router-dom"
-import { serveToast } from '../molecules/Toast'
+
 import { eth_or_ens_address_regex, email_regex } from '@poap/sane-data'
+import { Button, CardContainer, Container, Divider, H1, H3, HeroIcon, Input, Text } from "@poap/poap-components"
+
+import Loading from "../molecules/Loading"
+import { serveToast } from '../molecules/Toast'
+import ViewWrapper from "../molecules/ViewWrapper"
+import Confetti from "../atoms/Confetti"
+
+import { ReactComponent as Diamond } from '../../assets/illustrations/valuable-diamond.svg'
+import { ReactComponent as WelldoneIcon } from '../../assets/illustrations/well_done.svg'
+import { ReactComponent as FailedIcon } from '../../assets/illustrations/man_vr_failed.svg'
+
 
 export default function MintPOAP() {
 
@@ -18,7 +25,11 @@ export default function MintPOAP() {
     const [ loading, set_loading ] = useState( false )
     const { claim_code, challenge_code } = useParams(  )
     const [ claim_success, set_claim_success ] = useState(  )
+    const [ claim_failed, set_claim_fail ] = useState( false )
     const [ auto_mint_attempted, set_auto_mint_attempted ] = useState( false )
+
+    // Navigation
+    const navigate = useNavigate()
 
     // If a probable address is found, and the user did not supply an address, set the address to state
     useEffect( (  ) => {
@@ -66,7 +77,9 @@ export default function MintPOAP() {
                 
             log( `Error minting POAP for ${ address_to_mint_to }: `, e )
             serveToast( { message: `${ e.message }`, type: 'error' } )
-
+            if( e.message.includes( 'Failed' ) ) {
+                set_claim_fail( true )
+            }
 
         } finally {
             set_loading( false )
@@ -76,6 +89,18 @@ export default function MintPOAP() {
 
     // Loading message
     if( loading ) return <Loading message={ loading } />
+
+    // Failed message
+    if( !claim_success && claim_failed ) return <ViewWrapper center show_bookmark>
+        <Container>
+            <div style={ { maxWidth: '400px', margin: '0 auto', padding: '1rem' } }>
+                <FailedIcon />
+            </div>
+            <H3 align="center">Oh no! Something went wrong.</H3>
+            <Button onClick={ () => navigate( '/' ) }>Back to home</Button>
+
+        </Container>
+    </ViewWrapper>
 
     // Claim success
     if( claim_success ) return <ViewWrapper center show_bookmark>
@@ -90,6 +115,9 @@ export default function MintPOAP() {
 
             </CardContainer>
         </Container>
+        { /* Confetti injection */ }
+        <Confetti autoPlay={ true }/>
+        { /* End of Confetti injection */ }
     </ViewWrapper>
 
     // Claim interface
