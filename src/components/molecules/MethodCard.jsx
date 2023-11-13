@@ -12,7 +12,7 @@ export const SparklesImage = styled( SparklesIcon )`
     height: 16px;
 `
 
-// TODO create color object for Panel colors
+// TODO create color object for Panel color scheme
 const MethodContainer = styled.div`
     display: flex;
 
