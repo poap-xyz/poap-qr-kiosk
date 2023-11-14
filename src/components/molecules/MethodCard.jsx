@@ -1,28 +1,40 @@
 import { PoapIcon, H3, Text, Link, Number, useViewport, Input } from '@poap/poap-components'
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { formatDate, log } from '../../modules/helpers'
 
 import { ReactComponent as SparklesIcon } from '../../assets/decorations/sparkles.svg'
 import { ReactComponent as ShareWarningIcon } from '../../assets/illustrations/share_warning.svg'
 import { clipboard } from '../../hooks/clipboard'
 
+// Function to determine container styles based on the 'variation' prop
+const MethodContainerStyles = ( variation ) => {
+    switch ( variation ) {
+    case 'primary':
+        return css`
+            background-color: #3498db;
+            border-color: #2980b9;
+        `
+    default:
+        return css`
+            background: var(--white);
+            box-shadow: -6px 8px 0 rgba(var(--primary-400-rgb),.25);
+            border: 1px solid var(--dm-link-400);
+        `
+    }
+}
+
+
 export const SparklesImage = styled( SparklesIcon )`
     width: 16px;
     height: 16px;
 `
 
-// TODO create color object for Panel color scheme
 const MethodContainer = styled.div`
     display: flex;
-
     padding: ${ ( { padding } ) => padding || '' };
     margin: ${ ( { margin } ) => margin || '0 0 var(--spacing-6) 0' };
     border-radius: 24px;
-
-    background: var(--white);
-    box-shadow: -6px 8px 0 rgba(var(--primary-400-rgb),.25);
-    border: 1px solid var(--dm-link-400);
 `
 
 const MethodLabel = styled.div`
@@ -179,18 +191,24 @@ const ClippedContent = styled.span`
 `
 
 
+export const MethodCard = ( { event, eventLink, adminLink, onDelete, onRecalculate, variation, ...props } ) => {
 
+    const { isMobile } = useViewport()
 
-export const MethodCard = ( { event, eventLink, adminLink, onDelete, onRecalculate, ...props } ) => {
+    const containerStyles = MethodContainerStyles( variation )
+  
+    // Use the styled components with dynamic styles
+    const StyledMethodContainer = styled( MethodContainer )`
+        ${ containerStyles }
+    `
 
-    const { isMobile, isTablet } = useViewport()
     
     // if no event return null
     if( !event ) return
 
     const expirationDate = formatDate( event.expires, 'nl-NL' )
 
-    return <MethodContainer>
+    return <StyledMethodContainer>
         <MethodLabel>
             <IconContainer>
                 <PoapIcon size={ isMobile ? '16' : '20' } icon='QRCodeIcon' color='var(--warning-500)' />
@@ -251,8 +269,7 @@ export const MethodCard = ( { event, eventLink, adminLink, onDelete, onRecalcula
             </WarningBox>
         </MethodContent>
         
-    </ MethodContainer>
+    </ StyledMethodContainer>
     
-
 
 }
