@@ -13,7 +13,7 @@ export const useValidateUser = ( captchaResponse ) => {
     // States
     const { challenge_code, error_code } = useParams(  )
     const [ message, set_message ] = useState( `${ t( 'claim.setLoading' ) }` )
-    const [ user_valid, set_user_valid ] = useState( true )
+    const [ user_valid, set_user_valid ] = useState( undefined )
     const challenge = useChallenge( challenge_code )
 
     // Stakking function 
@@ -45,6 +45,10 @@ export const useValidateUser = ( captchaResponse ) => {
     const slow_users_down = false
     useEffect( f => {
 
+        // If no challenge code is present, do nothing
+        if( !challenge_code ) return
+
+        // Effect cancellation flag
         let cancelled = false;
 
         // Validate client
