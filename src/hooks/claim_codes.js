@@ -75,7 +75,7 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
             try {
 
                 // Check for presence of challenge data
-                if( !user_valid ) return log( 'User not (yet) validated' )
+                if( user_valid !== true ) return log( 'User not (yet) validated' )
 
                 // Validate for expired challenge, note that the claim_link check here exists because challenges are expired once links are retreived, so once a claim_code is loaded the challenge is expired while the page is still open
                 if( !claim_link && user_valid && challenge?.deleted ) {
@@ -90,7 +90,7 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
                 // If we already have a link in the state, do not get a new one
                 if( claim_link ) return
 
-                // If we are not ready to fetch the code ret, return undefined
+                // If we are not ready to fetch the code yet, return undefined
                 if( !fetch_code ) return
 
                 // If no game challenge, get a code
