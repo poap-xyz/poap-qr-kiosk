@@ -32,3 +32,28 @@ exports.v2_runtimes = {
     keep_warm: { minInstances: 1 },
     max_concurrency: { concurrency: 1000 }
 }
+
+/**
+ * 
+ * @param {Array} runtimes - runtime object as applied to a function
+ * @param {Object} allowed_runtimes - allowed runtime object as defined in this file
+ * @param {boolean} throw_on_fail - throw an error if validation fails
+ * @returns {boolean} - true if validation passes, false if validation fails and throw_on_fail is false
+ */
+exports.validate_runtime_settings = ( runtimes, allowed_runtimes, throw_on_fail=true ) => {
+
+    // const { log } = require( '../modules/helpers' )
+    // log( `Validating runtime settings against allowed rintimes: `, runtimes, allowed_runtimes )
+
+    // Check that all runtime keys exist in the v2_runtimes object
+    const runtime_keys = Object.keys( allowed_runtimes )
+    const invalid_runtime_keys = runtimes.filter( runtime_key => !runtime_keys.includes( runtime_key ) )
+    if( invalid_runtime_keys.length ) {
+        console.error( `Invalid runtime keys: `, invalid_runtime_keys )
+        if( throw_on_fail ) throw new Error( `Invalid runtime keys: ${ invalid_runtime_keys.length }` )
+        else return false
+    }
+
+    return true
+
+}

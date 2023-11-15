@@ -7,15 +7,13 @@
 exports.v1_onrequest = ( runtimes=[], handler ) => {
 
     const functions = require( "firebase-functions" )
-    const { v1_runtimes } = require( './runtimes_settings' )
+    const { v1_runtimes, validate_runtime_settings } = require( './runtimes_settings' )
 
     // If the first parameter was a function, return the undecorated handler
     if( typeof runtimes === 'function' ) return functions.https.onRequest( runtimes )
 
-    // Check that all runtime keys exist in the v2_runtimes object
-    const runtime_keys = Object.keys( v1_runtimes )
-    const invalid_runtime_keys = runtimes.some( runtime_key => !runtime_keys.includes( runtime_key ) )
-    if( invalid_runtime_keys.length ) throw new Error( `Invalid runtime keys: ${ invalid_runtime_keys }` )
+    // Validate runtime settings
+    validate_runtime_settings( runtimes, v1_runtimes )
 
     // Config the runtimes for this function
     const runtime = runtimes.reduce( ( acc, runtime_key ) => ( { ...acc, ...v1_runtimes[ runtime_key ] } ), {} )
@@ -31,16 +29,14 @@ exports.v1_onrequest = ( runtimes=[], handler ) => {
 exports.v2_onrequest = ( runtimes=[], handler ) => {
 
     const { onRequest } = require( "firebase-functions/v2/https" )
-    const { v2_runtimes } = require( './runtimes_settings' )
+    const { v2_runtimes, validate_runtime_settings } = require( './runtimes_settings' )
     const runtime_basis = { cors: true }
 
     // If the first parameter was a function, return the handler as 'protected' firebase oncall
     if( typeof runtimes === 'function' ) return onRequest( runtime_basis, runtimes )
 
-    // Check that all runtime keys exist in the v2_runtimes object
-    const runtime_keys = Object.keys( v2_runtimes )
-    const invalid_runtime_keys = runtimes.some( runtime_key => !runtime_keys.includes( runtime_key ) )
-    if( invalid_runtime_keys.length ) throw new Error( `Invalid runtime keys: ${ invalid_runtime_keys }` )
+    // Validate runtime settings
+    validate_runtime_settings( runtimes, v2_runtimes )
 
     const runtime = runtimes.reduce( ( acc, runtime_key ) => ( { ...acc, ...v2_runtimes[ runtime_key ] } ), runtime_basis )
 

@@ -27,10 +27,10 @@ exports.getEventDataFromCode = v1_oncall( getEventDataFromCode )
 exports.check_code_status = v1_oncall( check_code_status )
 
 // Refresh all codes ( trigger from frontend on page mount of EventView )
-exports.requestManualCodeRefresh = v1_oncall( [ 'memory_512MiB', 'long_timeout'  ], refresh_unknown_and_unscanned_codes )
+exports.requestManualCodeRefresh = v1_oncall( [ 'memory_512MB', 'long_timeout'  ], refresh_unknown_and_unscanned_codes )
 
 // Allow frontend to trigger updates for scanned codes, ( triggers on a periodic interval from EventView ), is lighter than requestManualCodeRefresh as it checks only scanned and claimed == true codes
-exports.refreshScannedCodesStatuses = v1_oncall( [ 'memory_512MiB', 'long_timeout' ], refreshScannedCodesStatuses )
+exports.refreshScannedCodesStatuses = v1_oncall( [ 'memory_512MB', 'long_timeout' ], refreshScannedCodesStatuses )
 
 // Directly mint a code to an address
 const { mint_code_to_address } = require( './modules/minting' )
@@ -40,12 +40,16 @@ exports.mint_code_to_address = v2_oncall( [ 'memory_512MiB', 'long_timeout' ], m
 const { recalculate_available_codes_admin } = require( './modules/codes' )
 exports.recalculate_available_codes = v2_oncall( recalculate_available_codes_admin )
 
+// On event registration, recalculate available codes
+const { recalculate_available_codes } = require( './modules/codes' )
+exports.recalculate_available_codes_on_event_registration = functions.runWith( generousRuntime ).firestore.document( `events/{eventId}` ).onCreate( ( { params } ) => recalculate_available_codes( params.eventId ) )
+
 // ///////////////////////////////
 // Event data
 // ///////////////////////////////
 
 const { registerEvent, deleteEvent, getUniqueOrganiserEmails } = require( './modules/events' )
-exports.registerEvent = v1_oncall( [ 'memory_1GiB', 'long_timeout' ], registerEvent )
+exports.registerEvent = v2_oncall( [ 'memory_1GiB', 'long_timeout' ], registerEvent )
 exports.deleteEvent = v1_oncall( deleteEvent )
 
 // Email export to update event organisers
@@ -78,7 +82,6 @@ exports.delete_data_of_deleted_event = functions.firestore.document( `events/{ev
 // Update items where parents were updated
 exports.updatePublicEventData = functions.firestore.document( `events/{eventId}` ).onWrite( updatePublicEventData )
 exports.updateEventAvailableCodes = functions.firestore.document( `codes/{codeId}` ).onUpdate( updateEventAvailableCodes )
-
 
 /* ///////////////////////////////
 // Security
