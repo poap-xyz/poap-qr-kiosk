@@ -1,6 +1,6 @@
 // Firebase functionality
 import { initializeApp } from "firebase/app"
-import { getFirestore, doc, onSnapshot } from "firebase/firestore"
+import { getFirestore, doc, onSnapshot, connectFirestoreEmulator } from "firebase/firestore"
 import { getAnalytics, logEvent } from "firebase/analytics"
 import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
@@ -63,14 +63,16 @@ export const log_kiosk_open = httpsCallable( functions, 'log_kiosk_open' )
 export const mint_code_to_address = httpsCallable( functions, 'mint_code_to_address' )
 export const recalculate_available_codes = httpsCallable( functions, 'recalculate_available_codes' )
 
-// Offline functions emulator
+// Offline emulators
 const functions_emulator_port = 5001
-// const firestore_emulator_port = 8080
+const firestore_emulator_port = 8080
+const emulator_host = 'localhost' // Note that cypress sometimes can't resolve localhost causing net::ERR_EMPTY_RESPONSE failures
 if( import.meta.env.VITE_useEmulator ) {
-    connectFunctionsEmulator( functions, 'localhost', functions_emulator_port )
+    log( `🤖 EMULATOR MODE ENABLED` )
+    connectFunctionsEmulator( functions, emulator_host, functions_emulator_port )
     log( `Using firebase functions emulator on port ${ functions_emulator_port }` )
-    // connectFirestoreEmulator( db, 'localhost', firestore_emulator_port )
-    // log( `Using firebase firestore emulator on port ${ firestore_emulator_port }` )
+    connectFirestoreEmulator( db, emulator_host, firestore_emulator_port )
+    log( `Using firebase firestore emulator on port ${ firestore_emulator_port }` )
 }
 
 export const get_emulator_function_call_url = name => `http://localhost:${ functions_emulator_port }/${ VITE_projectId }/us-central1/${ name }`
