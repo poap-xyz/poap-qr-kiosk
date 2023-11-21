@@ -12,6 +12,17 @@ Product owner: @actualymentor
 
 [!Password vault (Engineering folder)](https://team-poap.1password.com/vaults/qo2bydganq3dw7dzedyi6h3fwu/allitems/2ey6mleluwnp4mnxq4rkqcknpm)
 
+## Table of contents
+
+- [Requirements](#requirements)
+- [Frontend usage](#frontend-usage)
+- [Backend usage](#backend-usage)
+- [Maintenance](#maintenance)
+- [Tech stack](#tech-stack)
+- [Developer flow](#developer-flow)
+- [Setting up new Firebase projects](#setting-up-new-firebase-projects)
+
+
 ## Requirements
 
 - Have [nvm](https://github.com/nvm-sh/nvm) installed as a Node.js version manager
@@ -38,6 +49,22 @@ Product owner: @actualymentor
 3. `npm i`
 4. Populate `functions/.env.development` with the 1Password note `[ function/.env.development ] POAP Kiosk functions`
 5. `npm run serve`
+
+## Maintenance
+
+Most of the internal and external packages we use are semver compliant. Which is `major.patch.minor`, which you can read as `danger.attention.safe`. So `v1.2.5` -> `v1.9.535` is sage, but `v1.2.5` -> `v2.0.0` is dangerous.
+
+Minor versions are upgraded in bulk, blindly, and tested automatedly. Major versions require you to read the release notes of the dependency to check if the announced breaking changes affect us. Only after that do we upgrade and test them. Usually you can find version updates by going to the package github or searching for `packge_name changelog`, sometimes you need to find the `CHANGELOG.md` in a repo. Pay special attention to major version bumps (scroll to the part where the major version changes, don't just read the latest release notes).
+
+**Dependency bumps (frontend)**
+
+- Minor updates are done by running `npm run upgrade`
+- Major updates are done by running `ncu --doctor -u PACKAGE1,PACKAGE2,...`, this will incrementally install a package and then run tests to check if everything works
+    - double check that the emulator suite is running if your `.env.development` includes `VITE_useEmulator=true`
+
+**Dependency bumps (backend)**
+
+- Updates are done assisted by `ncu`, and tested locally after bumps, then tested in CI through pull requests
 
 ## Tech stack
 
