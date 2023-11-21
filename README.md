@@ -29,6 +29,7 @@ Product owner: @actualymentor
     1. Run the firebase functions backend locally, see next section
     1. Comment out the `VITE_useEmulator` line in `.env.development` (this will make the frontend use the live backend)
 1. `npm start`
+1 `npm run cypress` to run tests locally, if they all pass then your setup was successful
 
 ## Backend usage
 
