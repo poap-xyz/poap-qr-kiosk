@@ -1,12 +1,6 @@
 // V1 Dependencies
 const functions = require( "firebase-functions" )
 
-// V1 Runtime config
-const generousRuntime = {
-    timeoutSeconds: 540,
-    memory: '4GB'
-}
-
 const { log, dev } = require( './modules/helpers' )
 log( `⚠️ Verbose mode on, ${ dev ? '⚙️ dev mode on' : '🚀 production mode on' }` )
 
@@ -72,7 +66,7 @@ const { delete_data_of_deleted_event, updatePublicEventData } = require( './modu
 const { clean_up_expired_items } = require( './modules/health' )
 
 // Delete items where parents were deleted
-exports.clean_up_expired_items = functions.runWith( generousRuntime ).pubsub.schedule( 'every 24 hours' ).onRun( clean_up_expired_items )
+exports.clean_up_expired_items = functions.runWith( { timeoutSeconds: 540, memory: '4GB' } ).pubsub.schedule( 'every 24 hours' ).onRun( clean_up_expired_items )
 exports.delete_data_of_deleted_event = functions.firestore.document( `events/{eventId}` ).onDelete( delete_data_of_deleted_event )
 
 // Update items where parents were updated

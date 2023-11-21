@@ -10,6 +10,8 @@ Product owner: @actualymentor
 
 [Internal documentation](https://www.notion.so/poap/POAP-Kiosk-formerly-QR-Dispenser-3956e66a0b0742d49dab58e7b2fd0644)
 
+[!Password vault (Engineering folder)](https://team-poap.1password.com/vaults/qo2bydganq3dw7dzedyi6h3fwu/allitems/2ey6mleluwnp4mnxq4rkqcknpm)
+
 ## Requirements
 
 - Have [nvm](https://github.com/nvm-sh/nvm) installed as a Node.js version manager
@@ -25,7 +27,7 @@ Product owner: @actualymentor
 1. Populate `.env.development`
 1. CHOICE MOMENT. Either:
     1. Run the firebase functions backend locally, see next section
-    1. Comment out the `REACT_APP_useEmulator` line in `.env.development` (this will make the frontend use the live backend)
+    1. Comment out the `VITE_useEmulator` line in `.env.development` (this will make the frontend use the live backend)
 1. `npm start`
 
 ## Backend usage
@@ -33,11 +35,12 @@ Product owner: @actualymentor
 1. `cd functions`
 2. `nvm use`
 3. `npm i`
+4. Populate `functions/.env.development` with the 1Password note `[ function/.env.development ] POAP Kiosk functions`
 5. `npm run serve`
 
 ## Tech stack
 
-App code based on `create-react-app`, styling based on `styled-components`, routing using `react-router`.
+App code based on `vite`, styling based on `styled-components`, routing using `react-router`.
 
 Backend runs on a Firebase project.
 
@@ -56,9 +59,10 @@ This app follows the [POAP git flow]( https://app.gitbook.com/o/-Mdt3oJeD814je5S
 
 To prevent the psycho from pursuing you:
 
-1. Write for clarity and comprehension.
-2. Leave a "what this does" comment for **every** function.
-3. Be as descriptive as possible in commits and PRs.
+1. Write for clarity and comprehension, self documenting code does not exist
+2. Leave a "what this does" comment for **every** function, preferably in JSDoc
+3. Be as descriptive as possible in commits and PRs
+4. Assume the next person working on your code is much more junior than you
 
 ## Setting up new Firebase projects
 
