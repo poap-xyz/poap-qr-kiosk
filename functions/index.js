@@ -36,7 +36,7 @@ exports.recalculate_available_codes = v2_oncall( recalculate_available_codes_adm
 
 // On event registration, recalculate available codes
 const { recalculate_available_codes } = require( './modules/codes' )
-exports.recalculate_available_codes_on_event_registration = functions.runWith( generousRuntime ).firestore.document( `events/{eventId}` ).onCreate( ( { params } ) => recalculate_available_codes( params.eventId ) )
+exports.recalculate_available_codes_on_event_registration = functions.runWith( { timeoutSeconds: 540, memory: '4GB' } ).firestore.document( `events/{eventId}` ).onCreate( ( { params } ) => recalculate_available_codes( params.eventId ) )
 
 // ///////////////////////////////
 // Event data
