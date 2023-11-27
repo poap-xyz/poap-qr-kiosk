@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2017",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "resolveJsonModule": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true
+  },
+  "compileOnSave": true,
+  "exclude": ["node_modules"]
+}
