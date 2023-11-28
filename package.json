@@ -43,7 +43,7 @@
     "test:ci": "NODE_ENV=production CI=true start-server-and-test --expect 200 start 3000 'npm run test:parallel'",
     "test:parallel": "cypress-cloud run --browser chrome --parallel --record",
     "test:ci:with_emulator": "NODE_ENV=production CI=true start-server-and-test 'npm start' 3000 'cd functions && npm run serve' 4000 'npm run test:parallel'",
-    "lint": "eslint --fix src ",
+    "lint": "prettier . --write",
     "prepare": "husky install",
     "upgrade": "ncu && read -p 'Press enter to upgrade above packages' && ncu -u && read -p 'Press enter to install new versions...' && npm i && npm outdated "
   },
@@ -71,8 +71,12 @@
     "cypress-fail-fast": "^7.0.3",
     "cypress-file-upload": "^5.0.8",
     "dotenv": "^16.3.1",
+    "eslint": "^8.54.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-react": "^7.33.2",
     "husky": "^8.0.3",
+    "prettier": "3.1.0",
     "serve": "^14.2.1",
     "start-server-and-test": "^1.15.4"
   }
