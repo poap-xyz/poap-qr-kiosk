@@ -14,7 +14,6 @@ fi
 if echo $lint_outcome | grep -q "warning"; then
     echo "⚠️ [ precommit hook → complexity check ] code may be may be simpler to write, try to make it simpler before committing\n"
     echo "$lint_outcome"
-    exit 0
 fi
 
 echo "✅ [ precommit hook → prettify ] making your code cuter 💅💅💅"
