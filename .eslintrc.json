@@ -8,24 +8,26 @@
         "sourceType": "module"
     },
     "rules": {
-        "complexity": ["error", 5],
-        "max-len": ["error", { "code": 100, "ignorePattern": "^import |^export " }],
+        "complexity": ["error", 4],
+        "max-len": ["error", { "code": 80, "ignorePattern": "^import |^export " }],
         "max-statements": ["error", 10],
         "max-statements-per-line": ["error", { "max": 1 }],
         "max-depth": ["error", { "max": 2 }],
         "max-nested-callbacks": ["error", 3],
         "max-lines": ["error", { "max": 750, "skipBlankLines": true, "skipComments": true }],
-        "max-lines-per-function": ["error", 50]
+        "max-lines-per-function": ["error", 75]
     },
       "overrides": [
+            {
+              "files": "*.json",
+              "parser": "jsonc-eslint-parser",
+              "rules": {}
+            }
+        ,
         {
-          "files": ["*.spec.ts"],
+          "files": ["*.(spec | test).(*)"],
           "rules": {
-            "complexity": "off",
-            "max-nested-callbacks": "off",
-            "max-statements": "off",
-            "max-lines": "off",
-            "max-lines-per-function": "off"
+            "max-statements": "off"
           }
         }
       ]

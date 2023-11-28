@@ -1,23 +1,26 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "\n🤖 [ precommit hook ] linting before committing..."
+echo "\n🤖 [ precommit hooks running ] 🤖"
 
 # If errors, make it clear they cannot commit
-if ! lint_outcome=$( npm run lint ); then
-    echo "🚨 [ precommit hook ] lint encountered blocking issues, fix them before committing\n"
+if ! lint_outcome=$( npm run complexity_check ); then
+    echo "🚨 [ precommit hook → complexity check ] code seems to be too complex. Make it simpler before committing\n"
     echo "$lint_outcome"
     exit 1
 fi
 
 # If warnings, suggest they fix them
 if echo $lint_outcome | grep -q "warning"; then
-    echo "⚠️ [ precommit hook ] lint encountered warnings, consider fixing them before pushing\n"
+    echo "⚠️ [ precommit hook → complexity check ] code may be may be simpler to write, try to make it simpler before committing\n"
     echo "$lint_outcome"
     exit 0
 fi
 
-echo "✅ [ precommit hook ] lint encountered no blocking issues\n"
+echo "✅ [ precommit hook → prettify ] making your code cuter 💅💅💅"
 
+npm run prettify
 
+echo "✅ [ precommit hook → prettify ] done!"
 
+echo "\n🤖 [ precommit hooks finished ] 🤖"
