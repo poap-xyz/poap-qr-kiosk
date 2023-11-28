@@ -1,15 +1,14 @@
-import { useCustomCSS } from "../../hooks/custom_css"
-import Style from "../atoms/Style"
+import { useCustomCSS } from "../../hooks/custom_css";
+import Style from "../atoms/Style";
 
-export default function CustomCssWrapper( { children } ) {
+export default function CustomCssWrapper({ children }) {
+	const css = useCustomCSS();
 
-    const css = useCustomCSS()
+	return (
+		<>
+			{children}
 
-    return <>
-
-        { children }
-
-        { css && <Style styles={ css } /> }
-
-    </>
+			{css && <Style styles={css} />}
+		</>
+	);
 }

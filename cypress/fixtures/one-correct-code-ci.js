@@ -1,1 +1,1 @@
-module.exports = [ 'testingcigame1' ]
+module.exports = ["testingcigame1"];

@@ -1,122 +1,129 @@
-import { useParams } from "react-router-dom"
-import { dev, log } from "../modules/helpers"
-import { get_code_by_challenge, requestManualCodeRefresh, trackEvent } from "../modules/firebase"
-import { useChallenge } from "./challenges"
-import { useEffect, useState } from "react"
-import { useValidateUser } from "./user_validation"
-import { useEventOfChallenge } from "./events"
-import { useTranslation } from "react-i18next"
-import { useProbableMintAddress } from "./minter"
-const { VITE_publicUrl } = import.meta.env
+import { useParams } from "react-router-dom";
+import { dev, log } from "../modules/helpers";
+import { get_code_by_challenge, requestManualCodeRefresh, trackEvent } from "../modules/firebase";
+import { useChallenge } from "./challenges";
+import { useEffect, useState } from "react";
+import { useValidateUser } from "./user_validation";
+import { useEventOfChallenge } from "./events";
+import { useTranslation } from "react-i18next";
+import { useProbableMintAddress } from "./minter";
+const { VITE_publicUrl } = import.meta.env;
 
-export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) => {
+export const useClaimcodeForChallenge = (captchaResponse, fetch_code = false) => {
+	// i18next hook
+	const { t } = useTranslation();
 
-    // i18next hook
-    const { t } = useTranslation()
+	// Get challenge code from url
+	const { challenge_code } = useParams();
+	const challenge = useChallenge(challenge_code);
+	const { user_valid } = useValidateUser(captchaResponse);
+	const [claim_link, set_claim_link] = useState();
+	const [error, set_error] = useState();
+	const event = useEventOfChallenge(challenge_code);
 
-    // Get challenge code from url
-    const { challenge_code } = useParams(  )
-    const challenge = useChallenge( challenge_code )
-    const { user_valid } = useValidateUser( captchaResponse )
-    const [ claim_link, set_claim_link ] = useState(  )
-    const [ error, set_error ] = useState(  )
-    const event = useEventOfChallenge( challenge_code )
+	// Get the probable user address based on query andor local storage
+	const { probable_user_address } = useProbableMintAddress();
 
-    // Get the probable user address based on query andor local storage
-    const { probable_user_address } = useProbableMintAddress(  )
+	// Get claim code
+	async function get_poap_link() {
+		log(`Getting code for ${challenge_code}: `, challenge, event);
+		let { data: claim_code } = await get_code_by_challenge({
+			challenge_code,
+			captcha_response: captchaResponse,
+		});
 
-    // Get claim code
-    async function get_poap_link() {
+		// On first fail, refresh codes and try again
+		if (claim_code.error) {
+			log(`Error getting code: `, claim_code, `Refreshing codes and trying again`);
+			const { data } = await requestManualCodeRefresh(challenge?.eventId).catch((e) => ({
+				data: e,
+			}));
+			log(`Remote code update response : `, data);
+			const { data: retried_claim_code } = await get_code_by_challenge({
+				challenge_code,
+				captcha_response: captchaResponse,
+			});
+			claim_code = retried_claim_code;
+		}
 
+		// Handle code errors
+		if (claim_code.error) {
+			log(`Error getting code: `, claim_code);
+			throw new Error(claim_code.error);
+		}
+		log(`Received code: `, claim_code);
+		trackEvent(`claim_code_received`);
 
-        log( `Getting code for ${ challenge_code }: `, challenge, event )
-        let { data: claim_code } = await get_code_by_challenge( { challenge_code, captcha_response: captchaResponse } )
+		// Formulate redirect depending on claim type
+		log(`Generating claim link based on code ${claim_code} and event data `, event);
+		let link = `${
+			dev ? `http://localhost:3000` : VITE_publicUrl
+		}/#/mint/${claim_code}/${challenge_code}`;
+		if (event?.collect_emails) link = `${VITE_publicUrl}/#/static/claim/${claim_code}`;
+		if (event?.claim_base_url) link = `${event?.claim_base_url}${claim_code}`;
 
-        // On first fail, refresh codes and try again
-        if( claim_code.error ) {
-            log( `Error getting code: `, claim_code, `Refreshing codes and trying again` )
-            const { data } = await requestManualCodeRefresh( challenge?.eventId ).catch( e => ( { data: e } ) )
-            log( `Remote code update response : `, data )
-            const { data: retried_claim_code } = await get_code_by_challenge( { challenge_code, captcha_response: captchaResponse } )
-            claim_code = retried_claim_code
-        }
+		// If we have a probable user address, append it
+		if (probable_user_address) link += `?user_address=${probable_user_address}`;
 
-        // Handle code errors
-        if( claim_code.error ) {
-            log( `Error getting code: `, claim_code )
-            throw new Error( claim_code.error )
-        }
-        log( `Received code: `, claim_code )
-        trackEvent( `claim_code_received` )
+		log(`${t("claim.formulateRedirect")}`, link);
 
-        // Formulate redirect depending on claim type
-        log( `Generating claim link based on code ${ claim_code } and event data `, event )
-        let link = `${ dev ? `http://localhost:3000` : VITE_publicUrl }/#/mint/${ claim_code }/${ challenge_code }`
-        if( event?.collect_emails ) link = `${ VITE_publicUrl }/#/static/claim/${ claim_code }`
-        if( event?.claim_base_url ) link = `${ event?.claim_base_url }${ claim_code }`
+		return link;
+	}
 
-        // If we have a probable user address, append it
-        if( probable_user_address ) link += `?user_address=${ probable_user_address }`
+	// Once the user is validated, get a POAP claim code
+	useEffect(() => {
+		log(
+			`claim_codes.js triggered with User valid: ${user_valid}, fetch code: ${fetch_code} (known link: ${claim_link}), challenge: `,
+			challenge,
+			` event: `,
+			event,
+		);
 
-        log( `${ t( 'claim.formulateRedirect' ) }`, link )
+		let cancelled = false;
 
-        return link
-    }
+		(async () => {
+			try {
+				// Check for presence of challenge data
+				if (user_valid !== true) return log("User not (yet) validated");
 
-    // Once the user is validated, get a POAP claim code
-    useEffect( (  ) => {
+				// Validate for expired challenge, note that the claim_link check here exists because challenges are expired once links are retreived, so once a claim_code is loaded the challenge is expired while the page is still open
+				if (!claim_link && user_valid && challenge?.deleted) {
+					trackEvent(`claim_challenge_expired`);
+					log(
+						`Challenge expired, claim_link: ${claim_link}, challenge: `,
+						challenge,
+						`user_valid: ${user_valid}`,
+					);
+					throw new Error(`${t("claim.validation.alreadyUsed")}`);
+				}
 
-        log( `claim_codes.js triggered with User valid: ${ user_valid }, fetch code: ${ fetch_code } (known link: ${ claim_link }), challenge: `, challenge, ` event: `, event )
+				// Check if the event data was loaded yet, we need this for custom behaviour like claim_base_url and collect_emails
+				if (!event) return log("Event not (yet) loaded");
 
-        let cancelled = false;
+				// If we already have a link in the state, do not get a new one
+				if (claim_link) return;
 
-        ( async () => {
+				// If we are not ready to fetch the code yet, return undefined
+				if (!fetch_code) return;
 
-            try {
+				// If no game challenge, get a code
+				log(`Getting code for challenge: `, challenge);
+				const link = await get_poap_link();
+				log(`Got link: `, link);
+				if (cancelled && !link) return;
 
-                // Check for presence of challenge data
-                if( user_valid !== true ) return log( 'User not (yet) validated' )
+				set_claim_link(link);
+				log(`Set claim link to state: `, link);
+			} catch (e) {
+				log(`Error getting challenge: `, e);
 
-                // Validate for expired challenge, note that the claim_link check here exists because challenges are expired once links are retreived, so once a claim_code is loaded the challenge is expired while the page is still open
-                if( !claim_link && user_valid && challenge?.deleted ) {
-                    trackEvent( `claim_challenge_expired` )
-                    log( `Challenge expired, claim_link: ${ claim_link }, challenge: `, challenge, `user_valid: ${ user_valid }` )
-                    throw new Error( `${ t( 'claim.validation.alreadyUsed' ) }` )
-                }
+				// Setting error to loading screen ( CI relies on this )
+				set_error(e.message);
+			}
+		})();
 
-                // Check if the event data was loaded yet, we need this for custom behaviour like claim_base_url and collect_emails
-                if( !event ) return log( 'Event not (yet) loaded' )
+		return () => (cancelled = true);
+	}, [user_valid, fetch_code, event?.name]); // Note that we're comparing to the event?.name which is a base type, meaning the hook will not retrigger if the event is reloaded (and the object reference changes)
 
-                // If we already have a link in the state, do not get a new one
-                if( claim_link ) return
-
-                // If we are not ready to fetch the code yet, return undefined
-                if( !fetch_code ) return
-
-                // If no game challenge, get a code
-                log( `Getting code for challenge: `, challenge )
-                const link = await get_poap_link()
-                log( `Got link: `, link )
-                if( cancelled && !link ) return
-
-                set_claim_link( link )
-                log( `Set claim link to state: `, link )
-
-            } catch ( e ) {
-
-                log( `Error getting challenge: `, e )
-
-                // Setting error to loading screen ( CI relies on this )
-                set_error( e.message )
-
-            }
-
-        } )( )
-
-        return () => cancelled = true
-
-    }, [ user_valid, fetch_code, event?.name ] ) // Note that we're comparing to the event?.name which is a base type, meaning the hook will not retrigger if the event is reloaded (and the object reference changes)
-
-    return { claim_link, error }
-
-}
+	return { claim_link, error };
+};

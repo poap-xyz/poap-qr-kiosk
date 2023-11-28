@@ -1,1 +1,1 @@
-module.exports = [ 'testinglocalgame1' ]
+module.exports = ["testinglocalgame1"];

@@ -1,1 +1,1 @@
-module.exports = [ 'testinglocal0', 'testinglocala' ]
+module.exports = ["testinglocal0", "testinglocala"];

@@ -1,21 +1,18 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
-export default ( { styles } ) => {
+export default ({ styles }) => {
+	const [sane_styles, set_sane_styles] = useState(undefined);
 
-    const [ sane_styles, set_sane_styles ] = useState( undefined )
+	// Sanetise style input to protect against potential XSS
+	useEffect(() => {
+		if (!styles) return set_sane_styles(undefined);
+		const styles_without_tags = styles.replace(/<.*>/gi, "");
+		set_sane_styles(styles_without_tags);
+	}, [styles]);
 
-    // Sanetise style input to protect against potential XSS
-    useEffect( () => {
+	if (!sane_styles) return;
 
-        if( !styles ) return set_sane_styles( undefined )
-        const styles_without_tags = styles.replace( /<.*>/ig, '' )
-        set_sane_styles( styles_without_tags )
-
-    }, [ styles ] )
-
-    
-    if( !sane_styles ) return
-
-    return <style id="custom-added-css-overrides" dangerouslySetInnerHTML={ { __html: sane_styles } } />
-
-}
+	return (
+		<style id="custom-added-css-overrides" dangerouslySetInnerHTML={{ __html: sane_styles }} />
+	);
+};

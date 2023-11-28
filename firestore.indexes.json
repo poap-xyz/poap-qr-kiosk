@@ -1,91 +1,91 @@
 {
-  "indexes": [
-    {
-      "collectionGroup": "codes",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "claimed",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "updated",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "codes",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "claimed",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "event",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "updated",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "codes",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "claimed",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "event",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "updated",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "codes",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "claimed",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "event",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "scanned",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "updated",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "static_drop_claims",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "is_mock_claim",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "expires",
-          "order": "ASCENDING"
-        }
-      ]
-    }
-  ],
-  "fieldOverrides": []
+	"indexes": [
+		{
+			"collectionGroup": "codes",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "claimed",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "updated",
+					"order": "ASCENDING"
+				}
+			]
+		},
+		{
+			"collectionGroup": "codes",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "claimed",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "event",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "updated",
+					"order": "DESCENDING"
+				}
+			]
+		},
+		{
+			"collectionGroup": "codes",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "claimed",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "event",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "updated",
+					"order": "ASCENDING"
+				}
+			]
+		},
+		{
+			"collectionGroup": "codes",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "claimed",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "event",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "scanned",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "updated",
+					"order": "ASCENDING"
+				}
+			]
+		},
+		{
+			"collectionGroup": "static_drop_claims",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "is_mock_claim",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "expires",
+					"order": "ASCENDING"
+				}
+			]
+		}
+	],
+	"fieldOverrides": []
 }

@@ -1,67 +1,71 @@
-import { useEffect, useState } from "react"
-import { listenToEventMeta, listen_to_claim_challenge } from "../modules/firebase"
+import { useEffect, useState } from "react";
+import { listenToEventMeta, listen_to_claim_challenge } from "../modules/firebase";
 
-export const useEvent = ( eventId, do_nothing=false ) => {
+export const useEvent = (eventId, do_nothing = false) => {
+	const [event, set_event] = useState(undefined);
 
-    const [ event, set_event ] = useState( undefined )
+	useEffect(() => {
+		if (eventId && !do_nothing) return listenToEventMeta(eventId, set_event);
+	}, [eventId, do_nothing]);
 
-    useEffect( () => {
-        if( eventId && !do_nothing ) return listenToEventMeta( eventId, set_event )
-    }, [ eventId, do_nothing ] )
+	return event;
+};
 
-    return event
-}
+export const useEventTemplate = (eventId) => {
+	const [template, set_template] = useState(undefined);
 
-export const useEventTemplate = eventId => {
-    
-    const [ template, set_template ] = useState( undefined )
-    
-    useEffect( () => {
-        if( !eventId ) return set_template( undefined )
-        if( eventId ) return listenToEventMeta( eventId, event => {
-            set_template( event?.template )
-        }, true )
-    }, [ eventId ] )
-    
-    return template
-}
+	useEffect(() => {
+		if (!eventId) return set_template(undefined);
+		if (eventId)
+			return listenToEventMeta(
+				eventId,
+				(event) => {
+					set_template(event?.template);
+				},
+				true,
+			);
+	}, [eventId]);
 
-export const useEventOfChallenge = ( challenge_code ) => {
+	return template;
+};
 
-    const [ event_id, set_event_id ] = useState(  )
-    const [ event, set_event ] = useState(  )
+export const useEventOfChallenge = (challenge_code) => {
+	const [event_id, set_event_id] = useState();
+	const [event, set_event] = useState();
 
-    useEffect( () => listen_to_claim_challenge( challenge_code, challenge => {
-        if( challenge?.eventId ) set_event_id( challenge?.eventId )
-    } ), [ challenge_code ] )
-    useEffect( () => listenToEventMeta( event_id, remote_event => {
-        if( remote_event ) set_event( remote_event )
-    } ), [ event_id ] )
+	useEffect(
+		() =>
+			listen_to_claim_challenge(challenge_code, (challenge) => {
+				if (challenge?.eventId) set_event_id(challenge?.eventId);
+			}),
+		[challenge_code],
+	);
+	useEffect(
+		() =>
+			listenToEventMeta(event_id, (remote_event) => {
+				if (remote_event) set_event(remote_event);
+			}),
+		[event_id],
+	);
 
-    return event
-}
+	return event;
+};
 
-export const useLocalstoredEvent = ( do_nothing=false ) => {
+export const useLocalstoredEvent = (do_nothing = false) => {
+	const [eventId, setEventId] = useState(localStorage.getItem("cached_event_id"));
 
-    const [ eventId, setEventId ] = useState( localStorage.getItem( 'cached_event_id' ) )
+	useEffect(() => {
+		if (do_nothing) return;
 
-    useEffect( () => {
+		const listener = window.addEventListener("storage", () => {
+			const new_event_id = localStorage.getItem("cached_event_id");
+			if (new_event_id != eventId) setEventId(new_event_id);
+		});
 
-        if( do_nothing ) return
+		return () => {
+			window.removeEventListener("storage", listener);
+		};
+	});
 
-        const listener = window.addEventListener( 'storage', () => {
-
-            const new_event_id = localStorage.getItem( 'cached_event_id' )
-            if( new_event_id != eventId ) setEventId( new_event_id )
-
-        } )
-
-        return () => {
-            window.removeEventListener( 'storage', listener )
-        }
-
-    } )
-
-    return eventId
-
-}
+	return eventId;
+};

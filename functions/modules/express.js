@@ -1,26 +1,24 @@
 // Cached express instance
-let app = undefined
+let app = undefined;
 
 // CORS enabled express generator
-module.exports = f => {
+module.exports = (f) => {
+	// If cached, return
+	if (app) return app;
 
-    // If cached, return
-    if( app ) return app
+	// Function dependencies
+	const express = require("express");
+	const cors = require("cors");
+	const bodyParser = require("body-parser");
 
-    // Function dependencies
-    const express = require( 'express' )
-    const cors = require( 'cors' )
-    const bodyParser = require( 'body-parser' )
+	// Create express server
+	app = express();
 
-    // Create express server
-    app = express()
+	// Enable CORS
+	app.use(cors({ origin: true }));
 
-    // Enable CORS
-    app.use( cors( { origin: true } ) )
+	// Enable body parser
+	app.use(bodyParser.json());
 
-    // Enable body parser
-    app.use( bodyParser.json() )
-
-    return app
-
-}
+	return app;
+};
