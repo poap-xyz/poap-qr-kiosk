@@ -49,8 +49,10 @@
     "@types/promise-retry": "^1.1.6",
     "@types/pug": "^2.0.10",
     "@types/uuid": "^9.0.7",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.54.0",
     "firebase-tools": "^12.9.1",
-    "prettier": "3.1.0",
     "typescript": "^5.3.2"
   }
 }
