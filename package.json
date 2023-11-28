@@ -44,7 +44,7 @@
 		"test:parallel": "cypress-cloud run --browser chrome --parallel --record",
 		"test:ci:with_emulator": "NODE_ENV=production CI=true start-server-and-test 'npm start' 3000 'cd functions && npm run serve' 4000 'npm run test:parallel'",
 		"complexity_check": "eslint $(git diff --name-only HEAD | xargs) --ignore-pattern \"*.json\"",
-		"prettify": "prettier . --write",
+		"prettify": "prettier $(git diff --name-only HEAD | xargs) --write && git add -A .",
 		"prepare": "husky install",
 		"upgrade": "ncu && read -p 'Press enter to upgrade above packages' && ncu -u && read -p 'Press enter to install new versions...' && npm i && npm outdated "
 	},
