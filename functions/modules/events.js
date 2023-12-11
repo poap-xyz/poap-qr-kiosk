@@ -63,7 +63,6 @@ async function validate_and_write_event_codes( event_id, expiration_date, codes,
 
     // Parse out codes that are expected to be new, so keep only codes that are not found in the existing_code array
     const new_codes = saneCodes.filter( ( { qr_hash } ) => !existing_codes?.find( existing_code => existing_code.qr_hash == qr_hash ) )
-
     // First check if all codes are unused by another event
     const code_clash_queue = new_codes.map( code => async () => {
 
@@ -76,78 +75,30 @@ async function validate_and_write_event_codes( event_id, expiration_date, codes,
 
     } )
 
+    /* ///////////////////////////////
+	// Step 2: Throttled code writing, see https://cloud.google.com/firestore/docs/best-practices and https://cloud.google.com/firestore/quotas#writes_and_transactions */
+	
     // Check for code clashes in a throttled manner
     await Throttle.all( code_clash_queue, { maxInProgress } )
 
-    /* ///////////////////////////////
-	// Step 2: Throttled code writing using firestore patches */
-	
-    // Batch config
-    const batch_size = 499
+    // Load the codes into firestore
+    const code_writing_queue = saneCodes.map( code => async () => {
 
-    // Split into chunks of batch_size
-    const code_chunks = []
-    for( let index = 0; index < saneCodes.length; index += batch_size ) {
-        const chunk = saneCodes.slice( index, index + batch_size )
-        code_chunks.push( chunk )
-    }
+        return db.collection( 'codes' ).doc( code.qr_hash ).set( {
+            claimed: !!code.claimed,
+            scanned: false,
+            amountOfRemoteStatusChecks: 0,
+            created: Date.now(),
+            updated: Date.now(),
+            updated_human: new Date().toString(),
+            event: event_id,
+            expires: new Date( expiration_date ).getTime() + weekInMs
+        }, { merge: true } )
 
-    // Create batches for each chunk
-    const code_batches = code_chunks.map( chunk => {
-            
-        // Make a batch for this chunk
-        const batch = db.batch()
-
-        // For each entry in the chunk, add a batch set
-        chunk.forEach( code => {
-
-            if( !code ) return
-
-            const ref = db.collection( `codes` ).doc( code.qr_hash )
-            batch.set( ref, {
-                claimed: !!code.claimed,
-                scanned: false,
-                amountOfRemoteStatusChecks: 0,
-                created: Date.now(),
-                updated: Date.now(),
-                updated_human: new Date().toString(),
-                event: event_id,
-                expires: new Date( expiration_date ).getTime() + weekInMs
-            }, { merge: true } )
-
-        } )
-
-        // Return batch
-        return batch
-            
     } )
 
-    // Create writing queue
-    const writing_queue = code_batches.map( batch => () => batch.commit() )
-
-    // Write the watches with retry
-    const { throttle_and_retry } = require( './helpers' )
-    await throttle_and_retry( writing_queue, maxInProgress, `validate_and_write_event_codes`, 2, 5 )
-
-    // Old non-batchified way
-    // // Load the codes into firestore
-    // const code_writing_queue = saneCodes.map( code => async () => {
-
-    //     return db.collection( 'codes' ).doc( code.qr_hash ).set( {
-    //         claimed: !!code.claimed,
-    //         scanned: false,
-    //         amountOfRemoteStatusChecks: 0,
-    //         created: Date.now(),
-    //         updated: Date.now(),
-    //         updated_human: new Date().toString(),
-    //         event: event_id,
-    //         expires: new Date( expiration_date ).getTime() + weekInMs
-    //     }, { merge: true } )
-
-    // } )
-
-    // // Write codes to firestore with a throttle
-    // await Throttle.all( code_writing_queue, { maxInProgress } )
+    // Write codes to firestore with a throttle
+    await Throttle.all( code_writing_queue, { maxInProgress } )
 
     // Return the sanitised codes
     return saneCodes
