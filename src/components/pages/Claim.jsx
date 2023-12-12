@@ -59,6 +59,8 @@ export default function ClaimPOAP() {
     // If the game is done, and the user is valid, redirect for claiming
     useEffect( (  ) => {
 
+        log( `Determining whether to forward. User is ${ user_valid ? 'valid' : 'invalid' }, claim link is `, claim_link )
+
         // Game version do their claiming through a subcomponent of <Stroop />
         // for that reason we never forward game-based challenges
         if( has_game_challenge ) return

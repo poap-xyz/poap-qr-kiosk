@@ -192,6 +192,13 @@ jobs:
           echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
           sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
 
+      # Disable emulator for testing
+      - name: Disable emulator for testing
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: |
+          sed -i 's/^REACT_APP_useEmulator=.*$//g' .env
+          sed -i 's/^VITE_useEmulator=.*$//g' .env
+
       # Check linting
       - name: Check for linting errors
         if: steps.changed-frontend-files.outputs.any_changed == 'true'
