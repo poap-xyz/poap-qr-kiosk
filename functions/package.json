@@ -2,7 +2,7 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
-    "serve": "firebase use development && NODE_ENV=development ENVIRONMENT_LOCAL=true firebase emulators:start --only functions,firestore,pubsub | tee functions-emulator.log",
+    "serve": "NODE_ENV=development ENVIRONMENT_LOCAL=true firebase emulators:start --only functions,firestore,pubsub | tee functions-emulator.log",
     "kill": "sudo lsof -i :8085,8080 | sed -n '2p' | awk '{print $2}' | xargs kill -9",
     "shell": "firebase functions:shell",
     "start": "firebase use development && npm run runtime && npm run shell",
