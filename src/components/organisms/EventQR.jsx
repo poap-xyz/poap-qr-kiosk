@@ -1,4 +1,5 @@
 import { useEvent } from "../../hooks/events"
+import POAPSpinner from "../atoms/POAPSpinner"
 import AnnotatedQR from "../molecules/AnnotatedQR"
 let { VITE_publicUrl } = import.meta.env
 
@@ -6,6 +7,9 @@ export default function EventQR( { event_id, size=256, background="var(--primary
 
     const event = useEvent( event_id )
     const force_appcheck_fail = window?.location?.href?.includes( 'FORCE_INVALID_APPCHECK' )
+
+    // If no event data is available yet, render a placeholder
+    if( !event?.public_auth?.token ) return <POAPSpinner/>
 
     return <AnnotatedQR
         color={ color }
