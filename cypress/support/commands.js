@@ -14,7 +14,7 @@ beforeEach( () => {
 
 } )
 
-// Stub google analytics requests
+// Stub third party requests during testing
 beforeEach( () => {
 
     cy.intercept( 'https://unpkg.com/**/*', { middleware: true }, req => {
@@ -41,13 +41,7 @@ beforeEach( () => {
         // Respond with a stubbed function
         req.reply( ' () => console.log( "Stubbed Rive WASM CDN" )' )
 
-    } ).as( 'jsdelivr' )
-
-
-} )
-
-// Stub rive WASM requests
-beforeEach( () => {
+    } ).as( 'jsdelivr_stub' )
 
     cy.intercept( 'https://www.googletagmanager.com/**/*', { middleware: true }, req => {
 
@@ -61,6 +55,19 @@ beforeEach( () => {
         req.reply( ' () => console.log( "Stubbed Google Analytics" )' )
 
     } ).as( 'google_tag_stub' )
+
+    cy.intercept( 'https://*.matomo.cloud/**/*', { middleware: true }, req => {
+
+        // Disable request caching
+        req.on( 'before:response', ( res ) => {
+            // force all API responses to not be cached
+            res.headers[ 'cache-control' ] = 'no-store'
+        } )
+
+        // Respond with a stubbed function
+        req.reply( ' () => console.log( "Stubbed matomo" )' )
+
+    } ).as( 'matomo_stub' )
 
 
 } )
