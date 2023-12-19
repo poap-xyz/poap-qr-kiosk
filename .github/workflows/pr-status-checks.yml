@@ -76,7 +76,7 @@ jobs:
           steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
-          echo -e "\nREACT_APP_useEmulator=true" >> .env
+          echo -e "\nVITE_useEmulator=true" >> .env
           echo -e "${{ secrets.FUNCTIONS_DOTENV_DEVELOPMENT }}" > functions/.env.development
           sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
           cd functions && npm run use:dev
@@ -87,7 +87,7 @@ jobs:
           steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
-          echo -e "\nREACT_APP_useEmulator=true" >> .env
+          echo -e "\nVITE_useEmulator=true" >> .env
           echo -e "${{ secrets.FUNCTIONS_DOTENV_PRODUCTION }}" > functions/.env.production
           sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
           cd functions && npm run use:prod
