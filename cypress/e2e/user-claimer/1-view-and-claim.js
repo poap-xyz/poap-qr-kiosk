@@ -277,6 +277,8 @@ context( 'Claimer can view valid events', () => {
             cy.contains( 'Verifying your humanity' )
             cy.contains( 'Have I seen you before' )
             cy.contains( 'Please check the box below to proceed' )
+            cy.wait( 5000 )
+            cy.contains( 'Please check the box below to proceed' )
 
         } )
 
