@@ -23,6 +23,44 @@ const log_scan = async ( req, data ) => {
 
 }
 
+/**
+ * Cycles the public authentication for a specified event.
+ * 
+ * This function checks if the current public authentication for an event has expired.
+ * If it has, it generates a new authentication and updates the event with this new authentication,
+ * while preserving the previous authentication data.
+ * 
+ * @async
+ * @function cycle_event_public_auth_if_expired
+ * @param {string} event_id - The ID of the event for which public authentication is being cycled.
+ * @returns {Promise<void>} A promise that resolves when the operation is complete.
+ * 
+ * @example
+ * // Call the function with an event ID
+ * await cycle_event_public_auth_if_expired('event123');
+ */
+const cycle_event_public_auth_if_expired = async event_id => {
+
+    const { db, dataFromSnap } = require( './firebase' )
+    const { generate_new_event_public_auth } = require( './events' )
+
+    const event = await db.collection( 'events' ).doc( event_id ).get().then( dataFromSnap )
+    const { previous_public_auth={} } = event || {}
+
+    // If the auth expired, write a new one but only after the current scanner was let through
+    const new_auth_expires_in_m = previous_public_auth?.expiry_interval || 2
+    if( event.public_auth?.expires < Date.now() ) {
+
+        // Write new public auth AND save previous
+        log( `Previous auth expired, writing new auth` )
+        await db.collection( 'events' ).doc( event_id ).set( {
+            public_auth: generate_new_event_public_auth( new_auth_expires_in_m ),
+            previous_public_auth: event?.public_auth || {}
+        }, { merge: true } )
+    }
+
+}
+
 app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
     // Function dependencies
@@ -52,6 +90,9 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
         // Get the event from firestore
         const event = await db.collection( 'events' ).doc( event_id ).get().then( dataFromSnap )
         if( !event.uid ) throw new Error( `Event ${ event_id } does not exist` )
+
+        // If the auth expired, write a new one but only after the current scanner was let through
+        await cycle_event_public_auth_if_expired( event_id )
 
         /* ///////////////////////////////
 		// Timing helpers */
@@ -126,17 +167,6 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
             game_config: event.game_config || { duration: 30, target_score: 5 }
         } )
 
-        // If the auth expired, write a new one but only after the current scanner was let through
-        const new_auth_expires_in_m = previous_public_auth?.expiry_interval || 2
-        if( event.public_auth?.expires < Date.now() ) {
-
-            // Write new public auth AND save previous
-            await db.collection( 'events' ).doc( event_id ).set( {
-                public_auth: generate_new_event_public_auth( new_auth_expires_in_m ),
-                previous_public_auth: event?.public_auth || {}
-            }, { merge: true } )
-        }
-
         // Return a redirect to the QR POAP app
         // 307: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_redirection
         let redirect_link = `${ redirect_baseurl }/#/claim/${ challenge_auth.token }`
@@ -174,6 +204,8 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
 
         // Debugging info in the URL
         if( is_test_event || CI ) {
+
+            const new_auth_expires_in_m = previous_public_auth?.expiry_interval || 2
             redirect_link += `?event_expires=${ new_auth_expires_in_m * 60 }s&chal_expires=${ new_challenge_expires_in_mins * 60 }s&grace=${ old_auth_grace_period_in_ms / 1000 }s&trail=`
             redirect_link += completely_invalid ? 'compinv_' : 'ncompinv_'
             redirect_link += outside_grace_period ? 'outgr_' : 'noutgr_'
