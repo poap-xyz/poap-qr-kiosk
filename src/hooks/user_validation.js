@@ -13,6 +13,7 @@ export const useValidateUser = ( captchaResponse ) => {
     // States
     const { challenge_code, error_code } = useParams(  )
     const [ message, set_message ] = useState( `${ t( 'claim.setLoading' ) }` )
+    const [ error, set_error ] = useState(  )
     const [ user_valid, set_user_valid ] = useState( undefined )
     const challenge = useChallenge( challenge_code )
 
@@ -134,7 +135,8 @@ export const useValidateUser = ( captchaResponse ) => {
                 
                 // If we are unable to validate the user, set the error message and set user to invalid (will trigger manual captcha)
                 if( !cancelled ) {
-                    set_message( e.message )
+                    set_message( undefined )
+                    set_error( e.message )
                     set_user_valid( false )
                 }
 
@@ -146,6 +148,6 @@ export const useValidateUser = ( captchaResponse ) => {
 
     }, [ challenge_code, captchaResponse ] )
 
-    return { message, user_valid }
+    return { message, user_valid, error }
 
 }

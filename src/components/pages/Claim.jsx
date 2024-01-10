@@ -24,7 +24,7 @@ export default function ClaimPOAP() {
     const { challenge_code } = useParams( )
     const challenge = useChallenge( challenge_code )
     const [ captchaResponse, setCaptchaResponse ] = useState(  )
-    const { message: user_validation_status_message, user_valid } = useValidateUser( captchaResponse )
+    const { message: user_validation_status_message, error: user_validation_error, user_valid } = useValidateUser( captchaResponse )
 
     // Challenge state management
     const has_game_challenge = challenge?.challenges?.includes( 'game' )
@@ -80,12 +80,19 @@ export default function ClaimPOAP() {
     // ///////////////////////////////
     // Render component
     // ///////////////////////////////
+    log( `Claim debug breadcrumbs: `, { user_valid, user_validation_status_message, captchaResponse, error_getting_claim_code, has_game_challenge, gameDone, claim_link } )
+
+    // Auto validation failed, and there is a captcha response (meaning all validation options were exhausted)
+    if( !user_valid && !user_validation_status_message && captchaResponse ) return <Loading message={ user_validation_status_message || user_validation_error || error_getting_claim_code } />
 
     // If there is a validation status use it
-    if( user_validation_status_message || error_getting_claim_code ) return <Loading message={ user_validation_status_message || error_getting_claim_code } />
+    if( user_validation_status_message ) return <Loading message={ user_validation_status_message } /> 
 
     // If user is not valid, and no captcha response is known, show captcha
     if( !user_valid && !captchaResponse ) return <Captcha onChange={ response => setCaptchaResponse( response ) } />
+
+    // If the captcha was completed, but there is an error getting the claim code, show the error
+    if( user_valid && error_getting_claim_code ) return <Loading message={ error_getting_claim_code } />
 
     // If game challenge requested, show
     // Note that the Stroop module also handles the showing of the "claim POAP" button and we do not rely on the other components in here
