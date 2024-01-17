@@ -19,7 +19,7 @@
   "engines": {
     "node": "18"
   },
-  "main": "index.js",
+  "main": "lib/index.js",
   "dependencies": {
     "@poap/sane-data": "^0.0.7",
     "@sendgrid/mail": "^7.7.0",
