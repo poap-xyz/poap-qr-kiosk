@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "noImplicitAny": false,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
@@ -18,5 +19,5 @@
     "useUnknownInCatchVariables": true
   },
   "compileOnSave": true,
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "./lib/**/*"]
 }

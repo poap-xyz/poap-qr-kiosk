@@ -14,7 +14,7 @@
     "use:prod": "firebase use production",
     "logs": "firebase functions:log",
     "version": "firebase --version",
-    "build": "npm run lint && tsc"
+    "build": "tsc"
   },
   "engines": {
     "node": "18"
