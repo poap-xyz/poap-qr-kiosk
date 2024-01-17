@@ -36,3 +36,5 @@ cypress/videos
 !.env.project
 .flaskenv*
 !.env.vault
+
+/functions/lib
