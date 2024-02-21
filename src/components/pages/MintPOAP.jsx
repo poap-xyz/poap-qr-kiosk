@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
-import { log } from "../../modules/helpers"
 import { useProbableMintAddress } from "../../hooks/minter"
 import { mint_code_to_address } from "../../modules/firebase"
+import { log } from "../../modules/helpers"
 
-import { eth_or_ens_address_regex, email_regex } from '@poap/sane-data'
 import { Button, CardContainer, Container, Divider, H1, H3, HeroIcon, Input, Text } from "@poap/poap-components"
+import { email_regex, eth_or_ens_address_regex } from '@poap/sane-data'
 
+import Confetti from "../atoms/Confetti"
 import Loading from "../molecules/Loading"
 import { serveToast } from '../molecules/Toast'
 import ViewWrapper from "../molecules/ViewWrapper"
-import Confetti from "../atoms/Confetti"
 
+import { ReactComponent as FailedIcon } from '../../assets/illustrations/man_vr_failed.svg'
 import { ReactComponent as Diamond } from '../../assets/illustrations/valuable-diamond.svg'
 import { ReactComponent as WelldoneIcon } from '../../assets/illustrations/well_done.svg'
-import { ReactComponent as FailedIcon } from '../../assets/illustrations/man_vr_failed.svg'
 
 
 export default function MintPOAP() {
@@ -28,6 +28,7 @@ export default function MintPOAP() {
     const [ claim_failed, set_claim_fail ] = useState( false )
     const [ auto_mint_attempted, set_auto_mint_attempted ] = useState( false )
 
+    console.log( address_to_mint_to, address_to_mint_to.length )
     // Navigation
     const navigate = useNavigate()
 
@@ -127,7 +128,7 @@ export default function MintPOAP() {
                 <Diamond />
                 <H1 align='center' size='var(--fs-lg)' margin='var(--spacing-5) 0 var(--spacing-1) 0'>Ready to mint your POAP</H1>
                 <Divider outline margin='0 0 var(--spacing-6) 0' />
-                <Input id="address-to-mint-to" label="Address to mint the POAP to:" placeholder='Enter your ETH address, ENS, or email' onChange={ ( { target } ) => set_address_to_mint_to( target.value ) } value={ address_to_mint_to } />
+                <Input id="address-to-mint-to" label="Address to mint the POAP to:" placeholder='Enter your ETH address, ENS, or email' onChange={ ( { target } ) => set_address_to_mint_to( target.value?.trim() ) } value={ address_to_mint_to } />
                 <Button id='mint-poap-submit' onClick={ handle_mint } leftIcon={ <HeroIcon icon='sparkles' /> }>Collect your POAP</Button>
 
             </CardContainer>
