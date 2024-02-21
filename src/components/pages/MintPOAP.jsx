@@ -28,7 +28,6 @@ export default function MintPOAP() {
     const [ claim_failed, set_claim_fail ] = useState( false )
     const [ auto_mint_attempted, set_auto_mint_attempted ] = useState( false )
 
-    console.log( address_to_mint_to, address_to_mint_to.length )
     // Navigation
     const navigate = useNavigate()
 
