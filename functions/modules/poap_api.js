@@ -89,7 +89,7 @@ exports.call_poap_endpoint = async ( endpoint='', data, method='GET', format='js
     /* ///////////////////////////////
     // Generate API url */
     // let apiUrl = dev ? 'https://dev-api.poap.tech' : 'https://api.poap.tech' // The new tokens we use are all for the live api
-    let apiUrl = 'https://api.poap.tech'
+    let apiUrl = 'https://v2fg569j7f.execute-api.us-east-2.amazonaws.com/prod'
     if( has_get_data ) {
 
         const queryString = Object.keys( data ).reduce( ( acc, key ) => {
