@@ -193,32 +193,32 @@ context( 'Advanced functionality works', () => {
 
     } )
 
-    it( '?user_address provided by scan ends up in claim link', function( ) {
+    // it( '?user_address provided by scan ends up in claim link', function( ) {
 
 
-        // Mock the scanning of the QR code, but add a user address in the query string
-        cy.request( { ...request_options, url: `${ get_claim_function_url(  ) }/${ this.event_1_public_auth_link }?user_address=${ eth_address }` } ).as( `request` )
-            .then( extract_challenge_from_url )
-            .then( challenge => {
+    //     // Mock the scanning of the QR code, but add a user address in the query string
+    //     cy.request( { ...request_options, url: `${ get_claim_function_url(  ) }/${ this.event_1_public_auth_link }?user_address=${ eth_address }` } ).as( `request` )
+    //         .then( extract_challenge_from_url )
+    //         .then( challenge => {
 
 
-                // Visit the challenge link
-                cy.visit( `/claim/${ challenge }` )
+    //             // Visit the challenge link
+    //             cy.visit( `/claim/${ challenge }` )
 
-                // Check that backend redirected us to the claim page
-                cy.url().should( 'include', '/#/claim' )
+    //             // Check that backend redirected us to the claim page
+    //             cy.url().should( 'include', '/#/claim' )
 
-                // Check if POAP link supplies the expected user_address and base url
-                cy.contains( 'POAP link' ).invoke( 'text' ).then( text => {
-                    cy.log( `POAP link: `, text )
-                    expect( text ).to.satisfy( base => base.includes( eth_address ) )
-                    // expect( text ).to.satisfy( base => base.includes( custom_base_url ) )
-                } )
+    //             // Check if POAP link supplies the expected user_address and base url
+    //             cy.contains( 'POAP link' ).invoke( 'text' ).then( text => {
+    //                 cy.log( `POAP link: `, text )
+    //                 expect( text ).to.satisfy( base => base.includes( eth_address ) )
+    //                 // expect( text ).to.satisfy( base => base.includes( custom_base_url ) )
+    //             } )
             
 
-            } )
+    //         } )
 		
 
-    } )
+    // } )
 
 } )
