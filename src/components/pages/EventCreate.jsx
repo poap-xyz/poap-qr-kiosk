@@ -17,6 +17,7 @@ import FormFooter from '../molecules/FormFooter'
 import { UploadButton } from '../molecules/UploadButton'
 
 import { Button, CardContainer, Container, H3, Input, Dropdown, CardDashboard, useViewport } from '@poap/poap-components'
+import Select from '../atoms/Select'
 
 // ///////////////////////////////
 // Render component
@@ -51,7 +52,7 @@ export default function Admin( ) {
     const [ filename, setFilename ] = useState( 'codes.txt' )
     const [ isHealthy, setIsHealthy ] = useState( true )
     const [ backgroundTaps, setBackgroundTaps ] = useState( 0 )
-    const [ collectEmails, setCollectEmails ] = useState( false )
+    const [ collectEmails, setCollectEmails ] = useState( 'no' )
     const developer_mode = backgroundTaps >= 20
 
     // Email collection options
@@ -62,7 +63,7 @@ export default function Admin( ) {
         },
         {
             label: t( 'eventCreate.form.dropCollectEmails.options', { returnObjects: true } )?.[1]?.label,
-            value: 'yes'    
+            value: 'yes'
         }
     ]
 
@@ -223,7 +224,6 @@ export default function Admin( ) {
 
         try {
 
-
             // Health noti
             if( !isHealthy ) {
                 const ignore_unhealthy = confirm( `${ t( 'messaging.health.maintenance' ) }` )
@@ -253,9 +253,9 @@ export default function Admin( ) {
                 dropId,
                 // If naiveMode is true skip game, else check if gameEnabled 
                 challenges: [ abuseProtection ] ,
-                collect_emails: !!collectEmails,
+                collect_emails: collectEmails === 'yes',
                 // Custom base URLs may only be used is collectEmails is off, this is because collectEmails works by setting the base url in Claim.js
-                ... !collectEmails && customBaseurl && { claim_base_url: customBaseurl } ,
+                ...collectEmails == 'no' && customBaseurl && { claim_base_url: customBaseurl } ,
                 game_config: { duration: gameDuration, target_score: Math.ceil( gameDuration / 5 ) },
                 ... css && { css } 
             }
@@ -353,11 +353,11 @@ export default function Admin( ) {
                     { dev || developer_mode ? <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'eventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'eventCreate.form.dropDate.info' ) }` } value={ date } /> : null }
                     
                     <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'eventCreate.form.dropEmail.placeholder' ) } label={ t( 'eventCreate.form.dropEmail.label' ) } toolTip={ t( 'eventCreate.form.dropEmail.info' ) } value={ email } />
-                    <Dropdown id="event-create-game-enabled" label={ t( 'eventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` } options={ gameOptions } handleOptionSelect={ ( { value } ) => setAbuseProtection( `${ value }` ) }/>
-                    { abuseProtection === 'game' && <Dropdown id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) } /> }
+                    <Select id="event-create-game-enabled" label={ t( 'eventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` } options={ gameOptions } onChange={ ( event ) => setAbuseProtection( event.target.value ) } />
+                    { abuseProtection === 'game' && <Select id="event-create-game-duration" onChange={ (  event  ) => setGameDuration( event.target.value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) } /> }
                     { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'eventCreate.form.dropCss.placeholder' ) } label={ t( 'eventCreate.form.dropCss.label' ) } toolTip={ t( 'eventCreate.form.dropCss.info' ) } value={ css || '' } /> }
-                    { developer_mode && <Dropdown options={ email_collect_options } id="event-create-collect-emails" handleOptionSelect={ ( { value } ) => setCollectEmails( value.includes( 'yes' ) ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } value={ collectEmails ? 'yes' : 'no' }/> }
-                    { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'eventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'eventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'eventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
+                    { developer_mode && <Select options={ email_collect_options } id="event-create-collect-emails" onChange={ ( event ) => setCollectEmails( event.target.value ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } />  }
+                    { developer_mode && collectEmails == 'no' && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'eventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'eventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'eventCreate.form.dropBaseurl.info' ) } value={ customBaseurl }/> }
                 </Grid>
                 <FormFooter>
                     <Button onClick={ clearEvent } variation='white' tabIndex='0'>Cancel</Button>

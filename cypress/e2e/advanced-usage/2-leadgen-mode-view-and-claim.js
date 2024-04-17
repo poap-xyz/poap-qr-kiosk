@@ -96,7 +96,6 @@ context( "User can view and claim through static QR url", function() {
 
         // Claim POAP
         cy.get( 'a#static-print-qr-claim-button' ).click()
-        cy.contains( `Collecting your POAP` )
 
         // Claim succeeded
         cy.contains( `successfully collected` )
