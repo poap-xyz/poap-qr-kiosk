@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@heroicons/react": "^2.0.18",
-    "@poap/poap-components": "^0.1.21",
+    "@poap/poap-components": "^0.1.31",
     "@poap/sane-data": "^0.0.7",
     "@rive-app/react-canvas": "^4.6.2",
     "@vitejs/plugin-react": "^4.2.1",

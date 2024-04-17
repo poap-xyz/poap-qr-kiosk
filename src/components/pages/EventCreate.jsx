@@ -62,7 +62,7 @@ export default function Admin( ) {
         },
         {
             label: t( 'eventCreate.form.dropCollectEmails.options', { returnObjects: true } )?.[1]?.label,
-            value: 'yes'    
+            value: 'yes'
         }
     ]
 
@@ -223,7 +223,6 @@ export default function Admin( ) {
 
         try {
 
-
             // Health noti
             if( !isHealthy ) {
                 const ignore_unhealthy = confirm( `${ t( 'messaging.health.maintenance' ) }` )
@@ -353,11 +352,11 @@ export default function Admin( ) {
                     { dev || developer_mode ? <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'eventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'eventCreate.form.dropDate.info' ) }` } value={ date } /> : null }
                     
                     <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'eventCreate.form.dropEmail.placeholder' ) } label={ t( 'eventCreate.form.dropEmail.label' ) } toolTip={ t( 'eventCreate.form.dropEmail.info' ) } value={ email } />
-                    <Dropdown id="event-create-game-enabled" label={ t( 'eventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` } options={ gameOptions } handleOptionSelect={ ( { value } ) => setAbuseProtection( `${ value }` ) }/>
-                    { abuseProtection === 'game' && <Dropdown id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) } /> }
+                    <Dropdown id="event-create-game-enabled" label={ t( 'eventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` } options={ gameOptions } onChange={ ( value ) => setAbuseProtection( value ) } style={ { margin: '0 0 var(--spacing-4)' } }/>
+                    { abuseProtection === 'game' && <Dropdown id="event-create-game-duration" onChange={ value => setGameDuration( value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) } style={ { margin: '0 0 var(--spacing-4)' } }/> }
                     { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'eventCreate.form.dropCss.placeholder' ) } label={ t( 'eventCreate.form.dropCss.label' ) } toolTip={ t( 'eventCreate.form.dropCss.info' ) } value={ css || '' } /> }
-                    { developer_mode && <Dropdown options={ email_collect_options } id="event-create-collect-emails" handleOptionSelect={ ( { value } ) => setCollectEmails( value.includes( 'yes' ) ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } value={ collectEmails ? 'yes' : 'no' }/> }
-                    { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'eventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'eventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'eventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
+                    { developer_mode && <Dropdown options={ email_collect_options } id="event-create-collect-emails" onChange={ ( value ) => setCollectEmails( value ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } style={ { margin: '0 0 var(--spacing-4)' } }/>  }
+                    { developer_mode && collectEmails === 'no' && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'eventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'eventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'eventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
                 </Grid>
                 <FormFooter>
                     <Button onClick={ clearEvent } variation='white' tabIndex='0'>Cancel</Button>
