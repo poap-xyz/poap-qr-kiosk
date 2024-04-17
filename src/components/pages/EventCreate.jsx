@@ -1,23 +1,34 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import Papa from 'papaparse'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 // Functionality
-import { registerEvent, trackEvent, getEventDataFromCode, health_check } from '../../modules/firebase'
-import { log, dateOnXDaysFromNow, monthNameToNumber, dev } from '../../modules/helpers'
+import { getEventDataFromCode, health_check, registerEvent, trackEvent } from '../../modules/firebase'
+import { dateOnXDaysFromNow, dev, log, monthNameToNumber } from '../../modules/helpers'
 
 // Components
-import Section from '../atoms/Section'
 import { Col, Grid, Row } from '../atoms/Grid'
+import Section from '../atoms/Section'
 
-import Loading from '../molecules/Loading'
-import Layout from '../molecules/Layout'
 import FormFooter from '../molecules/FormFooter'
+import Layout from '../molecules/Layout'
+import Loading from '../molecules/Loading'
 import { UploadButton } from '../molecules/UploadButton'
 
-import { Button, CardContainer, Container, H3, Input, Dropdown, CardDashboard, useViewport } from '@poap/poap-components'
-
+import { Button, CardContainer, CardDashboard, Container, H3, Input, useViewport } from '@poap/poap-components'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+// id="event-create-game-enabled" label={ t( 'EventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'EventCreate.form.dropGame.info' ) }` } options={ optionss } handleOptionSelect={ handleOptionSelect }
+const Dropdown2 = ( { id, label, toolTip, form, options, handleOptionSelect } ) => {
+    return (
+        <form id={ { id } } onChange={ e => handleOptionSelect( e.target ) }>
+            <select { ...form.register( label ) }>
+                { options.map( ( option, i ) => <option key={ i } value={ option.value }>{ option.label }</option> ) }
+            </select>
+        </form>
+    )
+}
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
@@ -35,7 +46,7 @@ export default function Admin( ) {
     // ///////////////////////////////
     // State handling
     // ///////////////////////////////
-
+    const form = useForm()
     const [ email, setEmail ] = useState( dev ? 'ruben@poap.io' : '' )
     const [ date, setDate ] = useState( '' )
     const [ name, setName ] = useState( '' )
@@ -259,6 +270,7 @@ export default function Admin( ) {
                 game_config: { duration: gameDuration, target_score: Math.ceil( gameDuration / 5 ) },
                 ... css && { css } 
             }
+
             log( 'Creating event with data: ', JSON.stringify( event_data, null, 2 ) )
             const { data: newEvent } = await registerEvent( event_data )
 
@@ -353,10 +365,23 @@ export default function Admin( ) {
                     { dev || developer_mode ? <Input id="event-create-date" onChange={ ( { target } ) => setDate( target.value ) } pattern="\d{4}-\d{2}-\d{2}" min={ dateOnXDaysFromNow( 1 ) } type='date' label={ t( 'eventCreate.form.dropDate.label' ) } toolTip={ `${ t( 'eventCreate.form.dropDate.info' ) }` } value={ date } /> : null }
                     
                     <Input id="event-create-email" onChange={ ( { target } ) => setEmail( target.value ) } placeholder={ t( 'eventCreate.form.dropEmail.placeholder' ) } label={ t( 'eventCreate.form.dropEmail.label' ) } toolTip={ t( 'eventCreate.form.dropEmail.info' ) } value={ email } />
-                    <Dropdown id="event-create-game-enabled" label={ t( 'eventCreate.form.dropGame.label' ) } toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` } options={ gameOptions } handleOptionSelect={ ( { value } ) => setAbuseProtection( `${ value }` ) }/>
-                    { abuseProtection === 'game' && <Dropdown id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) } /> }
+                    <Dropdown2
+                        form={ form }
+                        id="event-create-game-enabled"
+                        label={ t( 'eventCreate.form.dropGame.label' ) }
+                        toolTip={ `${ t( 'eventCreate.form.dropGame.info' ) }` }
+                        options={ gameOptions } 
+                        handleOptionSelect={ ( { value } ) => setAbuseProtection( `${ value }` ) }
+                    />
+                    { abuseProtection === 'game' && <Dropdown2 
+                        form={ form }
+                        id="event-create-game-duration" handleOptionSelect={ option => setGameDuration( option.value ) } label={ t( 'eventCreate.gameTime.label' ) } toolTip={ t( 'eventCreate.gameTime.info' ) } options={ t( 'eventCreate.gameTime.options', { returnObjects: true } ) }
+                    /> }
                     { developer_mode && <Input highlight={ !css } id="event-create-css" onChange={ ( { target } ) => setCss( target.value ) } placeholder={ t( 'eventCreate.form.dropCss.placeholder' ) } label={ t( 'eventCreate.form.dropCss.label' ) } toolTip={ t( 'eventCreate.form.dropCss.info' ) } value={ css || '' } /> }
-                    { developer_mode && <Dropdown options={ email_collect_options } id="event-create-collect-emails" handleOptionSelect={ ( { value } ) => setCollectEmails( value.includes( 'yes' ) ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } value={ collectEmails ? 'yes' : 'no' }/> }
+                    { developer_mode && <Dropdown2 
+                        form={ form }
+                        options={ email_collect_options } id="event-create-collect-emails" handleOptionSelect={ ( { value } ) => setCollectEmails( value.includes( 'yes' ) ) }  label={ t( 'eventCreate.form.dropCollectEmails.label' ) } toolTip={ t( 'eventCreate.form.dropCollectEmails.info' ) } value={ collectEmails ? 'yes' : 'no' }
+                    /> }
                     { developer_mode && !collectEmails && <Input highlight={ !customBaseurl } id="event-create-custom-baseurl" onChange={ ( { target } ) => setCustomBaseurl( target.value ) } placeholder={ t( 'eventCreate.form.dropBaseurl.placeholder' ) } label={ t( 'eventCreate.form.dropBaseurl.label' ) } toolTip={ t( 'eventCreate.form.dropBaseurl.info' ) } value={ customBaseurl || '' } /> }
                 </Grid>
                 <FormFooter>
