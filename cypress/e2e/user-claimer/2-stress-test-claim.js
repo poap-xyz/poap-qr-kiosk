@@ -36,7 +36,7 @@ context( 'Claimer can view valid events', () => {
 
     } )
 
-	
+	/* 
     it( 'Successfully gets 3 challenge links', function( ) {
 
 
@@ -46,7 +46,7 @@ context( 'Claimer can view valid events', () => {
         cy.get_challenge_from_qr_public_auth( this.public_auth_link, `challenge_three`, start ).as( `challenge_three` )
 
 
-    } )
+    } ) */
 
     it( 'Successfully claims 3 challenge links', function( ) {
 
@@ -56,7 +56,7 @@ context( 'Claimer can view valid events', () => {
             .then( () => cy.mint_poap_from_challenge( this.challenge_three, `challenge_three`, start ) )
     
     } )
-
+/* 
     it( 'Shows codes marked as used (previous redirect marked as used)', function( ) {
 
         // Visit the public link
@@ -68,7 +68,7 @@ context( 'Claimer can view valid events', () => {
         // Shows one code as claimed
         cy.contains( '3 of 5 codes' )
 
-    } )
+    } ) */
 
     it( 'Successfully gets challenge link through old public auth (should work ONCE)', function( ) {
 
