@@ -89,7 +89,7 @@
         "info": "This field will be injected as CSS overrides during the claiming process."
       },
       "dropBaseurl": {
-        "placeholder": "https://kiosk.poap.xyz/#/static/claim/",
+        "placeholder": "https://poap.xyz/claim/",
         "label": "POAP Claim Baseurl Override",
         "info": "Instead of redirecting to the POAP interface to claim a POAP, redirect it to any URL of your choosing."
       },
