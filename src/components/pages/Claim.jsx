@@ -89,7 +89,7 @@ export default function ClaimPOAP() {
     if( user_validation_status_message ) return <Loading message={ user_validation_status_message } /> 
 
     // If user is not valid, and no captcha response is known, show captcha
-    if( true ) return <Captcha onChange={ response => setCaptchaResponse( response ) } />
+    if( !user_valid && !captchaResponse ) return <Captcha onChange={ response => setCaptchaResponse( response ) } />
 
     // If the captcha was completed, but there is an error getting the claim code, show the error
     if( user_valid && error_getting_claim_code ) return <Loading message={ error_getting_claim_code } />
