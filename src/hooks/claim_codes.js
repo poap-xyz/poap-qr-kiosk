@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { dev, log } from "../modules/helpers"
+import { log } from "../modules/helpers"
 import { get_code_by_challenge, requestManualCodeRefresh, trackEvent } from "../modules/firebase"
 import { useChallenge } from "./challenges"
 import { useEffect, useState } from "react"
