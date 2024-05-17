@@ -119,7 +119,7 @@ context( 'Claimer can view valid events with game', () => {
 
             } )
 
-    } ) */
+    } )
 
     it( 'Event 1: Shows code marked as used (previous redirect marked as used)', function( ) {
 
@@ -134,7 +134,7 @@ context( 'Claimer can view valid events with game', () => {
 
     } )
 
-/*     it( 'Event 1: Previous challenge link no longer works', function( ) {
+    it( 'Event 1: Previous challenge link no longer works', function( ) {
 
         // Visit the public link
         cy.visit( this.event_1_first_challenge_url )
@@ -142,7 +142,7 @@ context( 'Claimer can view valid events with game', () => {
         // Interface should indicate that the link expired
         cy.contains( 'This link was already used' )
 
-    } ) */
+    } )
 
     it( 'Event 1: Shows no codes after code is scanned', function( ) {
 
@@ -155,7 +155,7 @@ context( 'Claimer can view valid events with game', () => {
         cy.contains( '1 of 1 codes' )
 
     } )
-/* 
+
     it( 'Event 1: Shows error if link was used after code ran out', function( ) {
 
         // Visit the public link to the second code as read by simulating a scan
