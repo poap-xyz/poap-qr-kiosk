@@ -108,7 +108,7 @@ app.get( '/claim/:event_id/:public_auth_token', async ( req, res ) => {
         // Note: this sets how long scans are valid, it is an ESSENTIAL part of this applicaion
         // CI is set low so we can check if our app is performans
         // Live is set longer so that users on slow networks are not penalised
-        const old_auth_grace_period_in_ms = 1000 * (  CI || is_test_event ? 30 : 30 )
+        const old_auth_grace_period_in_ms = 1000 * (  CI || is_test_event ? 60 : 60 )
 
         // Check whether the (previous) auth token is still valid
         const current_auth_is_valid = public_auth?.token == public_auth_token

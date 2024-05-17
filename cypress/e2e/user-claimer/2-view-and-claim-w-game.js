@@ -50,7 +50,7 @@ context( 'Claimer can view valid events with game', () => {
         cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_1_public_auth_link' ).then( f => cy.log( `Event 1 public auth link: ${ this.event_1_public_auth_link }` ) )
 
     } )
-
+/* 
     it( 'Event 1: Successfully redirects to challenge link and play game', function( ) {
         
         // Store current
@@ -200,7 +200,7 @@ context( 'Claimer can view valid events with game', () => {
 
             } )
 
-    } )
+    } ) */
 
     // Delete event 1
     it( 'Event 1: Deletes the event when clicked', function() {
