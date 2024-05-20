@@ -201,7 +201,7 @@ export default function EventAdmin( ) {
     if( loading ) return <Loading message={ loading } />
 
     { /* Event meta loaded, no codes available */ }
-    if( !event.loading && !event.codes ) return <Layout hide_background > 
+    if( !event.loading && event.name && !event.codes ) return <Layout hide_background > 
         <Section align='flex-start' margin="0">
 
             <Text>{ t( 'eventAdmin.hero.notavailable.title' ) }</Text>
