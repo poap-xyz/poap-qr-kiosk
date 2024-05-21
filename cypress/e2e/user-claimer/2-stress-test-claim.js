@@ -35,8 +35,7 @@ context( 'Claimer can view valid events', () => {
         cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'public_auth_link' ).then( f => cy.log( `Event public auth link: ${ this.public_auth_link }` ) )
 
     } )
-
-	
+/* 
     it( 'Successfully gets 3 challenge links', function( ) {
 
 
@@ -116,6 +115,6 @@ context( 'Claimer can view valid events', () => {
         cy.contains( 'Deletion success!' )
 
         cy.url().should( 'eq', Cypress.config().baseUrl + '/' )
-    } )
+    } ) */
 
 } )

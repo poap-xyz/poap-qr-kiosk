@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { dev, log } from "../modules/helpers"
+import { log } from "../modules/helpers"
 import { get_code_by_challenge, requestManualCodeRefresh, trackEvent } from "../modules/firebase"
 import { useChallenge } from "./challenges"
 import { useEffect, useState } from "react"
@@ -51,7 +51,7 @@ export const useClaimcodeForChallenge = ( captchaResponse, fetch_code=false ) =>
 
         // Formulate redirect depending on claim type
         log( `Generating claim link based on code ${ claim_code } and event data `, event )
-        let link = `${ dev ? `http://localhost:3000` : VITE_publicUrl }/#/mint/${ claim_code }/${ challenge_code }`
+        let link = `https://poap.xyz/claim/${ claim_code }`
         if( event?.collect_emails ) link = `${ VITE_publicUrl }/#/static/claim/${ claim_code }`
         if( event?.claim_base_url ) link = `${ event?.claim_base_url }${ claim_code }`
 
