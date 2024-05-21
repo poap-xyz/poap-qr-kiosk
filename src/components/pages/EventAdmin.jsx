@@ -168,6 +168,7 @@ export default function EventAdmin( ) {
 
     }
 
+    // Little change to retry the deploy
     // Recauculate available codes
     async function recalculateAvailableCodes() {
 
