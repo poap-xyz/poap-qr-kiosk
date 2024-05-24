@@ -69,17 +69,17 @@ export default function Admin( ) {
 
     const gameOptions = [
         {
+            label: 'No anti-abuse protections (only in trusted environments)',
+            value: 'naive'
+        },
+        {
             label: 'Automated background checks only (physical events)',
             value: 'background'
-        },
+        },   
         {
             label: 'Automated checks & anti-farming game (online events)',
             value: 'game'
         },
-        ...developer_mode?[ {
-            label: 'No anti-abuse protections (only in trusted environments)',
-            value: 'naive'
-        } ]: [],
     ]
 
     // ///////////////////////////////
