@@ -122,9 +122,9 @@ Cypress.Commands.add( 'create_kiosk', ( code_amount = 'one', anti_farming_mode =
     if( anti_farming_mode == 'naive' ) {
 
         // Enable developer mode by clicking background 20 times
-        /* for( let i = 0; i < 20; i++ ) {
+        for( let i = 0; i < 20; i++ ) {
             cy.get( '#event-create-layout-container' ).click( { force: true } )
-        } */
+        }
 
         // Enable naive mode
         cy.get( '#event-create-game-enabled' ).should( 'exist' )
@@ -159,8 +159,11 @@ Cypress.Commands.add( 'create_kiosk', ( code_amount = 'one', anti_farming_mode =
             cy.get( '#event-create-layout-container' ).click( { force: true } )
         }
 
+        cy.get( '#event-create-game-enabled' ).should( 'exist' )
+        cy.get( '#event-create-game-enabled' ).select( 1, { force: true } )
+
         cy.get( '#event-create-collect-emails' ).should( 'exist' )
-        cy.get( '#event-create-collect-emails' ).select( 0, { force: true } )
+        cy.get( '#event-create-collect-emails' ).select( 1, { force: true } )
         cy.get( '#event-create-custom-baseurl' ).should( 'not.exist' )
     }
 

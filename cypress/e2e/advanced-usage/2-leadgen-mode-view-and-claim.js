@@ -57,8 +57,15 @@ context( "User can view and claim through static QR url", function() {
                 cy.url().as( 'event_1_first_challenge_url' )
 
                 // Check that backend redirected us to the claim page
-                cy.url().should( 'include', '/claim' )
+                cy.url().should( 'include', '/#/claim' )
 
+                // Wait for code retreival
+                cy.contains( 'POAP link' )
+
+                // Check if POAP link supplies one of the test codes
+                cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
+                    expect( text ).to.contain( "/#/static/claim/" )
+                } )
             } )
 
     } )
