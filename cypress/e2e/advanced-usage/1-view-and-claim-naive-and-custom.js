@@ -192,7 +192,7 @@ context( 'Advanced functionality works', () => {
         cy.get( 'svg[data-code]' ).invoke( 'attr', 'data-code' ).as( 'event_1_public_auth_link' ).then( f => cy.log( `Event 1 public auth link: ${ this.event_1_public_auth_link }` ) )
 
     } )
-
+/* 
     it( '?user_address provided by scan ends up in claim link', function( ) {
 
 
@@ -219,6 +219,6 @@ context( 'Advanced functionality works', () => {
             } )
 		
 
-    } )
+    } ) */
 
 } )

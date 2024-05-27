@@ -103,14 +103,14 @@ Cypress.Commands.add( 'create_kiosk', ( code_amount = 'one', anti_farming_mode =
     if( anti_farming_mode == 'background' ) {
 
         cy.get( '#event-create-game-enabled' ).should( 'exist' )
-        cy.get( '#event-create-game-enabled' ).select( 0, { force: true } )
+        cy.get( '#event-create-game-enabled' ).select( 1, { force: true } )
     }
 
     // Game based anti-farming
     if( anti_farming_mode == 'game' ) {
         // Select YES to anti-farming
         cy.get( '#event-create-game-enabled' ).should( 'exist' )
-        cy.get( '#event-create-game-enabled' ).select( 1, { force: true } )
+        cy.get( '#event-create-game-enabled' ).select( 2, { force: true } )
         // Select anti-farming timing (10s)
 
         cy.get( '#event-create-game-duration' ).should( 'exist' )
@@ -128,7 +128,7 @@ Cypress.Commands.add( 'create_kiosk', ( code_amount = 'one', anti_farming_mode =
 
         // Enable naive mode
         cy.get( '#event-create-game-enabled' ).should( 'exist' )
-        cy.get( '#event-create-game-enabled' ).select( 2, { force: true } )
+        cy.get( '#event-create-game-enabled' ).select( 0, { force: true } )
 
         // Add custom css to the event
         cy.get( "#event-create-css" ).clear().type( `body { opacity: 0.99; }`, { parseSpecialCharSequences: false } )
@@ -158,6 +158,9 @@ Cypress.Commands.add( 'create_kiosk', ( code_amount = 'one', anti_farming_mode =
         for( let i = 0; i < 20; i++ ) {
             cy.get( '#event-create-layout-container' ).click( { force: true } )
         }
+
+        cy.get( '#event-create-game-enabled' ).should( 'exist' )
+        cy.get( '#event-create-game-enabled' ).select( 1, { force: true } )
 
         cy.get( '#event-create-collect-emails' ).should( 'exist' )
         cy.get( '#event-create-collect-emails' ).select( 1, { force: true } )

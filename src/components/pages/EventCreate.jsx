@@ -46,7 +46,7 @@ export default function Admin( ) {
     const [ css, setCss ] = useState(  )
     const [ customBaseurl, setCustomBaseurl ] = useState(  )
     const [ codes, setCodes ] = useState(  )
-    const [ abuseProtection, setAbuseProtection ] = useState( false )
+    const [ abuseProtection, setAbuseProtection ] = useState( 'naive' )
     const [ gameDuration, setGameDuration ] = useState( 30 )
     const [ loading, setLoading ] = useState( false )
     const [ filename, setFilename ] = useState( 'codes.txt' )
@@ -69,17 +69,17 @@ export default function Admin( ) {
 
     const gameOptions = [
         {
+            label: 'No anti-abuse protections (only in trusted environments)',
+            value: 'naive'
+        },
+        {
             label: 'Automated background checks only (physical events)',
             value: 'background'
-        },
+        },   
         {
             label: 'Automated checks & anti-farming game (online events)',
             value: 'game'
         },
-        ...developer_mode?[ {
-            label: 'No anti-abuse protections (only in trusted environments)',
-            value: 'naive'
-        } ]: [],
     ]
 
     // ///////////////////////////////
