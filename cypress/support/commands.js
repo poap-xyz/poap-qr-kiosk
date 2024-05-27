@@ -160,7 +160,7 @@ Cypress.Commands.add( 'create_kiosk', ( code_amount = 'one', anti_farming_mode =
         }
 
         cy.get( '#event-create-collect-emails' ).should( 'exist' )
-        cy.get( '#event-create-collect-emails' ).select( 1, { force: true } )
+        cy.get( '#event-create-collect-emails' ).select( 0, { force: true } )
         cy.get( '#event-create-custom-baseurl' ).should( 'not.exist' )
     }
 
