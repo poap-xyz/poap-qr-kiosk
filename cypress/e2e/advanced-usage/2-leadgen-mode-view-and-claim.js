@@ -66,9 +66,7 @@ context( "User can view and claim through static QR url", function() {
                 cy.get( '#loading_text' ).invoke( 'text' ).then( text => {
                     expect( text ).to.contain( "/#/static/claim/" )
                 } )
-
             } )
-		
 
     } )
 
