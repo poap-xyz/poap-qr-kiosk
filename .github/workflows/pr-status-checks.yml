@@ -28,7 +28,7 @@ jobs:
       # Set up node
       - name: Set up frontend Node.js (.nvmrc)
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: ".nvmrc"
           cache: "npm"
