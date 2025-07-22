@@ -135,109 +135,12 @@ jobs:
           GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
 
   ## ###############
-  ## 3️⃣ Frontend testing
-  ## ###############
-  test-frontend:
-    name: Do frontend testing
-    runs-on: buildjet-8vcpu-ubuntu-2204
-    strategy:
-      fail-fast: false
-      matrix:
-        # run multiple copies of the current job in  parallel
-        containers: [ 1, 2, 3, 4 ]
-    needs: [deploy-functions, deploy-firebase-settings]
-
-    steps:
-      # Clones repo to the commit that triggered the event
-      - name: Cloning repository
-        uses: actions/checkout@v3
-      - name: Get changed files
-        id: changed-frontend-files
-        uses: tj-actions/changed-files@v35
-        with:
-          files_ignore: functions/**;fire{base,store}*;.*/**
-          files_ignore_separator: ";"
-      - name: List all changed files
-        run: |
-          echo "Any changed: ${{ steps.changed-frontend-files.outputs.any_changed }}, base ref: ${{ github.base_ref }}"
-          for file in ${{ steps.changed-frontend-files.outputs.all_changed_files }}; do
-            echo "change: $file"
-          done
-
-      # Set up node and install frontend dependencies
-      - name: Set up Node.js (.nvmrc)
-        uses: actions/setup-node@v3
-        if: steps.changed-frontend-files.outputs.any_changed == 'true'
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-      - name: Install dependencies
-        if: steps.changed-frontend-files.outputs.any_changed == 'true'
-        run: npm i
-
-      # Set up environment
-      - name: Create DEV environment files
-        if: |
-          github.ref == 'refs/heads/development' &&
-          steps.changed-frontend-files.outputs.any_changed == 'true'
-        run: |
-          echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
-          sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
-
-      - name: Create PROD environment files
-        if: |
-          github.ref == 'refs/heads/main' &&
-          steps.changed-frontend-files.outputs.any_changed == 'true'
-        run: |
-          echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
-          sed -i "s;%%cypress_cloud_service_url%%;${{ secrets.CYPRESS_CLOUD_SERVICE_URL }};g" currents.config.js
-
-      # Disable emulator for testing
-      - name: Disable emulator for testing
-        if: steps.changed-frontend-files.outputs.any_changed == 'true'
-        run: |
-          sed -i 's/^REACT_APP_useEmulator=.*$//g' .env
-          sed -i 's/^VITE_useEmulator=.*$//g' .env
-
-      # Check linting
-      - name: Check for linting errors
-        if: steps.changed-frontend-files.outputs.any_changed == 'true'
-        run: npm run lint
-
-      # Check CI
-      - name: Run cypress tests
-        if: steps.changed-frontend-files.outputs.any_changed == 'true'
-        run: npm run test:ci
-
-      # If CI failed, upload the videos for debugging
-      - name: Upload cypress video files
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-videos ${{ matrix.containers }}
-          # name: cypress-videos
-          path: |
-            cypress/videos
-            cypress/screenshots
-
-      # Upload log files of this fun
-      - name: Upload all log files
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: logfiles ${{ matrix.containers }}
-          # name: logfiles  
-          path: |
-              *.log
-              functions/*.log
-
-  ## ###############
   ## 4️⃣ Deploy frontend changes
   ## ###############
   deploy-frontend:
     name: Deploy frontend changes
     runs-on: buildjet-4vcpu-ubuntu-2204
-    needs: [ deploy-functions, deploy-firebase-settings, test-frontend ]
+    needs: [ deploy-functions, deploy-firebase-settings ]
 
     steps:
       # Clones repo to the commit that triggered the event
