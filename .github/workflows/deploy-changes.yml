@@ -43,23 +43,21 @@ jobs:
       #########
       # Deploy
       - name: Deploy DEV meta to Firebase
-        uses: w9jds/firebase-action@master
         if: |
           github.ref == 'refs/heads/development' &&
           steps.changed-firebase-files.outputs.any_changed == 'true'
-        with:
-          args: deploy --only=firestore --project=development
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
+        run: |
+          echo '${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}' > /tmp/gcp-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-key.json
+          npx firebase-tools@latest deploy --only=firestore --project=development
       - name: Deploy PROD meta to Firebase
-        uses: w9jds/firebase-action@master
         if: |
           github.ref == 'refs/heads/main' && 
           steps.changed-firebase-files.outputs.any_changed == 'true'
-        with:
-          args: deploy --only=firestore --project=production
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
+        run: |
+          echo '${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}' > /tmp/gcp-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-key.json
+          npx firebase-tools@latest deploy --only=firestore --project=production
 
   ## ###############
   ## 2️⃣ Deploy functions
@@ -116,16 +114,14 @@ jobs:
       #########
       # Deploy
       - name: Deploy DEV functions to Firebase
-        uses: w9jds/firebase-action@master
         if: |
           github.ref == 'refs/heads/development' &&
           steps.changed-functions-files.outputs.any_changed == 'true'
-        with:
-          args: deploy --only=functions --project=development --force
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
+        run: |
+          echo '${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}' > /tmp/gcp-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-key.json
+          npx firebase-tools@latest deploy --only=functions --project=development --force
       - name: Deploy PROD functions to Firebase
-        uses: w9jds/firebase-action@master
         if: |
           github.ref == 'refs/heads/main' &&
           steps.changed-functions-files.outputs.any_changed == 'true'
@@ -204,22 +200,19 @@ jobs:
 
       # Deploy frontend
       - name: Deploy to PROD Firebase
-        uses: w9jds/firebase-action@master
         if: |
           github.ref == 'refs/heads/main' &&
           steps.changed-frontend-files.outputs.any_changed == 'true'
-        with:
-          args: deploy --only hosting,firestore --project=production
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
+        run: |
+          echo '${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}' > /tmp/gcp-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-key.json
+          npx firebase-tools@latest deploy --only hosting,firestore --project=production
 
       - name: Deploy to DEV Firebase
-        uses: w9jds/firebase-action@master
         if: |
           github.ref == 'refs/heads/development' &&
           steps.changed-frontend-files.outputs.any_changed == 'true'
-        with:
-          args: deploy --only hosting,firestore --project=development
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
-          
+        run: |
+          echo '${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}' > /tmp/gcp-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-key.json
+          npx firebase-tools@latest deploy --only hosting,firestore --project=development
