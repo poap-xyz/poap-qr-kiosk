@@ -125,10 +125,10 @@ jobs:
         if: |
           github.ref == 'refs/heads/main' &&
           steps.changed-functions-files.outputs.any_changed == 'true'
-        run: |
-          echo '${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}' > /tmp/gcp-key.json
-          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-key.json
-          npx firebase-tools@latest deploy --only=functions --project=production --force
+        with:
+          args: deploy --only=functions --project=production --force
+        env:
+          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
 
   ## ###############
   ## 4️⃣ Deploy frontend changes
