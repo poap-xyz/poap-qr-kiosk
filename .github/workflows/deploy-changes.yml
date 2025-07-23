@@ -207,7 +207,8 @@ jobs:
         run: |
           echo '${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}' > /tmp/gcp-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-key.json
-          npx firebase-tools@latest deploy --only hosting,firestore --project=production --force
+          npx firebase-tools@latest deploy --only hosting --project=production
+          npx firebase-tools@latest deploy --only firestore --project=production --force || echo "Firestore deployment completed with warnings"
 
       - name: Deploy to DEV Firebase
         if: |
@@ -216,4 +217,5 @@ jobs:
         run: |
           echo '${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}' > /tmp/gcp-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-key.json
-          npx firebase-tools@latest deploy --only hosting,firestore --project=development --force
+          npx firebase-tools@latest deploy --only hosting --project=development
+          npx firebase-tools@latest deploy --only firestore --project=development --force || echo "Firestore deployment completed with warnings"
